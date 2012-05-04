@@ -100,6 +100,7 @@
 #endif /* TBB_PEFORMANCE_WARNINGS */
 #endif /* TBB_USE_PERFORMANCE_WARNINGS */
 
+
 #if !defined(__EXCEPTIONS) && !defined(_CPPUNWIND) && !defined(__SUNPRO_CC) || defined(_XBOX)
     #if TBB_USE_EXCEPTIONS
         #error Compilation settings do not support exception handling. Please do not set TBB_USE_EXCEPTIONS macro or set it to 0.

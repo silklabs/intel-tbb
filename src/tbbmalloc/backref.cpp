@@ -95,38 +95,48 @@ bool initBackRefMaster(Backend *backend)
     const int leaves = 4;
     const size_t masterSize = BackRefMaster::bytes+leaves*BackRefBlock::bytes;
 
-    backRefMaster = (BackRefMaster*)getRawMemory(masterSize, /*useMapMem=*/true);
-    if (!backRefMaster)
-        backRefMaster = (BackRefMaster*)backend->getLargeBlock(masterSize, /*startup=*/true);
-    if (! backRefMaster)
-        return false;
-    backRefMaster->backend = backend;
-    backRefMaster->listForUse = NULL;
-    for (int i=0; i<leaves; i++) {
-        BackRefBlock *bl = (BackRefBlock *)((uintptr_t)backRefMaster + BackRefMaster::bytes + i*BackRefBlock::bytes);
-        backRefMaster->lastUsed = i;
-        backRefMaster->addEmptyBackRefBlock(bl);
-        if (i)
-            backRefMaster->addBackRefBlockToList(bl);
-        else // active leaf is not needed in listForUse
-            backRefMaster->active = bl;
+    BackRefMaster *master = (BackRefMaster*)getRawMemory(masterSize,
+                                                         /*useMapMem=*/true);
+    if (!master) {
+        master = (BackRefMaster*)
+            backend->getLargeBlock(masterSize, /*startup=*/true);
     }
+    if (! master)
+        return false;
+
+    master->backend = backend;
+    master->listForUse = NULL;
+    master->lastUsed = -1;
+    for (int i=0; i<leaves; i++) {
+        BackRefBlock *bl = (BackRefBlock *)((uintptr_t)master + BackRefMaster::bytes + i*BackRefBlock::bytes);
+        master->addEmptyBackRefBlock(bl);
+        if (i)
+            master->addBackRefBlockToList(bl);
+        else // active leaf is not needed in listForUse
+            master->active = bl;
+    }
+    // backRefMaster is read in getBackRef, so publish it in consistent state
+    FencedStore((intptr_t&)backRefMaster, (intptr_t)master);
     return true;
 }
 
 void BackRefMaster::addBackRefBlockToList(BackRefBlock *bl)
 {
-    bl->nextForUse = backRefMaster->listForUse;
-    backRefMaster->listForUse = bl;
+    bl->nextForUse = listForUse;
+    listForUse = bl;
     bl->addedToForUse = true;
 }
 
 void BackRefMaster::addEmptyBackRefBlock(BackRefBlock *newBl)
 {
+    int nextLU = lastUsed+1;
     memset((char*)newBl+sizeof(BackRefBlock), 0,
            BackRefBlock::bytes-sizeof(BackRefBlock));
-    new (newBl) BackRefBlock(newBl, lastUsed);
-    backRefBl[lastUsed] = newBl;
+    new (newBl) BackRefBlock(newBl, nextLU);
+    backRefBl[nextLU] = newBl;
+    // lastUsed is read in getBackRef, and access to backRefBl[lastUsed]
+    // is possible only after checking backref against current lastUsed
+    FencedStore((intptr_t&)lastUsed, nextLU);
 }
 
 BackRefBlock *BackRefMaster::findFreeBlock()
@@ -148,7 +158,6 @@ BackRefBlock *BackRefMaster::findFreeBlock()
         if (!newBl)
             newBl = (BackRefBlock*)backend->get16KBlock(1, /*startup=*/!isMallocInitializedExt());
         if (!newBl) return NULL;
-        lastUsed++;
         backRefMaster->addEmptyBackRefBlock(newBl);
         active = newBl;
     } else  // no free blocks, give up
@@ -159,7 +168,9 @@ BackRefBlock *BackRefMaster::findFreeBlock()
 void *getBackRef(BackRefIdx backRefIdx)
 {
     // !backRefMaster means no initialization done, so it can't be valid memory
-    if (!backRefMaster || backRefIdx.getMaster() > backRefMaster->lastUsed
+    // see addEmptyBackRefBlock for fences around lastUsed
+    if (!FencedLoad((intptr_t&)backRefMaster)
+        || backRefIdx.getMaster() > FencedLoad((intptr_t&)backRefMaster->lastUsed)
         || backRefIdx.getOffset() >= BR_MAX_CNT)
         return NULL;
     return *(void**)((uintptr_t)backRefMaster->backRefBl[backRefIdx.getMaster()]

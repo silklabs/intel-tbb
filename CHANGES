@@ -1,3 +1,11 @@
+TBB 4.0 Update 1 commercial-aligned release
+
+Changes (w.r.t. TBB 4.0 commercial-aligned release):
+
+- Memory leaks fixed in binpack example.
+- Improvements and fixes in the TBB allocator.
+
+------------------------------------------------------------------------
 TBB 4.0 commercial-aligned release
 
 Changes (w.r.t. TBB 3.0 Update 8 commercial-aligned release):

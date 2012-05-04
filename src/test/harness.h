@@ -223,7 +223,6 @@ static void ParseCommandLine( int argc, char* argv[] ) {
 
 #if !HARNESS_CUSTOM_MAIN
 
-
 #if __TBB_MPI_INTEROP
 #undef SEEK_SET
 #undef SEEK_CUR
@@ -280,7 +279,6 @@ int main(int argc, char* argv[]) {
 #endif
     return 0;
 }
-
 
 #endif /* !HARNESS_CUSTOM_MAIN */
 

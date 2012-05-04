@@ -159,7 +159,9 @@ struct RegisterProcessShutdownNotification {
     }
 };
 
+#if __TBB_DYNAMIC_LOAD_ENABLED
 static RegisterProcessShutdownNotification reg;
+#endif
 #endif
 
 #if MALLOC_CHECK_RECURSION
@@ -210,7 +212,7 @@ volatile char VersionString[] = "\0" TBB_VERSION_STRINGS;
 
 } } // namespaces
 
-#ifdef _WIN32
+#if _WIN32 && __TBB_DYNAMIC_LOAD_ENABLED
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
 {
@@ -226,7 +228,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
     return TRUE;
 }
 
-#endif //_WIN32
+#endif //_WIN32 && __TBB_DYNAMIC_LOAD_ENABLED
 
 #if __TBB_ipf
 /* It was found that on IPF inlining of __TBB_machine_lockbyte leads

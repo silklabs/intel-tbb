@@ -55,6 +55,8 @@
 
 #include <cstdarg>
 
+#include "tbb/tbb_config.h"
+
 
 #ifdef HARNESS_INCOMPLETE_SOURCES
 #error Source files are not complete. Check the build environment

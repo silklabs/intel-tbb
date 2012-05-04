@@ -26,6 +26,8 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
+
 
 #if _WIN32 || _WIN64
 #include "tbb/machine/windows_api.h"
@@ -35,8 +37,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#include "tbb/tbb_config.h"
 
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
     // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers

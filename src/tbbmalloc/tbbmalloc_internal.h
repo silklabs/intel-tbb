@@ -247,27 +247,33 @@ public:
 template<unsigned NUM>
 class BitMask {
     static const int SZ = NUM/( CHAR_BIT*sizeof(uintptr_t)) + (NUM % sizeof(uintptr_t) ? 1:0);
+    static const unsigned WORD_LEN = CHAR_BIT*sizeof(uintptr_t);
     uintptr_t mask[SZ];
 public:
     void set(size_t idx, bool val) {
         MALLOC_ASSERT(idx<NUM, ASSERT_TEXT);
 
-        size_t i = idx / (CHAR_BIT*sizeof(uintptr_t));
-        int pos = idx % (CHAR_BIT*sizeof(uintptr_t));
+        size_t i = idx / WORD_LEN;
+        int pos = WORD_LEN - idx % WORD_LEN - 1;
         if (val)
             AtomicOr(&mask[i], 1ULL << pos);
         else
             AtomicAnd(&mask[i], ~(1ULL << pos));
     }
     int getMinTrue(unsigned startIdx) const {
-        size_t idx = startIdx / (CHAR_BIT*sizeof(uintptr_t));
-        int pos = startIdx % (CHAR_BIT*sizeof(uintptr_t));
-        // clear bits before startIdx
-        uintptr_t curr = mask[idx] & ~((1ULL<<pos) - 1);
+        size_t idx = startIdx / WORD_LEN;
+        uintptr_t curr;
+        int pos;
+
+        if (startIdx % WORD_LEN) { // clear bits before startIdx
+            pos = WORD_LEN - startIdx % WORD_LEN;
+            curr = mask[idx] & ((1ULL<<pos) - 1);
+        } else
+            curr = mask[idx];
 
         for (int i=idx; i<SZ; i++, curr=mask[i]) {
             if (-1 != (pos = BitScanRev(curr)))
-                return i*sizeof(uintptr_t)*CHAR_BIT + pos;
+                return (i+1)*WORD_LEN - pos - 1;
         }
         return -1;
     }

@@ -706,7 +706,7 @@ public:
         return cp < sz ? cp : sz;
     }
 
-    //! Return true if vector is not empty or has elements under construction at least.
+    //! Return false if vector is not empty or has elements under construction at least.
     bool empty() const {return !my_early_size;}
 
     //! Maximum size to which array can grow without allocating more memory. Concurrent allocations are not included in the value.

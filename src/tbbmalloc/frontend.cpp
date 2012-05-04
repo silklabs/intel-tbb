@@ -78,7 +78,7 @@ bool RecursiveMallocCallProtector::noRecursion() {
 /*
  * Block::objectSize value used to mark blocks allocated by startupAlloc
  */
-const unsigned int startupAllocObjSizeMark = ~(unsigned int)0;
+const uint16_t startupAllocObjSizeMark = ~(uint16_t)0;
 
 /*
  * This number of bins in the TLS that leads to blocks that we can allocate in.
@@ -305,7 +305,7 @@ protected:
 
     Block       *next;
     Block       *previous;        /* Use double linked list to speed up removal */
-    unsigned int objectSize;
+    uint16_t     objectSize;
     ThreadId     owner;
     FreeObject  *bumpPtr;         /* Bump pointer moves from the end to the beginning of a block */
     FreeObject  *freeList;
@@ -1788,7 +1788,7 @@ inline bool Block::isProperlyPlaced(const void *object) const
 FreeObject *Block::findAllocatedObject(const void *address) const
 {
     // calculate offset from the end of the block space
-    uintptr_t offset = (uintptr_t)this + blockSize - (uintptr_t)address;
+    uint16_t offset = (uintptr_t)this + blockSize - (uintptr_t)address;
     MALLOC_ASSERT( offset<=blockSize-sizeof(Block), ASSERT_TEXT );
     // find offset difference from a multiple of allocation size
     offset %= objectSize;
@@ -1823,7 +1823,11 @@ bool isLargeObject(void *object)
     LargeObjectHdr *header = (LargeObjectHdr*)object - 1;
     BackRefIdx idx = safer_dereference(&header->backRefIdx);
 
-    return idx.isLargeObject() && getBackRef(idx) == header;
+    return idx.isLargeObject()
+        // in valid LargeObjectHdr memoryBlock points somewhere before header
+        // TODO: more strict check
+        && (uintptr_t)header->memoryBlock < (uintptr_t)header
+        && getBackRef(idx) == header;
 }
 
 static inline bool isSmallObject (void *ptr)
@@ -2153,6 +2157,12 @@ extern "C" void mallocThreadShutdownNotification(void* arg)
 
 extern "C" void mallocProcessShutdownNotification(void)
 {
+    if (!isMallocInitialized()) return;
+
+/* This cleanup is useful during DLL unload. TBBmalloc can't be unloaded,
+   but we want reduce memory consumption at this moment.
+*/
+    defaultMemPool->extMemPool.hardCachesCleanup();
 #if COLLECT_STATISTICS
     ThreadId nThreads = ThreadIdCount;
     for( int i=1; i<=nThreads && i<MAX_THREADS; ++i )

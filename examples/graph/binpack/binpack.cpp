@@ -295,8 +295,13 @@ int main(int argc, char *argv[]) {
             make_edge(the_bin_buffer, the_writer);
             the_source.activate();
             g.wait_for_all();
+            for (int i=0; i<num_bin_packers; ++i) {
+                delete bins[i];
+            }
+            delete[] bins;
         }
         utility::report_elapsed_time((tbb::tick_count::now() - start).seconds());
+        delete[] input_array;
         return 0;
     } catch(std::exception& e) {
         cerr<<"error occurred. error text is :\"" <<e.what()<<"\"\n";
