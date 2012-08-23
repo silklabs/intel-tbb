@@ -127,10 +127,10 @@ class InnerBody: NoAssign {
 public:
     T sum;
     InnerBody( T /*c*/[], const T a[], const T b[], int i ) :
-        my_a(a), my_b(b), sum(0), i(i)
+        my_a(a), my_b(b), i(i), sum(0)
     {}
     InnerBody( InnerBody& x, split ) :
-        my_a(x.my_a), my_b(x.my_b), sum(0), i(x.i)
+        my_a(x.my_a), my_b(x.my_b), i(x.i), sum(0)
     { 
     }
     void join( InnerBody& x ) {sum += x.sum;}
@@ -170,7 +170,7 @@ class OuterBody: NoAssign {
 public:
     T sum;
     OuterBody( T c[], const T a[], int m_, const T b[], int n_ ) :
-        my_c(c), my_a(a), my_b(b), m(m_), n(n_)
+        my_a(a), my_b(b), my_c(c), m(m_), n(n_)
     {}
     void operator()( const blocked_range<int>& range ) const {
         for( int i=range.begin(); i!=range.end(); ++i ) {

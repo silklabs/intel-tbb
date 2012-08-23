@@ -44,6 +44,15 @@ LIBS = -lpthread
 LINK_FLAGS =
 LIB_LINK_FLAGS = -dynamiclib -i-static
 C_FLAGS = $(CPLUS_FLAGS)
+# ICC 11.0 and higher support -std=c++0x
+ifneq (,$(shell icc -dumpversion | egrep  "^1[1-9]\."))
+    CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
+endif
+
+# ICC 12.0 and higher provide Intel(R) Cilk Plus
+ifneq (,$(shell icc -dumpversion | egrep  "^1[2-9]\."))
+    CILK_AVAILABLE = yes
+endif
 
 ifeq ($(cfg), release)
     CPLUS_FLAGS = -O2 -fno-omit-frame-pointer
@@ -58,7 +67,7 @@ ifneq (,$(codecov))
 endif
 
 ifneq (00,$(lambdas)$(cpp0x))
-	CPLUS_FLAGS += -std=c++0x -D_TBB_CPP0X
+	CPLUS_FLAGS += $(CPP11_FLAGS)
 endif
 
 #------------------------------------------------------------------------------

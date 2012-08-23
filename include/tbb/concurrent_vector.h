@@ -106,7 +106,7 @@ namespace internal {
             }
 #endif /* TBB_USE_ASSERT */
         };
- 
+
         // Data fields
 
         //! allocator function pointer
@@ -190,19 +190,19 @@ private:
         class helper;
         friend class helper;
     };
-    
+
     typedef concurrent_vector_base_v3 concurrent_vector_base;
 
     //! Meets requirements of a forward iterator for STL and a Value for a blocked_range.*/
     /** Value is either the T or const T type of the container.
         @ingroup containers */
     template<typename Container, typename Value>
-    class vector_iterator 
+    class vector_iterator
     {
         //! concurrent_vector over which we are iterating.
         Container* my_vector;
 
-        //! Index into the vector 
+        //! Index into the vector
         size_t my_index;
 
         //! Caches my_vector-&gt;internal_subscript(my_index)
@@ -220,7 +220,7 @@ private:
 
         template<typename C, typename T, typename U>
         friend ptrdiff_t operator-( const vector_iterator<C,T>& i, const vector_iterator<C,U>& j );
-    
+
         template<typename C, typename U>
         friend class internal::vector_iterator;
 
@@ -229,11 +229,11 @@ private:
         friend class tbb::concurrent_vector;
 #else
 public: // workaround for MSVC
-#endif 
+#endif
 
-        vector_iterator( const Container& vector, size_t index, void *ptr = 0 ) : 
-            my_vector(const_cast<Container*>(&vector)), 
-            my_index(index), 
+        vector_iterator( const Container& vector, size_t index, void *ptr = 0 ) :
+            my_vector(const_cast<Container*>(&vector)),
+            my_index(index),
             my_item(static_cast<Value*>(ptr))
         {}
 
@@ -293,7 +293,7 @@ public: // workaround for MSVC
 
         //! Pre decrement
         vector_iterator& operator--() {
-            __TBB_ASSERT( my_index>0, "operator--() applied to iterator already at beginning of concurrent_vector" ); 
+            __TBB_ASSERT( my_index>0, "operator--() applied to iterator already at beginning of concurrent_vector" );
             size_t k = my_index--;
             if( my_item ) {
                 // Following test uses 2's-complement wizardry
@@ -405,7 +405,7 @@ public: // workaround for MSVC
 @par
     If an exception happens inside growth or assignment operation, an instance of the vector becomes invalid unless it is stated otherwise in the method documentation.
     Invalid state means:
-    - There are no guaranties that all items were initialized by a constructor. The rest of items is zero-filled, including item where exception happens.
+    - There are no guarantees that all items were initialized by a constructor. The rest of items is zero-filled, including item where exception happens.
     - An invalid vector instance cannot be repaired; it is unable to grow anymore.
     - Size and capacity reported by the vector are incorrect, and calculated as if the failed operation were successful.
     - Attempt to access not allocated elements using operator[] or iterators results in access violation or segmentation fault exception, and in case of using at() method a C++ exception is thrown.
@@ -428,13 +428,13 @@ public: // workaround for MSVC
     - Changed return type of methods grow* and push_back to iterator
 
 @par Changes since TBB 2.0
-    - Implemented exception-safety guaranties
+    - Implemented exception-safety guarantees
     - Added template argument for allocator
     - Added allocator argument in constructors
     - Faster index calculation
     - First growth call specifies a number of segments to be merged in the first allocation.
     - Fixed memory blow up for swarm of vector's instances of small size
-    - Added grow_by(size_type n, const_reference t) growth using copying constructor to init new items. 
+    - Added grow_by(size_type n, const_reference t) growth using copying constructor to init new items.
     - Added STL-like constructors.
     - Added operators ==, < and derivatives
     - Added at() method, approved for using after an exception was thrown inside the vector
@@ -442,7 +442,7 @@ public: // workaround for MSVC
     - Added assign() methods
     - Added compact() method to defragment first segments
     - Added swap() method
-    - range() defaults on grainsize = 1 supporting auto grainsize algorithms. 
+    - range() defaults on grainsize = 1 supporting auto grainsize algorithms.
 
     @ingroup containers */
 template<typename T, class A>
@@ -457,9 +457,9 @@ private:
         typedef const T& const_reference;
         typedef I iterator;
         typedef ptrdiff_t difference_type;
-        generic_range_type( I begin_, I end_, size_t grainsize_ = 1) : blocked_range<I>(begin_,end_,grainsize_) {} 
+        generic_range_type( I begin_, I end_, size_t grainsize_ = 1) : blocked_range<I>(begin_,end_,grainsize_) {}
         template<typename U>
-        generic_range_type( const generic_range_type<U>& r) : blocked_range<I>(r.begin(),r.end(),r.grainsize()) {} 
+        generic_range_type( const generic_range_type<U>& r) : blocked_range<I>(r.begin(),r.end(),r.grainsize()) {}
         generic_range_type( generic_range_type& r, split ) : blocked_range<I>(r,split()) {}
     };
 
@@ -482,7 +482,7 @@ public:
     typedef internal::vector_iterator<concurrent_vector,T> iterator;
     typedef internal::vector_iterator<concurrent_vector,const T> const_iterator;
 
-#if !defined(_MSC_VER) || _CPPLIB_VER>=300 
+#if !defined(_MSC_VER) || _CPPLIB_VER>=300
     // Assume ISO standard definition of std::reverse_iterator
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -612,7 +612,7 @@ public:
     }
 #endif
 
-    //! Grow by "delta" elements using copying constuctor.
+    //! Grow by "delta" elements using copying constructor.
 #if TBB_DEPRECATED
     /** Returns old size. */
     size_type grow_by( size_type delta, const_reference t ) {
@@ -625,7 +625,7 @@ public:
     }
 #endif
 
-    //! Append minimal sequence of elements such that size()>=n.  
+    //! Append minimal sequence of elements such that size()>=n.
 #if TBB_DEPRECATED
     /** The new elements are default constructed.  Blocks until all elements in range [0..n) are allocated.
         May return while other elements are being constructed by other threads. */
@@ -647,7 +647,7 @@ public:
     };
 #endif
 
-    //! Push item 
+    //! Push item
 #if TBB_DEPRECATED
     size_type push_back( const_reference item )
 #else
@@ -689,7 +689,7 @@ public:
     }
 
     //! Get range for iterating with parallel algorithms
-    range_type range( size_t grainsize = 1) {
+    range_type range( size_t grainsize = 1 ) {
         return range_type( begin(), end(), grainsize );
     }
 
@@ -697,6 +697,7 @@ public:
     const_range_type range( size_t grainsize = 1 ) const {
         return const_range_type( begin(), end(), grainsize );
     }
+
     //------------------------------------------------------------------------
     // Capacity
     //------------------------------------------------------------------------
@@ -713,7 +714,7 @@ public:
     size_type capacity() const {return internal_capacity();}
 
     //! Allocate enough space to grow to size n without having to allocate more memory later.
-    /** Like most of the methods provided for STL compatibility, this method is *not* thread safe. 
+    /** Like most of the methods provided for STL compatibility, this method is *not* thread safe.
         The capacity afterwards may be bigger than the requested reservation. */
     void reserve( size_type n ) {
         if( n )
@@ -724,13 +725,13 @@ public:
     void resize( size_type n ) {
         internal_resize( n, sizeof(T), max_size(), NULL, &destroy_array, &initialize_array );
     }
-    
+
     //! Resize the vector, copy t for new elements. Not thread-safe.
     void resize( size_type n, const_reference t ) {
         internal_resize( n, sizeof(T), max_size(), static_cast<const void*>(&t), &destroy_array, &initialize_array_by );
     }
-   
-#if TBB_DEPRECATED 
+
+#if TBB_DEPRECATED
     //! An alias for shrink_to_fit()
     void compact() {shrink_to_fit();}
 #endif /* TBB_DEPRECATED */
@@ -891,13 +892,13 @@ private:
         void assign(const void *src) { for(; i < n; ++i) array[i] = static_cast<const T*>(src)[i]; }
         template<class I> void iterate(I &src) { for(; i < n; ++i, ++src) new( &array[i] ) T( *src ); }
         ~internal_loop_guide() {
-            if(i < n) // if exception raised, do zerroing on the rest of items
+            if(i < n) // if exception raised, do zeroing on the rest of items
                 std::memset(array+i, 0, (n-i)*sizeof(value_type));
         }
     };
 };
 
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
 #pragma warning (push)
 #pragma warning (disable: 4701) // potentially uninitialized local variable "old"
 #endif
@@ -913,9 +914,9 @@ void concurrent_vector<T, A>::shrink_to_fit() {
         __TBB_RETHROW();
     }
 }
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
 #pragma warning (pop)
-#endif // warning 4701 is back 
+#endif // warning 4701 is back
 
 template<typename T, class A>
 void concurrent_vector<T, A>::internal_free_segments(void *table[], segment_index_t k, segment_index_t first_block) {
@@ -1002,7 +1003,7 @@ void concurrent_vector<T, A>::assign_array( void* dst, const void* src, size_typ
     internal_loop_guide loop(n, dst); loop.assign(src);
 }
 
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
     // Workaround for overzealous compiler warning
     #pragma warning (push)
     #pragma warning (disable: 4189)
@@ -1013,9 +1014,9 @@ void concurrent_vector<T, A>::destroy_array( void* begin, size_type n ) {
     for( size_type j=n; j>0; --j )
         array[j-1].~T(); // destructors are supposed to not throw any exceptions
 }
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
     #pragma warning (pop)
-#endif // warning 4189 is back 
+#endif // warning 4189 is back
 
 // concurrent_vector's template functions
 template<typename T, class A1, class A2>

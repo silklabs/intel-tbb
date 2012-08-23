@@ -68,40 +68,47 @@ private:
 #include <direct.h>
 #define PATH_LEN MAX_PATH+1
 #define SLASH '\\'
+#define ROOT_DIR "\\"
+// ROOT_DIR_REST means how many symbols before first slash in the path
+#define ROOT_DIR_REST 2
 #else
 #include <unistd.h>
+#include <limits.h>
 #define PATH_LEN PATH_MAX+1
 #define SLASH '/'
+#define ROOT_DIR "/"
+// ROOT_DIR_REST means how many symbols before first slash in the path
+#define ROOT_DIR_REST 0
 #define _getcwd getcwd
 #define _chdir  chdir
 #endif
 
-char dir[PATH_LEN+1];
-int dir_len;
+class ChangeCurrentDir {
+    char dir[PATH_LEN+1];
+    char *last_slash;
+public:
+    ChangeCurrentDir() {
+        if ( !_getcwd( dir, PATH_LEN ) ) {
+            REPORT_FATAL_ERROR("ERROR: Couldn't get current working directory\n");
+        }
 
-void change_current_dir() {
-    if ( !_getcwd( dir, PATH_LEN-3 ) ) {
-        REPORT_FATAL_ERROR("ERROR1: Couldn't get current working directory\n");
+        last_slash = strrchr( dir, SLASH );
+        ASSERT( last_slash, "The current directory doesn't contain slashes" );
+        *last_slash = 0;
+
+        if ( _chdir( last_slash-dir == ROOT_DIR_REST ? ROOT_DIR : dir ) ) {
+            REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory (%s)\n", dir );
+        }
     }
 
-    dir_len = strlen( dir );
-    while ( dir[--dir_len] != SLASH ) ;
-    dir[dir_len] = 0;
-
-    if ( _chdir(dir) ) {
-        REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory (%s)\n" );
+    // Restore current dir
+    ~ChangeCurrentDir() {
+        *last_slash = SLASH;
+        if ( _chdir(dir) ) {
+            REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory\n");
+        }
     }
-}
-
-void restore_current_dir() {
-    dir[dir_len] = SLASH;
-    if ( _chdir(dir) ) {
-        REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory\n");
-    }
-}
-
-static bool dir_changed = false;
-static bool dir_restored = false;
+};
 
 //! Represents a TBB or OpenMP run-time that uses RML.
 template<typename Factory, typename Client>
@@ -115,18 +122,9 @@ public:
     ::rml::server::execution_resource_t me;
 #endif
     RunTime() {
-        if ( !dir_changed ) {
-            // Change current dir to check the dynamic_link behavior
-            change_current_dir();
-            dir_changed=true;
-        }
         factory.open();
     }
     ~RunTime() {
-        if ( !dir_restored ) {
-            restore_current_dir();
-            dir_restored=true;
-        }
         factory.close();
     }
     //! Create server for this run-time
@@ -195,6 +193,9 @@ class OMP_Client: public ClientBase<__kmp::rml::omp_client> {
     }
 };
 
+// A global instance of ChangeCurrentDir should be declared before TBB_RunTime and OMP_RunTime
+// since we want to change current directory before opening factory
+ChangeCurrentDir Changer;
 RunTime<tbb::internal::rml::tbb_factory, TBB_Client> TBB_RunTime;
 RunTime<__kmp::rml::omp_factory, OMP_Client> OMP_RunTime;
 

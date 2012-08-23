@@ -61,7 +61,7 @@ RD?=rmdir
 MD?=mkdir -p
 NUL= /dev/null
 SLASH=/
-MAKE_VERSIONS=bash $(tbb_root)/build/version_info_sunos.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.tmp
+MAKE_VERSIONS=bash $(tbb_root)/build/version_info_sunos.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.ver
 MAKE_TBBVARS=bash $(tbb_root)/build/generate_tbbvars.sh
 
 ifdef LD_LIBRARY_PATH

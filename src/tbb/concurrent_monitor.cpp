@@ -31,16 +31,23 @@
 namespace tbb {
 namespace internal {
 
+void concurrent_monitor::thread_context::init() {
+    new (sema.begin()) binary_semaphore;
+    ready = true;
+}
+
 concurrent_monitor::~concurrent_monitor() {
     abort_all();
     __TBB_ASSERT( waitset_ec.empty(), "waitset not empty?" );
 }
 
-void concurrent_monitor::prepare_wait( thread_context& thr, void* ctx ) {
+void concurrent_monitor::prepare_wait( thread_context& thr, uintptr_t ctx ) {
+    if( !thr.ready )
+        thr.init();
     // this is good place to pump previous spurious wakeup
-    if( thr.spurious ) {
+    else if( thr.spurious ) {
         thr.spurious = false;
-        thr.sema.P();
+        thr.semaphore().P();
     }
     thr.context = ctx;
     thr.in_waitset = true;
@@ -84,7 +91,7 @@ void concurrent_monitor::notify_one_relaxed() {
         }
     }
     if( n!=end )
-        to_thread_context(n)->sema.V();
+        to_thread_context(n)->semaphore().V();
 }
 
 void concurrent_monitor::notify_all_relaxed() {
@@ -103,9 +110,9 @@ void concurrent_monitor::notify_all_relaxed() {
     waitset_node_t* nxt;
     for( waitset_node_t* n=temp.front(); n!=end; n=nxt ) {
         nxt = n->next;
-        to_thread_context(n)->sema.V();
+        to_thread_context(n)->semaphore().V();
     }
-#if TBB_USE_DEBUG
+#if TBB_USE_ASSERT
     temp.clear();
 #endif
 }
@@ -127,9 +134,9 @@ void concurrent_monitor::abort_all_relaxed() {
     for( waitset_node_t* n=temp.front(); n!=end; n=nxt ) {
         nxt = n->next;
         to_thread_context(n)->aborted = true;
-        to_thread_context(n)->sema.V();
+        to_thread_context(n)->semaphore().V();
     }
-#if TBB_USE_DEBUG
+#if TBB_USE_ASSERT
     temp.clear();
 #endif
 }

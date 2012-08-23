@@ -55,6 +55,7 @@
     extern "C" void _ReadWriteBarrier();
     #pragma intrinsic(_ReadWriteBarrier)
     #pragma intrinsic(_mm_mfence)
+    #pragma intrinsic(_mm_pause)
     #define __TBB_compiler_fence()    _ReadWriteBarrier()
     #define __TBB_full_memory_fence() _mm_mfence()
 #endif
@@ -72,7 +73,6 @@ extern "C" {
     __int16 __TBB_EXPORTED_FUNC __TBB_machine_cmpswp2 (volatile void *ptr, __int16 value, __int16 comparand );
     __int16 __TBB_EXPORTED_FUNC __TBB_machine_fetchadd2 (volatile void *ptr, __int16 addend );
     __int16 __TBB_EXPORTED_FUNC __TBB_machine_fetchstore2 (volatile void *ptr, __int16 value );
-    void __TBB_EXPORTED_FUNC __TBB_machine_pause (__int32 delay );
 }
 
 inline long __TBB_machine_cmpswp4 (volatile void *ptr, __int32 value, __int32 comparand ) {
@@ -95,27 +95,23 @@ inline __int64 __TBB_machine_fetchstore8 (volatile void *ptr, __int64 value ) {
     return _InterlockedExchange64( (__int64*)ptr, value );
 }
 
-#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE   1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
-#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+inline void __TBB_machine_pause_v6 (__int32 delay ) {
+    for (;delay>0; --delay )
+        _mm_pause();
+}
 
-#if !__INTEL_COMPILER
+#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
+
 extern "C" unsigned char _BitScanReverse64( unsigned long* i, unsigned __int64 w );
 #pragma intrinsic(_BitScanReverse64)
-#endif
+
 
 inline __int64 __TBB_machine_lg( unsigned __int64 i ) {
-#if __INTEL_COMPILER
-    unsigned __int64 j;
-    __asm
-    {
-        bsr rax, i
-        mov j, rax
-    }
-#else
     unsigned long j;
     _BitScanReverse64( &j, i );
-#endif
     return j;
 }
 
@@ -132,7 +128,7 @@ inline void __TBB_machine_AND( volatile void *operand, intptr_t addend ) {
 
 extern "C" __declspec(dllimport) int __stdcall SwitchToThread( void );
 #define __TBB_Yield()  SwitchToThread()
-#define __TBB_Pause(V) __TBB_machine_pause(V)
+#define __TBB_Pause(V) __TBB_machine_pause_v6(V)
 #define __TBB_Log2(V)  __TBB_machine_lg(V)
 
 // API to retrieve/update FPU control setting

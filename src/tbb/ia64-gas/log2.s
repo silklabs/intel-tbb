@@ -24,7 +24,6 @@
 // invalidate any other reasons why the executable file might be covered by
 // the GNU General Public License.
 
-	// Support for class ConcurrentVector
 	.section .text
 	.align 16
 	// unsigned long __TBB_machine_lg( unsigned long x );

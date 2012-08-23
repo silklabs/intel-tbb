@@ -2,7 +2,11 @@
 <BODY>
 
 <H2>Overview</H2>
-Parallel seismic wave simulation that demonstrates use of parallel_for and affinity_partitioner.
+<DL>
+<DT>Parallel seismic wave simulation that demonstrates use of parallel_for and affinity_partitioner.
+<DT>The example can be built in the offload version to run on Intel&reg Many Integrated Core (Intel&reg MIC) Architecture based coprocessor (see <A HREF=../../index.html#build_4>build instructions</A>).
+NOTE: Currently, the offload version does not support GUI and can only be used with console mode.
+</DL>
 
 <H2>Files</H2>
 <DL>
@@ -23,22 +27,24 @@ Parallel seismic wave simulation that demonstrates use of parallel_for and affin
 <H2>Directories</H2>
 <DL>
 <DT><A HREF="msvs">msvs</A>
-<DD>Contains Microsoft* Visual Studio* 2005 workspace for building and running the example.
-<DT><A HREF="xcode">xcode</A>
-<DD>Contains Xcode* IDE workspace for building and running the example.
-</DL>
+<DD>Contains Microsoft* Visual Studio* 2005 workspace for building and running the 
+    example (Windows* systems only).<DT><A HREF="xcode">xcode</A>
+<DD>Contains Xcode* IDE workspace for building and running the example (Mac OS* X 
+    systems only).</DL>
 
 <H2>To Build</H2>
 General build directions can be found <A HREF=../../index.html#build>here</A>.
 The following additional options are supported:
 <DL>
-<DT><TT>make [(general targets: {release, debug} [test])] UI={con, gdi, dd, x, mac}</TT>
-<DD>Build and run as usual, but build with the specified GUI driver: console, GDI+*, Direct Draw*, X11, or OpenGL*
+<DT><TT>make [(general targets: {release, debug} [test])] UI={con, gdi, dd, d2d, x, mac}</TT>
+<DD>Build and run as usual, but build with the specified GUI driver: console, GDI+*, DirectDraw*, 
+    Direct2D*, X11, or OpenGL*
     (see the description of the <A HREF=../../common/index.html>common GUI code</A>
     for more information on available graphics support).
     For Linux* and Mac OS* X systems, the best available driver is detected automatically by the Makefile.
-    For Windows* systems, UI=gdi is the default GUI driver; compiling with UI=dd may offer superior
-    performance, but can only be used if the Microsoft* Direct Draw* SDK is installed on your system 
+    For Windows* systems, UI=gdi is the default GUI driver; compiling with UI=dd or 
+    UI=d2d may offer superior
+    performance, but can only be used if the Microsoft* DirectX* SDK is installed on your system 
     and if overlay is supported by your graphics card.
     Use UI=con to build without the GUI for use in making performance measurements
     <I>(strongly recommended when measuring performance or scalability; see note below)</I>.
@@ -92,9 +98,6 @@ user interface:
 <UL>
 <LI>While running with the GUI display turned on should yield reasonable performance in most cases, <I>running with the GUI
     display turned off is strongly recommended</I> in order to demonstrate the full performance and scalability of the example.
-<LI>If using the X-windows (X11) GUI on Mac OS* X systems, X11 might not be installed on the system by default.
-    To install X11 on Mac OS* X systems, use the operating system install disk, choose "Optional installs" and select X11 from
-    the "Applications" list.  Alternatively, if X11 is not available, build without the GUI (see build targets above).
 </UL>
 
 <HR>

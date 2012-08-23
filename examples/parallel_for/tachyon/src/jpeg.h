@@ -58,7 +58,7 @@
 /*
  *  jpeg.h - This file deals with JPEG format image files (reading/writing)
  *
- *  $Id: jpeg.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: jpeg.h,v 1.2 2007-02-22 17:54:15 Exp $
  */ 
 
 int readjpeg(char * name, int * xres, int * yres, unsigned char **imgdata);

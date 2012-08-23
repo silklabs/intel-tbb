@@ -105,6 +105,8 @@ public:
     //! Get drawing memory descriptor
     inline drawing_memory get_drawing_memory() const;
 
+    //! code of the ESCape key
+    static const int esc_key = 27;
     //! Mouse events handler.
     virtual void on_mouse(int x, int y, int key) { }
     //! Mouse events handler.

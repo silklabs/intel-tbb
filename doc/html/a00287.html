@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::mutex::scoped_lock Class Reference</title>
+<title>tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,51 +21,72 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00286.html">mutex</a>::<a class="el" href="a00287.html">scoped_lock</a></div>
-<h1>tbb::mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::mutex::scoped_lock" -->The scoped locking pattern.  
+<a class="el" href="a00412.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00287.html">function_node&lt; Input, Output, queueing, Allocator &gt;</a></div>
+<h1>tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->Implements a function node that supports Input -&gt; Output.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00509.html">mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00509.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00083.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;:
+<p><center><img src="a00287.png" usemap="#tbb::flow::interface6::function_node< Input, Output, queueing, Allocator >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::function_node< Input, Output, queueing, Allocator >_map">
+<area href="a00289.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,424,24">
+</map>
+<a href="a00063.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d2d8e92791b85100f8a53f7b2335c60c"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::input_type" ref="d2d8e92791b85100f8a53f7b2335c60c" args="" -->
+typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="df1b2d30d065b64efcee71021129760a"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::output_type" ref="df1b2d30d065b64efcee71021129760a" args="" -->
+typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8d8519eb42d5ddbba668a575b24a720a"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::predecessor_type" ref="8d8519eb42d5ddbba668a575b24a720a" args="" -->
+typedef <a class="el" href="a00327.html">sender</a>&lt; input_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb82369d652cd58b169f9a2e8f7ed023"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::successor_type" ref="eb82369d652cd58b169f9a2e8f7ed023" args="" -->
+typedef <a class="el" href="a00321.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6083108a1ca5a4f1464511e378e4bedf"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::fInput_type" ref="6083108a1ca5a4f1464511e378e4bedf" args="" -->
+typedef internal::function_input&lt;<br>
+ input_type, output_type,<br>
+ Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4259f2853fb3af09518df3efb44ed8d5"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::queue_type" ref="4259f2853fb3af09518df3efb44ed8d5" args="" -->
+typedef internal::function_input_queue&lt;<br>
+ input_type, Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>queue_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="431ce7232e788562d9152493961ee4b9"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::fOutput_type" ref="431ce7232e788562d9152493961ee4b9" args="" -->
+typedef internal::function_output&lt;<br>
+ output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
+
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1d403ae51b484df5d86d85ae38f11e6e"></a><!-- doxytag: member="tbb::mutex::scoped_lock::scoped_lock" ref="1d403ae51b484df5d86d85ae38f11e6e" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#1d403ae51b484df5d86d85ae38f11e6e">scoped_lock</a> ()</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5b9019c1e6e9b2c41c986a384bd179db"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::function_node" ref="5b9019c1e6e9b2c41c986a384bd179db" args="(graph &amp;g, size_t concurrency, Body body)" -->
+template&lt;typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00287.html#5b9019c1e6e9b2c41c986a384bd179db">function_node</a> (<a class="el" href="a00288.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct lock that has not acquired a mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="605a6b9af0f8cdabdf81825e0de99600"></a><!-- doxytag: member="tbb::mutex::scoped_lock::scoped_lock" ref="605a6b9af0f8cdabdf81825e0de99600" args="(mutex &amp;mutex)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#605a6b9af0f8cdabdf81825e0de99600">scoped_lock</a> (<a class="el" href="a00286.html">mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="01055081ed477714503820035db3a965"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::function_node" ref="01055081ed477714503820035db3a965" args="(const function_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#01055081ed477714503820035db3a965">function_node</a> (const <a class="el" href="a00286.html">function_node</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ebbbecaf4311e9df7362cb76ceaa368"></a><!-- doxytag: member="tbb::mutex::scoped_lock::~scoped_lock" ref="0ebbbecaf4311e9df7362cb76ceaa368" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#0ebbbecaf4311e9df7362cb76ceaa368">~scoped_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b86c76d70a008960f3261e927f846367"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::try_put" ref="b86c76d70a008960f3261e927f846367" args="(const input_type &amp;i)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_put</b> (const input_type &amp;i)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock (if lock is held). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="862e022841cdc522e4296a5533b22efd"></a><!-- doxytag: member="tbb::mutex::scoped_lock::acquire" ref="862e022841cdc522e4296a5533b22efd" args="(mutex &amp;mutex)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#862e022841cdc522e4296a5533b22efd">acquire</a> (<a class="el" href="a00286.html">mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="591e0c49b82bcedffcbe0923f1b915ec"></a><!-- doxytag: member="tbb::mutex::scoped_lock::try_acquire" ref="591e0c49b82bcedffcbe0923f1b915ec" args="(mutex &amp;mutex)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#591e0c49b82bcedffcbe0923f1b915ec">try_acquire</a> (<a class="el" href="a00286.html">mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0d51d18cd99df3b2e93bf07378d0992c"></a><!-- doxytag: member="tbb::mutex::scoped_lock::release" ref="0d51d18cd99df3b2e93bf07378d0992c" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00287.html#0d51d18cd99df3b2e93bf07378d0992c">release</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="93062a14ad2e50e2b7b485b913170779"></a><!-- doxytag: member="tbb::mutex::scoped_lock::mutex" ref="93062a14ad2e50e2b7b485b913170779" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>mutex</b></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="34125123f0c8d9c13dbd6f52148608a1"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::successors" ref="34125123f0c8d9c13dbd6f52148608a1" args="()" -->
+internal::broadcast_cache&lt;<br>
+ output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The scoped locking pattern. 
-<p>
-It helps to avoid the common problem of forgetting to release lock. It also nicely provides the "node" for queuing locks. 
+<h3>template&lt;typename Input, typename Output, typename Allocator&gt;<br>
+ class tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;</h3>
+
+Implements a function node that supports Input -&gt; Output. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00509.html">mutex.h</a></ul>
+<li><a class="el" href="a00509.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

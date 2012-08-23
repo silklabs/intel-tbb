@@ -180,6 +180,10 @@ int main(int argc, char *argv[] ) {
         
         while( !feof( stream_err ) ) {
             if( fgets( psBuffer, 512, stream_err ) != NULL ){
+                if (strstr( psBuffer, "TBBmalloc: " )) {
+                    // TBB allocator might or might not be here, ignore it
+                    continue;
+                }
                 bool match_found = false;
                 do{
                     if ( strings_iterator == strings_vector.end() ){
@@ -216,7 +220,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.0", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6003", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6004", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));

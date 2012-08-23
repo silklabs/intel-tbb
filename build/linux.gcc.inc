@@ -48,17 +48,21 @@ LIB_LINK_FLAGS = $(DYLIB_KEY) -Wl,-soname=$(BUILDING_LIBRARY)
 LIBS += -lpthread -lrt
 LINK_FLAGS = -Wl,-rpath-link=.
 C_FLAGS = $(CPLUS_FLAGS)
+# gcc 4.4 and higher support -std=c++0x
+ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[4-9]|[5-9])"))
+    CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
+endif
 
 ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq ($(cfg), release)
-        CPLUS_FLAGS = $(ITT_NOTIFY) -O2 -DUSE_PTHREAD
+        CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
 endif
 ifeq ($(cfg), debug)
         CPLUS_FLAGS = -DTBB_USE_DEBUG $(ITT_NOTIFY) -g -O0 -DUSE_PTHREAD
 endif
 
-ifneq (0,$(cpp0x))
-    CXX_ONLY_FLAGS = -std=c++0x
+ifneq (00,$(lambdas)$(cpp0x))
+    CXX_ONLY_FLAGS += $(CPP11_FLAGS)
 endif
 
 TBB_ASM.OBJ=

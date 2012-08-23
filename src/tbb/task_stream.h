@@ -107,7 +107,7 @@ public:
             spin_mutex::scoped_lock lock;
             if( lock.try_acquire(lanes[idx].my_mutex) ) {
                 lanes[idx].my_queue.push_back(source);
-                set_one_bit( population, idx );
+                set_one_bit( population, idx ); //TODO: avoid atomic op if the bit is already set
                 break;
             }
         }

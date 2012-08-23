@@ -296,7 +296,7 @@ class generic_scheduler: public scheduler, public ::rml::job {
     static generic_scheduler* create_worker( market& m, size_t index );
 
     //! Perform necessary cleanup when a worker thread finishes.
-    static void cleanup_worker( void* arg, bool is_worker );
+    static void cleanup_worker( void* arg, bool worker );
 
 protected:
     generic_scheduler( arena*, size_t index );
@@ -395,7 +395,7 @@ public:
     void free_nonlocal_small_task( task& t ); 
 
 #if __TBB_TASK_GROUP_CONTEXT
-    //! Padding isolating thread local members from members that can be written to by other threads.
+    //! Padding isolating thread-local members from members that can be written to by other threads.
     char _padding1[NFS_MaxLineSize - sizeof(context_list_node_t)];
 
     //! Head of the thread specific list of task group contexts.
@@ -417,7 +417,7 @@ public:
     /** Together with my_nonlocal_ctx_list_update constitute synchronization protocol
         that keeps hot path of context destruction (by the owner thread) mostly 
         lock-free. **/
-    uintptr_t my_local_ctx_list_update;
+    tbb::atomic<uintptr_t> my_local_ctx_list_update;
 
     //! Task, in the context of which the current TBB dispatch loop is running.
     /** Outside of or in the outermost dispatch loop (not in a nested call to
@@ -490,7 +490,7 @@ private:
 #if __TBB_TASK_GROUP_CONTEXT
     //! Flag indicating that a context is being destructed by non-owner thread.
     /** See also my_local_ctx_list_update. **/
-    uintptr_t my_nonlocal_ctx_list_update;
+    tbb::atomic<uintptr_t> my_nonlocal_ctx_list_update;
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 #if __TBB_SURVIVE_THREAD_SWITCH
@@ -683,7 +683,7 @@ inline intptr_t generic_scheduler::effective_reference_priority () const {
             ? *my_ref_top_priority : my_arena->my_top_priority;
 }
 
-inline void generic_scheduler::offload_task ( task& t, intptr_t p ) {
+inline void generic_scheduler::offload_task ( task& t, intptr_t /*priority*/ ) {
     GATHER_STATISTIC( ++my_counters.prio_tasks_offloaded );
     __TBB_ASSERT( my_offloaded_task_list_tail_link && !*my_offloaded_task_list_tail_link, NULL );
 #if TBB_USE_ASSERT

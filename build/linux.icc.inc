@@ -44,9 +44,9 @@ CPLUS = icpc
 CONLY = icc
 
 ifeq (release,$(cfg))
-CPLUS_FLAGS = -O2 -g -strict-ansi -DUSE_PTHREAD
+CPLUS_FLAGS = -O2 -g -DUSE_PTHREAD
 else
-CPLUS_FLAGS = -O0 -g -strict-ansi -DUSE_PTHREAD -DTBB_USE_DEBUG
+CPLUS_FLAGS = -O0 -g -DUSE_PTHREAD -DTBB_USE_DEBUG
 endif
 
 ifneq (,$(codecov))
@@ -59,6 +59,15 @@ OPENMP_FLAG = -openmp
 LIB_LINK_FLAGS = -shared -i-static -Wl,-soname=$(BUILDING_LIBRARY)
 LIBS += -lpthread -lrt
 C_FLAGS = $(CPLUS_FLAGS)
+# ICC 11.0 and higher support -std=c++0x
+ifneq (,$(shell icc -dumpversion | egrep  "^1[1-9]\."))
+    CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
+endif
+
+# ICC 12.0 and higher provide Intel(R) Cilk Plus
+ifneq (,$(shell icc -dumpversion | egrep  "^1[2-9]\."))
+    CILK_AVAILABLE = yes
+endif
 
 TBB_ASM.OBJ=
 MALLOC_ASM.OBJ=
@@ -70,11 +79,14 @@ endif
 
 ifeq (ia64,$(arch))
 # Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
-    CPLUS_FLAGS += $(PIC_KEY)
+# strict-ansi does not work with <signal.h> on RHEL 4 AS
+    CPLUS_FLAGS += $(PIC_KEY) $(if $(findstring cc3.,$(runtime)),-ansi,-strict-ansi)
+else
+    CPLUS_FLAGS += -strict-ansi
 endif
 
 ifneq (00,$(lambdas)$(cpp0x))
-	CPLUS_FLAGS += -std=c++0x -D_TBB_CPP0X
+	CPLUS_FLAGS += $(CPP11_FLAGS)
 endif
 
 #------------------------------------------------------------------------------

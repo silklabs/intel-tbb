@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::cache_aligned_allocator&lt; void &gt; Class Template Reference</title>
+<title>tbb::internal::affinity_partitioner_base_v3 Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,32 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00250.html">cache_aligned_allocator&lt; void &gt;</a></div>
-<h1>tbb::cache_aligned_allocator&lt; void &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00410.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::cache_aligned_allocator&lt; void &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+<a class="el" href="a00412.html">tbb</a>::<b>internal</b>::<a class="el" href="a00250.html">affinity_partitioner_base_v3</a></div>
+<h1>tbb::internal::affinity_partitioner_base_v3 Class Reference</h1><!-- doxytag: class="tbb::internal::affinity_partitioner_base_v3" -->Defines entry point for affinity partitioner into tbb run-time library.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00428.html">cache_aligned_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00573.html">partitioner.h</a>&gt;</code>
 <p>
-<a href="a00009.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::internal::affinity_partitioner_base_v3:
+<p><center><img src="a00250.png" usemap="#tbb::internal::affinity_partitioner_base_v3_map" border="0" alt=""></center>
+<map name="tbb::internal::affinity_partitioner_base_v3_map">
+<area href="a00249.html" alt="tbb::affinity_partitioner" shape="rect" coords="0,56,240,80">
+</map>
+<a href="a00099.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ce89776145998f0685a767b4f195272d"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::pointer" ref="ce89776145998f0685a767b4f195272d" args="" -->
-typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa554f840d8ef010ff2650bac032ec01"></a><!-- doxytag: member="tbb::internal::affinity_partitioner_base_v3::tbb::affinity_partitioner" ref="fa554f840d8ef010ff2650bac032ec01" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00250.html#fa554f840d8ef010ff2650bac032ec01">tbb::affinity_partitioner</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4431fbbe1a8cfeb19c48ad0072078f45"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::const_pointer" ref="4431fbbe1a8cfeb19c48ad0072078f45" args="" -->
-typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2ab296f4ecdd75f8e193ff92004a697d"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::value_type" ref="2ab296f4ecdd75f8e193ff92004a697d" args="" -->
-typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
-
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6d1d1f136cb6105d06ddbcf67107575"></a><!-- doxytag: member="tbb::internal::affinity_partitioner_base_v3::tbb::interface6::internal::affinity_partition_type" ref="c6d1d1f136cb6105d06ddbcf67107575" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>tbb::interface6::internal::affinity_partition_type</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;&gt;<br>
- class tbb::cache_aligned_allocator&lt; void &gt;</h3>
-
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+Defines entry point for affinity partitioner into tbb run-time library. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00428.html">cache_aligned_allocator.h</a></ul>
+<li><a class="el" href="a00573.html">partitioner.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

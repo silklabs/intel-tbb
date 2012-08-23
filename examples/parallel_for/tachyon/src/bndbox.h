@@ -58,7 +58,7 @@
 /* 
  * bndbox.h - This file contains the defines for bounding boxes etc.
  *
- *  $Id: bndbox.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: bndbox.h,v 1.2 2007-02-22 17:54:15  Exp $
  */
  
 typedef struct {

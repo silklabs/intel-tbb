@@ -59,7 +59,7 @@
  * vol.h - Volume rendering definitions etc.
  *
  *
- *  $Id: vol.h,v 1.2 2007-02-22 17:54:17 dpoulsen Exp $
+ *  $Id: vol.h,v 1.2 2007-02-22 17:54:17 Exp $
  */
 
 

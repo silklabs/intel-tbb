@@ -40,6 +40,10 @@
 #include "tbb/memory_pool.h"
 #include "tbb/scalable_allocator.h"
 
+#if __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||_WIN64)
+#include "../tbbmalloc/tbbmalloc_internal_api.h"
+#define __TBBMALLOC_CALL_THREAD_SHUTDOWN 1
+#endif
 // the actual body of the test is there:
 #include "test_allocator.h"
 #include "harness_allocator.h"
@@ -81,6 +85,56 @@ public:
     }
 };
 
+class NullAllocator {
+public:
+    typedef char value_type;
+    NullAllocator() { }
+    NullAllocator(const NullAllocator&) { }
+    ~NullAllocator() { }
+    void *allocate(size_t) { return NULL; }
+    void deallocate(void *, size_t) { ASSERT(0, NULL); }
+};
+
+void TestZeroSpaceMemoryPool()
+{
+    try {
+        tbb::memory_pool<NullAllocator> pool;
+        ASSERT(0, "Useless allocator with no memory must not be created");
+    } catch (std::bad_alloc) {
+    } catch (...) {
+        ASSERT(0, "wrong exception type; expected bad_alloc");
+    }
+}
+
+/* test that pools in small space are either usable or not created
+   (i.e., exception raised) */
+void TestSmallFixedSizePool()
+{
+    char *buf;
+    bool allocated = false;
+
+    for (size_t sz = 0; sz < 64*1024; sz = sz? 3*sz : 3) {
+        buf = (char*)malloc(sz);
+        try {
+            tbb::fixed_pool pool(buf, sz);
+            allocated = pool.malloc( 16 ) || pool.malloc( 9*1024 );
+            ASSERT(allocated, NULL);
+        } catch (std::bad_alloc) {
+        } catch (...) {
+            ASSERT(0, "wrong exception type; expected bad_alloc");
+        }
+        free(buf);
+    }
+    ASSERT(allocated, "Maximal buf size should be enough to create working fixed_pool");
+    try {
+        tbb::fixed_pool pool(NULL, 10*1024*1024);
+        ASSERT(0, "Useless allocator with no memory must not be created");
+    } catch (std::bad_alloc) {
+    } catch (...) {
+        ASSERT(0, "wrong exception type; expected bad_alloc");
+    }
+}
+
 int TestMain () {
 #if _MSC_VER && !__TBBMALLOC_NO_IMPLICIT_LINKAGE
     #ifdef _DEBUG
@@ -108,9 +162,9 @@ int TestMain () {
         strcpy(p1, text);
         char *p2 = (char*)pool.realloc( p1, 15 );
         ASSERT( p2 && !strcmp(p2, text), "realloc broke memory" );
-        
+
         result += TestMain(tbb::memory_pool_allocator<void>(pool) );
-        
+
         // try allocate almost entire buf keeping some reasonable space for internals
         char *p3 = (char*)pool.realloc( p2, sizeof(buf)-128*1024 );
         ASSERT( p3, "defragmentation failed" );
@@ -122,6 +176,9 @@ int TestMain () {
 
         result += TestMain(tbb::memory_pool_allocator<void>(pool) );
     }
+    TestSmallFixedSizePool();
+    TestZeroSpaceMemoryPool();
+
     ASSERT( !result, NULL );
     return Harness::Done;
 }

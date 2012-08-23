@@ -99,7 +99,7 @@ static const priority_t priority_from_normalized_rep[num_priority_levels] = {
 };
 
 inline void assert_priority_valid ( intptr_t& p ) {
-    __TBB_ASSERT( p >= 0 && p < num_priority_levels, NULL );
+    __TBB_ASSERT_EX( p >= 0 && p < num_priority_levels, NULL );
 }
 
 inline intptr_t& priority ( task& t ) {
@@ -166,16 +166,10 @@ enum free_task_hint {
 
 #if TBB_USE_ASSERT
 
-static const uintptr_t venom =
-#if __TBB_WORDSIZE == 8
-        0xDDEEAADDDEADBEEF;
-#else
-        0xDEADBEEF;
-#endif
+static const uintptr_t venom = tbb::internal::size_t_select(0xDEADBEEFU,0xDDEEAADDDEADBEEFULL);
 
-/** Crazy conversion is necessary to shut up insane MS compiler. **/
 template <typename T>
-void poison_value ( T& val ) { val = *(T*)(uintptr_t*)&venom; }
+void poison_value ( T& val ) { val = * punned_cast<T*>(&venom); }
 
 /** Expected to be used in assertions only, thus no empty form is defined. **/
 inline bool is_alive( uintptr_t v ) { return v != venom; }

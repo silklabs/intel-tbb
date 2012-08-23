@@ -71,9 +71,9 @@ public:
     MyServer* server;
     /*override*/void process( job& j, void* cookie, size_type index ) {
         MyTeam& t = *static_cast<MyTeam*>(cookie);
-        ASSERT( t.self_ptr==&t, "trashed cookie" ); 
-        ASSERT( index<t.max_thread, NULL ); 
-        ASSERT( !t.info[index].ran, "duplicate index?" ); 
+        ASSERT( t.self_ptr==&t, "trashed cookie" );
+        ASSERT( index<t.max_thread, NULL );
+        ASSERT( !t.info[index].ran, "duplicate index?" );
         t.info[index].job = &j;
         t.info[index].ran = true;
         do_process(j);
@@ -87,7 +87,7 @@ public:
             if( nesting.level==0 ) {
                 if( index&1 ) {
                     size_type target = index-1;
-                    ASSERT(  target<t.max_thread, NULL ); 
+                    ASSERT(  target<t.max_thread, NULL );
                     // wait until t.info[target].job is defined
                     tbb::internal::spin_wait_until_eq( t.info[target].ran, true );
                     server->try_increase_load( 1, true );
@@ -124,7 +124,7 @@ void FireUpJobs( MyServer& server, MyClient& client, int max_thread, int n_extra
                 // No change in number of threads
                 break;
             case 2:
-                // Decrease number of threads.  
+                // Decrease number of threads.
                 n_thread = int(max_thread)/2;
                 break;
             // Case 3 is same code as the default, but has effect of increasing the number of threads.
@@ -157,7 +157,7 @@ void FireUpJobs( MyServer& server, MyClient& client, int max_thread, int n_extra
             REMARK("client %d: team size is %d\n", client.client_id(), n_delivered);
             if( checker ) {
                 checker->check_number_of_threads_delivered( n_delivered, n_thread, n_extra );
-            }      
+            }
             // Protocol requires that master wait until workers have called "done_processing"
             while( team.barrier!=n_delivered ) {
                 ASSERT( team.barrier>=0, NULL );

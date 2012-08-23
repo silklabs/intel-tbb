@@ -29,6 +29,9 @@
 /////// Common internal implementation of Windows-specific stuff //////////////
 ///////                  Must be the first included header       //////////////
 
+#ifndef __WINVIDEO_H__
+#define __WINVIDEO_H__
+
 #ifndef _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
@@ -284,3 +287,5 @@ void video::show_title()
     if(g_hAppWnd)
         SetWindowTextA(g_hAppWnd, title);
 }
+
+#endif //__WINVIDEO_H__

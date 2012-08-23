@@ -58,7 +58,7 @@
 /* 
  * machine.h - This is the machine specific include file
  *
- *  $Id: machine.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: machine.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 #include <stdio.h>

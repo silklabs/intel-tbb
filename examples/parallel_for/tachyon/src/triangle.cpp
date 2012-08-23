@@ -58,7 +58,7 @@
 /* 
  * triangle.c - This file contains the functions for dealing with triangles.
  *
- *  $Id: triangle.cpp,v 1.3 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: triangle.cpp,v 1.3 2007-02-22 17:54:16  Exp $
  */
  
 #include "machine.h"

@@ -53,9 +53,9 @@ public:
                 recycle_as_continuation();
                 is_continuation = true;
                 set_ref_count( (a!=NULL)+(b!=NULL) );
-                if( a )
+                if( a ) {
                     if( b ) spawn(*b);
-                else 
+                } else 
                     a = b;
                 next = a;
             }

@@ -43,16 +43,9 @@
 namespace tbb {
 namespace internal {
 
-const size_t MByte = 1<<20;
+const size_t MByte = 1024*1024;
 
-#if !defined(__TBB_WORDSIZE)
-    const size_t ThreadStackSize = 1*MByte;
-#elif __TBB_WORDSIZE<=4
-    const size_t ThreadStackSize = 2*MByte;
-#else
-    const size_t ThreadStackSize = 4*MByte;
-#endif
-
+const size_t ThreadStackSize = (sizeof(uintptr_t) <= 4 ? 2 : 4 )*MByte;
 
 #ifndef __TBB_HardwareConcurrency
 
@@ -121,6 +114,10 @@ T1 max ( const T1& val1, const T2& val2 ) {
     return val1 < val2 ? val2 : val1;
 }
 
+//! Utility template function to prevent "unused" warnings by various compilers.
+template<typename T>
+void suppress_unused_warning( const T& ) {}
+
 //------------------------------------------------------------------------
 // FastRandom
 //------------------------------------------------------------------------
@@ -156,7 +153,7 @@ public:
 
 //! Atomically replaces value of dst with newValue if they satisfy condition of compare predicate
 /** Return value semantics is the same as for CAS. **/
-template<typename T1, typename T2, class Pred> 
+template<typename T1, typename T2, class Pred>
 T1 atomic_update ( tbb::atomic<T1>& dst, T2 newValue, Pred compare ) {
     T1 oldValue = dst;
     while ( compare(oldValue, newValue) ) {
@@ -178,15 +175,15 @@ enum do_once_state {
 //! One-time initialization function
 /** /param initializer Pointer to function without arguments
            The variant that returns bool is used for cases when initialization can fail
-           and it is OK to continue execution, but the state should be reset so that 
+           and it is OK to continue execution, but the state should be reset so that
            the initialization attempt was repeated the next time.
-    /param state Shared state associated with initializer that specifies its 
+    /param state Shared state associated with initializer that specifies its
             initialization state. Must be initially set to #uninitialized value
             (e.g. by means of default static zero initialization). **/
 template <typename F>
 void atomic_do_once ( const F& initializer, atomic<do_once_state>& state ) {
     // tbb::atomic provides necessary acquire and release fences.
-    // The loop in the implementation is necessary to avoid race when thread T2 
+    // The loop in the implementation is necessary to avoid race when thread T2
     // that arrived in the middle of initialization attempt by another thread T1
     // has just made initialization possible.
     // In such a case T2 has to rely on T1 to initialize, but T1 may already be past

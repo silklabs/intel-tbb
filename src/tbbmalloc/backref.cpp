@@ -42,14 +42,17 @@ struct BackRefBlock : public BlockI {
     BackRefBlock *nextForUse;     // the next in the chain of blocks with free items
     FreeObject   *bumpPtr;        // bump pointer moves from the end to the beginning of the block
     FreeObject   *freeList;
+    // list of all blocks that were allocated from raw mem (i.e., not from backend)
+    BackRefBlock *nextRawMemBlock;
     int           allocatedCount; // the number of objects allocated
     int           myNum;          // the index in the parent array
     MallocMutex   blockMutex;
     bool          addedToForUse;  // this block is already added to the listForUse chain
 
-    BackRefBlock(BackRefBlock *blockToUse, int myNum) :
+    BackRefBlock(BackRefBlock *blockToUse, int num) :
         nextForUse(NULL), bumpPtr((FreeObject*)((uintptr_t)blockToUse + blockSize - sizeof(void*))),
-        freeList(NULL), allocatedCount(0), myNum(myNum), addedToForUse(false) {
+        freeList(NULL), nextRawMemBlock(NULL), allocatedCount(0), myNum(num),
+        addedToForUse(false) {
         memset(&blockMutex, 0, sizeof(MallocMutex));
         // index in BackRefMaster must fit to uint16_t
         MALLOC_ASSERT(!(myNum >> 16), ASSERT_TEXT);
@@ -57,6 +60,7 @@ struct BackRefBlock : public BlockI {
 
     // when BackRefMaster::findFreeBlock() calls get16KBlock
     // BackRefBlock::bytes is used implicitly
+    // TODO: take into account VirtualAlloc granularity
     static const int bytes = blockSize;
 };
 
@@ -70,11 +74,17 @@ struct BackRefMaster {
  */
     static const size_t bytes = 64*1024;
     static const int dataSz;
+/* space is reserved for master table and 4 leaves
+   taking into account VirtualAlloc allocation granularity */
+    static const int leaves = 4;
+    static const size_t masterSize = BackRefMaster::bytes+leaves*BackRefBlock::bytes;
 
     Backend       *backend;
     BackRefBlock  *active;         // if defined, use it for allocations
     BackRefBlock  *listForUse;     // the chain of data blocks with free items
-    int            lastUsed;       // index of the last used block
+    BackRefBlock  *allRawMemBlocks;
+    intptr_t       lastUsed;       // index of the last used block
+    bool           rawMemUsed;
     BackRefBlock  *backRefBl[1];   // the real size of the array is dataSz
 
     BackRefBlock *findFreeBlock();
@@ -90,24 +100,17 @@ static BackRefMaster *backRefMaster;
 
 bool initBackRefMaster(Backend *backend)
 {
-    // reserve space for master table and 4 leaves taking into account VirtualAlloc allocation granularity
-    // MapMemory is forced because the function runs during startup.
-    const int leaves = 4;
-    const size_t masterSize = BackRefMaster::bytes+leaves*BackRefBlock::bytes;
-
-    BackRefMaster *master = (BackRefMaster*)getRawMemory(masterSize,
-                                                         /*useMapMem=*/true);
-    if (!master) {
-        master = (BackRefMaster*)
-            backend->getLargeBlock(masterSize, /*startup=*/true);
-    }
+    bool rawMemUsed;
+    BackRefMaster *master =
+        (BackRefMaster*)backend->getBackRefSpace(BackRefMaster::masterSize,
+                                                 &rawMemUsed);
     if (! master)
         return false;
-
     master->backend = backend;
-    master->listForUse = NULL;
+    master->listForUse = master->allRawMemBlocks = NULL;
+    master->rawMemUsed = rawMemUsed;
     master->lastUsed = -1;
-    for (int i=0; i<leaves; i++) {
+    for (int i=0; i<BackRefMaster::leaves; i++) {
         BackRefBlock *bl = (BackRefBlock *)((uintptr_t)master + BackRefMaster::bytes + i*BackRefBlock::bytes);
         master->addEmptyBackRefBlock(bl);
         if (i)
@@ -120,6 +123,20 @@ bool initBackRefMaster(Backend *backend)
     return true;
 }
 
+void destroyBackRefMaster(Backend *backend)
+{
+    if (backRefMaster) { // Is initBackRefMaster() called?
+        for (BackRefBlock *curr=backRefMaster->allRawMemBlocks; curr; ) {
+            BackRefBlock *next = curr->nextRawMemBlock;
+            // allRawMemBlocks list is only for raw mem blocks
+            backend->putBackRefSpace(curr, BackRefBlock::bytes, /*rawMemUsed=*/true);
+            curr = next;
+        }
+        backend->putBackRefSpace(backRefMaster, BackRefMaster::masterSize,
+                                 backRefMaster->rawMemUsed);
+    }
+}
+
 void BackRefMaster::addBackRefBlockToList(BackRefBlock *bl)
 {
     bl->nextForUse = listForUse;
@@ -129,14 +146,14 @@ void BackRefMaster::addBackRefBlockToList(BackRefBlock *bl)
 
 void BackRefMaster::addEmptyBackRefBlock(BackRefBlock *newBl)
 {
-    int nextLU = lastUsed+1;
+    intptr_t nextLU = lastUsed+1;
     memset((char*)newBl+sizeof(BackRefBlock), 0,
            BackRefBlock::bytes-sizeof(BackRefBlock));
     new (newBl) BackRefBlock(newBl, nextLU);
     backRefBl[nextLU] = newBl;
     // lastUsed is read in getBackRef, and access to backRefBl[lastUsed]
     // is possible only after checking backref against current lastUsed
-    FencedStore((intptr_t&)lastUsed, nextLU);
+    FencedStore(lastUsed, nextLU);
 }
 
 BackRefBlock *BackRefMaster::findFreeBlock()
@@ -150,15 +167,16 @@ BackRefBlock *BackRefMaster::findFreeBlock()
         MALLOC_ASSERT(active->addedToForUse, ASSERT_TEXT);
         active->addedToForUse = false;
     } else if (lastUsed-1 < backRefMaster->dataSz) {    // allocate new data node
-        // This block is never released, so can prevent releasing of a region
-        // if it's received from the backend, so prefer getRawMemory using.
-        BackRefBlock *newBl = (BackRefBlock*)
-            getRawMemory(BackRefBlock::bytes,
-                         /*useMapMem=*/!isMallocInitializedExt());
-        if (!newBl)
-            newBl = (BackRefBlock*)backend->get16KBlock(1, /*startup=*/!isMallocInitializedExt());
+        bool rawMemUsed;
+        BackRefBlock *newBl =
+            (BackRefBlock*)backend->getBackRefSpace(BackRefBlock::bytes, &rawMemUsed);
         if (!newBl) return NULL;
         backRefMaster->addEmptyBackRefBlock(newBl);
+        if (rawMemUsed) {
+            newBl->nextRawMemBlock = backRefMaster->allRawMemBlocks;
+            backRefMaster->allRawMemBlocks = newBl;
+        } else
+            newBl->nextRawMemBlock = NULL;
         active = newBl;
     } else  // no free blocks, give up
         return NULL;
@@ -170,7 +188,7 @@ void *getBackRef(BackRefIdx backRefIdx)
     // !backRefMaster means no initialization done, so it can't be valid memory
     // see addEmptyBackRefBlock for fences around lastUsed
     if (!FencedLoad((intptr_t&)backRefMaster)
-        || backRefIdx.getMaster() > FencedLoad((intptr_t&)backRefMaster->lastUsed)
+        || backRefIdx.getMaster() > FencedLoad(backRefMaster->lastUsed)
         || backRefIdx.getOffset() >= BR_MAX_CNT)
         return NULL;
     return *(void**)((uintptr_t)backRefMaster->backRefBl[backRefIdx.getMaster()]
@@ -196,7 +214,8 @@ BackRefIdx BackRefIdx::newBackRef(bool largeObj)
             MallocMutex::scoped_lock lock(backRefMutex);
 
             MALLOC_ASSERT(backRefMaster, ASSERT_TEXT);
-            if (! (blockToUse = backRefMaster->findFreeBlock()))
+            blockToUse = backRefMaster->findFreeBlock();
+            if (!blockToUse)
                 return BackRefIdx();
         }
         toUse = NULL;

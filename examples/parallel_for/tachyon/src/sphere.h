@@ -58,7 +58,7 @@
 /* 
  * sphere.h - This file contains the defines for spheres etc.
  *
- *  $Id: sphere.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: sphere.h,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
 object * newsphere(void *, vector, flt);

@@ -248,7 +248,7 @@ void ParallelSum () {
     );
     ASSERT( r2 == R, NULL );
 #endif /* LAMBDAS */
-    delete array;
+    delete[] array;
 }
 
 const int N = 1000;
@@ -289,11 +289,11 @@ void TestDeterministicReduction () {
         ASSERT( body2.my_value == R, NULL );
 #if __TBB_LAMBDAS_PRESENT
         Type r = tbb::parallel_deterministic_reduce( range, Type(), 
-            [](const tbb::blocked_range<int>& r, Type value) -> Type {
+            [](const tbb::blocked_range<int>& br, Type value) -> Type {
                 Harness::ConcurrencyTracker ct;
-                for ( int i = r.begin(); i != r.end(); ++i ) {
+                for ( int ii = br.begin(); ii != br.end(); ++ii ) {
                     Op op;
-                    value = op(value, i);
+                    value = op(value, ii);
                 }
                 return value;
         },

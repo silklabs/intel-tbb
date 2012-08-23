@@ -81,6 +81,7 @@ int TestMain () {
     const int N = 1000;
     const int Grainsize = N/1000;
     int a[N];
+    int max_sum;
     ASSERT( MinThread>=1, "Error: Number of threads must be positive.\n");
 
     for(int p=MinThread; p<=MaxThread; ++p) {
@@ -197,10 +198,13 @@ int TestMain () {
                              if (mmr.second < a[i]) mmr.second = a[i];
                          }
                      });
-        minmax_c.combine_each([](std::pair<int,int> x) {
-                                  int sum;
-                                  sum = x.first + x.second;
+        max_sum = 0;
+        minmax_c.combine_each([&max_sum](std::pair<int,int> x) {
+                                  int tsum = x.first + x.second;
+                                  if( tsum>max_sum ) max_sum = tsum;
                               });
+        ASSERT( (N-1)<=max_sum && max_sum<=a[0]+N-1, "combinable::combine_each /w lambda failed." );
+
         std::pair<int,int> minmax_result_c;
         minmax_result_c =
             minmax_c.combine([](std::pair<int,int> x, std::pair<int,int> y) {
@@ -215,6 +219,7 @@ int TestMain () {
         REMARK("Testing enumerable_thread_specific... ");
         enumerable_thread_specific< std::pair<int,int> > minmax_ets([&]() { return std::make_pair(a[0], a[0]); } );
 
+        max_sum = 0;
         parallel_for(blocked_range<int>(0,N),
                      [&] (const blocked_range<int> &r) {
                          std::pair<int,int>& mmr = minmax_ets.local();
@@ -223,10 +228,12 @@ int TestMain () {
                              if (mmr.second < a[i]) mmr.second = a[i];
                          }
                      });
-        minmax_ets.combine_each([](std::pair<int,int> x) {
-                                    int sum;
-                                    sum = x.first + x.second;
+        minmax_ets.combine_each([&max_sum](std::pair<int,int> x) {
+                                  int tsum = x.first + x.second;
+                                  if( tsum>max_sum ) max_sum = tsum;
                                 });
+        ASSERT( (N-1)<=max_sum && max_sum<=a[0]+N-1, "enumerable_thread_specific::combine_each /w lambda failed." );
+
         std::pair<int,int> minmax_result_ets;
         minmax_result_ets =
             minmax_ets.combine([](std::pair<int,int> x, std::pair<int,int> y) {

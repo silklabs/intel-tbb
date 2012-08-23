@@ -26,10 +26,10 @@
     the GNU General Public License.
 */
 
-const unsigned MByte = 1048576; //1MB
+const unsigned MByte = 1024*1024;
 bool __tbb_test_errno = false;
 
-/* _WIN32_WINNT should be defined at the very beginning, 
+/* _WIN32_WINNT should be defined at the very beginning,
    because other headers might include <windows.h>
 */
 
@@ -61,7 +61,7 @@ void limitMem( size_t limit )
             exit(1);
         }
     }
-    if (0 == SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, 
+    if (0 == SetInformationJobObject(hJob, JobObjectExtendedLimitInformation,
                                      &jobInfo, sizeof(jobInfo))) {
         REPORT("Can't set limits: %ld\n", GetLastError());
         exit(1);
@@ -87,7 +87,7 @@ void limitMem( size_t limit )
         exit(1);
     }
 }
-#endif 
+#endif
 
 #define ASSERT_ERRNO(cond, msg)  ASSERT( !__tbb_test_errno || (cond), msg )
 #define CHECK_ERRNO(cond) (__tbb_test_errno && (cond))
@@ -180,7 +180,7 @@ struct MemStruct
     UINT Size;
 
     MemStruct() : Pointer(NULL), Size(0) {}
-    MemStruct(void* Pointer, UINT Size) : Pointer(Pointer), Size(Size) {}
+    MemStruct(void* ptr, UINT sz) : Pointer(ptr), Size(sz) {}
 };
 
 class CMemTest: NoAssign
@@ -191,8 +191,8 @@ class CMemTest: NoAssign
     static bool firstTime;
 
 public:
-    CMemTest(Harness::SpinBarrier *limitBarrier, bool isVerbose=false) :
-        CountErrors(0), limitBarrier(limitBarrier)
+    CMemTest(Harness::SpinBarrier *barrier, bool isVerbose=false) :
+        CountErrors(0), limitBarrier(barrier)
         {
             srand((UINT)time(NULL));
             FullLog=isVerbose;
@@ -203,7 +203,7 @@ public:
     void UniquePointer(); // unique pointer - check with padding
     void AddrArifm(); // unique pointer - check with pointer arithmetic
     bool ShouldReportError();
-    void Free_NULL(); // 
+    void Free_NULL(); //
     void Zerofilling(); // check if arrays are zero-filled
     void TestAlignedParameters();
     void RunAllTests(int total_threads);
@@ -213,7 +213,7 @@ public:
 class Limit {
     size_t limit;
 public:
-    Limit(size_t limit) : limit(limit) {}
+    Limit(size_t a_limit) : limit(a_limit) {}
     void operator() () const {
         limitMem(limit);
     }
@@ -228,7 +228,7 @@ struct RoundRobin: NoAssign {
 
     RoundRobin( long p, Harness::SpinBarrier *limitBarrier, bool verbose ) :
         number_of_threads(p), test(limitBarrier, verbose) {}
-    void operator()( int /*id*/ ) const 
+    void operator()( int /*id*/ ) const
         {
             test.RunAllTests(number_of_threads);
         }
@@ -252,7 +252,7 @@ static void setSystemAllocs()
     Raligned_realloc=0;
     Taligned_free=0;
     Rposix_memalign=0;
-#else 
+#else
     Raligned_malloc=0;
     Raligned_realloc=0;
     Taligned_free=0;
@@ -269,7 +269,7 @@ void ReallocParam()
 
     bufs[0] = Trealloc(NULL, 30*MByte);
     ASSERT(bufs[0], "Can't get memory to start the test.");
-  
+
     for (i=1; i<ITERS; i++)
     {
         bufs[i] = Trealloc(NULL, 30*MByte);
@@ -277,14 +277,14 @@ void ReallocParam()
             break;
     }
     ASSERT(i<ITERS, "Limits should be decreased for the test to work.");
-  
+
     Trealloc(bufs[0], 0);
-    /* There is a race for the free space between different threads at 
+    /* There is a race for the free space between different threads at
        this point. So, have to run the test sequentially.
     */
     bufs[0] = Trealloc(NULL, 30*MByte);
     ASSERT(bufs[0], NULL);
-  
+
     for (int j=0; j<i; j++)
         Trealloc(bufs[j], 0);
 }
@@ -315,13 +315,13 @@ int main(int argc, char* argv[]) {
 
     ParseCommandLine( argC, argV );
 #if __linux__
-    /* According to man pthreads 
+    /* According to man pthreads
        "NPTL threads do not share resource limits (fixed in kernel 2.6.10)".
        Use per-threads limits for affected systems.
      */
     if ( LinuxKernelVersion() < 2*1000000 + 6*1000 + 10)
         perProcessLimits = false;
-#endif    
+#endif
     //-------------------------------------
 #if __APPLE__
     /* Skip due to lack of memory limit enforcing under Mac OS X. */
@@ -330,13 +330,13 @@ int main(int argc, char* argv[]) {
     ReallocParam();
     limitMem(0);
 #endif
-    
-//for linux and dynamic runtime errno is used to check allocator fuctions
+
+//for linux and dynamic runtime errno is used to check allocator functions
 //check if library compiled with /MD(d) and we can use errno
-#if _MSC_VER 
+#if _MSC_VER
 #if defined(_MT) && defined(_DLL) //check errno if test itself compiled with /MD(d) only
     char*  version_info_block = NULL;
-    int version_info_block_size; 
+    int version_info_block_size;
     LPVOID comments_block = NULL;
     UINT comments_block_size;
 #ifdef _DEBUG
@@ -345,7 +345,7 @@ int main(int argc, char* argv[]) {
 #define __TBBMALLOCDLL "tbbmalloc.dll"
 #endif //_DEBUG
     version_info_block_size = GetFileVersionInfoSize( __TBBMALLOCDLL, (LPDWORD)&version_info_block_size );
-    if( version_info_block_size 
+    if( version_info_block_size
         && ((version_info_block = (char*)malloc(version_info_block_size)) != NULL)
         && GetFileVersionInfo(  __TBBMALLOCDLL, NULL, version_info_block_size, version_info_block )
         && VerQueryValue( version_info_block, "\\StringFileInfo\\000004b0\\Comments", &comments_block, &comments_block_size )
@@ -365,7 +365,7 @@ int main(int argc, char* argv[]) {
         NativeParallelFor( p, RoundRobin(p, barrier, Verbose) );
         delete barrier;
     }
-    if( !error_occurred ) 
+    if( !error_occurred )
         REPORT("done\n");
     return 0;
 }
@@ -591,8 +591,7 @@ void CMemTest::Zerofilling()
 void myMemset(void *ptr, int c, size_t n)
 {
 #if  __linux__ &&  __i386__
-// memset in Fedora 13 is not always correclty set memory to
-// required values.
+// memset in Fedora 13 not always correctly sets memory to required values.
     char *p = (char*)ptr;
     for (size_t i=0; i<n; i++)
         p[i] = c;
@@ -601,7 +600,7 @@ void myMemset(void *ptr, int c, size_t n)
 #endif
 }
 
-// This test requires 200 MB per thread, i.e. for standart 1:4 run
+// This test requires 200 MB per thread, i.e. for standard 1:4 run
 // more then 800 MB of RAM is required.
 void CMemTest::NULLReturn(UINT MinSize, UINT MaxSize, int total_threads)
 {
@@ -624,7 +623,7 @@ void CMemTest::NULLReturn(UINT MinSize, UINT MaxSize, int total_threads)
     */
     PointerList.reserve(200*total_threads*MByte/MinSize);
 
-    /* There is a bug in the specific verion of GLIBC (2.5-12) shipped
+    /* There is a bug in the specific version of GLIBC (2.5-12) shipped
        with RHEL5 that leads to erroneous working of the test
        on Intel64 and IPF systems when setrlimit-related part is enabled.
        Switching to GLIBC 2.5-18 from RHEL5.1 resolved the issue.
@@ -708,7 +707,7 @@ void CMemTest::NULLReturn(UINT MinSize, UINT MaxSize, int total_threads)
         {
             Size=rand()%(MaxSize-MinSize)+MinSize;
             errno = ENOMEM+j+1;
-            tmp=Tcalloc(COUNT_ELEM_CALLOC,Size);  
+            tmp=Tcalloc(COUNT_ELEM_CALLOC,Size);
             if (tmp == NULL)
             {
                 CountNULL++;
@@ -728,7 +727,7 @@ void CMemTest::NULLReturn(UINT MinSize, UINT MaxSize, int total_threads)
                 if ( CHECK_ERRNO(errno != ENOMEM+j+1) && !known_issue ) {
                     CountErrors++;
                     if (ShouldReportError()) REPORT("error: errno changed to %d though valid pointer was returned\n", errno);
-                }      
+                }
                 PointerList.push_back(MemStruct(tmp, Size));
             }
         }
@@ -754,7 +753,7 @@ void CMemTest::NULLReturn(UINT MinSize, UINT MaxSize, int total_threads)
                     if (errno != 0 && !known_issue) {
                         CountErrors++;
                         if (ShouldReportError()) REPORT("valid pointer returned, error: errno not kept\n");
-                    }      
+                    }
                     PointerList[i].Size *= 2;
                 }
                 else if (tmp != PointerList[i].Pointer && tmp != NULL) // another place
@@ -929,13 +928,13 @@ void CMemTest::TestAlignedParameters()
                 ret = Tposix_memalign(NULL, bad_align, 100);
                 ASSERT(EINVAL==ret, NULL);
             }
-    
+
         memptr = &ret;
         ret = Tposix_memalign(&memptr, 5*sizeof(void*), 100);
         ASSERT(memptr == &ret,
-               "memptr should not be changed after unsuccesful call");
+               "memptr should not be changed after unsuccessful call");
         ASSERT(EINVAL==ret, NULL);
-    
+
         // alignment is power of 2, but not a multiple of sizeof(void *),
         // we expect that sizeof(void*) > 2
         ret = Tposix_memalign(NULL, 2, 100);
@@ -949,7 +948,7 @@ void CMemTest::TestAlignedParameters()
                 ASSERT(NULL==memptr, NULL);
                 ASSERT_ERRNO(EINVAL==errno, NULL);
             }
-    
+
         // size is zero
         memptr = Taligned_malloc(0, 16);
         ASSERT(NULL==memptr, "size is zero, so must return NULL");
@@ -959,7 +958,7 @@ void CMemTest::TestAlignedParameters()
         // NULL pointer is OK to free
         errno = 0;
         Taligned_free(NULL);
-        /* As there is no return value for free, strictly speaking we can't 
+        /* As there is no return value for free, strictly speaking we can't
            check errno here. But checked implementations obey the assertion.
         */
         ASSERT_ERRNO(0==errno, NULL);
@@ -1003,5 +1002,5 @@ void CMemTest::RunAllTests(int total_threads)
     AddrArifm();
     NULLReturn(1*MByte,100*MByte,total_threads);
 #endif
-    if (FullLog) REPORT("All tests ended\nclearing memory...");
+    if (FullLog) REPORT("Tests for %d threads ended\n", total_threads);
 }

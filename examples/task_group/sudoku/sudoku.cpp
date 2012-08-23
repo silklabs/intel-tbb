@@ -34,11 +34,23 @@
 #include "tbb/tick_count.h"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/task_group.h"
+
+#if __INTEL_COMPILER
+// Suppress "std::auto_prt<> is deprecated" warning
+// TODO: replace auto_ptr with unique_ptr for compilers supporting C++11
+#pragma warning(disable: 1478)
+#endif
 #include "../../common/utility/utility.h"
 
 #pragma warning(disable: 4996)
 
-#define __TBB_LAMBDAS_PRESENT  ( _MSC_VER >= 1600 && !__INTEL_COMPILER || __INTEL_COMPILER > 1100 && _TBB_CPP0X )
+#if __INTEL_COMPILER
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
+#elif __GNUC__
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
+#elif _MSC_VER
+#define __TBB_LAMBDAS_PRESENT ( _MSC_VER>=1600 )
+#endif
 
 const unsigned BOARD_SIZE=81;
 const unsigned BOARD_DIM=9;

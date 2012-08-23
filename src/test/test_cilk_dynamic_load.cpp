@@ -43,12 +43,6 @@
 
 #if __TBB_CILK_INTEROP && CILK_SYMBOLS_VISIBLE && !CILK_LINKAGE_BROKEN && HEAVY_NESTED_INTEROP_SUPPORT
 
-#if _WIN32 || _WIN64
-#include "tbb/machine/windows_api.h"
-#else
-#include <dlfcn.h>
-#endif /* _WIN32 || _WIN64 */
-
 #include "tbb/task_scheduler_init.h"
 #include "tbb/task.h"
 
@@ -85,6 +79,7 @@ CILK_TEST_EXPORT void CilkShutdown()
 #else /* _USRDLL undefined */
 
 #include "harness.h"
+#include "harness_dynamic_libs.h"
 
 int SerialFib( int n ) {
     int a=0, b=1;
@@ -111,30 +106,11 @@ class FibTask: public tbb::task {
             result = n;
         } else {
 
-#if _WIN32 || _WIN64
-            HMODULE hLib = LoadLibrary("test_cilk_dynamic_load_dll.dll");
-            ASSERT( hLib, "failed to load test_cilk_dynamic_load_dll" );
-
-            CilkFib = (CILK_CALL) GetProcAddress(hLib, "CilkFib");
-            ASSERT( CilkFib, "failed to get address" );
-
-            CilkShutdown = (CILK_SHUTDOWN) GetProcAddress(hLib, "CilkShutdown");
-            ASSERT( CilkShutdown, "failed to get address" );
-#else /* !WIN */
-        #if __APPLE__
-            #define LIBRARY_NAME(base) base".dylib"
-        #else
-            #define LIBRARY_NAME(base) base".so"
-        #endif /* __APPLE__ */
-            void *hLib = dlopen( LIBRARY_NAME("test_cilk_dynamic_load_dll"), RTLD_LAZY );
-            ASSERT( hLib, "failed to load test_cilk_dynamic_load_dll" );
-
-            CilkFib = (CILK_CALL) dlsym(hLib, "CilkFib");
-            ASSERT( CilkFib, "failed to get address" );
-
-            CilkShutdown = (CILK_SHUTDOWN) dlsym(hLib, "CilkShutdown");
-            ASSERT( CilkShutdown, "failed to get address" );
-#endif /* !WIN */
+            // TODO: why RTLD_LAZY was used here?
+            Harness::LIBRARY_HANDLE hLib =
+                Harness::OpenLibrary(TEST_LIBRARY_NAME("test_cilk_dynamic_load_dll"));
+            CilkFib = (CILK_CALL)Harness::GetAddress(hLib, "CilkFib");
+            CilkShutdown = (CILK_SHUTDOWN)Harness::GetAddress(hLib, "CilkShutdown");
 
             int x, y;
             x = CilkFib(n-2);
@@ -143,11 +119,7 @@ class FibTask: public tbb::task {
 
             CilkShutdown();
 
-#if _WIN32 || _WIN64
-            FreeLibrary(hLib);
-#else
-            dlclose(hLib);
-#endif
+            Harness::CloseLibrary(hLib);
         }
         return NULL;
     }

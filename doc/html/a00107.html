@@ -20,15 +20,19 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>tbb::queuing_rw_mutex::scoped_lock Member List</h1>This is the complete list of members for <a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a>, including all inherited members.<p><table>
-  <tr class="memlist"><td><a class="el" href="a00302.html#a8dd5ab8686e76de21587544dbb681e0">acquire</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#0d2f93edf7b15ec4bcee138823220c52">downgrade_to_reader</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#67ae221109ddc69510ab593874e435d4">release</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#c62e365be7bcbba091c9ea7454a4d22c">scoped_lock</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#fbb8798792d3aebb136c46fc63d2529e">scoped_lock</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#2e4ff6c9ec2fee6682f95290d1f42baa">try_acquire</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#11ba1da4a722c9e6f73339a52c487e82">upgrade_to_writer</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00302.html#32c7d67a660d23ebbaab1a1d2826d31a">~scoped_lock</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
+<h1>tbb::pipeline Member List</h1>This is the complete list of members for <a class="el" href="a00310.html">tbb::pipeline</a>, including all inherited members.<p><table>
+  <tr class="memlist"><td><a class="el" href="a00310.html#38fb5c9c8395dd6f89a4ae2011a83e0d">add_filter</a>(filter &amp;filter_)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00310.html#2c84aef5b834b555ee220b176e25931e">clear</a>()</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>filter</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>internal::pipeline_cleaner</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>internal::pipeline_root_task</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>internal::stage_task</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00310.html#596dc3beba27099c4c8581cb419e1a59">pipeline</a>()</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00310.html#f627616049b3fe36801f37ee40403ef8">run</a>(size_t max_number_of_live_tokens)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00310.html#93d7fec8cd607b803dd2d79fb46bd260">run</a>(size_t max_number_of_live_tokens, tbb::task_group_context &amp;context)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>tbb::interface6::internal::pipeline_proxy</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>thread_bound_filter</b> (defined in <a class="el" href="a00310.html">tbb::pipeline</a>)</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [friend]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00310.html#49513c6c24f9d5bbbb27edca5efe01c9">~pipeline</a>()</td><td><a class="el" href="a00310.html">tbb::pipeline</a></td><td><code> [virtual]</code></td></tr>
 </table><hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

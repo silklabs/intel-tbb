@@ -45,7 +45,13 @@
     #pragma warning (disable: 4267)
 #endif /* _MSC_VER && _Wp64 */
 
-#define __TBB_LAMBDAS_PRESENT  ( _MSC_VER >= 1600 && !__INTEL_COMPILER || __INTEL_COMPILER > 1100 && _TBB_CPP0X )
+#if __INTEL_COMPILER
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
+#elif __GNUC__
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
+#elif _MSC_VER
+#define __TBB_LAMBDAS_PRESENT ( _MSC_VER>=1600 )
+#endif
 
 using namespace std;
 using namespace tbb;

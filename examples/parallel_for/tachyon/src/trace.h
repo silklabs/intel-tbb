@@ -58,7 +58,7 @@
 /* 
  * trace.h - This file contains the declarations and defines for the trace module
  *
- *   $Id: trace.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *   $Id: trace.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 extern char *global_buffer;

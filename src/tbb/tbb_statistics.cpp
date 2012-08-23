@@ -136,12 +136,15 @@ private:
 
     void dump ( char const* fmt, ... ) {
         va_list args;
-        va_start( args, fmt );
-        if ( my_file )
+        if ( my_file ) {
+            va_start( args, fmt );
             vfprintf( my_file, fmt, args );
-        va_start( args, fmt );
+            va_end( args );
+        }
 #if __TBB_STATISTICS_STDOUT
+        va_start( args, fmt );
         vprintf( fmt, args );
+        va_end( args );
 #endif
     }
 

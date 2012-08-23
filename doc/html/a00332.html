@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::tbb_hash_compare&lt; Key &gt; Struct Template Reference</title>
+<title>tbb::spin_mutex::scoped_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,30 +21,71 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00332.html">tbb_hash_compare</a></div>
-<h1>tbb::tbb_hash_compare&lt; Key &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::tbb_hash_compare" -->hash_compare that is default argument for concurrent_hash_map  
+<a class="el" href="a00412.html">tbb</a>::<a class="el" href="a00331.html">spin_mutex</a>::<a class="el" href="a00332.html">scoped_lock</a></div>
+<h1>tbb::spin_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::spin_mutex::scoped_lock" -->Represents acquisition of a mutex.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00431.html">concurrent_hash_map.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00607.html">spin_mutex.h</a>&gt;</code>
 <p>
-<a href="a00012.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00126.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c35d106ad65aa6ca5ba9008c1c86f80d"></a><!-- doxytag: member="tbb::tbb_hash_compare::hash" ref="c35d106ad65aa6ca5ba9008c1c86f80d" args="(const Key &amp;a)" -->
-static size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>hash</b> (const Key &amp;a)</td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29ae680ae7f5e685c2e15535b9c855b3"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::scoped_lock" ref="29ae680ae7f5e685c2e15535b9c855b3" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#29ae680ae7f5e685c2e15535b9c855b3">scoped_lock</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b4d302049aabea046e392ddfad8b3f06"></a><!-- doxytag: member="tbb::tbb_hash_compare::equal" ref="b4d302049aabea046e392ddfad8b3f06" args="(const Key &amp;a, const Key &amp;b)" -->
-static bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>equal</b> (const Key &amp;a, const Key &amp;b)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct without acquiring a mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5ce6807050a9e8f87bcb4a65dccb12ef"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::scoped_lock" ref="5ce6807050a9e8f87bcb4a65dccb12ef" args="(spin_mutex &amp;m)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#5ce6807050a9e8f87bcb4a65dccb12ef">scoped_lock</a> (<a class="el" href="a00331.html">spin_mutex</a> &amp;m)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct and acquire lock on a mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3ee3c338732b1f64b0b32a757807a30d"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::acquire" ref="3ee3c338732b1f64b0b32a757807a30d" args="(spin_mutex &amp;m)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#3ee3c338732b1f64b0b32a757807a30d">acquire</a> (<a class="el" href="a00331.html">spin_mutex</a> &amp;m)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#9297ec188534b45dc0ca48f2f39a0501">try_acquire</a> (<a class="el" href="a00331.html">spin_mutex</a> &amp;m)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#9297ec188534b45dc0ca48f2f39a0501"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eeb615e68e963e6bf8d9c11402d0ce8e"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::release" ref="eeb615e68e963e6bf8d9c11402d0ce8e" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#eeb615e68e963e6bf8d9c11402d0ce8e">release</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ac6fa425d1f06c56d8b70abc51aac844"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::~scoped_lock" ref="ac6fa425d1f06c56d8b70abc51aac844" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#ac6fa425d1f06c56d8b70abc51aac844">~scoped_lock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy lock. If holding a lock, releases the lock first. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6ee2a2cdaf6a2128849e7d7723d9174f"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::spin_mutex" ref="6ee2a2cdaf6a2128849e7d7723d9174f" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>spin_mutex</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Key&gt;<br>
- struct tbb::tbb_hash_compare&lt; Key &gt;</h3>
-
-hash_compare that is default argument for concurrent_hash_map 
+Represents acquisition of a mutex. 
 <p>
-<hr>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="a00431.html">concurrent_hash_map.h</a></ul>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="9297ec188534b45dc0ca48f2f39a0501"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock::try_acquire" ref="9297ec188534b45dc0ca48f2f39a0501" args="(spin_mutex &amp;m)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::spin_mutex::scoped_lock::try_acquire           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00331.html">spin_mutex</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>m</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try acquiring lock (non-blocking). 
+<p>
+Return true if lock acquired; false otherwise. 
+</div>
+</div><p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="a00607.html">spin_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

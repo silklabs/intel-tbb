@@ -43,7 +43,7 @@ template<typename M>
 struct Counter {
     typedef M mutex_type;
     M mutex;
-    volatile long value; 
+    volatile long value;
     void flog_once_lock_guard( size_t mode );
     void flog_once_unique_lock( size_t mode );
 };
@@ -189,7 +189,7 @@ void TestLocks( const char* name, int nthread ) {
     Counter<M> counter;
     counter.value = 0;
     Order = 0;
-    // use the macro because of a seeming gcc 4.6 bug
+    // use the macro because of a gcc 4.6 bug
 #define TEST_SIZE 100000
     NativeParallelFor( nthread, WorkForLocks<Counter<M>, TEST_SIZE>(counter) );
 
@@ -246,7 +246,7 @@ struct WorkForCondVarCtor: NoAssign {
 static condition_variable* test_cv;
 static tbb::atomic<int> n_waiters;
 
-// Test if the destructor works 
+// Test if the destructor works
 template<typename M>
 struct WorkForCondVarDtor: NoAssign {
     int nthread;
@@ -378,7 +378,7 @@ struct WorkForCondVarTimedWait: NoAssign {
             // sleeper
             tbb::tick_count::interval_t intv((double)2.0 /*seconds*/);
             ul.lock();
-            ++n_waiters; // raise flag 1/(nthread-1) 
+            ++n_waiters; // raise flag 1/(nthread-1)
             t1 = tbb::tick_count::now();
             cv_status st = test_cv.wait_for( ul, intv ); // gate 2
             t2 = tbb::tick_count::now();
@@ -397,7 +397,7 @@ struct WorkForCondVarTimedWait: NoAssign {
             ++n_done; // open gate 3
 
             while( n_waiters<(nthread-1) ) __TBB_Yield(); // wait until all other threads block on cv.
-            for( int i=0; i<2*short_delay; ++i ) __TBB_Yield();  // give some time to waiters so that all of them in the waitq 
+            for( int i=0; i<2*short_delay; ++i ) __TBB_Yield();  // give some time to waiters so that all of them in the waitq
             ul.lock();
             false_to_true = true;
             test_cv.notify_all(); // open gate 4
@@ -455,7 +455,7 @@ struct WorkForCondVarWaitAndNotifyOne: NoAssign {
                     ul.unlock();
                     __TBB_Yield();
                 }
-    
+
                 // give waiters time to go to sleep.
                 for( int m=0; m<short_delay; ++m )
                     __TBB_Yield();
@@ -471,7 +471,7 @@ struct WorkForCondVarWaitAndNotifyOne: NoAssign {
                 // each waiter should go to sleep at least once
                 unsigned nw = ++n_waiters;
                 for( ;; ) {
-                    // update to max_waitq_length 
+                    // update to max_waitq_length
                     if( nw>max_waitq_length ) max_waitq_length = nw;
                     ++n_visit_to_waitq;
                     test_cv.wait( ul );
@@ -509,7 +509,7 @@ struct WorkForCondVarWaitPredAndNotifyAll: NoAssign {
     condition_variable& test_cv;
     M& my_mtx;
     int multiple;
-    WorkForCondVarWaitPredAndNotifyAll( int n_, condition_variable& cv_, M& mtx_, int m_ ) : 
+    WorkForCondVarWaitPredAndNotifyAll( int n_, condition_variable& cv_, M& mtx_, int m_ ) :
         nthread(n_), test_cv(cv_), my_mtx(mtx_), multiple(m_) {}
     void operator()( int tid ) const {
         if( tid&1 ) {
@@ -517,7 +517,7 @@ struct WorkForCondVarWaitPredAndNotifyAll: NoAssign {
                 unique_lock<M> ul( my_mtx, defer_lock );
                 // exercise wait part
                 int my_ticket = ++ticket_for_sleep; // grab my ticket
-                if( my_ticket>max_ticket ) 
+                if( my_ticket>max_ticket )
                     break;
 
                 ul.lock();
@@ -551,7 +551,7 @@ struct WorkForCondVarWaitPredAndNotifyAll: NoAssign {
                     ul.unlock();
                     __TBB_Yield();
                 }
-    
+
                 // give waiters time to go to sleep.
                 for( int m=0; m<long_delay*multiple; ++m )
                     __TBB_Yield();
@@ -633,7 +633,7 @@ void TestConditionVariable( const char* name, int nthread )
         NativeParallelFor( nthread, WorkForCondVarWaitPredAndNotifyAll<M>( nthread, cv4, mtx4, delay_multiple ) );
         if( max_waitq_length<unsigned(nthread/2) )
             ++delay_multiple;
-    } while( n_visit_to_waitq<=0 || max_waitq_length<unsigned(nthread/2) ); 
+    } while( n_visit_to_waitq<=0 || max_waitq_length<unsigned(nthread/2) );
 }
 
 #if TBB_USE_EXCEPTIONS

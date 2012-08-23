@@ -163,7 +163,7 @@ inline void thread_monitor::yield() {
 #if USE_PTHREAD
 inline void thread_monitor::check( int error_code, const char* routine ) {
     if( error_code ) {
-        fprintf(stderr,"thread_monitor %s\n", strerror(error_code) );
+        fprintf(stderr,"thread_monitor %s in %s\n", strerror(error_code), routine );
         exit(1);
     }
 }

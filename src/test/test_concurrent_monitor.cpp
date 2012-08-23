@@ -79,15 +79,15 @@ private:
 };
 
 struct PredicateEq {
-    void* p;
-    PredicateEq( void* p_ ) : p(p_) {}
-    bool operator() ( void* v ) const {return p==v;}
+    uintptr_t p;
+    PredicateEq( uintptr_t p_ ) : p(p_) {}
+    bool operator() ( uintptr_t v ) const {return p==v;}
 };
 
 struct QueuingMutex_Context {
     const QueuingMutex::ScopedLock* lck;
     QueuingMutex_Context( QueuingMutex::ScopedLock* l_ ) : lck(l_) {}
-    void* operator()() { return (void*)lck; }
+    uintptr_t operator()() { return uintptr_t(lck); }
 };
 
 struct QueuingMutex_Until : NoAssign {
@@ -125,7 +125,7 @@ void QueuingMutex::ScopedLock::Acquire( QueuingMutex& m, size_t test_mode )
             break;
 #if __TBB_LAMBDAS_PRESENT
         case 1:
-            mutex->waitq.wait( [&](){ return going!=0ul; }, [=]() { return (void*)this; } );
+            mutex->waitq.wait( [&](){ return going!=0ul; }, [=]() { return (uintptr_t)this; } );
             break;
 #endif
         default:
@@ -150,7 +150,7 @@ void QueuingMutex::ScopedLock::Release( )
         spin_wait_while_eq( next, (ScopedLock*)0 );
     }
     __TBB_store_with_release(next->going, 1);
-    mutex->waitq.notify( PredicateEq(next) );
+    mutex->waitq.notify( PredicateEq(uintptr_t(next)) );
 done:
     Initialize();
 }
@@ -160,12 +160,12 @@ void QueuingMutex::ScopedLock::SleepPerhaps()
 {
     bool slept = false;
     internal::concurrent_monitor& mq = mutex->waitq;
-    mq.prepare_wait( thr_ctx, this );
+    mq.prepare_wait( thr_ctx, uintptr_t(this) );
     while( going==0ul ) {
         if( (slept=mq.commit_wait( thr_ctx ))==true && going!=0ul )
             break;
         slept = false;
-        mq.prepare_wait( thr_ctx, this );
+        mq.prepare_wait( thr_ctx, uintptr_t(this) );
     }
     if( !slept )
         mq.cancel_wait( thr_ctx );
@@ -204,7 +204,7 @@ private:
 struct SpinMutex_Context {
     const SpinMutex::ScopedLock* lck;
     SpinMutex_Context( SpinMutex::ScopedLock* l_ ) : lck(l_) {}
-    void* operator()() { return (void*)lck; }
+    uintptr_t operator()() { return uintptr_t(lck); }
 };
 
 struct SpinMutex_Until {
@@ -226,7 +226,7 @@ retry:
             break;
 #if __TBB_LAMBDAS_PRESENT
         case 1:
-            mutex->waitq.wait( [&](){ return mutex->flag==0; }, [=]() { return (void*)this; } );
+            mutex->waitq.wait( [&](){ return mutex->flag==0; }, [=]() { return (uintptr_t)this; } );
             break;
 #endif
         default:
@@ -254,11 +254,11 @@ void SpinMutex::ScopedLock::SleepPerhaps()
 {
     bool slept = false;
     internal::concurrent_monitor& mq = mutex->waitq;
-    mq.prepare_wait( thr_ctx, this );
+    mq.prepare_wait( thr_ctx, uintptr_t(this) );
     while( mutex->flag ) {
         if( (slept=mq.commit_wait( thr_ctx ))==true )
             break;
-        mq.prepare_wait( thr_ctx, this );
+        mq.prepare_wait( thr_ctx, uintptr_t(this) );
     }
     if( !slept )
         mq.cancel_wait( thr_ctx );
@@ -305,10 +305,14 @@ void Test( int p ) {
 
 atomic<size_t> n_sleepers;
 
+#if defined(_MSC_VER) && defined(_Wp64)
+    // Workaround for overzealous compiler warnings in /Wp64 mode
+    #pragma warning (disable: 4244 4267)
+#endif
+
 struct AllButOneSleep : NoAssign {
     internal::concurrent_monitor*& mon;
     static const size_t VLN = 1024*1024;
-    //void operator()( tbb::blocked_range<size_t>& range ) const {
     void operator()( int i ) const {
         internal::concurrent_monitor::thread_context thr_ctx;
 
@@ -324,7 +328,7 @@ struct AllButOneSleep : NoAssign {
             delete mon;
             mon = NULL;
         } else {
-            mon->prepare_wait( thr_ctx, (void*)this );
+            mon->prepare_wait( thr_ctx, uintptr_t(this) );
             while( n_sleepers<VLN ) {
                 try {
                     ++n_sleepers;
@@ -335,7 +339,7 @@ struct AllButOneSleep : NoAssign {
                     // can no longer access 'mon'
                     break;
                 }
-                mon->prepare_wait( thr_ctx, (void*)this );
+                mon->prepare_wait( thr_ctx, uintptr_t(this) );
             }
         }
     }
@@ -357,7 +361,7 @@ void TestDestructor() {
 int TestMain () {
     for( int p=MinThread; p<=MaxThread; ++p ) {
         REMARK( "testing with %d workers\n", static_cast<int>(p) );
-        // test the predicated notify 
+        // test the predicated notify
         Test<QueuingMutex,100000,0>( p );
         Test<QueuingMutex,1000,10000>( p );
         // test the notify_all method

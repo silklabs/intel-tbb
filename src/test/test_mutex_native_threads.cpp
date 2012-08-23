@@ -182,7 +182,7 @@ void Test( const char * name, int nthread ) {
     Counter<M> counter;
     counter.value = 0;
     Order = 0;
-    // use the macro because of a seeming gcc 4.6 bug
+    // use the macro because of a gcc 4.6 bug
 #define TEST_SIZE 100000
     tbb::tick_count t0 = tbb::tick_count::now();
     NativeParallelFor( nthread, Work<Counter<M>, TEST_SIZE>(counter) );
@@ -201,7 +201,7 @@ void TestReaderWriter( const char * mutex_name, int nthread ) {
     REMARK("testing %s\n",mutex_name);
     Invariant<M,8> invariant(mutex_name);
     Order = 0;
-    // use the macro because of a seeming gcc 4.6 bug
+    // use the macro because of a gcc 4.6 bug
 #define TEST_SIZE 1000000
     tbb::tick_count t0 = tbb::tick_count::now();
     NativeParallelFor( nthread, Work<Invariant<M,8>, TEST_SIZE>(invariant) );

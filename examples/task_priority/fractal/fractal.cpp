@@ -39,6 +39,7 @@
 
 video *v;
 extern bool silent;
+extern bool schedule_auto;
 extern int grain_size;
 
 color_t fractal::calc_one_pixel(int x0, int y0) {
@@ -150,8 +151,12 @@ public:
 
 void fractal::render( tbb::task_group_context &context ) {
     // run parallel_for that process the fractal area
-    tbb::parallel_for( tbb::blocked_range2d<int>(0, size_y, grain_size, 0, size_x, grain_size ), 
-            fractal_body(*this), tbb::simple_partitioner(), context);
+    if( schedule_auto )
+        tbb::parallel_for( tbb::blocked_range2d<int>(0, size_y, grain_size, 0, size_x, grain_size ),
+                fractal_body(*this), tbb::auto_partitioner(), context);
+    else
+        tbb::parallel_for( tbb::blocked_range2d<int>(0, size_y, grain_size, 0, size_x, grain_size ),
+                fractal_body(*this), tbb::simple_partitioner(), context);
 }
 
 void fractal::run( tbb::task_group_context &context ) {

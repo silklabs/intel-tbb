@@ -103,14 +103,14 @@ public:
     /** Can only be used when T is a POD type, as copying does not invoke copy constructors. **/
     void copy_memory ( T* dst ) const
     {
-        size_t size = m_cur_segment_size - m_pos;
-        memcpy( dst, m_cur_segment + m_pos, size * sizeof(T) );
-        dst += size;
-        size = m_cur_segment_size / 2;
+        size_t sz = m_cur_segment_size - m_pos;
+        memcpy( dst, m_cur_segment + m_pos, sz * sizeof(T) );
+        dst += sz;
+        sz = m_cur_segment_size / 2;
         for ( long i = (long)m_num_segments - 2; i >= 0; --i ) {
-            memcpy( dst, m_segments[i], size * sizeof(T) );
-            dst += size;
-            size /= 2;
+            memcpy( dst, m_segments[i], sz * sizeof(T) );
+            dst += sz;
+            sz /= 2;
         }
     }
 

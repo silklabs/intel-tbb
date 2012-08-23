@@ -33,9 +33,19 @@ PERF_RUN_ARGS=auto input1 silent
 ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # which icc
-ifeq ($(CXX),icc)
-CXX0XFLAGS=-std=c++0x -D_TBB_CPP0X
-endif # icc
+
+ifeq ($(offload), mic)
+override CXXFLAGS += -D__TBB_MIC=1
+endif
+
+ifeq ($(CXX), icc)
+TBBLIB = -tbb
+TBBLIB_DEBUG = -tbb
+CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
+else
+TBBLIB = -ltbb
+TBBLIB_DEBUG = -ltbb_debug
+endif
 
 ifeq ($(shell uname), Linux)
 LIBS+= -lrt 
@@ -44,10 +54,10 @@ endif
 all:	release test
 
 release: *.cpp
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb $(LIBS) $(CXX0XFLAGS)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ $(TBBLIB) $(LIBS) $(CXX0XFLAGS)
 
 debug: *.cpp
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb_debug $(LIBS) $(CXX0XFLAGS)
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ $(TBBLIB_DEBUG) $(LIBS) $(CXX0XFLAGS)
 
 clean:
 	$(RM) $(PROG) *.o *.d

@@ -34,7 +34,7 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # which icc
 ifeq ($(CXX),icc)
-CXX0XFLAGS=-std=c++0x -D_TBB_CPP0X
+CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
 endif # icc
 
 ifeq ($(shell uname), Linux)

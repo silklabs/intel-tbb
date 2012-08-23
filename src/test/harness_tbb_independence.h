@@ -29,10 +29,6 @@
 #ifndef harness_tbb_independence_H
 #define harness_tbb_independence_H
 
-#if __TBB_DYNAMIC_LOAD_ENABLED
-#include "../tbb/tbb_assert_impl.h"
-#endif
-
 #if __linux__  && __ia64__
 
 #define __TBB_NO_IMPLICIT_LINKAGE 1
@@ -75,17 +71,6 @@ extern "C" int64_t __TBB_machine_cmpswp8__TBB_full_fence(volatile void *ptr, int
     return result;
 }
 
-#elif _WIN64 && defined(_M_X64) && !__MINGW64__
-
-#define __TBB_NO_IMPLICIT_LINKAGE 1
-#include "tbb/tbb_machine.h"
-
-#if __TBB_DYNAMIC_LOAD_ENABLED
-extern "C" {
-void __TBB_machine_pause(__int32 /*delay*/ ) { __TBB_Yield(); }
-}
-#endif
-
-#endif /* _WIN64 */
+#endif /* __linux__  && __ia64 */
 
 #endif // harness_tbb_independence_H

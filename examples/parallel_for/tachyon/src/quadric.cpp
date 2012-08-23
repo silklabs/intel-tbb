@@ -58,7 +58,7 @@
 /* 
  * quadric.c - This file contains the functions for dealing with quadrics.
  *
- *  $Id: quadric.cpp,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: quadric.cpp,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
 #include "machine.h"

@@ -218,9 +218,9 @@ class concurrent_queue: public internal::concurrent_queue_base {
         ~destroyer() {my_value.~T();}          
     };
 
-    T& get_ref( page& page, size_t index ) {
+    T& get_ref( page& pg, size_t index ) {
         __TBB_ASSERT( index<items_per_page, NULL );
-        return static_cast<T*>(static_cast<void*>(&page+1))[index];
+        return static_cast<T*>(static_cast<void*>(&pg+1))[index];
     }
 
     /*override*/ virtual void copy_item( page& dst, size_t index, const void* src ) {
@@ -302,8 +302,8 @@ public:
     //! Set the capacity
     /** Setting the capacity to 0 causes subsequent push_if_not_full operations to always fail,
         and subsequent push operations to block forever. */
-    void set_capacity( size_type capacity ) {
-        internal_set_capacity( capacity, sizeof(T) );
+    void set_capacity( size_type new_capacity ) {
+        internal_set_capacity( new_capacity, sizeof(T) );
     }
 
     typedef internal::concurrent_queue_iterator<concurrent_queue,T> iterator;

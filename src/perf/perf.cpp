@@ -759,11 +759,14 @@ inline bool __TBB_bool( bool b ) { return b; }
 
     void Report ( char const* fmt, ... ) {
         va_list args;
-        va_start( args, fmt );
-        if ( ResFile )
+        if ( ResFile ) {
+            va_start( args, fmt );
             vfprintf( ResFile, fmt, args );
+            va_end( args );
+        }
         va_start( args, fmt );
         vprintf( fmt, args );
+        va_end( args );
     }
 
     void PrintResults () {

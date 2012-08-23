@@ -57,8 +57,8 @@ captured_exception::~captured_exception () throw() {
     clear();
 }
 
-void captured_exception::set ( const char* name, const char* info ) throw() {
-    my_exception_name = duplicate_string( name );
+void captured_exception::set ( const char* a_name, const char* info ) throw() {
+    my_exception_name = duplicate_string( a_name );
     my_exception_info = duplicate_string( info );
 }
 
@@ -87,10 +87,10 @@ void captured_exception::destroy () throw() {
     }
 }
 
-captured_exception* captured_exception::allocate ( const char* name, const char* info ) {
+captured_exception* captured_exception::allocate ( const char* a_name, const char* info ) {
     captured_exception *e = (captured_exception*)allocate_via_handler_v3( sizeof(captured_exception) );
     if ( e ) {
-        ::new (e) captured_exception(name, info);
+        ::new (e) captured_exception(a_name, info);
         e->my_dynamic = true;
     }
     return e;
@@ -153,15 +153,15 @@ task_group_context::~task_group_context () {
         if ( governor::is_set(my_owner) ) {
             // Local update of the context list 
             uintptr_t local_count_snapshot = my_owner->my_context_state_propagation_epoch;
-            my_owner->my_local_ctx_list_update = 1;
+            my_owner->my_local_ctx_list_update.store<relaxed>(1);
             // Prevent load of nonlocal update flag from being hoisted before the
             // store to local update flag.
             atomic_fence();
-            if ( my_owner->my_nonlocal_ctx_list_update ) {
+            if ( my_owner->my_nonlocal_ctx_list_update.load<relaxed>() ) {
                 spin_mutex::scoped_lock lock(my_owner->my_context_list_mutex);
                 my_node.my_prev->my_next = my_node.my_next;
                 my_node.my_next->my_prev = my_node.my_prev;
-                my_owner->my_local_ctx_list_update = 0;
+                my_owner->my_local_ctx_list_update.store<relaxed>(0);
             }
             else {
                 my_node.my_prev->my_next = my_node.my_next;
@@ -169,7 +169,7 @@ task_group_context::~task_group_context () {
                 // Release fence is necessary so that update of our neighbors in 
                 // the context list was committed when possible concurrent destroyer
                 // proceeds after local update flag is reset by the following store.
-                __TBB_store_with_release( my_owner->my_local_ctx_list_update, 0 );
+                my_owner->my_local_ctx_list_update.store<release>(0);
                 if ( local_count_snapshot != the_context_state_propagation_epoch ) {
                     // Another thread was propagating cancellation request when we removed
                     // ourselves from the list. We must ensure that it is not accessing us 
@@ -180,19 +180,23 @@ task_group_context::~task_group_context () {
             }
         }
         else {
-            // Nonlocal update of the context list 
+            // Nonlocal update of the context list
+            // Synchronizes with generic_scheduler::free_scheduler()
             if ( __TBB_FetchAndStoreW(&my_kind, dying) == detached ) {
                 my_node.my_prev->my_next = my_node.my_next;
                 my_node.my_next->my_prev = my_node.my_prev;
             }
             else {
-                __TBB_FetchAndAddW(&my_owner->my_nonlocal_ctx_list_update, 1);
+                //TODO: evaluate and perhaps relax
+                my_owner->my_nonlocal_ctx_list_update.fetch_and_increment<full_fence>();
+                //TODO: evaluate and perhaps remove
                 spin_wait_until_eq( my_owner->my_local_ctx_list_update, 0u );
                 my_owner->my_context_list_mutex.lock();
                 my_node.my_prev->my_next = my_node.my_next;
                 my_node.my_next->my_prev = my_node.my_prev;
                 my_owner->my_context_list_mutex.unlock();
-                __TBB_FetchAndAddW(&my_owner->my_nonlocal_ctx_list_update, -1);
+                //TODO: evaluate and perhaps relax
+                my_owner->my_nonlocal_ctx_list_update.fetch_and_decrement<full_fence>();
             }
         }
     }
@@ -224,24 +228,24 @@ void task_group_context::register_with ( generic_scheduler *local_sched ) {
     my_node.my_prev = &local_sched->my_context_list_head;
     // Notify threads that may be concurrently destroying contexts registered
     // in this scheduler's list that local list update is underway.
-    local_sched->my_local_ctx_list_update = 1;
+    local_sched->my_local_ctx_list_update.store<relaxed>(1);
     // Prevent load of global propagation epoch counter from being hoisted before 
     // speculative stores above, as well as load of nonlocal update flag from
     // being hoisted before the store to local update flag.
     atomic_fence();
     // Finalize local context list update
-    if ( local_sched->my_nonlocal_ctx_list_update ) {
+    if ( local_sched->my_nonlocal_ctx_list_update.load<relaxed>() ) {
         spin_mutex::scoped_lock lock(my_owner->my_context_list_mutex);
         local_sched->my_context_list_head.my_next->my_prev = &my_node;
         my_node.my_next = local_sched->my_context_list_head.my_next;
-        my_owner->my_local_ctx_list_update = 0;
+        my_owner->my_local_ctx_list_update.store<relaxed>(0);
         local_sched->my_context_list_head.my_next = &my_node;
     }
     else {
         local_sched->my_context_list_head.my_next->my_prev = &my_node;
         my_node.my_next = local_sched->my_context_list_head.my_next;
-        __TBB_store_with_release( my_owner->my_local_ctx_list_update, 0 );
-        // Thread local list of contexts allows concurrent traversal by another thread 
+        my_owner->my_local_ctx_list_update.store<release>(0);
+        // Thread-local list of contexts allows concurrent traversal by another thread
         // while propagating state change. To ensure visibility of my_node's members
         // to the concurrently traversing thread, the list's head is updated by means
         // of store-with-release.

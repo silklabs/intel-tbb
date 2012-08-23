@@ -58,7 +58,7 @@
 /* 
  * intersect.c - This file contains code for CSG and intersection routines.
  *
- *  $Id: intersect.cpp,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: intersect.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 #include "machine.h"

@@ -98,7 +98,7 @@ class TaskGenerator: public tbb::task {
     const int my_child_count;
     int my_depth;
 public:
-    TaskGenerator(int child_count, int depth) : my_child_count(child_count), my_depth(depth) {
+    TaskGenerator(int child_count, int d) : my_child_count(child_count), my_depth(d) {
         ASSERT(my_child_count>1, "The TaskGenerator should produce at least two children");
     }
     /*override*/ tbb::task* execute() {

@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 0
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6003
+#define TBB_INTERFACE_VERSION 6004
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -132,6 +132,14 @@
 #else
     #define __TBB_EXPORTED_FUNC
     #define __TBB_EXPORTED_METHOD
+#endif
+
+#if __INTEL_COMPILER || _MSC_VER
+#define __TBB_NOINLINE(decl) __declspec(noinline) decl
+#elif __GNUC__
+#define __TBB_NOINLINE(decl) decl __attribute__ ((noinline))
+#else
+#define __TBB_NOINLINE(decl) decl
 #endif
 
 #include <cstddef>      /* Need size_t and ptrdiff_t */
@@ -244,7 +252,7 @@ const size_t NFS_MaxLineSize = 128;
     both as a way to have the compiler help enforce use of the label and to quickly rule out
     one potential issue.
 
-    Note however that, with some architecture/compiler combinations, e.g. on Itanium, "volatile" 
+    Note however that, with some architecture/compiler combinations, e.g. on IA-64, "volatile" 
     also has non-portable memory semantics that are needlessly expensive for "relaxed" operations.
 
     Note that this must only be applied to data that will not change bit patterns when cast to/from
@@ -349,6 +357,15 @@ struct allocator_type<const T> {
     typedef T value_type;
 };
 #endif
+
+//! A function to select either 32-bit or 64-bit value, depending on machine word size.
+inline size_t size_t_select( unsigned u, unsigned long long ull ) {
+    /* Explicit cast of the arguments to size_t is done to avoid compiler warnings
+       (e.g. by Clang and MSVC) about possible truncation. The value of the right size,
+       which is selected by ?:, is anyway not truncated or promoted.
+       MSVC still warns if this trick is applied directly to constants, hence this function. */
+    return (sizeof(size_t)==sizeof(u)) ? size_t(u) : size_t(ull);
+}
 
 // Struct to be used as a version tag for inline functions.
 /** Version tag can be necessary to prevent loader on Linux from using the wrong 

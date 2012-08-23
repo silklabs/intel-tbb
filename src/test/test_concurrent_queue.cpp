@@ -160,8 +160,8 @@ const int M = 10000;
 template<typename CQ,typename T>
 struct Body: NoAssign {
     CQ* queue;
-        const int nthread;
-        Body( int nthread_ ) : nthread(nthread_) {}
+    const int nthread;
+    Body( int nthread_ ) : nthread(nthread_) {}
     void operator()( int thread_id ) const {
         long pop_kind[3] = {0,0,0};
         int serial[MAXTHREAD+1];
@@ -304,7 +304,7 @@ void TestPushPop( size_t prefill, ptrdiff_t capacity, int nthread ) {
                                nthread, long(PopKind[k]), k==0?"failed":"succeeded", max_trial, min_requirement);
                         else
                             REPORT("Warning: the number of %s pop_if_present operations is less than expected for %d threads. Investigate if it happens repeatedly.\n",
-                               k==0?"failed":"succeeded", nthread ); 
+                               k==0?"failed":"succeeded", nthread );
 
                     } else {
                         success = false;
@@ -412,8 +412,8 @@ public:
     BarEx( const BarEx& a_bar ) : state(LIVE) {
         ASSERT( a_bar.state==LIVE, NULL );
         my_id = a_bar.my_id;
-        if( mode==PREPARATION ) 
-            if( !( ++count % 100 ) ) 
+        if( mode==PREPARATION )
+            if( !( ++count % 100 ) )
                 throw Bar_exception();
         my_tilda_id = a_bar.my_tilda_id;
     }
@@ -738,7 +738,7 @@ void TestClear() {
     FooConstructed = 0;
     FooDestroyed = 0;
     const unsigned int n=5;
-        
+
     CQ queue;
     const int q_capacity=10;
     queue.set_capacity(q_capacity);
@@ -811,12 +811,12 @@ void TestExceptionBody() {
     enum methods {
         m_push = 0,
         m_pop
-    };  
+    };
 
     REMARK("Testing exception safety\n");
     MaxFooCount = 5;
     // verify 'clear()' on exception; queue's destructor calls its clear()
-    // Do test on queues of two different types at the same time to 
+    // Do test on queues of two different types at the same time to
     // catch problem with incorrect sharing between templates.
     {
         CQ queue0;
@@ -1165,10 +1165,11 @@ tbb::atomic<size_t> failed_pops;
 
 class SimplePushBody {
     tbb::concurrent_bounded_queue<int>* q;
+    int max;
 public:
-    SimplePushBody(tbb::concurrent_bounded_queue<int>* _q) : q(_q) {}
+    SimplePushBody(tbb::concurrent_bounded_queue<int>* _q, int hi_thr) : q(_q), max(hi_thr) {}
     void operator()(int thread_id) const {
-        if (thread_id == MaxThread) {
+        if (thread_id == max) {
             Harness::Sleep(50);
             q->abort();
             return;
@@ -1184,11 +1185,12 @@ public:
 
 class SimplePopBody {
     tbb::concurrent_bounded_queue<int>* q;
+    int max;
 public:
-    SimplePopBody(tbb::concurrent_bounded_queue<int>* _q) : q(_q) {}
+    SimplePopBody(tbb::concurrent_bounded_queue<int>* _q, int hi_thr) : q(_q), max(hi_thr) {}
     void operator()(int thread_id) const {
         int e;
-        if (thread_id == MaxThread) {
+        if (thread_id == max) {
             Harness::Sleep(50);
             q->abort();
             return;
@@ -1205,54 +1207,87 @@ public:
 
 void TestAbort() {
 #if TBB_USE_EXCEPTIONS
-    int nthreads = MaxThread;
+    for (int nthreads=MinThread; nthreads<=MaxThread; ++nthreads) {
+        REMARK("Testing Abort on %d thread(s).\n", nthreads);
 
-    tbb::concurrent_bounded_queue<int> iq1;
-    iq1.set_capacity(0);
-    for (int i=0; i<10; ++i) {
-        num_pushed = num_popped = failed_pushes = failed_pops = 0;
-        SimplePushBody my_push_body1(&iq1);
-        NativeParallelFor( nthreads+1, my_push_body1 );
-        ASSERT(num_pushed == 0, "no elements should have been pushed to zero-sized queue");
-        ASSERT((int)failed_pushes == nthreads, "All threads should have failed to push an element to zero-sized queue");
-    }
+        REMARK("...testing pushing to zero-sized queue\n");
+        tbb::concurrent_bounded_queue<int> iq1;
+        iq1.set_capacity(0);
+        for (int i=0; i<10; ++i) {
+            num_pushed = num_popped = failed_pushes = failed_pops = 0;
+            SimplePushBody my_push_body1(&iq1, nthreads);
+            NativeParallelFor( nthreads+1, my_push_body1 );
+            ASSERT(num_pushed == 0, "no elements should have been pushed to zero-sized queue");
+            ASSERT((int)failed_pushes == nthreads, "All threads should have failed to push an element to zero-sized queue");
+        }
+        
+        REMARK("...testing pushing to small-sized queue\n");
+        tbb::concurrent_bounded_queue<int> iq2;
+        iq2.set_capacity(2);
+        for (int i=0; i<10; ++i) {
+            num_pushed = num_popped = failed_pushes = failed_pops = 0;
+            SimplePushBody my_push_body2(&iq2, nthreads);
+            NativeParallelFor( nthreads+1, my_push_body2 );
+            ASSERT(num_pushed <= 2, "at most 2 elements should have been pushed to queue of size 2");
+            if (nthreads >= 2) 
+                ASSERT((int)failed_pushes == nthreads-2, "nthreads-2 threads should have failed to push an element to queue of size 2");
+            int e;
+            while (iq2.try_pop(e)) ;
+        }
+        
+        REMARK("...testing popping from small-sized queue\n");
+        tbb::concurrent_bounded_queue<int> iq3;
+        iq3.set_capacity(2);
+        for (int i=0; i<10; ++i) {
+            num_pushed = num_popped = failed_pushes = failed_pops = 0;
+            iq3.push(42);
+            iq3.push(42);
+            SimplePopBody my_pop_body(&iq3, nthreads);
+            NativeParallelFor( nthreads+1, my_pop_body);
+            ASSERT(num_popped <= 2, "at most 2 elements should have been popped from queue of size 2");
+            if (nthreads >= 2)
+                ASSERT((int)failed_pops == nthreads-2, "nthreads-2 threads should have failed to pop an element from queue of size 2");
+            else {
+                int e;
+                iq3.pop(e);
+            }
+        }
 
-    tbb::concurrent_bounded_queue<int> iq2;
-    iq2.set_capacity(2);
-    for (int i=0; i<10; ++i) {
-        num_pushed = num_popped = failed_pushes = failed_pops = 0;
-        SimplePushBody my_push_body2(&iq2);
-        NativeParallelFor( nthreads+1, my_push_body2 );
-        ASSERT(num_pushed <= 2, "at most 2 elements should have been pushed to queue of size 2");
-        if (nthreads >= 2) 
-            ASSERT((int)failed_pushes == nthreads-2, "nthreads-2 threads should have failed to push an element to queue of size 2");
-        int e;
-        while (iq2.try_pop(e)) ;
-    }
-
-    tbb::concurrent_bounded_queue<int> iq3;
-    iq3.set_capacity(2);
-    for (int i=0; i<10; ++i) {
-        num_pushed = num_popped = failed_pushes = failed_pops = 0;
-        iq3.push(42);
-        iq3.push(42);
-        SimplePopBody my_pop_body(&iq3);
-        NativeParallelFor( nthreads+1, my_pop_body);
-        ASSERT(num_popped <= 2, "at most 2 elements should have been popped from queue of size 2");
-        if (nthreads >= 2)
-            ASSERT((int)failed_pops == nthreads-2, "nthreads-2 threads should have failed to pop an element from queue of size 2");
+        REMARK("...testing pushing and popping from small-sized queue\n");
+        tbb::concurrent_bounded_queue<int> iq4;
+        int cap = nthreads/2;
+        if (!cap) cap=1;
+        iq4.set_capacity(cap);
+        for (int i=0; i<10; ++i) {
+            num_pushed = num_popped = failed_pushes = failed_pops = 0;
+            SimplePushBody my_push_body2(&iq4, nthreads);
+            NativeParallelFor( nthreads+1, my_push_body2 );
+            ASSERT((int)num_pushed <= cap, "at most cap elements should have been pushed to queue of size cap");
+            if (nthreads >= cap) 
+                ASSERT((int)failed_pushes == nthreads-cap, "nthreads-cap threads should have failed to push an element to queue of size cap");
+            SimplePopBody my_pop_body(&iq4, nthreads);
+            NativeParallelFor( nthreads+1, my_pop_body);
+            ASSERT((int)num_popped <= cap, "at most cap elements should have been popped from queue of size cap");
+            if (nthreads >= cap)
+                ASSERT((int)failed_pops == nthreads-cap, "nthreads-cap threads should have failed to pop an element from queue of size cap");
+            else {
+                int e;
+                while (iq4.try_pop(e)) ;
+            }
+        }
     }
 #endif
 }
 
 
-template <typename T>
+template <typename Q>
 class FloggerBody : NoAssign {
-    tbb::concurrent_queue<T> *q;
+    Q *q;
 public:
-    FloggerBody(tbb::concurrent_queue<T> *q_) : q(q_) {}  
+    FloggerBody(Q *q_) : q(q_) {}  
     void operator()(const int threadID) const {
-        T elem = T(threadID);
+        typedef typename Q::value_type value_type;
+        value_type elem = value_type(threadID);
         for (size_t i=0; i<275; ++i) {
             q->push(elem);
             (void) q->try_pop(elem);
@@ -1260,30 +1295,58 @@ public:
     }
 };
 
-template <typename T>
-void TestFlogger(T /*max*/) {
-    tbb::concurrent_queue<T> *q = new  tbb::concurrent_queue<T>();
-    hacked_concurrent_queue_rep* hack_rep = ((hacked_concurrent_queue<T>*)(void*)q)->my_rep;
-    size_t nq = hacked_concurrent_queue_rep::n_queue;
-    hack_rep->head_counter = std::numeric_limits<std::size_t>::max() & ~( nq * hack_rep->items_per_page - 1 );
-    hack_rep->tail_counter = std::numeric_limits<std::size_t>::max() & ~( nq * hack_rep->items_per_page - 1 );
+template <typename HackedQRep, typename Q>
+void TestFloggerHelp(HackedQRep* hack_rep, Q* q, size_t items_per_page) {
+    size_t nq = HackedQRep::n_queue;
+    size_t hack_val = std::numeric_limits<std::size_t>::max() & ~( nq * items_per_page - 1 );
+    hack_rep->head_counter = hack_val;
+    hack_rep->tail_counter = hack_val;
     size_t k = hack_rep->tail_counter & -(ptrdiff_t)nq;
+
     for (size_t i=0; i<nq; ++i) {
         hack_rep->array[i].head_counter = k;
         hack_rep->array[i].tail_counter = k;
     }
-    NativeParallelFor(MaxThread, FloggerBody<T>(q));
+    NativeParallelFor(MaxThread, FloggerBody<Q>(q));
     ASSERT(q->empty(), "FAILED flogger/empty test.");
     delete q;
 }
 
+template <typename T>
+void TestFlogger(T /*max*/) {
+    { // test strict_ppl::concurrent_queue or deprecated::concurrent_queue
+        tbb::concurrent_queue<T>* q = new tbb::concurrent_queue<T>;
+#if !TBB_DEPRECATED
+        REMARK("Wraparound on strict_ppl::concurrent_queue...");
+        hacked_concurrent_queue_rep* hack_rep = ((hacked_concurrent_queue<T>*)(void*)q)->my_rep;
+        TestFloggerHelp(hack_rep, q, hack_rep->items_per_page);
+        REMARK(" works.\n");
+#else
+        REMARK("Wraparound on deprecated::concurrent_queue...");
+        hacked_bounded_concurrent_queue* hack_q = (hacked_bounded_concurrent_queue*)(void*)q;
+        hacked_bounded_concurrent_queue_rep* hack_rep = hack_q->my_rep;
+        TestFloggerHelp(hack_rep, q, hack_q->items_per_page);
+        REMARK(" works.\n");
+#endif
+    }
+    { // test tbb::concurrent_bounded_queue
+        tbb::concurrent_bounded_queue<T>* q = new tbb::concurrent_bounded_queue<T>;
+        REMARK("Wraparound on tbb::concurrent_bounded_queue...");
+        hacked_bounded_concurrent_queue* hack_q = (hacked_bounded_concurrent_queue*)(void*)q;
+        hacked_bounded_concurrent_queue_rep* hack_rep = hack_q->my_rep;
+        TestFloggerHelp(hack_rep, q, hack_q->items_per_page);
+        REMARK(" works.\n");
+    }
+}
+
 void TestWraparound() {
-    TestFlogger(INT_MAX);
-    TestFlogger((unsigned char)CHAR_MAX);
+    REMARK("Testing Wraparound...\n");
+    TestFlogger(std::numeric_limits<int>::max());
+    TestFlogger(std::numeric_limits<unsigned char>::max());
+    REMARK("Done Testing Wraparound.\n");
 }
 
 int TestMain () {
-
     TestEmptiness();
 
     TestFullness();

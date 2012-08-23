@@ -115,6 +115,7 @@ void plugin_call(int maxthread)
 
 #define HARNESS_NO_ASSERT 1
 #include "harness.h"
+#include "harness_dynamic_libs.h"
 
 extern "C" void plugin_call(int);
 
@@ -170,6 +171,12 @@ int use_lot_of_tls() {
 
 typedef void (*PLUGIN_CALL)(int);
 
+#if __linux__
+    #define RML_LIBRARY_NAME(base) TEST_LIBRARY_NAME(base) ".1"
+#else
+    #define RML_LIBRARY_NAME(base) TEST_LIBRARY_NAME(base)
+#endif
+
 int TestMain () {
 #if !RML_USE_WCRM
     PLUGIN_CALL my_plugin_call;
@@ -177,8 +184,8 @@ int TestMain () {
     int tls_key_count = use_lot_of_tls();
     REMARK("%d thread local objects allocated in advance\n", tls_key_count);
 
+    Harness::LIBRARY_HANDLE hLib;
 #if _WIN32 || _WIN64
-    HMODULE hLib;
     hLib = LoadLibrary("irml.dll");
     if ( !hLib )
         hLib = LoadLibrary("irml_debug.dll");
@@ -186,18 +193,7 @@ int TestMain () {
         return Harness::Skipped; // No shared RML, skip the test
     FreeLibrary(hLib);
 #else /* !WIN */
-#if __APPLE__
-    #define LIBRARY_NAME(base) base".dylib"
-#else
-    #define LIBRARY_NAME(base) base".so"
-#endif
-    void* hLib;
 #if __TBB_ARENA_PER_MASTER
-#if __linux__
-    #define RML_LIBRARY_NAME(base) LIBRARY_NAME(base) ".1"
-#else
-    #define RML_LIBRARY_NAME(base) LIBRARY_NAME(base)
-#endif
     hLib = dlopen(RML_LIBRARY_NAME("libirml"), RTLD_LAZY);
     if ( !hLib )
         hLib = dlopen(RML_LIBRARY_NAME("libirml_debug"), RTLD_LAZY);
@@ -208,47 +204,33 @@ int TestMain () {
 #endif /* OS */
     for( int i=1; i<100; ++i ) {  
         REMARK("Iteration %d, loading plugin library...\n", i);
+        hLib = Harness::OpenLibrary(TEST_LIBRARY_NAME("test_model_plugin_dll"));
+        if ( !hLib ) {
+#if !__TBB_NO_IMPLICIT_LINKAGE
 #if _WIN32 || _WIN64
-        hLib = LoadLibrary("test_model_plugin_dll.dll");
-        if ( !hLib ) {
-#if !__TBB_NO_IMPLICIT_LINKAGE
             report_error_in("LoadLibrary");
-            return -1;
 #else
-            return Harness::Skipped;
-#endif
-        }
-        my_plugin_call = (PLUGIN_CALL) GetProcAddress(hLib, "plugin_call");
-        if (my_plugin_call==NULL) {
-            report_error_in("GetProcAddress");
-            return -1;
-        }
-#else /* !WIN */
-        hLib = dlopen( LIBRARY_NAME("test_model_plugin_dll"), RTLD_LAZY );
-        if ( !hLib ) {
-#if !__TBB_NO_IMPLICIT_LINKAGE
             report_error_in("dlopen");
+#endif
             return -1;
 #else
             return Harness::Skipped;
 #endif
         }
-        my_plugin_call = PLUGIN_CALL (dlsym(hLib, "plugin_call"));
+        my_plugin_call = (PLUGIN_CALL)Harness::GetAddress(hLib, "plugin_call");
         if (my_plugin_call==NULL) {
+#if _WIN32 || _WIN64
+            report_error_in("GetProcAddress");
+#else
             report_error_in("dlsym");
+#endif
             return -1;
         }
-#endif /* !WIN */
-
         REMARK("Calling plugin method...\n");
         my_plugin_call(MaxThread);
 
         REMARK("Unloading plugin library...\n");
-#if _WIN32 || _WIN64
-        FreeLibrary(hLib);
-#else
-        dlclose(hLib);
-#endif
+        Harness::CloseLibrary(hLib);
     } // end for(1,100)
 
     return Harness::Done;

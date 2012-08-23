@@ -64,8 +64,9 @@ OUTPUT_KEY = -o #
 OUTPUTOBJ_KEY = -o #
 PIC_KEY =
 WARNING_AS_ERROR_KEY = -Werror
-WARNING_KEY = -Wall  -Wno-uninitialized
-WARNING_SUPPRESS = -Wno-parentheses
+WARNING_KEY = -Wall
+TEST_WARNING_KEY = -Wextra -Wshadow -Wcast-qual -Woverloaded-virtual -Wnon-virtual-dtor -Wno-uninitialized
+WARNING_SUPPRESS = -Wno-parentheses -Wno-uninitialized
 DYLIB_KEY = -shared
 LIBDL =
 EXPORT_KEY = -Wl,--version-script,
@@ -79,6 +80,10 @@ LIBS = -lpsapi
 
 LINK_FLAGS = -Wl,--enable-auto-import
 LIB_LINK_FLAGS = $(DYLIB_KEY)
+# gcc 4.4 and higher support -std=c++0x
+ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion gcc 4.4"))
+    CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
+endif
 
 ifeq ($(cfg), release)
         CPLUS_FLAGS = -O2
@@ -101,7 +106,7 @@ ifeq (intel64,$(arch))
 endif
 
 ifeq (ia32,$(arch))
-    CPLUS_FLAGS += -m32
+    CPLUS_FLAGS += -m32 -march=i686
     LIB_LINK_FLAGS += -m32
 endif
 

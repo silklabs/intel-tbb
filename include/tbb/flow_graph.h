@@ -307,6 +307,8 @@ public:
     explicit graph() : my_nodes(NULL), my_nodes_last(NULL)
     {
         own_context = true;
+        cancelled = false;
+        caught_exception = false;
         my_context = new task_group_context();
         my_root_task = ( new ( task::allocate_root(*my_context) ) empty_task );
         my_root_task->set_ref_count(1);
@@ -367,9 +369,26 @@ public:
     //! Wait until graph is idle and decrement_wait_count calls equals increment_wait_count calls.
     /** The waiting thread will go off and steal work while it is block in the wait_for_all. */
     void wait_for_all() {
-        if (my_root_task)
-            my_root_task->wait_for_all();
-        my_root_task->set_ref_count(1);
+        cancelled = false;
+        caught_exception = false;
+        if (my_root_task) {
+#if TBB_USE_EXCEPTIONS
+            try {
+#endif
+                my_root_task->wait_for_all();
+                cancelled = my_context->is_group_execution_cancelled();
+#if TBB_USE_EXCEPTIONS
+            }
+            catch(...) {
+                my_root_task->set_ref_count(1);
+                my_context->reset();
+                caught_exception = true;
+                cancelled = true;
+                throw;
+            }
+#endif
+            my_root_task->set_ref_count(1);
+        }
     }
 
     //! Returns the root task of the graph
@@ -399,16 +418,23 @@ public:
     //! end const iterator
     const_iterator cend() const { return const_iterator(this, false); }
 
+    //! return status of graph execution
+    bool is_cancelled() { return cancelled; }
+    bool exception_thrown() { return caught_exception; }
+
 private:
     task *my_root_task;
     task_group_context *my_context;
     bool own_context;
+    bool cancelled;
+    bool caught_exception;
 
     graph_node *my_nodes, *my_nodes_last;
 
     spin_mutex nodelist_mutex;
     void register_node(graph_node *n); 
     void remove_node(graph_node *n);
+
 };
 
 template <typename C, typename N>
@@ -792,6 +818,8 @@ public:
         graph_node(src.my_graph), internal::continue_input<output_type>(src),
         internal::function_output<Output>()
     {}
+
+    bool try_put(const input_type &i) { return internal::continue_input<Output>::try_put(i); }
 
 protected:
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }

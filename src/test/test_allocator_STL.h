@@ -40,6 +40,8 @@ void TestSequence(const typename Container::allocator_type &a) {
         ASSERT( *p==i*i, NULL );
         ++p;
     }
+    // regression test against compilation error for GCC 4.6.2
+    c.resize(1000);
 }
 
 template<typename Set>

@@ -58,7 +58,7 @@
 /*
  *  imageio.c - This file deals with reading/writing image files
  *
- *  $Id: imageio.cpp,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: imageio.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  */ 
 
 /* For our puposes, we're interested only in the 3 byte per pixel 24 bit

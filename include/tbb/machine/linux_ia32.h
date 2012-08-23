@@ -92,8 +92,10 @@ __TBB_MACHINE_DEFINE_ATOMICS(4,int32_t,"l","=r")
 #pragma warning( disable: 998 )
 #endif
 
-static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, int64_t comparand )
-{
+static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, int64_t comparand ) {
+#if __TBB_GCC_BUILTIN_ATOMICS_PRESENT
+    return __sync_val_compare_and_swap( reinterpret_cast<volatile int64_t*>(ptr), comparand, value );
+#else /* !__TBB_GCC_BUILTIN_ATOMICS_PRESENT */
     int64_t result;
     union {
         int64_t i64;
@@ -139,6 +141,7 @@ static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, 
     );
 #endif /* __PIC__ */
     return result;
+#endif /* !__TBB_GCC_BUILTIN_ATOMICS_PRESENT */
 }
 
 #if __INTEL_COMPILER
@@ -166,12 +169,24 @@ static inline void __TBB_machine_pause( int32_t delay ) {
     return;
 }   
 
+//TODO: Check if it possible and profitable for IA-32 on (Linux and Windows)
+//to use of 64-bit load/store via floating point registers together with full fence
+//for sequentially consistent load/store, instead of CAS.
+
+#if __clang__
+#define __TBB_fildq  "fildll"
+#define __TBB_fistpq "fistpll"
+#else
+#define __TBB_fildq  "fildq"
+#define __TBB_fistpq "fistpq"
+#endif
+
 static inline int64_t __TBB_machine_load8 (const volatile void *ptr) {
     int64_t result;
     if( ((uint32_t)ptr&7u)==0 ) {
         // Aligned load
-        __asm__ __volatile__ ( "fildq %1\n\t"
-                               "fistpq %0" :  "=m"(result) : "m"(*(const __TBB_VOLATILE uint64_t*)ptr) : "memory" );
+        __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
+                               __TBB_fistpq " %0" :  "=m"(result) : "m"(*(const __TBB_VOLATILE uint64_t*)ptr) : "memory" );
     } else {
         // Unaligned load
         result = __TBB_machine_cmpswp8(const_cast<void*>(ptr),0,0);
@@ -187,8 +202,8 @@ extern "C" void __TBB_machine_store8_slow_perf_warning( volatile void *ptr );
 static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
     if( ((uint32_t)ptr&7u)==0 ) {
         // Aligned store
-        __asm__ __volatile__ ( "fildq %1\n\t"
-                               "fistpq %0" :  "=m"(*(__TBB_VOLATILE int64_t*)ptr) : "m"(value) : "memory" );
+        __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
+                               __TBB_fistpq " %0" :  "=m"(*(__TBB_VOLATILE int64_t*)ptr) : "m"(value) : "memory" );
     } else {
         // Unaligned store
 #if TBB_USE_PERFORMANCE_WARNINGS
@@ -206,11 +221,12 @@ static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
 #define __TBB_Pause(V) __TBB_machine_pause(V)
 #define __TBB_Log2(V)  __TBB_machine_lg(V)
 
-#define __TBB_USE_GENERIC_DWORD_FETCH_ADD           1
-#define __TBB_USE_GENERIC_DWORD_FETCH_STORE         1
-#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE   1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
-#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+#define __TBB_USE_GENERIC_DWORD_FETCH_ADD                   1
+#define __TBB_USE_GENERIC_DWORD_FETCH_STORE                 1
+#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
 // API to retrieve/update FPU control setting
 #define __TBB_CPU_CTL_ENV_PRESENT 1

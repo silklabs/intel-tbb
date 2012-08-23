@@ -34,7 +34,6 @@
     LIBRARY_ASSERT and DYNAMIC_LINK_WARNING instead.
 */
 
-
 #ifndef LIBRARY_ASSERT
     #include "tbb/tbb_stddef.h"
     #define LIBRARY_ASSERT(x,y) __TBB_ASSERT(x,y)
@@ -61,7 +60,7 @@
 
 OPEN_INTERNAL_NAMESPACE
 
-#if !defined(DYNAMIC_LINK_WARNING) && (!__TBB_WEAK_SYMBOLS || __TBB_TASK_CPP_DIRECTLY_INCLUDED)
+#if !defined(DYNAMIC_LINK_WARNING) && __TBB_DYNAMIC_LOAD_ENABLED
     // Report runtime errors and continue.
     #define DYNAMIC_LINK_WARNING dynamic_link_warning
     static void dynamic_link_warning( dynamic_link_error_t code, ... ) {
@@ -69,6 +68,7 @@ OPEN_INTERNAL_NAMESPACE
     } // library_warning
 #endif /* DYNAMIC_LINK_WARNING */
 
+#if __TBB_DYNAMIC_LOAD_ENABLED
 #if _WIN32 || _WIN64
 /*
     There is a security issue on Windows: LoadLibrary() may load and execute malicious code.
@@ -90,7 +90,7 @@ OPEN_INTERNAL_NAMESPACE
         in  name -- Name of a file (may be with relative path; it must not be an absolute one).
         out path -- Buffer to save result (absolute path) to.
         in  len  -- Size of buffer.
-        ret      -- 0         -- Error occured.
+        ret      -- 0         -- Error occurred.
                     > len     -- Buffer too short, required size returned.
                     otherwise -- Ok, number of characters (not counting terminating null) written to
                                  buffer.
@@ -112,7 +112,7 @@ static size_t abs_path( char const * name, char * path, size_t len ) {
 
     // Now get path to our DLL.
     DWORD drc = GetModuleFileName( handle, path, static_cast< DWORD >( len ) );
-    if ( drc == 0 ) {    // Error occured.
+    if ( drc == 0 ) {    // Error occurred.
         int err = GetLastError();
         DYNAMIC_LINK_WARNING( dl_sys_fail, "GetModuleFileName", err );
         return drc;
@@ -242,6 +242,7 @@ static size_t abs_path( char const * name, char * path, size_t len ) {
 
 _abs_path abs_path;
 #endif /* WIN */
+#endif /* __TBB_DYNAMIC_LOAD_ENABLED */
 
 #if __TBB_WEAK_SYMBOLS
 
@@ -366,10 +367,10 @@ bool dynamic_link( const char* library, const dynamic_link_descriptor descriptor
 
     // Get descriptors from the library
     if ( library_handle && dynamic_link( library_handle, descriptors, n, required ) ) {
-#if !__TBB_DYNAMIC_LOAD_ENABLED && !__TBB_TASK_CPP_DIRECTLY_INCLUDED
+#if !__TBB_DYNAMIC_LOAD_ENABLED
         return true;
 #else
-        // The library have been loaded by another module and contains requested symbols.
+        // The library has been loaded by another module and contains requested symbols.
         // But after we obtained the library's handle it can be unloaded by another thread
         // invalidating our handle copy. Therefore we need to pin the library in memory.
 #if _WIN32||_WIN64
@@ -419,7 +420,7 @@ bool dynamic_link( const char* library, const dynamic_link_descriptor descriptor
         library_handle = 0;
     }
 
-#if __TBB_DYNAMIC_LOAD_ENABLED || __TBB_TASK_CPP_DIRECTLY_INCLUDED
+#if __TBB_DYNAMIC_LOAD_ENABLED
     if ( !library_handle ) {
 #if _WIN32||_WIN64
 #if _XBOX

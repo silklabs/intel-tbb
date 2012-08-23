@@ -85,9 +85,12 @@ struct arena_base : intrusive_list_node {
     unsigned my_num_workers_allotted;
 
     //! Number of threads in the arena at the moment
-    /** Consists of the workers servicing the arena and one master until it starts 
+    /** Consists of the workers servicing the arena and one master until it starts
         arena shutdown and detaches from it. Plays the role of the arena's ref count. **/
     atomic<unsigned> my_num_threads_active;
+
+    //! ABA prevention marker
+    uintptr_t my_aba_epoch;
 
     //! FPU control settings of arena's master thread captured at the moment of arena instantiation.
     __TBB_cpu_ctl_env_t my_cpu_ctl_env;
@@ -236,14 +239,11 @@ private:
     /** Return true if no job or if arena is being cleaned up. */
     bool is_out_of_work();
 
-    //! Initiates arena shutdown.
-    void close_arena ();
-
     //! Registers the worker with the arena and enters TBB scheduler dispatch loop
     void process( generic_scheduler& );
 
     //! Notification that worker or master leaves its arena
-    inline void on_thread_leaving ();
+    inline void on_thread_leaving ( bool master = false );
 
 #if __TBB_STATISTICS
     //! Outputs internal statistics accumulated by the arena
@@ -274,8 +274,14 @@ private:
 namespace tbb {
 namespace internal {
 
-inline void arena::on_thread_leaving () {
-    // In case of using fire-and-forget tasks (scheduled via task::enqueue()) 
+inline void arena::on_thread_leaving ( bool master ) {
+    //
+    // Implementation of arena destruction synchronization logic contained various
+    // bugs/flaws at the different stages of its evolution, so below is a detailed
+    // description of the issues taken into consideration in the framework of the
+    // current design.
+    //
+    // In case of using fire-and-forget tasks (scheduled via task::enqueue())
     // master thread is allowed to leave its arena before all its work is executed,
     // and market may temporarily revoke all workers from this arena. Since revoked
     // workers never attempt to reset arena state to EMPTY and cancel its request
@@ -283,24 +289,45 @@ inline void arena::on_thread_leaving () {
     // thread is leaving it and arena's state is EMPTY (that is its master thread
     // left and it does not contain any work).
     //
-    // A worker that checks for work presence and transitions arena to the EMPTY 
+    // A worker that checks for work presence and transitions arena to the EMPTY
     // state (in snapshot taking procedure arena::is_out_of_work()) updates
     // arena::my_pool_state first and only then arena::my_num_workers_requested.
-    // So the below check for work absence must be done against the latter field.
+    // So the check for work absence must be done against the latter field.
     //
-    // Besides there is a time window between decrementing the active threads count
-    // and checking if there is an outstanding request for workers. New worker 
-    // thread may arrive during this window, finish whatever work is present, and
-    // then shutdown the arena. This sequence may result in destructing the same
-    // arena twice. So a local copy of the outstanding request value must be done
-    // before decrementing active threads count.
+    // In a time window between decrementing the active threads count and checking
+    // if there is an outstanding request for workers. New worker thread may arrive,
+    // finish remaining work, set arena state to empty, and leave decrementing its
+    // refcount and destroying. Then the current thread will destroy the arena
+    // the second time. To preclude it a local copy of the outstanding request
+    // value can be stored before decrementing active threads count.
     //
-    int requested = __TBB_load_with_acquire(my_num_workers_requested);
-    if ( --my_num_threads_active==0 && !requested ) {
-        __TBB_ASSERT( !my_num_workers_requested, NULL );
-        __TBB_ASSERT( my_pool_state == SNAPSHOT_EMPTY || !my_max_num_workers, NULL );
-        close_arena();
-    }
+    // But this technique may cause two other problem. When the stored request is
+    // zero, it is possible that arena still has threads and they can generate new
+    // tasks and thus re-establish non-zero requests. Then all the threads can be
+    // revoked (as described above) leaving this thread the last one, and causing
+    // it to destroy non-empty arena.
+    //
+    // The other problem takes place when the stored request is non-zero. Another
+    // thread may complete the work, set arena state to empty, and leave without
+    // arena destruction before this thread decrements the refcount. This thread
+    // cannot destroy the arena either. Thus the arena may be "orphaned".
+    //
+    // In both cases we cannot dereference arena pointer after the refcount is
+    // decremented, as our arena may already be destroyed.
+    //
+    // If this is the master thread, market can be concurrently destroyed.
+    // In case of workers market's liveness is ensured by the RML connection
+    // rundown protocol, according to which the client (i.e. the market) lives
+    // until RML server notifies it about connection termination, and this
+    // notification is fired only after all workers return into RML.
+    //
+    // Thus if we decremented refcount to zero we ask the market to check arena
+    // state (including the fact if it is alive) under the lock.
+    //
+    uintptr_t aba_epoch = my_aba_epoch;
+    market* m = my_market;
+    if ( !--my_num_threads_active )
+        market::try_destroy_arena( m, this, aba_epoch, master );
 }
 
 template<bool Spawned> void arena::advertise_new_work() {

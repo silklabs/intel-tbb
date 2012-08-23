@@ -338,7 +338,7 @@ void MoveThreadIntoProcessorGroup( void* hThread, int groupIndex ) {
     __TBB_ASSERT( hardware_concurrency_info == initialization_complete, "MoveThreadIntoProcessorGroup is used before AvailableHwConcurrency" );
     if ( !TBB_SetThreadGroupAffinity )
         return;
-    TBB_GROUP_AFFINITY ga = { theProcessorGroups[groupIndex].mask, (WORD)groupIndex };
+    TBB_GROUP_AFFINITY ga = { theProcessorGroups[groupIndex].mask, (WORD)groupIndex, {0,0,0} };
     TBB_SetThreadGroupAffinity( hThread, &ga, NULL );
 }
 

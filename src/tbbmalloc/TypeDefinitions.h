@@ -89,6 +89,13 @@ static inline T alignUp  (T arg, uintptr_t alignment) {
     return T(((uintptr_t)arg+(alignment-1)) & ~(alignment-1));
     // /*is this better?*/ return (((uintptr_t)arg-1) | (alignment-1)) + 1;
 }
+template<typename T> // works for not power-of-2 alignments
+static inline T alignUpGeneric(T arg, uintptr_t alignment) {
+    if (size_t rem = arg % alignment) {
+        arg += alignment - rem;
+    }
+    return arg;
+}
 template<typename T>
 static inline bool isAligned(T arg, uintptr_t alignment) {
     return 0==((uintptr_t)arg & (alignment-1));

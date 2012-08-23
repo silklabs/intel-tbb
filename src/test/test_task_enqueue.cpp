@@ -181,81 +181,81 @@ static volatile bool CanStart;
 //! Custom user task interface
 class ITask {
 public: 
-	virtual ~ITask() {} 
-	virtual void Execute() = 0;
-	virtual void Release() { delete this; }
+    virtual ~ITask() {} 
+    virtual void Execute() = 0;
+    virtual void Release() { delete this; }
 };
 
 class TestTask : public ITask {
-	volatile bool *m_pDone;
+    volatile bool *m_pDone;
 public:
     TestTask ( volatile bool *pDone ) : m_pDone(pDone) {}
 
-	/* override */ void Execute() {
-		*m_pDone = true;
-	}
+    /* override */ void Execute() {
+        *m_pDone = true;
+    }
 };
 
 class CarrierTask : public tbb::task {
-	ITask* m_pTask;
+    ITask* m_pTask;
 public:
     CarrierTask(ITask* pTask) : m_pTask(pTask) {}
 
-	/*override*/ task* execute() {
-		m_pTask->Execute();
-		m_pTask->Release();
-		return NULL;
-	}
+    /*override*/ task* execute() {
+        m_pTask->Execute();
+        m_pTask->Release();
+        return NULL;
+    }
 };
 
 class SpawnerTask : public ITask {
-	ITask* m_taskToSpawn;
+    ITask* m_taskToSpawn;
 public:
-	SpawnerTask(ITask* job) : m_taskToSpawn(job) {}
+    SpawnerTask(ITask* job) : m_taskToSpawn(job) {}
 
-	void Execute() {
-		while ( !CanStart )
-		    __TBB_Yield();
-		tbb::task::enqueue( *new( tbb::task::allocate_root() ) CarrierTask(m_taskToSpawn) );
-	}
+    void Execute() {
+        while ( !CanStart )
+            __TBB_Yield();
+        tbb::task::enqueue( *new( tbb::task::allocate_root() ) CarrierTask(m_taskToSpawn) );
+    }
 };
 
 class EnqueuerBody {
 public:
     void operator() ( int id ) const {
-	    tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads() + 1);
+        tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads() + 1);
 
-	    SpawnerTask* pTask = new SpawnerTask( new TestTask(Finished + id) );
-	    tbb::task::enqueue( *new( tbb::task::allocate_root() ) CarrierTask(pTask) );
+        SpawnerTask* pTask = new SpawnerTask( new TestTask(Finished + id) );
+        tbb::task::enqueue( *new( tbb::task::allocate_root() ) CarrierTask(pTask) );
     }
 };
 
 //! Regression test for a bug that caused premature arena destruction
 void TestCascadedEnqueue () {
     REMARK("Testing cascaded enqueue\n");
-	tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads() + 1);
+    tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads() + 1);
 
     int minNumThreads = min(tbb::task_scheduler_init::default_num_threads(), MaxNumThreads) / 2;
-	int maxNumThreads = min(tbb::task_scheduler_init::default_num_threads() * 2, MaxNumThreads);
+    int maxNumThreads = min(tbb::task_scheduler_init::default_num_threads() * 2, MaxNumThreads);
 
-	for ( int numThreads = minNumThreads; numThreads <= maxNumThreads; ++numThreads ) {
-		for ( int i = 0; i < NumRepeats; ++i ) {
-			CanStart = false;
+    for ( int numThreads = minNumThreads; numThreads <= maxNumThreads; ++numThreads ) {
+        for ( int i = 0; i < NumRepeats; ++i ) {
+            CanStart = false;
             __TBB_Yield();
-			NativeParallelFor( numThreads, EnqueuerBody() );
-			CanStart = true;
+            NativeParallelFor( numThreads, EnqueuerBody() );
+            CanStart = true;
             int j = 0;
-			while ( j < numThreads ) {
+            while ( j < numThreads ) {
                 if ( Finished[j] )
                     ++j;
                 else
-    				__TBB_Yield();
-			}
+                    __TBB_Yield();
+            }
             for ( j = 0; j < numThreads; ++j )
                 Finished[j] = false;
             REMARK("%02d threads; Iteration %03d\r", numThreads, i);
-		}
-	}
+        }
+    }
     REMARK( "                                 \r" );
 }
 
@@ -270,11 +270,11 @@ public:
 class SharedRootBody {
     tbb::task *my_root;
 public:
-	SharedRootBody ( tbb::task *root ) : my_root(root) {}
+    SharedRootBody ( tbb::task *root ) : my_root(root) {}
 
-	void operator() ( int ) const {
-	    tbb::task::enqueue( *new( tbb::task::allocate_additional_child_of(*my_root) ) DummyTask );
-	}
+    void operator() ( int ) const {
+        tbb::task::enqueue( *new( tbb::task::allocate_additional_child_of(*my_root) ) DummyTask );
+    }
 };
 
 //! Test for enqueuing children of the same root from different master threads

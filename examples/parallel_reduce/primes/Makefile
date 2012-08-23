@@ -34,6 +34,18 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # icc
 
+ifeq ($(offload), mic)
+override CXXFLAGS += -D__TBB_MIC=1
+endif
+
+ifeq ($(CXX), icc)
+TBBLIB = -tbb
+TBBLIB_DEBUG = -tbb
+else
+TBBLIB = -ltbb
+TBBLIB_DEBUG = -ltbb_debug
+endif
+
 ifeq ($(shell uname), Linux)
 LIBS+= -lrt 
 endif
@@ -41,10 +53,10 @@ endif
 all:	release test
 
 release: main.cpp primes.cpp 
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb $(LIBS)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ $(TBBLIB) $(LIBS)
 
 debug: main.cpp primes.cpp
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb_debug $(LIBS)
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ $(TBBLIB_DEBUG) $(LIBS)
 
 clean:
 	$(RM) $(PROG) *.o *.d

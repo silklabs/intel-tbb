@@ -58,7 +58,7 @@
 /* 
  * shade.h - This file contains declarations and definitions for the shader.
  *
- *  $Id: shade.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: shade.h,v 1.2 2007-02-22 17:54:16 Exp $
  */
  
 void reset_lights(void);

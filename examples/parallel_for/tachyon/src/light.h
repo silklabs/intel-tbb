@@ -58,7 +58,7 @@
 /* 
  * light.h - this file includes declarations and defines for light sources.
  *
- *  $Id: light.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: light.h,v 1.2 2007-02-22 17:54:15  Exp $
  */
 
 typedef struct {

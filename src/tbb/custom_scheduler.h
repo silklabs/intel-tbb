@@ -97,12 +97,11 @@ class custom_scheduler: private generic_scheduler {
         task_prefix& p = s.prefix();
         if( SchedulerTraits::itt_possible )
             ITT_NOTIFY(sync_releasing, &p.ref_count);
-        if( SchedulerTraits::has_slow_atomic && p.ref_count==1 ) {
+        if( SchedulerTraits::has_slow_atomic && p.ref_count==1 )
             p.ref_count=0;
-        } else {
-            if( __TBB_FetchAndDecrementWrelease(&p.ref_count) > 1 ) // more references exist
-                return;
-        }
+        else if( __TBB_FetchAndDecrementWrelease(&p.ref_count) > 1 ) // more references exist
+            return;
+
         // Ordering on p.ref_count (superfluous if SchedulerTraits::has_slow_atomic)
         __TBB_control_consistency_helper();
         __TBB_ASSERT(p.ref_count==0, "completion of task caused predecessor's reference count to underflow");

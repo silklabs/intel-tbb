@@ -70,7 +70,7 @@ bool __TBB_InitOnce::InitializationDone;
     static bool ITT_InitializationDone;
 #endif
 
-#if !(_WIN32||_WIN64) || !__TBB_DYNAMIC_LOAD_ENABLED
+#if !(_WIN32||_WIN64) || __TBB_SOURCE_DIRECTLY_INCLUDED
     static __TBB_InitOnce __TBB_InitOnceHiddenInstance;
 #endif
 
@@ -188,7 +188,7 @@ void DoOneTimeInitializations() {
     __TBB_InitOnce::unlock();
 }
 
-#if (_WIN32||_WIN64) && __TBB_DYNAMIC_LOAD_ENABLED
+#if (_WIN32||_WIN64) && !__TBB_SOURCE_DIRECTLY_INCLUDED
 //! Windows "DllMain" that handles startup and shutdown of dynamic library.
 extern "C" bool WINAPI DllMain( HANDLE /*hinstDLL*/, DWORD reason, LPVOID /*lpvReserved*/ ) {
     switch( reason ) {
@@ -210,7 +210,7 @@ extern "C" bool WINAPI DllMain( HANDLE /*hinstDLL*/, DWORD reason, LPVOID /*lpvR
     }
     return true;
 }
-#endif /* (_WIN32||_WIN64) && __TBB_DYNAMIC_LOAD_ENABLED */
+#endif /* (_WIN32||_WIN64) && !__TBB_SOURCE_DIRECTLY_INCLUDED */
 
 void itt_store_pointer_with_release_v3( void* dst, void* src ) {
     ITT_NOTIFY(sync_releasing, dst);
@@ -243,7 +243,7 @@ void* itt_load_pointer_v3( const void* src ) {
 
 void itt_set_sync_name_v3( void* obj, const tchar* name) {
     ITT_SYNC_RENAME(obj, name);
-    (void)obj, (void)name;  // Prevents compiler warning when ITT support is switched off
+    suppress_unused_warning(obj && name);
 }
 
 

@@ -45,10 +45,10 @@
 
 #define FLAT_RANGE  100000
 #define FLAT_GRAIN  100
-#define NESTING_RANGE  100
-#define NESTING_GRAIN  10
-#define NESTED_RANGE  (FLAT_RANGE / NESTING_RANGE)
-#define NESTED_GRAIN  (FLAT_GRAIN / NESTING_GRAIN)
+#define OUTER_RANGE  100
+#define OUTER_GRAIN  10
+#define INNER_RANGE  (FLAT_RANGE / OUTER_RANGE)
+#define INNER_GRAIN  (FLAT_GRAIN / OUTER_GRAIN)
 
 tbb::atomic<intptr_t> g_FedTasksCount; // number of tasks added by parallel_do feeder
 
@@ -75,12 +75,12 @@ inline intptr_t NumSubranges ( intptr_t length, intptr_t grain ) {
 }
 
 template<class Body>
-intptr_t TestNumSubrangesCalculation ( intptr_t length, intptr_t grain, intptr_t nested_length, intptr_t nested_grain ) {
+intptr_t TestNumSubrangesCalculation ( intptr_t length, intptr_t grain, intptr_t inner_length, intptr_t inner_grain ) {
     ResetGlobals();
     g_ThrowException = false;
-    intptr_t nestingCalls = NumSubranges(length, grain),
-             nestedCalls = NumSubranges(nested_length, nested_grain),
-             maxExecuted = nestingCalls * (nestedCalls + 1);
+    intptr_t outerCalls = NumSubranges(length, grain),
+             innerCalls = NumSubranges(inner_length, inner_grain),
+             maxExecuted = outerCalls * (innerCalls + 1);
     tbb::parallel_for( range_type(0, length, grain), Body() );
     ASSERT (g_CurExecuted == maxExecuted, "Wrong estimation of bodies invocation count");
     return maxExecuted;
@@ -123,7 +123,8 @@ public:
 //! Test parallel_for and parallel_reduce for a given partitioner.
 /** The Body need only be suitable for a parallel_for. */
 template<typename ParForBody, typename Partitioner>
-void TestParallelLoopAux( Partitioner& partitioner ) {
+void TestParallelLoopAux() {
+    Partitioner partitioner;
     for( int i=0; i<2; ++i ) {
         ResetGlobals();
         TRY();
@@ -134,7 +135,7 @@ void TestParallelLoopAux( Partitioner& partitioner ) {
                 tbb::parallel_reduce( range_type(0, FLAT_RANGE, FLAT_GRAIN), rb, partitioner );
             }
         CATCH_AND_ASSERT();
-        ASSERT (exceptionCaught, "No exception thrown from the nesting parallel_for");
+        ASSERT (exceptionCaught, "No exception thrown from the outer parallel_for");
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
         ASSERT (g_Exceptions == 1, "No try_blocks in any body expected in this test");
         if ( !g_SolitaryException )
@@ -147,19 +148,23 @@ void TestParallelLoopAux( Partitioner& partitioner ) {
 template<typename Body>
 void TestParallelLoop() {
     // The simple and auto partitioners should be const, but not the affinity partitioner.
-    const tbb::simple_partitioner p0;
-    TestParallelLoopAux<Body>( p0 );
-    const tbb::auto_partitioner p1;
-    TestParallelLoopAux<Body>( p1 );
+    TestParallelLoopAux<Body, const tbb::simple_partitioner  >();
+    TestParallelLoopAux<Body, const tbb::auto_partitioner    >();
+#define __TBB_TEMPORARILY_DISABLED 1
+#if !__TBB_TEMPORARILY_DISABLED
+    // TODO: Improve the test so that it tolerates delayed start of tasks with affinity_partitioner
+    TestParallelLoopAux<Body, /***/ tbb::affinity_partitioner>();
+#endif
+#undef __TBB_TEMPORARILY_DISABLED
 }
 
 class SimpleParForBody: NoAssign {
 public:
     void operator()( const range_type& r ) const {
         Harness::ConcurrencyTracker ct;
-        volatile long x;
+        volatile long x = 0;
         for( count_type i = r.begin(); i != r.end(); ++i )
-            x = 0;
+            x += 0;
         ++g_CurExecuted;
         WaitUntilConcurrencyPeaks();
         ThrowTestException(1);
@@ -170,48 +175,48 @@ void Test1() {
     TestParallelLoop<SimpleParForBody>();
 } // void Test1 ()
 
-class NestingParForBody: NoAssign {
+class OuterParForBody: NoAssign {
 public:
     void operator()( const range_type& ) const {
         Harness::ConcurrencyTracker ct;
         ++g_CurExecuted;
-        tbb::parallel_for( tbb::blocked_range<size_t>(0, NESTED_RANGE, NESTED_GRAIN), SimpleParForBody() );
+        tbb::parallel_for( tbb::blocked_range<size_t>(0, INNER_RANGE, INNER_GRAIN), SimpleParForBody() );
     }
 };
 
-//! Uses parallel_for body containing a nested parallel_for with the default context not wrapped by a try-block.
-/** Nested algorithms are spawned inside the new bound context by default. Since
-    exceptions thrown from the nested parallel_for are not handled by the caller
-    (nesting parallel_for body) in this test, they will cancel all the sibling nested
+//! Uses parallel_for body containing an inner parallel_for with the default context not wrapped by a try-block.
+/** Inner algorithms are spawned inside the new bound context by default. Since
+    exceptions thrown from the inner parallel_for are not handled by the caller
+    (outer parallel_for body) in this test, they will cancel all the sibling inner
     algorithms. **/
 void Test2 () {
-    TestParallelLoop<NestingParForBody>();
+    TestParallelLoop<OuterParForBody>();
 } // void Test2 ()
 
-class NestingParForBodyWithIsolatedCtx {
+class OuterParForBodyWithIsolatedCtx {
 public:
     void operator()( const range_type& ) const {
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
         ++g_CurExecuted;
-        tbb::parallel_for( tbb::blocked_range<size_t>(0, NESTED_RANGE, NESTED_GRAIN), SimpleParForBody(), tbb::simple_partitioner(), ctx );
+        tbb::parallel_for( tbb::blocked_range<size_t>(0, INNER_RANGE, INNER_GRAIN), SimpleParForBody(), tbb::simple_partitioner(), ctx );
     }
 };
 
-//! Uses parallel_for body invoking a nested parallel_for with an isolated context without a try-block.
-/** Even though exceptions thrown from the nested parallel_for are not handled
-    by the caller in this test, they will not affect sibling nested algorithms
+//! Uses parallel_for body invoking an inner parallel_for with an isolated context without a try-block.
+/** Even though exceptions thrown from the inner parallel_for are not handled
+    by the caller in this test, they will not affect sibling inner algorithms
     already running because of the isolated contexts. However because the first
     exception cancels the root parallel_for only the first g_NumThreads subranges
-    will be processed (which launch nested parallel_fors) **/
+    will be processed (which launch inner parallel_fors) **/
 void Test3 () {
     ResetGlobals();
-    typedef NestingParForBodyWithIsolatedCtx body_type;
-    intptr_t  nestedCalls = NumSubranges(NESTED_RANGE, NESTED_GRAIN),
-            minExecuted = (g_NumThreads - 1) * nestedCalls;
+    typedef OuterParForBodyWithIsolatedCtx body_type;
+    intptr_t  innerCalls = NumSubranges(INNER_RANGE, INNER_GRAIN),
+            minExecuted = (g_NumThreads - 1) * innerCalls;
     TRY();
-        tbb::parallel_for( range_type(0, NESTING_RANGE, NESTING_GRAIN), body_type() );
+        tbb::parallel_for( range_type(0, OUTER_RANGE, OUTER_GRAIN), body_type() );
     CATCH_AND_ASSERT();
-    ASSERT (exceptionCaught, "No exception thrown from the nesting parallel_for");
+    ASSERT (exceptionCaught, "No exception thrown from the outer parallel_for");
     if ( g_SolitaryException ) {
         ASSERT (g_CurExecuted > minExecuted, "Too few tasks survived exception");
         ASSERT (g_CurExecuted <= minExecuted + (g_ExecutedAtCatch + g_NumThreads), "Too many tasks survived exception");
@@ -221,42 +226,42 @@ void Test3 () {
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
 } // void Test3 ()
 
-class NestingParForExceptionSafeBody {
+class OuterParForExceptionSafeBody {
 public:
     void operator()( const range_type& ) const {
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
         TRY();
-            tbb::parallel_for( tbb::blocked_range<size_t>(0, NESTED_RANGE, NESTED_GRAIN), SimpleParForBody(), tbb::simple_partitioner(), ctx );
-        CATCH();
+            tbb::parallel_for( tbb::blocked_range<size_t>(0, INNER_RANGE, INNER_GRAIN), SimpleParForBody(), tbb::simple_partitioner(), ctx );
+        CATCH();  // this macro sets g_ExceptionCaught
     }
 };
 
-//! Uses parallel_for body invoking a nested parallel_for (with default bound context) inside a try-block.
-/** Since exception(s) thrown from the nested parallel_for are handled by the caller
+//! Uses parallel_for body invoking an inner parallel_for (with default bound context) inside a try-block.
+/** Since exception(s) thrown from the inner parallel_for are handled by the caller
     in this test, they do not affect neither other tasks of the the root parallel_for
-    nor sibling nested algorithms. **/
+    nor sibling inner algorithms. **/
 void Test4 () {
     ResetGlobals( true, true );
-    intptr_t  nestedCalls = NumSubranges(NESTED_RANGE, NESTED_GRAIN),
-            nestingCalls = NumSubranges(NESTING_RANGE, NESTING_GRAIN),
-            maxExecuted = nestingCalls * nestedCalls;
+    intptr_t  innerCalls = NumSubranges(INNER_RANGE, INNER_GRAIN),
+            outerCalls = NumSubranges(OUTER_RANGE, OUTER_GRAIN),
+            maxExecuted = outerCalls * innerCalls;
     TRY();
-        tbb::parallel_for( range_type(0, NESTING_RANGE, NESTING_GRAIN), NestingParForExceptionSafeBody() );
+        tbb::parallel_for( range_type(0, OUTER_RANGE, OUTER_GRAIN), OuterParForExceptionSafeBody() );
     CATCH();
-    ASSERT (!exceptionCaught, "All exceptions must have been handled in the parallel_for body");
+    ASSERT(!exceptionCaught, "All exceptions must have been handled in the parallel_for body");
     intptr_t  minExecuted = 0;
     if ( g_SolitaryException ) {
-        minExecuted = maxExecuted - nestedCalls;
+        minExecuted = maxExecuted - innerCalls;
         ASSERT (g_Exceptions == 1, "No exception registered");
         ASSERT (g_CurExecuted >= minExecuted, "Too few tasks executed");
         ASSERT (g_CurExecuted <= minExecuted + g_NumThreads, "Too many tasks survived exception");
     }
     else {
         minExecuted = g_Exceptions;
-        ASSERT (g_Exceptions > 1 && g_Exceptions <= nestingCalls, "Unexpected actual number of exceptions");
+        ASSERT (g_Exceptions > 1 && g_Exceptions <= outerCalls, "Unexpected actual number of exceptions");
         ASSERT (g_CurExecuted >= minExecuted, "Too many executed tasks reported");
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived multiple exceptions");
-        ASSERT (g_CurExecuted <= nestingCalls * (1 + g_NumThreads), "Too many tasks survived exception");
+        ASSERT (g_CurExecuted <= outerCalls * (1 + g_NumThreads), "Too many tasks survived exception");
     }
 } // void Test4 ()
 
@@ -327,14 +332,18 @@ void TestCancelation2 () {
 // Regression test based on the contribution by the author of the following forum post:
 // http://softwarecommunity.intel.com/isn/Community/en-US/forums/thread/30254959.aspx
 
-#define LOOP_COUNT 16
-#define MAX_NESTING 3
-#define REDUCE_RANGE 1024
-#define REDUCE_GRAIN 256
-
 class Worker {
+    static const int max_nesting = 3;
+    static const int reduce_range = 1024;
+    static const int reduce_grain = 256;
 public:
-    void DoWork (int & result, int nest);
+    int DoWork (int level);
+    int Validate (int start_level) {
+        int expected = 1; // identity for multiplication
+        for(int i=start_level+1; i<max_nesting; ++i)
+             expected *= reduce_range;
+        return expected;
+    }
 };
 
 class RecursiveParReduceBodyWithSharedWorker {
@@ -347,17 +356,15 @@ public:
         , m_NestingLevel(src.m_NestingLevel)
         , m_Result(0)
     {}
-    RecursiveParReduceBodyWithSharedWorker ( Worker *w, int nesting )
+    RecursiveParReduceBodyWithSharedWorker ( Worker *w, int outer )
         : m_SharedWorker(w)
-        , m_NestingLevel(nesting)
+        , m_NestingLevel(outer)
         , m_Result(0)
     {}
 
     void operator() ( const tbb::blocked_range<size_t>& r ) {
         for (size_t i = r.begin (); i != r.end (); ++i) {
-            int subtotal = 0;
-            m_SharedWorker->DoWork (subtotal, m_NestingLevel);
-            m_Result += subtotal;
+            m_Result += m_SharedWorker->DoWork (m_NestingLevel);
         }
     }
     void join (const RecursiveParReduceBodyWithSharedWorker & x) {
@@ -366,23 +373,23 @@ public:
     int result () { return m_Result; }
 };
 
-void Worker::DoWork ( int& result, int nest ) {
-    ++nest;
-    if ( nest < MAX_NESTING ) {
-        RecursiveParReduceBodyWithSharedWorker rt (this, nest);
-        tbb::parallel_reduce (tbb::blocked_range<size_t>(0, REDUCE_RANGE, REDUCE_GRAIN), rt);
-        result = rt.result ();
+int Worker::DoWork ( int level ) {
+    ++level;
+    if ( level < max_nesting ) {
+        RecursiveParReduceBodyWithSharedWorker rt (this, level);
+        tbb::parallel_reduce (tbb::blocked_range<size_t>(0, reduce_range, reduce_grain), rt);
+        return rt.result();
     }
     else
-        ++result;
+        return 1;
 }
 
 //! Regression test for hanging that occurred with the first version of cancellation propagation
 void TestCancelation3 () {
     Worker w;
-    int result = 0;
-    w.DoWork (result, 0);
-    ASSERT ( result == 1048576, "Wrong calculation result");
+    int result   = w.DoWork (0);
+    int expected = w.Validate(0);
+    ASSERT ( result == expected, "Wrong calculation result");
 }
 
 void RunParForAndReduceTests () {
@@ -407,8 +414,8 @@ void RunParForAndReduceTests () {
 
 #define ITER_RANGE          1000
 #define ITEMS_TO_FEED       50
-#define NESTED_ITER_RANGE   100
-#define NESTING_ITER_RANGE  50
+#define INNER_ITER_RANGE   100
+#define OUTER_ITER_RANGE  50
 
 #define PREPARE_RANGE(Iterator, rangeSize)  \
     size_t test_vector[rangeSize + 1]; \
@@ -418,8 +425,8 @@ void RunParForAndReduceTests () {
     Iterator end(&test_vector[rangeSize])
 
 void Feed ( tbb::parallel_do_feeder<size_t> &feeder, size_t val ) {
-    if (g_FedTasksCount < ITEMS_TO_FEED) { 
-        ++g_FedTasksCount; 
+    if (g_FedTasksCount < ITEMS_TO_FEED) {
+        ++g_FedTasksCount;
         feeder.add(val);
     }
 }
@@ -465,37 +472,37 @@ void Test1_parallel_do () {
 } // void Test1_parallel_do ()
 
 template <class Iterator>
-class NestingParDoBody {
+class OuterParDoBody {
 public:
     void operator()( size_t& /*value*/ ) const {
         ++g_CurExecuted;
-        PREPARE_RANGE(Iterator, NESTED_ITER_RANGE);
+        PREPARE_RANGE(Iterator, INNER_ITER_RANGE);
         tbb::parallel_do<Iterator, SimpleParDoBody>(begin, end, SimpleParDoBody());
     }
 };
 
 template <class Iterator>
-class NestingParDoBodyWithFeeder : NestingParDoBody<Iterator> {
+class OuterParDoBodyWithFeeder : OuterParDoBody<Iterator> {
 public:
     void operator()( size_t& value, tbb::parallel_do_feeder<size_t>& feeder ) const {
         Feed(feeder, 0);
-        NestingParDoBody<Iterator>::operator()(value);
+        OuterParDoBody<Iterator>::operator()(value);
     }
 };
 
-//! Uses parallel_do body containing a nested parallel_do with the default context not wrapped by a try-block.
-/** Nested algorithms are spawned inside the new bound context by default. Since
-    exceptions thrown from the nested parallel_do are not handled by the caller
-    (nesting parallel_do body) in this test, they will cancel all the sibling nested
+//! Uses parallel_do body containing an inner parallel_do with the default context not wrapped by a try-block.
+/** Inner algorithms are spawned inside the new bound context by default. Since
+    exceptions thrown from the inner parallel_do are not handled by the caller
+    (outer parallel_do body) in this test, they will cancel all the sibling inner
     algorithms. **/
-template <class Iterator, class nesting_body>
+template <class Iterator, class outer_body>
 void Test2_parallel_do () {
     ResetGlobals();
     PREPARE_RANGE(Iterator, ITER_RANGE);
     TRY();
-        tbb::parallel_do<Iterator, nesting_body >(begin, end, nesting_body() );
+        tbb::parallel_do<Iterator, outer_body >(begin, end, outer_body() );
     CATCH_AND_ASSERT();
-    ASSERT (exceptionCaught, "No exception thrown from the nesting parallel_for");
+    ASSERT (exceptionCaught, "No exception thrown from the outer parallel_for");
     //if ( g_SolitaryException )
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
     ASSERT (g_Exceptions == 1, "No try_blocks in any body expected in this test");
@@ -503,42 +510,42 @@ void Test2_parallel_do () {
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
 } // void Test2_parallel_do ()
 
-template <class Iterator> 
-class NestingParDoBodyWithIsolatedCtx {
+template <class Iterator>
+class OuterParDoBodyWithIsolatedCtx {
 public:
     void operator()( size_t& /*value*/ ) const {
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
         ++g_CurExecuted;
-        PREPARE_RANGE(Iterator, NESTED_ITER_RANGE);
+        PREPARE_RANGE(Iterator, INNER_ITER_RANGE);
         tbb::parallel_do<Iterator, SimpleParDoBody>(begin, end, SimpleParDoBody(), ctx);
     }
 };
 
-template <class Iterator> 
-class NestingParDoBodyWithIsolatedCtxWithFeeder : NestingParDoBodyWithIsolatedCtx<Iterator> {
+template <class Iterator>
+class OuterParDoBodyWithIsolatedCtxWithFeeder : OuterParDoBodyWithIsolatedCtx<Iterator> {
 public:
     void operator()( size_t& value, tbb::parallel_do_feeder<size_t> &feeder ) const {
         Feed(feeder, 0);
-        NestingParDoBodyWithIsolatedCtx<Iterator>::operator()(value);
+        OuterParDoBodyWithIsolatedCtx<Iterator>::operator()(value);
     }
 };
 
-//! Uses parallel_do body invoking a nested parallel_do with an isolated context without a try-block.
-/** Even though exceptions thrown from the nested parallel_do are not handled
-    by the caller in this test, they will not affect sibling nested algorithms
+//! Uses parallel_do body invoking an inner parallel_do with an isolated context without a try-block.
+/** Even though exceptions thrown from the inner parallel_do are not handled
+    by the caller in this test, they will not affect sibling inner algorithms
     already running because of the isolated contexts. However because the first
-    exception cancels the root parallel_do only the first g_NumThreads subranges
-    will be processed (which launch nested parallel_dos) **/
-template <class Iterator, class nesting_body>
+    exception cancels the root parallel_do, only the first g_NumThreads subranges
+    will be processed (which launch inner parallel_dos) **/
+template <class Iterator, class outer_body>
 void Test3_parallel_do () {
     ResetGlobals();
-    PREPARE_RANGE(Iterator, NESTING_ITER_RANGE);
-    intptr_t nestedCalls = NESTED_ITER_RANGE,
-             minExecuted = (g_NumThreads - 1) * nestedCalls;
+    PREPARE_RANGE(Iterator, OUTER_ITER_RANGE);
+    intptr_t innerCalls = INNER_ITER_RANGE,
+             minExecuted = (g_NumThreads - 1) * innerCalls;
     TRY();
-        tbb::parallel_do<Iterator, nesting_body >(begin, end, nesting_body());
+        tbb::parallel_do<Iterator, outer_body >(begin, end, outer_body());
     CATCH_AND_ASSERT();
-    ASSERT (exceptionCaught, "No exception thrown from the nesting parallel_for");
+    ASSERT (exceptionCaught, "No exception thrown from the outer parallel_for");
     if ( g_SolitaryException ) {
         ASSERT (g_CurExecuted > minExecuted, "Too few tasks survived exception");
         ASSERT (g_CurExecuted <= minExecuted + (g_ExecutedAtCatch + g_NumThreads), "Too many tasks survived exception");
@@ -549,11 +556,11 @@ void Test3_parallel_do () {
 } // void Test3_parallel_do ()
 
 template <class Iterator>
-class NestingParDoWithEhBody {
+class OuterParDoWithEhBody {
 public:
     void operator()( size_t& /*value*/ ) const {
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
-        PREPARE_RANGE(Iterator, NESTED_ITER_RANGE);
+        PREPARE_RANGE(Iterator, INNER_ITER_RANGE);
         TRY();
             tbb::parallel_do<Iterator, SimpleParDoBody>(begin, end, SimpleParDoBody(), ctx);
         CATCH();
@@ -561,42 +568,42 @@ public:
 };
 
 template <class Iterator>
-class NestingParDoWithEhBodyWithFeeder : NoAssign, NestingParDoWithEhBody<Iterator> {
+class OuterParDoWithEhBodyWithFeeder : NoAssign, OuterParDoWithEhBody<Iterator> {
 public:
     void operator()( size_t &value, tbb::parallel_do_feeder<size_t> &feeder ) const {
         Feed(feeder, 0);
-        NestingParDoWithEhBody<Iterator>::operator()(value);
+        OuterParDoWithEhBody<Iterator>::operator()(value);
     }
 };
 
-//! Uses parallel_for body invoking a nested parallel_for (with default bound context) inside a try-block.
-/** Since exception(s) thrown from the nested parallel_for are handled by the caller
+//! Uses parallel_for body invoking an inner parallel_for (with default bound context) inside a try-block.
+/** Since exception(s) thrown from the inner parallel_for are handled by the caller
     in this test, they do not affect neither other tasks of the the root parallel_for
-    nor sibling nested algorithms. **/
-template <class Iterator, class nesting_body_with_eh>
+    nor sibling inner algorithms. **/
+template <class Iterator, class outer_body_with_eh>
 void Test4_parallel_do () {
     ResetGlobals( true, true );
-    PREPARE_RANGE(Iterator, NESTING_ITER_RANGE);
+    PREPARE_RANGE(Iterator, OUTER_ITER_RANGE);
     TRY();
-        tbb::parallel_do<Iterator, nesting_body_with_eh>(begin, end, nesting_body_with_eh());
+        tbb::parallel_do<Iterator, outer_body_with_eh>(begin, end, outer_body_with_eh());
     CATCH();
     ASSERT (!exceptionCaught, "All exceptions must have been handled in the parallel_do body");
-    intptr_t nestedCalls = NESTED_ITER_RANGE,
-             nestingCalls = NESTING_ITER_RANGE + g_FedTasksCount,
-             maxExecuted = nestingCalls * nestedCalls,
+    intptr_t innerCalls = INNER_ITER_RANGE,
+             outerCalls = OUTER_ITER_RANGE + g_FedTasksCount,
+             maxExecuted = outerCalls * innerCalls,
              minExecuted = 0;
     if ( g_SolitaryException ) {
-        minExecuted = maxExecuted - nestedCalls;
+        minExecuted = maxExecuted - innerCalls;
         ASSERT (g_Exceptions == 1, "No exception registered");
         ASSERT (g_CurExecuted >= minExecuted, "Too few tasks executed");
         ASSERT (g_CurExecuted <= minExecuted + g_NumThreads, "Too many tasks survived exception");
     }
     else {
         minExecuted = g_Exceptions;
-        ASSERT (g_Exceptions > 1 && g_Exceptions <= nestingCalls, "Unexpected actual number of exceptions");
+        ASSERT (g_Exceptions > 1 && g_Exceptions <= outerCalls, "Unexpected actual number of exceptions");
         ASSERT (g_CurExecuted >= minExecuted, "Too many executed tasks reported");
-        ASSERT (g_CurExecuted < g_ExecutedAtCatch + g_NumThreads + nestingCalls, "Too many tasks survived multiple exceptions");
-        ASSERT (g_CurExecuted <= nestingCalls * (1 + g_NumThreads), "Too many tasks survived exception");
+        ASSERT (g_CurExecuted < g_ExecutedAtCatch + g_NumThreads + outerCalls, "Too many tasks survived multiple exceptions");
+        ASSERT (g_CurExecuted <= outerCalls * (1 + g_NumThreads), "Too many tasks survived exception");
     }
 } // void Test4_parallel_do ()
 
@@ -647,7 +654,7 @@ class ParDoWorkerTask : public tbb::task {
     tbb::task_group_context &my_ctx;
 
     tbb::task* execute () {
-        PREPARE_RANGE(Iterator, NESTED_ITER_RANGE);
+        PREPARE_RANGE(Iterator, INNER_ITER_RANGE);
         tbb::parallel_do<Iterator, B>( begin, end, B(), my_ctx );
         return NULL;
     }
@@ -720,9 +727,9 @@ void RunParDoTests() {
     g_Master = Harness::CurrentTid();
 #if TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN
     RunWithSimpleBody(Test1_parallel_do, SimpleParDoBody);
-    RunWithTemplatedBody(Test2_parallel_do, NestingParDoBody);
-    RunWithTemplatedBody(Test3_parallel_do, NestingParDoBodyWithIsolatedCtx);
-    RunWithTemplatedBody(Test4_parallel_do, NestingParDoWithEhBody);
+    RunWithTemplatedBody(Test2_parallel_do, OuterParDoBody);
+    RunWithTemplatedBody(Test3_parallel_do, OuterParDoBodyWithIsolatedCtx);
+    RunWithTemplatedBody(Test4_parallel_do, OuterParDoWithEhBody);
     Test5_parallel_do<Harness::ForwardIterator<size_t> >();
     Test5_parallel_do<Harness::RandomIterator<size_t> >();
 #endif /* TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN */
@@ -801,7 +808,7 @@ public:
 void Test0_pipeline () {
     ResetGlobals();
     // Run test when serial filter is the first non-input filter
-    InputFilter inputFilter;
+    InputFilter inputFilter;  //Emits NUM_ITEMS items
     NoThrowFilter filter1(NoThrowFilter::addition, 99, false);
     NoThrowFilter filter2(NoThrowFilter::subtraction, 90, true);
     NoThrowFilter filter3(NoThrowFilter::multiplication, 5, false);
@@ -849,7 +856,7 @@ struct FilterSet {
     {}
 }; // struct FilterSet
 
-FilterSet serial_parallel( tbb::filter::serial, tbb::filter::parallel, false, true );
+FilterSet serial_parallel( tbb::filter::serial, tbb::filter::parallel, /*throw1*/false, /*throw2*/true );
 
 template<typename InFilter, typename Filter>
 class CustomPipeline : protected tbb::pipeline {
@@ -892,9 +899,9 @@ void Test1_pipeline ( const FilterSet& filters ) {
 } // void Test1_pipeline ()
 
 // Filter with nesting
-class NestingFilter : public tbb::filter {
+class OuterFilter : public tbb::filter {
 public:
-    NestingFilter (tbb::filter::mode _mode, bool ) : filter (_mode) {}
+    OuterFilter (tbb::filter::mode _mode, bool ) : filter (_mode) {}
 
     void* operator()(void* item) {
         ++g_CurExecuted;
@@ -902,54 +909,56 @@ public:
         testPipeline.run();
         return item;
     }
-}; // class NestingFilter
+}; // class OuterFilter
 
-//! Uses pipeline containing a nested pipeline with the default context not wrapped by a try-block.
-/** Nested algorithms are spawned inside the new bound context by default. Since
-    exceptions thrown from the nested pipeline are not handled by the caller
-    (nesting pipeline body) in this test, they will cancel all the sibling nested
+//! Uses pipeline containing an inner pipeline with the default context not wrapped by a try-block.
+/** Inner algorithms are spawned inside the new bound context by default. Since
+    exceptions thrown from the inner pipeline are not handled by the caller
+    (outer pipeline body) in this test, they will cancel all the sibling inner
     algorithms. **/
 void Test2_pipeline ( const FilterSet& filters ) {
     ResetGlobals();
-    CustomPipeline<InputFilter, NestingFilter> testPipeline(filters);
+    CustomPipeline<InputFilter, OuterFilter> testPipeline(filters);
     TRY();
         testPipeline.run();
     CATCH_AND_ASSERT();
-    ASSERT (exceptionCaught, "No exception thrown from the nesting pipeline");
+    ASSERT (exceptionCaught, "No exception thrown from the outer pipeline");
     ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
     ASSERT (g_Exceptions == 1, "No try_blocks in any body expected in this test");
     if ( !g_SolitaryException )
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
 } // void Test2_pipeline ()
 
-class NestingFilterWithIsolatedCtx : public tbb::filter {
+//! creates isolated inner pipeline and runs it.
+class OuterFilterWithIsolatedCtx : public tbb::filter {
 public:
-    NestingFilterWithIsolatedCtx(tbb::filter::mode m, bool ) : filter(m) {}
+    OuterFilterWithIsolatedCtx(tbb::filter::mode m, bool ) : filter(m) {}
 
     void* operator()(void* item) {
         ++g_CurExecuted;
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
+        // create inner pipeline with serial input, parallel output filter, second filter throws
         SimplePipeline testPipeline(serial_parallel);
         testPipeline.run(ctx);
         return item;
     }
-}; // class NestingFilterWithIsolatedCtx
+}; // class OuterFilterWithIsolatedCtx
 
-//! Uses pipeline invoking a nested pipeline with an isolated context without a try-block.
-/** Even though exceptions thrown from the nested pipeline are not handled
-    by the caller in this test, they will not affect sibling nested algorithms
+//! Uses pipeline invoking an inner pipeline with an isolated context without a try-block.
+/** Even though exceptions thrown from the inner pipeline are not handled
+    by the caller in this test, they will not affect sibling inner algorithms
     already running because of the isolated contexts. However because the first
     exception cancels the root parallel_do only the first g_NumThreads subranges
-    will be processed (which launch nested pipelines) **/
+    will be processed (which launch inner pipelines) **/
 void Test3_pipeline ( const FilterSet& filters ) {
     ResetGlobals();
-    intptr_t nestedCalls = 100,
-             minExecuted = (g_NumThreads - 1) * nestedCalls;
-    CustomPipeline<InputFilter, NestingFilterWithIsolatedCtx> testPipeline(filters);
+    intptr_t innerCalls = NUM_ITEMS,
+             minExecuted = (g_NumThreads - 1) * innerCalls;
+    CustomPipeline<InputFilter, OuterFilterWithIsolatedCtx> testPipeline(filters);
     TRY();
         testPipeline.run();
     CATCH_AND_ASSERT();
-    ASSERT (exceptionCaught, "No exception thrown from the nesting parallel_for");
+    ASSERT (exceptionCaught, "No exception thrown from the outer parallel_for");
     if ( g_SolitaryException ) {
         ASSERT (g_CurExecuted > minExecuted, "Too few tasks survived exception");
         ASSERT (g_CurExecuted <= minExecuted + (g_ExecutedAtCatch + g_NumThreads), "Too many tasks survived exception");
@@ -959,9 +968,9 @@ void Test3_pipeline ( const FilterSet& filters ) {
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived exception");
 } // void Test3_pipeline ()
 
-class NestingFilterWithEhBody : public tbb::filter {
+class OuterFilterWithEhBody : public tbb::filter {
 public:
-    NestingFilterWithEhBody(tbb::filter::mode m, bool ) : filter(m) {}
+    OuterFilterWithEhBody(tbb::filter::mode m, bool ) : filter(m) {}
 
     void* operator()(void* item) {
         tbb::task_group_context ctx(tbb::task_group_context::isolated);
@@ -971,12 +980,12 @@ public:
         CATCH();
         return item;
     }
-}; // class NestingFilterWithEhBody
+}; // class OuterFilterWithEhBody
 
-//! Uses pipeline body invoking a nested pipeline (with default bound context) inside a try-block.
-/** Since exception(s) thrown from the nested pipeline are handled by the caller
-    in this test, they do not affect neither other tasks of the the root pipeline
-    nor sibling nested algorithms. **/
+//! Uses pipeline body invoking an inner pipeline (with default bound context) inside a try-block.
+/** Since exception(s) thrown from the inner pipeline are handled by the caller
+    in this test, they do not affect other tasks of the the root pipeline
+    nor sibling inner algorithms. **/
 void Test4_pipeline ( const FilterSet& filters ) {
 #if __GNUC__ && !__INTEL_COMPILER
     if ( strncmp(__VERSION__, "4.1.0", 5) == 0 ) {
@@ -985,23 +994,23 @@ void Test4_pipeline ( const FilterSet& filters ) {
     }
 #endif
     ResetGlobals( true, true );
-    intptr_t nestedCalls = NUM_ITEMS + 1,
-             nestingCalls = 2 * (NUM_ITEMS + 1),
-             maxExecuted = nestingCalls * nestedCalls;
-    CustomPipeline<InputFilter, NestingFilterWithEhBody> testPipeline(filters);
+    intptr_t innerCalls = NUM_ITEMS + 1,
+             outerCalls = 2 * (NUM_ITEMS + 1),
+             maxExecuted = outerCalls * innerCalls;  // the number of invocations of the inner pipelines
+    CustomPipeline<InputFilter, OuterFilterWithEhBody> testPipeline(filters);
     TRY();
         testPipeline.run();
     CATCH_AND_ASSERT();
     ASSERT (!exceptionCaught, "All exceptions must have been handled in the parallel_do body");
     intptr_t  minExecuted = 0;
     if ( g_SolitaryException ) {
-        minExecuted = maxExecuted - nestedCalls;
+        minExecuted = maxExecuted - innerCalls;  // one throwing inner pipeline
         ASSERT (g_Exceptions != 0, "No exception registered");
         ASSERT (g_CurExecuted <= minExecuted + g_NumThreads, "Too many tasks survived exception");
     }
     else {
         minExecuted = g_Exceptions;
-        ASSERT (g_Exceptions > 1 && g_Exceptions <= nestingCalls, "Unexpected actual number of exceptions");
+        ASSERT (g_Exceptions > 1 && g_Exceptions <= outerCalls, "Unexpected actual number of exceptions");
         ASSERT (g_CurExecuted >= minExecuted, "Too many executed tasks reported");
         ASSERT (g_CurExecuted <= g_ExecutedAtCatch + g_NumThreads, "Too many tasks survived multiple exceptions");
     }
@@ -1019,7 +1028,7 @@ class FinalizationBaseFilter : public tbb::filter {
 public:
     FinalizationBaseFilter ( tbb::filter::mode m ) : filter(m) {}
 
-    // Deletes buffers if exception occured
+    // Deletes buffers if exception occurred
     virtual void finalize( void* item ) {
         size_t* m_Item = (size_t*)item;
         delete[] m_Item;
@@ -1118,7 +1127,7 @@ public:
     }
 }; // class FilterToCancel
 
-template <class Filter_to_cancel> 
+template <class Filter_to_cancel>
 class PipelineLauncherTask : public tbb::task {
     tbb::task_group_context &my_ctx;
 public:

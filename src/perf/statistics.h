@@ -181,7 +181,12 @@ private:
 };
 
 //! using: Func(const char *fmt, ...) { vargf2buff(buff, 128, fmt);...
-#define vargf2buff(name, size, fmt) char name[size]; memset(name, 0, size); va_list args; va_start(args, fmt); vsnprintf( name, size-1, fmt, args)
+#define vargf2buff(name, size, fmt) \ 
+    char name[size]; memset(name, 0, size); \
+    va_list args; va_start(args, fmt); \
+    vsnprintf(name, size-1, fmt, args); \
+    va_end(args);
+
 
 inline std::string Format(const char *fmt, ...) {
     vargf2buff(buf, 1024, fmt); // from statistics.h

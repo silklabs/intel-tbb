@@ -44,10 +44,21 @@ cfg ?= release
 CPLUS = icl /nologo $(VCCOMPAT_FLAG)
 LINK_FLAGS = /link /nologo
 LIB_LINK_FLAGS= /link /nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO
+
+# ICC 11.0 and higher support -std=c++0x
+ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion icl 11"))
+    CPP11_FLAGS = /Qstd=c++0x /D_TBB_CPP0X
+endif
+
+# ICC 12.0 and higher provide Intel(R) Cilk Plus
+ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion icl 12"))
+    CILK_AVAILABLE = yes
+endif
+
 ifeq ($(runtime), vc_mt)
-	MS_CRT_KEY = /MT$(if $(findstring debug,$(cfg)),d)
+    MS_CRT_KEY = /MT$(if $(findstring debug,$(cfg)),d)
 else
-	MS_CRT_KEY = /MD$(if $(findstring debug,$(cfg)),d)
+    MS_CRT_KEY = /MD$(if $(findstring debug,$(cfg)),d)
 endif
 EH_FLAGS = /EHsc /GR
 
@@ -91,14 +102,14 @@ CPLUS_FLAGS += /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
                /D_WIN32_WINNT=$(_WIN32_WINNT)
 
 ifeq ($(runtime),vc8)
-        CPLUS_FLAGS += /D_USE_RTM_VERSION
+    CPLUS_FLAGS += /D_USE_RTM_VERSION
 endif
 
 
 C_FLAGS = $(CPLUS_FLAGS)
 
 ifneq (00,$(lambdas)$(cpp0x))
-	CPLUS_FLAGS += /Qstd=c++0x /D_TBB_CPP0X
+    CPLUS_FLAGS += $(CPP11_FLAGS)
 endif
 
 VCVERSION:=$(runtime)

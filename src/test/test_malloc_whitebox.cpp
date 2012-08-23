@@ -26,6 +26,10 @@
     the GNU General Public License.
 */
 
+/* to prevent loading dynamic TBBmalloc at startup, that is not needed
+   for the whitebox test */
+#define __TBB_SOURCE_DIRECTLY_INCLUDED 1
+
 #include "harness.h"
 #include "harness_barrier.h"
 
@@ -42,7 +46,6 @@
 #include "../tbbmalloc/backend.cpp"
 #include "../tbbmalloc/backref.cpp"
 #include "../tbbmalloc/large_objects.cpp"
-#undef __TBB_DYNAMIC_LOAD_ENABLED // to prevent loading dynamic TBBmalloc
 #include "../tbbmalloc/tbbmalloc.cpp"
 
 const int LARGE_MEM_SIZES_NUM = 10;
@@ -54,8 +57,8 @@ class AllocInfo {
     int size;
 public:
     AllocInfo() : p(NULL), val(0), size(0) {}
-    explicit AllocInfo(int size) : p((int*)scalable_malloc(size*sizeof(int))),
-                                   val(rand()), size(size) {
+    explicit AllocInfo(int sz) : p((int*)scalable_malloc(sz*sizeof(int))),
+                                   val(rand()), size(sz) {
         ASSERT(p, NULL);
         for (int k=0; k<size; k++)
             p[k] = val;
@@ -208,9 +211,10 @@ public:
             scalable_free(objs[i]);
 
 #ifdef USE_WINTHREAD
-        // under Windows DllMain used to call mallocThreadShutdownNotification,
-        // as we don't use it have to call the callback manually
-        mallocThreadShutdownNotification(NULL);
+        // Under Windows DllMain is used for mallocThreadShutdownNotification
+        // calling. As DllMain is not used during whitebox testing,
+        // we have to call the callback manually.
+        __TBB_mallocThreadShutdownNotification();
 #endif
     }
 };
@@ -395,12 +399,16 @@ void TestPools() {
     }
 
     void *smallObj =  pool_malloc(fixedPool, 10);
+    ASSERT(smallObj, "Memory was not allocated");
     memset(smallObj, 1, 10);
     void *ptr = pool_malloc(fixedPool, 1024);
+    ASSERT(ptr, "Memory was not allocated");
     memset(ptr, 1, 1024);
     void *largeObj = pool_malloc(fixedPool, minLargeObjectSize);
+    ASSERT(largeObj, "Memory was not allocated");
     memset(largeObj, 1, minLargeObjectSize);
     ptr = pool_malloc(fixedPool, minLargeObjectSize);
+    ASSERT(ptr, "Memory was not allocated");
     memset(ptr, minLargeObjectSize, minLargeObjectSize);
     pool_malloc(fixedPool, 10*minLargeObjectSize); // no leak for unsuccesful allocations
     pool_free(fixedPool, smallObj);
@@ -409,6 +417,7 @@ void TestPools() {
     // provoke large object cache cleanup and hope no leaks occurs
     for (size_t sz=minLargeObjectSize; sz<1*1024*1024; sz+=largeBlockCacheStep) {
         ptr = pool_malloc(mallocPool, sz);
+        ASSERT(ptr, "Memory was not allocated");
         memset(ptr, sz, sz);
         pool_free(mallocPool, ptr);
     }
@@ -429,12 +438,14 @@ void TestObjectRecognition() {
     ASSERT(getObjectSize(falseObjectSize)!=falseObjectSize, "Error in test: bad choice for false object size");
 
     void* mem = scalable_malloc(2*blockSize);
+    ASSERT(mem, "Memory was not allocated");
     Block* falseBlock = (Block*)alignUp((uintptr_t)mem, blockSize);
     falseBlock->objectSize = falseObjectSize;
     char* falseSO = (char*)falseBlock + falseObjectSize*7;
     ASSERT(alignDown(falseSO, blockSize)==(void*)falseBlock, "Error in test: false object offset is too big");
 
     void* bufferLOH = scalable_malloc(2*blockSize + headersSize);
+    ASSERT(bufferLOH, "Memory was not allocated");
     LargeObjectHdr* falseLO = 
         (LargeObjectHdr*)alignUp((uintptr_t)bufferLOH + headersSize, blockSize);
     LargeObjectHdr* headerLO = (LargeObjectHdr*)falseLO-1;
@@ -499,14 +510,15 @@ class TestBackendWork: public SimpleBarrier {
 
     rml::internal::Backend *backend;
 public:
-    TestBackendWork(rml::internal::Backend *backend) : backend(backend) {}
+    TestBackendWork(rml::internal::Backend *bknd) : backend(bknd) {}
     void operator()(int) const {
         barrier.wait();
         
         for (int i=0; i<ITERS; i++) {
-            BlockI *block16K = backend->get16KBlock(1, /*startup=*/false);
-            LargeMemoryBlock *lmb = backend->getLargeBlock(16*1024, /*startup=*/false);
-            backend->put16KBlock(block16K, /*startup=*/false);
+            BlockI *block16K = backend->get16KBlock(1);
+            ASSERT(block16K, "Memory was not allocated");
+            LargeMemoryBlock *lmb = backend->getLargeBlock(16*1024);
+            backend->put16KBlock(block16K);
             backend->putLargeBlock(lmb);
         }
     }
@@ -526,8 +538,9 @@ void TestBackend()
         NativeParallelFor( p, TestBackendWork(backend) );
     }
 
-    BlockI *block = backend->get16KBlock(1, /*startup=*/false);
-    backend->put16KBlock(block, /*startup=*/false);
+    BlockI *block = backend->get16KBlock(1);
+    ASSERT(block, "Memory was not allocated");
+    backend->put16KBlock(block);
 
     pool_destroy(mPool);
 }

@@ -33,6 +33,7 @@
 #include "tbb/atomic.h"
 #include "tbb/spin_mutex.h"
 #include "tbb/tbb_exception.h"
+#include "tbb/aligned_space.h"
 
 #include "semaphore.h"
 
@@ -89,12 +90,10 @@ public:
         }
     }
 
-#if !TBB_USE_DEBUG
+    void clear() {head.next = head.prev = &head; __TBB_store_relaxed(count, 0);}
 private:
-#endif
     __TBB_atomic size_t count;
     node_t head;
-    void clear() {head.next = &head; head.prev = &head;__TBB_store_relaxed(count, 0);}
 };
 
 typedef circular_doubly_linked_list_with_sentinel waitset_t;
@@ -109,15 +108,29 @@ public:
     class thread_context : waitset_node_t, no_copy {
         friend class concurrent_monitor;
     public:
-        thread_context() : spurious(false), aborted(false), context(NULL) {epoch = 0; in_waitset = false;}
-        ~thread_context() { if( spurious ) sema.P(); }
+        thread_context() : spurious(false), aborted(false), ready(false), context(0) {
+            epoch = 0;
+            in_waitset = false;
+        }
+        ~thread_context() {
+            if (ready) {
+                if( spurious ) semaphore().P();
+                semaphore().~binary_semaphore();
+            }
+        }
+        binary_semaphore& semaphore() { return *sema.begin(); }
     private:
-        binary_semaphore   sema;
+        //! The method for lazy initialization of the thread_context's semaphore.
+        //  Inlining of the method is undesirable, due to extra instructions for
+        //  exception support added at caller side.
+        __TBB_NOINLINE( void init() );
+        tbb::aligned_space<binary_semaphore, 1> sema;
         __TBB_atomic unsigned epoch;
-        tbb::atomic<bool>     in_waitset;
-        bool         spurious;
-        bool aborted;
-        void*        context;
+        tbb::atomic<bool> in_waitset;
+        bool  spurious;
+        bool  aborted;
+        bool  ready;
+        uintptr_t context;
     };
 
     //! ctor
@@ -127,7 +140,7 @@ public:
     ~concurrent_monitor() ; 
 
     //! prepare wait by inserting 'thr' into the wailt queue
-    void prepare_wait( thread_context& thr, void* ctx = 0 );
+    void prepare_wait( thread_context& thr, uintptr_t ctx = 0 );
 
     //! Commit wait if event count has not changed; otherwise, cancel wait.
     /** Returns true if committed, false if canceled. */
@@ -135,7 +148,8 @@ public:
         const bool do_it = thr.epoch == __TBB_load_relaxed(epoch);
         // this check is just an optimization
         if( do_it ) {
-            thr.sema.P();
+            __TBB_ASSERT( thr.ready, "use of commit_wait() without prior prepare_wait()");
+            thr.semaphore().P();
             __TBB_ASSERT( !thr.in_waitset, "still in the queue?" );
             if( thr.aborted )
                 throw_exception( eid_user_abort );
@@ -222,9 +236,9 @@ void concurrent_monitor::notify_relaxed( const P& predicate ) {
         end = temp.end();
         for( waitset_node_t* n=temp.front(); n!=end; n=nxt ) {
             nxt = n->next;
-            to_thread_context(n)->sema.V();
+            to_thread_context(n)->semaphore().V();
         }
-#if TBB_USE_DEBUG
+#if TBB_USE_ASSERT
         temp.clear();
 #endif
 }

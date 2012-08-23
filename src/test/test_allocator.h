@@ -190,6 +190,9 @@ struct Body: NoAssign {
         for( size_t k=0; k<256; ++k )
             if(array[k])
                 check_deallocate(array, k, thread_id);
+#if __TBBMALLOC_CALL_THREAD_SHUTDOWN
+        __TBB_mallocThreadShutdownNotification();
+#endif
     }
 };
 

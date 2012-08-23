@@ -58,7 +58,7 @@
 /* 
  * bndbox.c - This file contains the functions for dealing with bounding boxes.
  *
- *  $Id: bndbox.cpp,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: bndbox.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  */
  
 #include "machine.h"

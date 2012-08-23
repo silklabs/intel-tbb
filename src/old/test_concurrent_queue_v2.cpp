@@ -83,7 +83,7 @@ static tbb::atomic<long> PopKind[3];
 
 const int M = 10000;
 
-struct Body {
+struct Body: NoAssign {
     tbb::concurrent_queue<Foo>* queue;
     const int nthread;
     Body( int nthread_ ) : nthread(nthread_) {}
@@ -245,20 +245,20 @@ void TestIterator() {
     tbb::concurrent_queue<Foo> queue;
     tbb::concurrent_queue<Foo>& const_queue = queue;
     for( int j=0; j<500; ++j ) {
-        TestIteratorAux( queue.begin(), queue.end(), j );
+        TestIteratorAux(       queue.begin(),       queue.end(), j );
         TestIteratorAux( const_queue.begin(), const_queue.end(), j );
-        TestIteratorAux( const_queue.begin(), queue.end(), j );
-        TestIteratorAux( queue.begin(), const_queue.end(), j );
+        TestIteratorAux( const_queue.begin(),       queue.end(), j );
+        TestIteratorAux(       queue.begin(), const_queue.end(), j );
         Foo f;
         f.serial = j+1;
         queue.push(f);
     }
     TestIteratorAssignment<tbb::concurrent_queue<Foo>::const_iterator>( const_queue.begin() );
-    TestIteratorAssignment<tbb::concurrent_queue<Foo>::const_iterator>( queue.begin() );
-    TestIteratorAssignment<tbb::concurrent_queue<Foo>::iterator>( queue.begin() );
+    TestIteratorAssignment<tbb::concurrent_queue<Foo>::const_iterator>(       queue.begin() );
+    TestIteratorAssignment<tbb::concurrent_queue<Foo>::      iterator>(       queue.begin() );
 }
 
-void TestConcurrenetQueueType() {
+void TestConcurrentQueueType() {
     AssertSameType( tbb::concurrent_queue<Foo>::value_type(), Foo() );
     Foo f;
     const Foo g;
@@ -301,7 +301,7 @@ void TestFullQueue() {
 }
 
 template<typename T>
-struct TestNegativeQueueBody {
+struct TestNegativeQueueBody: NoAssign {
     tbb::concurrent_queue<T>& queue;
     const int nthread;
     TestNegativeQueueBody( tbb::concurrent_queue<T>& q, int n ) : queue(q), nthread(n) {}
@@ -338,7 +338,7 @@ int TestMain () {
     TestEmptyQueue<char>();
     TestEmptyQueue<Foo>();
     TestFullQueue();
-    TestConcurrenetQueueType();
+    TestConcurrentQueueType();
     TestIterator();
 
     // Test concurrent operations

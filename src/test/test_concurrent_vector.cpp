@@ -118,7 +118,7 @@ public:
         my_bar = x.my_bar;
         ASSERT( x.is_valid_or_zero(), "bad source for assignment" );
         ASSERT( is_valid(), NULL );
-    } 
+    }
     bool operator==(const Foo &f) const { return my_bar == f.my_bar; }
     bool operator<(const Foo &f) const { return my_bar < f.my_bar; }
 };
@@ -175,7 +175,7 @@ void TestResizeAndCopy() {
             ASSERT( count+new_size==FooCount, NULL );
             for( int j=0; j<new_size; ++j ) {
                 int expected = j<old_size ? j : 33;
-                if( v[j].bar()!=expected ) 
+                if( v[j].bar()!=expected )
                     REPORT("ERROR on line %d for old_size=%ld new_size=%ld v[%ld].bar()=%d != %d\n",__LINE__,long(old_size),long(new_size),long(j),v[j].bar(), expected);
             }
             ASSERT( v.size()==size_t(new_size), NULL );
@@ -205,7 +205,7 @@ void TestCapacity() {
     allocator_t::init_counters();
     for( size_t old_size=0; old_size<=11000; old_size=(old_size<5 ? old_size+1 : 3*old_size) ) {
         for( size_t new_size=0; new_size<=11000; new_size=(new_size<5 ? new_size+1 : 3*new_size) ) {
-            long count = FooCount; 
+            long count = FooCount;
             {
                 vector_t v; v.reserve(old_size);
                 ASSERT( v.capacity()>=old_size, NULL );
@@ -234,7 +234,7 @@ void TestCapacity() {
             }
             ASSERT( FooCount==count, NULL );
         }
-    } 
+    }
     ASSERT( allocator_t::items_allocated == allocator_t::items_freed, NULL);
     ASSERT( allocator_t::allocations == allocator_t::frees, NULL);
 }
@@ -304,9 +304,9 @@ void TestRangeAssignment( Range2 r2 ) {
 
 template<typename Iterator, typename T>
 void TestIteratorTraits() {
-    AssertSameType( static_cast<typename Iterator::difference_type*>(0), static_cast<ptrdiff_t*>(0) ); 
-    AssertSameType( static_cast<typename Iterator::value_type*>(0), static_cast<T*>(0) ); 
-    AssertSameType( static_cast<typename Iterator::pointer*>(0), static_cast<T**>(0) ); 
+    AssertSameType( static_cast<typename Iterator::difference_type*>(0), static_cast<ptrdiff_t*>(0) );
+    AssertSameType( static_cast<typename Iterator::value_type*>(0), static_cast<T*>(0) );
+    AssertSameType( static_cast<typename Iterator::pointer*>(0), static_cast<T**>(0) );
     AssertSameType( static_cast<typename Iterator::iterator_category*>(0), static_cast<std::random_access_iterator_tag*>(0) );
     T x;
     typename Iterator::reference xr = x;
@@ -326,7 +326,7 @@ void CheckConstIterator( const Vector& u, int i, const Iterator& cp ) {
     ASSERT( u.begin()[i].bar()==i, NULL );
 }
 
-template<typename Iterator1, typename Iterator2, typename V> 
+template<typename Iterator1, typename Iterator2, typename V>
 void CheckIteratorComparison( V& u ) {
     V u2 = u;
     Iterator1 i = u.begin();
@@ -359,7 +359,7 @@ void TestSequentialFor() {
     V v(N);
     ASSERT(v.grow_by(0) == v.grow_by(0, FooWithAssign()), NULL);
 
-    // Check iterator 
+    // Check iterator
     tbb::tick_count t0 = tbb::tick_count::now();
     typename V::iterator p = v.begin();
     ASSERT( !(*p).is_const(), NULL );
@@ -374,7 +374,7 @@ void TestSequentialFor() {
         ASSERT( -delta<=0, "difference type not signed?" );
     }
     tbb::tick_count t1 = tbb::tick_count::now();
-    
+
     // Check const_iterator going forwards
     const V& u = v;
     typename V::const_iterator cp = u.begin();
@@ -418,19 +418,19 @@ void TestSequentialFor() {
         if( 0<=k+delta && size_t(k+delta)<u.size() ) {
             V::const_iterator &cpr = (cp += delta);
             ASSERT( &cpr == &cp, "+= not returning a reference?");
-            k += delta; 
-        } 
+            k += delta;
+        }
         delta = i*7 % u.size();
         if( 0<=k-delta && size_t(k-delta)<u.size() ) {
-            if( i&1 ) { 
+            if( i&1 ) {
                 V::const_iterator &cpr = (cp -= delta);
                 ASSERT( &cpr == &cp, "-= not returning a reference?");
             } else
                 cp = cp - delta;        // Test operator-
-            k -= delta; 
-        } 
+            k -= delta;
+        }
     }
-    
+
     for( int i=0; size_t(i)<u.size(); i=(i<50?i+1:i*3) )
         for( int j=-i; size_t(i+j)<u.size(); j=(j<50?j+1:j*5) ) {
             ASSERT( (u.begin()+i)[j].bar()==i+j, NULL );
@@ -457,7 +457,7 @@ void TestSequentialFor() {
     TestRangeAssignment<typename V::range_type>( v.range() );
     // doesn't compile as expected: TestRangeAssignment<typename V::range_type>( u.range() );
 
-    // Check reverse_iterator 
+    // Check reverse_iterator
     typename V::reverse_iterator rp = v.rbegin();
     for( size_t i=v.size(); i>0; --i, ++rp ) {
         typename V::reference pref = *rp;
@@ -465,8 +465,8 @@ void TestSequentialFor() {
         ASSERT( rp!=v.rend(), NULL );
     }
     ASSERT( rp==v.rend(), NULL );
-    
-    // Check const_reverse_iterator 
+
+    // Check const_reverse_iterator
     typename V::const_reverse_iterator crp = u.rbegin();
     ASSERT( crp == v.crbegin(), NULL );
     ASSERT( *crp == v.back(), NULL);
@@ -503,9 +503,6 @@ void TestSequentialFor() {
 }
 
 static const size_t Modulus = 7;
-
-typedef static_counting_allocator<debug_allocator<Foo> > MyAllocator;
-typedef tbb::concurrent_vector<Foo, MyAllocator> MyVector;
 
 template<typename MyVector>
 class GrowToAtLeast: NoAssign {
@@ -566,7 +563,7 @@ public:
         {
             if( i&1 ) {
 #if TBB_DEPRECATED
-                typename MyVector::reference element = my_vector[my_vector.grow_by(1)]; 
+                typename MyVector::reference element = my_vector[my_vector.grow_by(1)];
                 element.bar() = i;
 #else
                 my_vector.grow_by(1)->bar() = i;
@@ -596,6 +593,10 @@ public:
 
 //! Test concurrent invocations of method concurrent_vector::grow_by
 void TestConcurrentGrowBy( int nthread ) {
+
+    typedef static_counting_allocator<debug_allocator<Foo> > MyAllocator;
+    typedef tbb::concurrent_vector<Foo, MyAllocator> MyVector;
+
     MyAllocator::init_counters();
     {
         int m = 100000; MyAllocator a;
@@ -726,7 +727,7 @@ static tbb::concurrent_vector<Number> Primes;
 class FindPrimes {
     bool is_prime( Number val ) const {
         int limit, factor = 3;
-        if( val<5u ) 
+        if( val<5u )
             return val==2;
         else {
             limit = long(sqrtf(float(val))+0.5f);
@@ -737,7 +738,7 @@ class FindPrimes {
     }
 public:
     void operator()( const tbb::blocked_range<Number>& r ) const {
-        for( Number i=r.begin(); i!=r.end(); ++i ) { 
+        for( Number i=r.begin(); i!=r.end(); ++i ) {
             if( i%2 && is_prime(i) ) {
 #if TBB_DEPRECATED
                 Primes[Primes.grow_by(1)] = i;
@@ -763,10 +764,10 @@ void TestFindPrimes() {
     // Time fully subscribed run.
     double t2 = TimeFindPrimes( tbb::task_scheduler_init::automatic );
 
-    // Time parallel run that is very likely oversubscribed.  
+    // Time parallel run that is very likely oversubscribed.
 #if _XBOX
     double t128 = TimeFindPrimes(32);  //XBOX360 can't handle too many threads
-#else    
+#else
     double t128 = TimeFindPrimes(128);
 #endif
     REMARK("TestFindPrimes: t2==%g t128=%g k=%g\n", t2, t128, t128/t2);
@@ -777,7 +778,7 @@ void TestFindPrimes() {
     // and the generalization to fix the issue is not worth the trouble.
     if( t128 > 1.3*t2 ) {
         REPORT("Warning: grow_by is pathetically slow: t2==%g t128=%g k=%g\n", t2, t128, t128/t2);
-    } 
+    }
 }
 
 //------------------------------------------------------------------------
@@ -831,7 +832,7 @@ void TestExceptions() {
                 case ctor_size: {
                         vector_t sized(N);
                     } break; // auto destruction after exception is checked by ~Foo
-                // Do not test assignment constructor due to reusing of same methods as below 
+                // Do not test assignment constructor due to reusing of same methods as below
                 case assign_nt: {
                         victim.assign(N, FooWithAssign());
                     } break;
@@ -972,7 +973,7 @@ void TestVectorTypes() {
         // VC8 does not properly align a temporary value; to work around, use explicit variable
         ClassWithVectorType foo(i);
         v.push_back(foo);
-        for( int j=0; i<i; ++j ) {
+        for( int j=0; j<i; ++j ) {
             ClassWithVectorType bar(j);
             ASSERT( v[j]==bar, NULL );
         }

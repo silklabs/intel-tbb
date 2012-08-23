@@ -58,7 +58,7 @@
 /* 
  * plane.h - This file contains the defines for planes etc.
  *
- *  $Id: plane.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: plane.h,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
  

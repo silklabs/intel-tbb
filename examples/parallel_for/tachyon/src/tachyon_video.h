@@ -56,10 +56,15 @@
 */
 
 #include "../../../common/gui/video.h"
-extern class video *video;
 
 class tachyon_video : public video
 {
+public:
+    bool updating_mode;
+    bool recycling;
+    bool pausing;
     void on_process();
     void on_key(int key);
 };
+
+extern class tachyon_video *video;

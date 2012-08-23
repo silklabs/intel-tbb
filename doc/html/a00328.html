@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::tbb_allocator&lt; T &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::sequencer_node&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,104 +21,86 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00328.html">tbb_allocator</a></div>
-<h1>tbb::tbb_allocator&lt; T &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00410.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::tbb_allocator" -->Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5.  
+<a class="el" href="a00412.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00328.html">sequencer_node</a></div>
+<h1>tbb::flow::interface6::sequencer_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::sequencer_node" --><!-- doxytag: inherits="tbb::flow::interface6::queue_node" -->Forwards messages in sequence order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00610.html">tbb_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00509.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00138.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::sequencer_node&lt; T, A &gt;:
+<p><center><img src="a00328.png" usemap="#tbb::flow::interface6::sequencer_node< T, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::sequencer_node< T, A >_map">
+<area href="a00313.html" alt="tbb::flow::interface6::queue_node< T, A >" shape="rect" coords="280,112,550,136">
+<area href="a00263.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="280,56,550,80">
+<area href="a00289.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,270,24">
+<area href="a00321.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="280,0,550,24">
+<area href="a00327.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="560,0,830,24">
+</map>
+<a href="a00075.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3cdd9619bc0a802763e7823068f83a4c"></a><!-- doxytag: member="tbb::tbb_allocator::value_type" ref="3cdd9619bc0a802763e7823068f83a4c" args="" -->
-typedef internal::allocator_type&lt;<br>
- T &gt;::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="af629f26832ff4e476e240637a78bc0c"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::input_type" ref="af629f26832ff4e476e240637a78bc0c" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#af629f26832ff4e476e240637a78bc0c">input_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f979d0e74d7c6e5aeb0d26408776a9e1"></a><!-- doxytag: member="tbb::tbb_allocator::pointer" ref="f979d0e74d7c6e5aeb0d26408776a9e1" args="" -->
-typedef value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ca026eaef70e35791c407323199031a7"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::output_type" ref="ca026eaef70e35791c407323199031a7" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#ca026eaef70e35791c407323199031a7">output_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1622504886ef265016a5821d61bf7adc"></a><!-- doxytag: member="tbb::tbb_allocator::const_pointer" ref="1622504886ef265016a5821d61bf7adc" args="" -->
-typedef const value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8127e36811832563fe1e9bc3ba391f79"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::predecessor_type" ref="8127e36811832563fe1e9bc3ba391f79" args="" -->
+typedef <a class="el" href="a00327.html">sender</a>&lt; <a class="el" href="a00328.html#af629f26832ff4e476e240637a78bc0c">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#8127e36811832563fe1e9bc3ba391f79">predecessor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b8e58d23c5c98fd65d4432c1e324f4c0"></a><!-- doxytag: member="tbb::tbb_allocator::reference" ref="b8e58d23c5c98fd65d4432c1e324f4c0" args="" -->
-typedef value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>reference</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="795f3ee75f133b9d3b159172fc4a197f"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::successor_type" ref="795f3ee75f133b9d3b159172fc4a197f" args="" -->
+typedef <a class="el" href="a00321.html">receiver</a>&lt; <a class="el" href="a00328.html#ca026eaef70e35791c407323199031a7">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#795f3ee75f133b9d3b159172fc4a197f">successor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="532f36f99650b1c26a2b8899383c5411"></a><!-- doxytag: member="tbb::tbb_allocator::const_reference" ref="532f36f99650b1c26a2b8899383c5411" args="" -->
-typedef const value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="639df0fb169cfcb94ba1b12429b736f4"></a><!-- doxytag: member="tbb::tbb_allocator::size_type" ref="639df0fb169cfcb94ba1b12429b736f4" args="" -->
-typedef size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="54828b5d0b937d608f76650a5df0e39f"></a><!-- doxytag: member="tbb::tbb_allocator::difference_type" ref="54828b5d0b937d608f76650a5df0e39f" args="" -->
-typedef ptrdiff_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>difference_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09a7f81fb2c3055aaecf058b11538544d524c717485b74aa552fb45b45562cb5"></a><!-- doxytag: member="tbb::tbb_allocator::scalable" ref="09a7f81fb2c3055aaecf058b11538544d524c717485b74aa552fb45b45562cb5" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scalable</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09a7f81fb2c3055aaecf058b11538544e108c3168e3be5de1d98e74723136fbf"></a><!-- doxytag: member="tbb::tbb_allocator::standard" ref="09a7f81fb2c3055aaecf058b11538544e108c3168e3be5de1d98e74723136fbf" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>standard</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#09a7f81fb2c3055aaecf058b11538544">malloc_type</a> { <b>scalable</b>, 
-<b>standard</b>
- }</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Specifies current allocator. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d85cd071047b52eeb207d458d54098cc"></a><!-- doxytag: member="tbb::tbb_allocator::tbb_allocator" ref="d85cd071047b52eeb207d458d54098cc" args="(const tbb_allocator &amp;)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>tbb_allocator</b> (const <a class="el" href="a00328.html">tbb_allocator</a> &amp;)  throw ()</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="7e71cbdf78f989091bc162b89bee7e66"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::sequencer_node" ref="7e71cbdf78f989091bc162b89bee7e66" args="(graph &amp;g, const Sequencer &amp;s)" -->
+template&lt;typename Sequencer&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00328.html#7e71cbdf78f989091bc162b89bee7e66">sequencer_node</a> (<a class="el" href="a00288.html">graph</a> &amp;g, const Sequencer &amp;s)</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5c3cb04a50d15d38f4c66ca3e5d2f6af"></a><!-- doxytag: member="tbb::tbb_allocator::tbb_allocator" ref="5c3cb04a50d15d38f4c66ca3e5d2f6af" args="(const tbb_allocator&lt; U &gt; &amp;)" -->
-template&lt;typename U&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>tbb_allocator</b> (const <a class="el" href="a00328.html">tbb_allocator</a>&lt; U &gt; &amp;)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b38e7a070552960384bcc1d91af13a5c"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::sequencer_node" ref="b38e7a070552960384bcc1d91af13a5c" args="(const sequencer_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#b38e7a070552960384bcc1d91af13a5c">sequencer_node</a> (const <a class="el" href="a00328.html">sequencer_node</a> &amp;src)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="08d3822344271d0a1c2e64e8c9c16b58"></a><!-- doxytag: member="tbb::tbb_allocator::address" ref="08d3822344271d0a1c2e64e8c9c16b58" args="(reference x) const " -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="93d3d8f6a72b3e1387047282116ed6ee"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::~sequencer_node" ref="93d3d8f6a72b3e1387047282116ed6ee" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#93d3d8f6a72b3e1387047282116ed6ee">~sequencer_node</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2b388f25858f783d995d61506de24656"></a><!-- doxytag: member="tbb::tbb_allocator::address" ref="2b388f25858f783d995d61506de24656" args="(const_reference x) const " -->
-const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (const_reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6a0608d8fbfa05edde1e1da559f9eb40"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::size_type" ref="6a0608d8fbfa05edde1e1da559f9eb40" args="" -->
+typedef <a class="el" href="a00263.html">buffer_node</a>&lt; T, A <br>
+&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6cb487b1bdce0b581f265a77dca6d53"></a><!-- doxytag: member="tbb::tbb_allocator::allocate" ref="f6cb487b1bdce0b581f265a77dca6d53" args="(size_type n, const void *=0)" -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#f6cb487b1bdce0b581f265a77dca6d53">allocate</a> (size_type n, const void *=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d50b89267bddf58afeb3e784aba0f0d6"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::sequencer_operation" ref="d50b89267bddf58afeb3e784aba0f0d6" args="" -->
+typedef <a class="el" href="a00263.html">buffer_node</a>&lt; T, A <br>
+&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>sequencer_operation</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allocate space for n objects. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdd011fdf2f9ad07006dc7c0a7ec1da2"></a><!-- doxytag: member="tbb::tbb_allocator::deallocate" ref="fdd011fdf2f9ad07006dc7c0a7ec1da2" args="(pointer p, size_type)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#fdd011fdf2f9ad07006dc7c0a7ec1da2">deallocate</a> (pointer p, size_type)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1372a379c01bc269b36bf3128560879e1cdf6bcff9743d2be54bc70c4300cd28"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::WAIT" ref="1372a379c01bc269b36bf3128560879e1cdf6bcff9743d2be54bc70c4300cd28" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Free previously allocated block of memory. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f059ca2c96243024f0d562ee3a87a3a5"></a><!-- doxytag: member="tbb::tbb_allocator::max_size" ref="f059ca2c96243024f0d562ee3a87a3a5" args="() const " -->
-size_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#f059ca2c96243024f0d562ee3a87a3a5">max_size</a> () const   throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1372a379c01bc269b36bf3128560879e544c3030ddd97ba489e7d2bf1c612bc8"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::SUCCEEDED" ref="1372a379c01bc269b36bf3128560879e544c3030ddd97ba489e7d2bf1c612bc8" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Largest value for which method allocate might succeed. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ab228ab9e324ed041c2226e1d717df5f"></a><!-- doxytag: member="tbb::tbb_allocator::construct" ref="ab228ab9e324ed041c2226e1d717df5f" args="(pointer p, const value_type &amp;value)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#ab228ab9e324ed041c2226e1d717df5f">construct</a> (pointer p, const value_type &amp;value)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1372a379c01bc269b36bf3128560879ee298eb3257a044e4d0aca8a58f2f62b0"></a><!-- doxytag: member="tbb::flow::interface6::sequencer_node::FAILED" ref="1372a379c01bc269b36bf3128560879ee298eb3257a044e4d0aca8a58f2f62b0" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy-construct value at location pointed to by p. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ef133522bf55f05a605bee0763208281"></a><!-- doxytag: member="tbb::tbb_allocator::destroy" ref="ef133522bf55f05a605bee0763208281" args="(pointer p)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#ef133522bf55f05a605bee0763208281">destroy</a> (pointer p)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy value at location pointed to by p. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="78701e7454ef8e1a25b5acd364367080"></a><!-- doxytag: member="tbb::tbb_allocator::allocator_type" ref="78701e7454ef8e1a25b5acd364367080" args="()" -->
-static <a class="el" href="a00328.html#09a7f81fb2c3055aaecf058b11538544">malloc_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00328.html#78701e7454ef8e1a25b5acd364367080">allocator_type</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns current allocator. <br></td></tr>
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::tbb_allocator&lt; T &gt;</h3>
+<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface6::sequencer_node&lt; T, A &gt;</h3>
 
-Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5. 
-<p>
-The class selects the best memory allocation mechanism available from scalable_malloc and standard malloc. The members are ordered the same way they are in section 20.4.1 of the ISO C++ standard. 
+Forwards messages in sequence order. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00610.html">tbb_allocator.h</a></ul>
+<li><a class="el" href="a00509.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

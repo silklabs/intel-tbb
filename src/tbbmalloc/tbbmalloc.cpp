@@ -27,6 +27,7 @@
 */
 
 #include "TypeDefinitions.h" // Customize.h and proxy.h get included
+#include "tbbmalloc_internal_api.h"
 
 #include "../tbb/itt_notify.h" // for __TBB_load_ittnotify()
 
@@ -71,8 +72,10 @@ namespace internal {
 
 void* (*original_malloc_ptr)(size_t) = 0;
 void  (*original_free_ptr)(void*) = 0;
+#if MALLOC_LD_PRELOAD
 static void* (*original_calloc_ptr)(size_t,size_t) = 0;
 static void* (*original_realloc_ptr)(void*,size_t) = 0;
+#endif
 
 #endif /* MALLOC_CHECK_RECURSION */
 
@@ -138,31 +141,45 @@ void init_tbbmalloc() {
 /* Preventing TBB allocator library from unloading to prevent
    resource leak, as memory is not released on the library unload.
 */
-#if USE_WINTHREAD && __TBB_DYNAMIC_LOAD_ENABLED
+#if USE_WINTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED
     // Prevent Windows from displaying message boxes if it fails to load library
     UINT prev_mode = SetErrorMode (SEM_FAILCRITICALERRORS);
-    LoadLibrary(MALLOCLIB_NAME);
+    HMODULE lib = LoadLibrary(MALLOCLIB_NAME);
+    MALLOC_ASSERT(lib, "Allocator can't load ifself.");
     SetErrorMode (prev_mode);
-#endif /* USE_PTHREAD */
+#endif /* USE_PTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED */
 }
 
-#if !(_WIN32||_WIN64)
+#if !__TBB_SOURCE_DIRECTLY_INCLUDED
+#if USE_WINTHREAD
+extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
+{
+
+    if (callReason==DLL_THREAD_DETACH)
+    {
+        __TBB_mallocThreadShutdownNotification();
+    }
+    else if (callReason==DLL_PROCESS_DETACH)
+    {
+        __TBB_mallocProcessShutdownNotification();
+    }
+    return TRUE;
+}
+#else
 struct RegisterProcessShutdownNotification {
     RegisterProcessShutdownNotification() {
-#if USE_PTHREAD && __TBB_DYNAMIC_LOAD_ENABLED
         // prevents unloading, POSIX case
-        dlopen(MALLOCLIB_NAME, RTLD_NOW);
-#endif
+        void *ret = dlopen(MALLOCLIB_NAME, RTLD_NOW);
+        MALLOC_ASSERT(ret, "Allocator can't load ifself.");
     }
     ~RegisterProcessShutdownNotification() {
-        mallocProcessShutdownNotification();
+        __TBB_mallocProcessShutdownNotification();
     }
 };
 
-#if __TBB_DYNAMIC_LOAD_ENABLED
 static RegisterProcessShutdownNotification reg;
-#endif
-#endif
+#endif /* USE_WINTHREAD */
+#endif /* !__TBB_SOURCE_DIRECTLY_INCLUDED */
 
 #if MALLOC_CHECK_RECURSION
 
@@ -203,32 +220,7 @@ void __TBB_internal_free(void *object)
 
 #endif /* MALLOC_CHECK_RECURSION */
 
-#include "../tbb/tbb_version.h"
-
-/** The leading "\0" is here so that applying "strings" to the binary
-    delivers a clean result.
-    volatile added to prevent possible dropping of constant by linker. */
-volatile char VersionString[] = "\0" TBB_VERSION_STRINGS;
-
 } } // namespaces
-
-#if _WIN32 && __TBB_DYNAMIC_LOAD_ENABLED
-
-extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
-{
-
-    if (callReason==DLL_THREAD_DETACH)
-    {
-        mallocThreadShutdownNotification(NULL);
-    }
-    else if (callReason==DLL_PROCESS_DETACH)
-    {
-        mallocProcessShutdownNotification();
-    }
-    return TRUE;
-}
-
-#endif //_WIN32 && __TBB_DYNAMIC_LOAD_ENABLED
 
 #if __TBB_ipf
 /* It was found that on IPF inlining of __TBB_machine_lockbyte leads

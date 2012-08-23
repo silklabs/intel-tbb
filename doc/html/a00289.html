@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::null_mutex::scoped_lock Class Reference</title>
+<title>tbb::flow::interface6::graph_node Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,33 +21,54 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00288.html">null_mutex</a>::<a class="el" href="a00289.html">scoped_lock</a></div>
-<h1>tbb::null_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_mutex::scoped_lock" -->Represents acquisition of a mutex.  
+<a class="el" href="a00412.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00289.html">graph_node</a></div>
+<h1>tbb::flow::interface6::graph_node Class Reference</h1><!-- doxytag: class="tbb::flow::interface6::graph_node" -->The base of all graph nodes.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00511.html">null_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00509.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00085.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::graph_node:
+<p><center><img src="a00289.png" usemap="#tbb::flow::interface6::graph_node_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::graph_node_map">
+<area href="a00262.html" alt="tbb::flow::interface6::broadcast_node< T >" shape="rect" coords="511,56,1012,80">
+<area href="a00263.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="511,112,1012,136">
+<area href="a00278.html" alt="tbb::flow::interface6::continue_node< Output >" shape="rect" coords="511,168,1012,192">
+<area href="a00286.html" alt="tbb::flow::interface6::function_node< Input, Output,, Allocator >" shape="rect" coords="511,224,1012,248">
+<area href="a00287.html" alt="tbb::flow::interface6::function_node< Input, Output, queueing, Allocator >" shape="rect" coords="511,280,1012,304">
+<area href="a00292.html" alt="tbb::flow::interface6::limiter_node< T >" shape="rect" coords="511,336,1012,360">
+<area href="a00300.html" alt="tbb::flow::interface6::multifunction_node< Input, Output,, Allocator >" shape="rect" coords="511,392,1012,416">
+<area href="a00300.html" alt="tbb::flow::interface6::multifunction_node< TupleType, TupleType, rejecting, Allocator >" shape="rect" coords="511,448,1012,472">
+<area href="a00330.html" alt="tbb::flow::interface6::source_node< Output >" shape="rect" coords="511,504,1012,528">
+</map>
+<a href="a00060.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="765e64065919fdd9665e78b5ec4d3c6f"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::scoped_lock" ref="765e64065919fdd9665e78b5ec4d3c6f" args="(null_mutex &amp;)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4f3a9aad30268e2a9f1416eab325f7e5"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::graph_node" ref="4f3a9aad30268e2a9f1416eab325f7e5" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_node</b> (<a class="el" href="a00288.html">graph</a> &amp;g)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6889f00ca3946906e89e856988bb890"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::acquire" ref="f6889f00ca3946906e89e856988bb890" args="(null_mutex &amp;)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f51137fff91095fa3e6a736b71c27cc"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::my_graph" ref="6f51137fff91095fa3e6a736b71c27cc" args="" -->
+<a class="el" href="a00288.html">graph</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_graph</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90eb562a9de52b33362a6fe237b3df42"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::try_acquire" ref="90eb562a9de52b33362a6fe237b3df42" args="(null_mutex &amp;)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d1ce68896f6d366dcc3fad19f6fd55d1"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::next" ref="d1ce68896f6d366dcc3fad19f6fd55d1" args="" -->
+<a class="el" href="a00289.html">graph_node</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>next</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b29fdf07b4c295850a6e433001c2c6a7"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::release" ref="b29fdf07b4c295850a6e433001c2c6a7" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="28049e438b241b0d6051767bbeacc0b9"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::prev" ref="28049e438b241b0d6051767bbeacc0b9" args="" -->
+<a class="el" href="a00289.html">graph_node</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>prev</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="137c56ab53c02049fca0b78c49294314"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::graph" ref="137c56ab53c02049fca0b78c49294314" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621c092f8466e55743ceef04b0bde9ce"></a><!-- doxytag: member="tbb::flow::interface6::graph_node::graph_iterator" ref="621c092f8466e55743ceef04b0bde9ce" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_iterator</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Represents acquisition of a mutex. 
+The base of all graph nodes. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00511.html">null_mutex.h</a></ul>
+<li><a class="el" href="a00509.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

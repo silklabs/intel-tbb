@@ -44,7 +44,7 @@
 #include "atomic.h"
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-    // Workaround for overzealous compiler warnings 
+    // Workaround for overzealous compiler warnings
     #pragma warning (push)
     #pragma warning (disable: 4244)
 #endif
@@ -221,7 +221,7 @@ struct partition_type_base {
     }
     template<typename StartType, typename Range>
     void execute(StartType &start, Range &range) {
-        // The algorithm in a few words ([]-denotes calls to decision mathods of partitioner):
+        // The algorithm in a few words ([]-denotes calls to decision methods of partitioner):
         // [If this task is stolen, adjust depth and divisions if necessary, set flag].
         // If range is divisible {
         //    Spread the work while [initial divisions left];
@@ -263,7 +263,7 @@ struct partition_type_base {
                         continue; // note: check_for_demand() should guarantee increasing max_depth() next time
                 }
                 start.run_body( range_pool.back() );
-                range_pool.pop_back();  
+                range_pool.pop_back();
             } while( !range_pool.empty() && !start.is_cancelled() );
         }
     }
@@ -296,7 +296,7 @@ struct auto_partition_type_base : partition_type_base<Partition> {
 #if TBB_USE_EXCEPTIONS
                 // RTTI is available, check whether the cast is valid
                 __TBB_ASSERT(dynamic_cast<flag_task*>(t.parent()), 0);
-                // correctess of the cast rely on avoiding the root task for which:
+                // correctness of the cast relies on avoiding the root task for which:
                 // - initial value of my_divisor != 0 (protected by separate assertion)
                 // - is_stolen_task() always return false for the root task.
 #endif
@@ -347,15 +347,15 @@ class affinity_partition_type : public auto_partition_type_base<affinity_partiti
     }
 public:
     affinity_partition_type( tbb::internal::affinity_partitioner_base_v3& ap ) {
-        __TBB_ASSERT( (factor&(factor-1))==0, "factor must be power of two" ); 
+        __TBB_ASSERT( (factor&(factor-1))==0, "factor must be power of two" );
         ap.resize(factor);
         my_array = ap.my_array;
         map_begin = 0;
         map_end = unsigned(ap.my_size);
         set_mid();
         my_delay = true;
-        my_divisor /= __TBB_INITIAL_CHUNKS; // let excatly P tasks to be distributed across workers
-        my_max_depth = factor_power+1; // the first factor_power ranges will be spawned, and >=1 ranges should left
+        my_divisor /= __TBB_INITIAL_CHUNKS; // let exactly P tasks to be distributed across workers
+        my_max_depth = factor_power+1; // the first factor_power ranges will be spawned, and >=1 ranges should be left
         __TBB_ASSERT( my_max_depth < __TBB_RANGE_POOL_CAPACITY, 0 );
     }
     affinity_partition_type(affinity_partition_type& p, split)
@@ -371,7 +371,7 @@ public:
             t.set_affinity( my_array[map_begin] );
     }
     void note_affinity( task::affinity_id id ) {
-        if( map_begin<map_end ) 
+        if( map_begin<map_end )
             my_array[map_begin] = id;
     }
     bool check_for_demand( task &t ) {
@@ -441,8 +441,8 @@ public:
 //! @endcond
 } // namespace interfaceX
 
-//! A simple partitioner 
-/** Divides the range until the range is not divisible. 
+//! A simple partitioner
+/** Divides the range until the range is not divisible.
     @ingroup algorithms */
 class simple_partitioner {
 public:
@@ -463,7 +463,7 @@ private:
     typedef interface6::internal::simple_partition_type task_partition_type;
 };
 
-//! An auto partitioner 
+//! An auto partitioner
 /** The range is initial divided into several large chunks.
     Chunks are further subdivided into smaller pieces if demand detected and they are divisible.
     @ingroup algorithms */

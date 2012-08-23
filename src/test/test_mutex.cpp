@@ -132,12 +132,12 @@ public:
 
         // Methods for reader-writer mutex
         // These methods can be instantiated only if M supports lock_read() and try_lock_read().
-        
+
         void acquire( mutex_type& m, bool is_writer ) {
             if( is_writer ) m.my_iso_mutex.lock();
             else m.my_iso_mutex.lock_read();
             my_mutex = &m;
-        } 
+        }
         bool try_acquire( mutex_type& m, bool is_writer ) {
             if( is_writer ? m.my_iso_mutex.try_lock() : m.my_iso_mutex.try_lock_read() ) {
                 my_mutex = &m;
@@ -148,20 +148,20 @@ public:
         }
         bool upgrade_to_writer() {
             my_mutex->my_iso_mutex.unlock();
-            my_mutex->my_iso_mutex.lock(); 
+            my_mutex->my_iso_mutex.lock();
             return false;
         }
         bool downgrade_to_reader() {
             my_mutex->my_iso_mutex.unlock();
-            my_mutex->my_iso_mutex.lock_read(); 
+            my_mutex->my_iso_mutex.lock_read();
             return false;
         }
         ~scoped_lock() {
-            if( my_mutex ) 
+            if( my_mutex )
                 release();
         }
-    };    
-  
+    };
+
     static const bool is_recursive_mutex = M::is_recursive_mutex;
     static const bool is_rw_mutex = M::is_rw_mutex;
 };
@@ -169,7 +169,7 @@ public:
 namespace tbb {
     namespace profiling {
         template<typename M>
-        void set_name( const TBB_MutexFromISO_Mutex<M>&, const char* ) {}  
+        void set_name( const TBB_MutexFromISO_Mutex<M>&, const char* ) {}
     }
 }
 
@@ -231,70 +231,58 @@ struct Invariant {
 template<typename I>
 struct TwiddleInvariant: NoAssign {
     I& invariant;
+    TwiddleInvariant( I& invariant_ ) : invariant(invariant_) {}
+
     /** Increments counter once for each iteration in the iteration space. */
     void operator()( tbb::blocked_range<size_t>& range ) const {
         for( size_t i=range.begin(); i!=range.end(); ++i ) {
             //! Every 8th access is a write access
-            bool write = (i%8)==7;
+            const bool write = (i%8)==7;
             bool okay = true;
             bool lock_kept = true;
             if( (i/8)&1 ) {
                 // Try implicit acquire and explicit release
                 typename I::mutex_type::scoped_lock lock(invariant.mutex,write);
-                if( write ) {
-                    long my_value = invariant.value[0];
-                    invariant.update();
-                    if( i%16==7 ) {
-                        lock_kept = lock.downgrade_to_reader();
-                        if( !lock_kept )
-                            my_value = invariant.value[0] - 1;
-                        okay = invariant.value_is(my_value+1);
-                    }
-                } else {
-                    okay = invariant.is_okay();
-                    if( i%8==3 ) {
-                        long my_value = invariant.value[0];
-                        lock_kept = lock.upgrade_to_writer();
-                        if( !lock_kept )
-                            my_value = invariant.value[0];
-                        invariant.update();
-                        okay = invariant.value_is(my_value+1);
-                    }
-                }
+                execute_aux(lock, i, write, /*ref*/okay, /*ref*/lock_kept);
                 lock.release();
             } else {
                 // Try explicit acquire and implicit release
                 typename I::mutex_type::scoped_lock lock;
                 lock.acquire(invariant.mutex,write);
-                if( write ) {
-                    long my_value = invariant.value[0];
-                    invariant.update();
-                    if( i%16==7 ) {
-                        lock_kept = lock.downgrade_to_reader();
-                        if( !lock_kept )
-                            my_value = invariant.value[0] - 1;
-                        okay = invariant.value_is(my_value+1);
-                    }
-                } else {
-                    okay = invariant.is_okay();
-                    if( i%8==3 ) {
-                        long my_value = invariant.value[0];
-                        lock_kept = lock.upgrade_to_writer();
-                        if( !lock_kept )
-                            my_value = invariant.value[0];
-                        invariant.update();
-                        okay = invariant.value_is(my_value+1);
-                    }
-                }
+                execute_aux(lock, i, write, /*ref*/okay, /*ref*/lock_kept);
             }
             if( !okay ) {
                 REPORT( "ERROR for %s at %ld: %s %s %s %s\n",invariant.mutex_name, long(i),
-                             write?"write,":"read,", write?(i%16==7?"downgrade,":""):(i%8==3?"upgrade,":""),
-                             lock_kept?"lock kept,":"lock not kept,", (i/8)&1?"imp/exp":"exp/imp" );
+                        write     ? "write,"                  : "read,",
+                        write     ? (i%16==7?"downgrade,":"") : (i%8==3?"upgrade,":""),
+                        lock_kept ? "lock kept,"              : "lock not kept,", // TODO: only if downgrade/upgrade
+                        (i/8)&1   ? "impl/expl"               : "expl/impl" );
             }
         }
     }
-    TwiddleInvariant( I& invariant_ ) : invariant(invariant_) {}
+private:
+    void execute_aux(typename I::mutex_type::scoped_lock & lock, const size_t i, const bool write, bool & okay, bool & lock_kept) const {
+        if( write ) {
+            long my_value = invariant.value[0];
+            invariant.update();
+            if( i%16==7 ) {
+                lock_kept = lock.downgrade_to_reader();
+                if( !lock_kept )
+                    my_value = invariant.value[0] - 1;
+                okay = invariant.value_is(my_value+1);
+            }
+        } else {
+            okay = invariant.is_okay();
+            if( i%8==3 ) {
+                long my_value = invariant.value[0];
+                lock_kept = lock.upgrade_to_writer();
+                if( !lock_kept )
+                    my_value = invariant.value[0];
+                invariant.update();
+                okay = invariant.value_is(my_value+1);
+            }
+        }
+    }
 };
 
 /** This test is generic so that we can test any other kinds of ReaderWriter locks we write later. */
@@ -376,7 +364,7 @@ void TestTryAcquire_OneThread( const char * mutex_name ) {
         lock1.release();
     else
         REPORT("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
-} 
+}
 
 #if _MSC_VER && !defined(__INTEL_COMPILER)
     #pragma warning( pop )
@@ -396,7 +384,7 @@ struct RecursiveAcquisition {
         bool first = (mask&1U<<i)==0;
         if( first ) {
             // first time to acquire lock
-            if( i<max_lock ) 
+            if( i<max_lock )
                 // out of order acquisition might lead to deadlock, so stop
                 return;
             max_lock = i;
@@ -409,10 +397,10 @@ struct RecursiveAcquisition {
             int a = RecurArray[i];
             ASSERT( (a==0)==first, "should be either a==0 if it is the first time to acquire the lock or a!=0 otherwise" );
             ++RecurArray[i];
-            if( x ) 
+            if( x )
                 Body( x/RecurN, max_lock, mask|1U<<i );
             --RecurArray[i];
-            ASSERT( a==RecurArray[i], "a is not equal to RecurArray[i]" );                        
+            ASSERT( a==RecurArray[i], "a is not equal to RecurArray[i]" );
 
             // release lock on location RecurArray[i] using explicit release; otherwise, use implicit one
             if( (i&2)!=0 ) r_lock.release();
@@ -424,11 +412,11 @@ struct RecursiveAcquisition {
             ASSERT( (a==0)==first, "should be either a==0 if it is the first time to acquire the lock or a!=0 otherwise" );
 
             ++RecurArray[i];
-            if( x ) 
+            if( x )
                 Body( x/RecurN, max_lock, mask|1U<<i );
             --RecurArray[i];
 
-            ASSERT( a==RecurArray[i], "a is not equal to RecurArray[i]" );                        
+            ASSERT( a==RecurArray[i], "a is not equal to RecurArray[i]" );
 
             // release lock on location RecurArray[i] using explicit release; otherwise, use implicit one
             if( (i&2)!=0 ) r_lock.release();
@@ -436,7 +424,7 @@ struct RecursiveAcquisition {
     }
 
     void operator()( const tbb::blocked_range<size_t> &r ) const
-    {   
+    {
         for( size_t x=r.begin(); x<r.end(); x++ ) {
             Body( x );
         }
@@ -531,7 +519,7 @@ void TestNullRWMutex( const char * name ) {
     tbb::parallel_for(tbb::blocked_range<size_t>(0,n,10),NullUpgradeDowngrade<M>(m, name));
 }
 
-//! Test ISO C++0x compatibility portion of TBB mutex 
+//! Test ISO C++0x compatibility portion of TBB mutex
 template<typename M>
 void TestISO( const char * name ) {
     typedef TBB_MutexFromISO_Mutex<M> tbb_from_iso;
@@ -545,7 +533,7 @@ void TestTryAcquire_OneThreadISO( const char * name ) {
     TestTryAcquire_OneThread<tbb_from_iso>( name );
 }
 
-//! Test ISO-like C++0x compatibility portion of TBB reader-writer mutex 
+//! Test ISO-like C++0x compatibility portion of TBB reader-writer mutex
 template<typename M>
 void TestReaderWriterLockISO( const char * name ) {
     typedef TBB_MutexFromISO_Mutex<M> tbb_from_iso;
@@ -553,11 +541,11 @@ void TestReaderWriterLockISO( const char * name ) {
     TestTryAcquireReader_OneThread<tbb_from_iso>( name );
 }
 
-//! Test ISO C++0x compatibility portion of TBB recursive mutex 
+//! Test ISO C++0x compatibility portion of TBB recursive mutex
 template<typename M>
 void TestRecursiveMutexISO( const char * name ) {
     typedef TBB_MutexFromISO_Mutex<M> tbb_from_iso;
-    TestRecursiveMutex<tbb_from_iso>(name); 
+    TestRecursiveMutex<tbb_from_iso>(name);
 }
 
 #include "tbb/task_scheduler_init.h"
@@ -567,7 +555,7 @@ int TestMain () {
         tbb::task_scheduler_init init( p );
         REMARK( "testing with %d workers\n", static_cast<int>(p) );
 #if TBB_TEST_LOW_WORKLOAD
-        // The amount of work is decreased in this mode to bring the length 
+        // The amount of work is decreased in this mode to bring the length
         // of the runs under tools into the tolerable limits.
         const int n = 1;
 #else
@@ -590,29 +578,29 @@ int TestMain () {
 
             TestTryAcquire_OneThread<tbb::spin_mutex>("Spin Mutex");
             TestTryAcquire_OneThread<tbb::queuing_mutex>("Queuing Mutex");
-#if USE_PTHREAD 
+#if USE_PTHREAD
             // under ifdef because on Windows tbb::mutex is reenterable and the test will fail
             TestTryAcquire_OneThread<tbb::mutex>("Wrapper Mutex");
 #endif /* USE_PTHREAD */
             TestTryAcquire_OneThread<tbb::recursive_mutex>( "Recursive Mutex" );
             TestTryAcquire_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex"); // only tests try_acquire for writers
             TestTryAcquire_OneThread<tbb::queuing_rw_mutex>("Queuing RW Mutex"); // only tests try_acquire for writers
-            TestTryAcquireReader_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex"); 
-            TestTryAcquireReader_OneThread<tbb::queuing_rw_mutex>("Queuing RW Mutex"); 
+            TestTryAcquireReader_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex");
+            TestTryAcquireReader_OneThread<tbb::queuing_rw_mutex>("Queuing RW Mutex");
 
             TestReaderWriterLock<tbb::queuing_rw_mutex>( "Queuing RW Mutex" );
             TestReaderWriterLock<tbb::spin_rw_mutex>( "Spin RW Mutex" );
 
             TestRecursiveMutex<tbb::recursive_mutex>( "Recursive Mutex" );
 
-            // Test ISO C++0x interface  
+            // Test ISO C++0x interface
             TestISO<tbb::spin_mutex>( "ISO Spin Mutex" );
             TestISO<tbb::mutex>( "ISO Mutex" );
             TestISO<tbb::spin_rw_mutex>( "ISO Spin RW Mutex" );
             TestISO<tbb::recursive_mutex>( "ISO Recursive Mutex" );
             TestISO<tbb::critical_section>( "ISO Critical Section" );
             TestTryAcquire_OneThreadISO<tbb::spin_mutex>( "ISO Spin Mutex" );
-#if USE_PTHREAD 
+#if USE_PTHREAD
             // under ifdef because on Windows tbb::mutex is reenterable and the test will fail
             TestTryAcquire_OneThreadISO<tbb::mutex>( "ISO Mutex" );
 #endif /* USE_PTHREAD */

@@ -35,9 +35,9 @@ tbb::spin_mutex global_mutex;
 
 #define N 1000
 #define MAX_NODES 4
-#define C 8 
+#define C 8
 
-struct empty_no_assign : private NoAssign { 
+struct empty_no_assign : private NoAssign {
    empty_no_assign() {}
    empty_no_assign( int ) {}
    operator int() { return 0; }
@@ -65,7 +65,7 @@ void run_continue_nodes( int p, tbb::flow::graph& g, tbb::flow::continue_node< O
         n.register_predecessor( *reinterpret_cast< tbb::flow::sender< tbb::flow::continue_msg > * >(&n) );
     }
 
-    for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) { 
+    for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) {
         harness_counting_receiver<OutputType> *receivers = new harness_counting_receiver<OutputType>[num_receivers];
         harness_graph_executor<tbb::flow::continue_msg, OutputType>::execute_count = 0;
 
@@ -74,11 +74,11 @@ void run_continue_nodes( int p, tbb::flow::graph& g, tbb::flow::continue_node< O
         }
 
         NativeParallelFor( p, parallel_puts<tbb::flow::continue_msg>(n) );
-        g.wait_for_all(); 
+        g.wait_for_all();
 
         // 2) the nodes will receive puts from multiple predecessors simultaneously,
         size_t ec = harness_graph_executor<tbb::flow::continue_msg, OutputType>::execute_count;
-        ASSERT( (int)ec == p, NULL ); 
+        ASSERT( (int)ec == p, NULL );
         for (size_t r = 0; r < num_receivers; ++r ) {
             size_t c = receivers[r].my_count;
             // 3) the nodes will send to multiple successors.
@@ -93,6 +93,7 @@ void continue_nodes( Body body ) {
         tbb::flow::graph g;
         tbb::flow::continue_node< OutputType > exe_node( g, body );
         run_continue_nodes( p, g, exe_node);
+        exe_node.try_put(tbb::flow::continue_msg());
         tbb::flow::continue_node< OutputType > exe_node_copy( exe_node );
         run_continue_nodes( p, g, exe_node_copy);
     }
@@ -111,7 +112,7 @@ struct inc_functor {
     OutputType operator()( tbb::flow::continue_msg ) {
        ++global_execute_count;
        ++local_execute_count;
-       return OutputType(); 
+       return OutputType();
     }
 
 };
@@ -124,13 +125,13 @@ void continue_nodes_with_copy( ) {
         inc_functor<OutputType> cf;
         cf.local_execute_count = Offset;
         global_execute_count = Offset;
-      
+
         tbb::flow::continue_node< OutputType > exe_node( g, cf );
         for (size_t i = 0; i < N; ++i) {
            exe_node.register_predecessor( *reinterpret_cast< tbb::flow::sender< tbb::flow::continue_msg > * >(&exe_node) );
         }
 
-        for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) { 
+        for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) {
             harness_counting_receiver<OutputType> *receivers = new harness_counting_receiver<OutputType>[num_receivers];
 
             for (size_t r = 0; r < num_receivers; ++r ) {
@@ -138,7 +139,7 @@ void continue_nodes_with_copy( ) {
             }
 
             NativeParallelFor( p, parallel_puts<tbb::flow::continue_msg>(exe_node) );
-            g.wait_for_all(); 
+            g.wait_for_all();
 
             // 2) the nodes will receive puts from multiple predecessors simultaneously,
             for (size_t r = 0; r < num_receivers; ++r ) {
@@ -153,7 +154,7 @@ void continue_nodes_with_copy( ) {
         const size_t expected_count = p*MAX_NODES + Offset;
         size_t global_count = global_execute_count;
         size_t inc_count = body_copy.local_execute_count;
-        ASSERT( global_count == expected_count && global_count == inc_count, NULL ); 
+        ASSERT( global_count == expected_count && global_count == inc_count, NULL );
 
     }
 }
@@ -177,7 +178,7 @@ void test_concurrency(int num_threads) {
     run_continue_nodes<empty_no_assign>();
 }
 
-int TestMain() { 
+int TestMain() {
     if( MinThread<1 ) {
         REPORT("number of threads must be positive\n");
         exit(1);

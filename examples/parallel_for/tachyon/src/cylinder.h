@@ -58,7 +58,7 @@
 /* 
  * cylinder.h - This file contains the defines for cylinders etc.
  *
- *  $Id: cylinder.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: cylinder.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 object * newcylinder(void *, vector, vector, flt);

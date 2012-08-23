@@ -176,6 +176,7 @@ void PrintExtraVersionInfo( const char* category, const char* format, ... ) {
         va_list args; va_start(args, format);
         // Note: correct vsnprintf definition obtained from tbb_assert_impl.h
         vsnprintf( str, 1024-1, format, args);
+        va_end(args);
         fprintf(stderr, "TBB: %s\t%s\n", category, str );
     }
 }

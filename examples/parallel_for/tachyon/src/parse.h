@@ -58,7 +58,7 @@
 /*
  * parse.h - this file contains defines for model file reading.
  *
- *  $Id: parse.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: parse.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 #define PARSENOERR       0

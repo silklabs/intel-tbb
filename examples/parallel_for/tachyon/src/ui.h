@@ -58,7 +58,7 @@
 /*
  * ui.h - defines for user interface functions
  *
- *  $Id: ui.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: ui.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 /* Different types of message, for levels of verbosity etc */

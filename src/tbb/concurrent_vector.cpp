@@ -97,7 +97,7 @@ public:
 
     //! Publish segment so other threads can see it.
     inline static void publish_segment( segment_t& s, void* rhs ) {
-    // see also itt_store_pointer_with_release_v3()
+        // see also itt_store_pointer_with_release_v3()
         ITT_NOTIFY( sync_releasing, &s.array );
         __TBB_store_with_release( s.array, rhs );
     }
@@ -113,7 +113,7 @@ public:
     static void extend_segment_table(concurrent_vector_base_v3 &v, size_type start);
 
     inline static segment_t &acquire_segment(concurrent_vector_base_v3 &v, size_type index, size_type element_size, bool owner) {
-        segment_t &s = v.my_segment[index]; // TODO: pass v.my_segment as arument
+        segment_t &s = v.my_segment[index]; // TODO: pass v.my_segment as argument
         if( !__TBB_load_with_acquire(s.array) ) { // do not check for internal::vector_allocation_error_flag 
             if( owner ) {
                 enable_segment( v, index, element_size );
@@ -208,19 +208,20 @@ public:
 void concurrent_vector_base_v3::helper::extend_segment_table(concurrent_vector_base_v3 &v, concurrent_vector_base_v3::size_type start) {
     if( start > segment_size(pointers_per_short_table) ) start = segment_size(pointers_per_short_table);
     // If other threads are trying to set pointers in the short segment, wait for them to finish their
-    // assigments before we copy the short segment to the long segment. Note: grow_to_at_least depends on it
-    for( segment_index_t i = 0; segment_base(i) < start && v.my_segment == v.my_storage; i++ )
+    // assignments before we copy the short segment to the long segment. Note: grow_to_at_least depends on it
+    for( segment_index_t i = 0; segment_base(i) < start && v.my_segment == v.my_storage; i++ ){
         if(!v.my_storage[i].array) {
             ITT_NOTIFY(sync_prepare, &v.my_storage[i].array);
             atomic_backoff backoff;
             do backoff.pause(); while( v.my_segment == v.my_storage && !v.my_storage[i].array );
             ITT_NOTIFY(sync_acquired, &v.my_storage[i].array);
         }
+    }
     if( v.my_segment != v.my_storage ) return;
 
     segment_t* s = (segment_t*)NFS_Allocate( pointers_per_long_table, sizeof(segment_t), NULL );
     // No need to check !s here, because NFS_Allocate throws exception if it cannot allocate the requested storage.
-    memset( s, 0, pointers_per_long_table*sizeof(segment_t) );
+    std::memset( s, 0, pointers_per_long_table*sizeof(segment_t) );
     for( segment_index_t i = 0; i < pointers_per_short_table; i++)
         s[i] = v.my_storage[i];
     if( v.my_segment.compare_and_swap( s, v.my_storage ) != v.my_storage )
@@ -290,7 +291,7 @@ void concurrent_vector_base_v3::helper::cleanup() {
         for(; k_start <= k_end; ++k_start ) // not in first block
             if( !__TBB_load_with_acquire(table[k_start].array) )
                 publish_segment(table[k_start], internal::vector_allocation_error_flag);
-        // fill alocated items
+        // fill allocated items
         first_segment();
         goto recover;
     }
@@ -523,7 +524,7 @@ void *concurrent_vector_base_v3::internal_compact( size_type element_size, void 
 
     segment_t *const segment_table = my_segment;
     internal_segments_table &old = *static_cast<internal_segments_table*>( table );
-    memset(&old, 0, sizeof(old));
+    std::memset(&old, 0, sizeof(old));
 
     if ( k != first_block && k ) // first segment optimization
     {
@@ -567,7 +568,7 @@ void *concurrent_vector_base_v3::internal_compact( size_type element_size, void 
     if ( k_stop < k_end ) {
         old.first_block = first_block;
         memcpy(old.table+k_stop, segment_table+k_stop, (k_end-k_stop) * sizeof(segment_t));
-        memset(segment_table+k_stop, 0, (k_end-k_stop) * sizeof(segment_t));
+        std::memset(segment_table+k_stop, 0, (k_end-k_stop) * sizeof(segment_t));
         if( !k ) my_first_block = 0;
     }
     return table;

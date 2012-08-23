@@ -228,7 +228,7 @@ public:
                 tbb::task::enqueue( *new(tbb::task::allocate_root() ) tbb::empty_task, id == 0 ? Low : High );
                 Harness::Sleep(count);
 #if __TBB_ipf
-                // Increased sleep periods are required on systems with unfair hyperthreading (Itanium 2)
+                // Increased sleep periods are required on systems with unfair hyperthreading (Itanium(R) 2 processor)
                 count += 10;
 #endif
             }

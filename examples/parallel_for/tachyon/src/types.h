@@ -69,7 +69,7 @@
 /* 
  * types.h - This file contains all of the type definitions for the raytracer
  *
- *  $Id: types.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: types.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 #define MAXOCTNODES 25       /* subdivide octants /w > # of children */

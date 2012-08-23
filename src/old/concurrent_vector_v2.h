@@ -60,21 +60,24 @@ namespace internal {
     /** @ingroup containers */
     class concurrent_vector_base {
     protected:
-        typedef unsigned long segment_index_t;
 
-        //! Log2 of "min_segment_size".  
+        // Basic types declarations
+        typedef unsigned long segment_index_t;
+        typedef size_t size_type;
+
+        //! Log2 of "min_segment_size".
         static const int lg_min_segment_size = 4;
 
         //! Minimum size (in physical items) of a segment.
         static const int min_segment_size = segment_index_t(1)<<lg_min_segment_size;
-      
-        static segment_index_t segment_index_of( size_t index ) { 
+
+        static segment_index_t segment_index_of( size_t index ) {
             uintptr_t i = index|1<<(lg_min_segment_size-1);
-            uintptr_t j = __TBB_Log2(i); 
-            return segment_index_t(j-(lg_min_segment_size-1)); 
+            uintptr_t j = __TBB_Log2(i);
+            return segment_index_t(j-(lg_min_segment_size-1));
         }
 
-        static segment_index_t segment_base( segment_index_t k ) { 
+        static segment_index_t segment_base( segment_index_t k ) {
             return min_segment_size>>1<<k & -min_segment_size;
         }
 
@@ -83,8 +86,6 @@ namespace internal {
             __TBB_ASSERT( result==segment_base(k+1)-segment_base(k), NULL );
             return result;
         }
-
-        typedef size_t size_type;
 
         void __TBB_EXPORTED_METHOD internal_reserve( size_type n, size_type element_size, size_type max_size );
 
@@ -104,9 +105,15 @@ namespace internal {
 #endif /* TBB_USE_ASSERT */
         };
 
+        // Data fields
+
+        //! Pointer to the segments table
         atomic<segment_t*> my_segment;
 
+        //! embedded storage of segment pointers
         segment_t my_storage[2];
+
+        // Methods
 
         concurrent_vector_base() {
             my_early_size = 0;
@@ -115,7 +122,7 @@ namespace internal {
             my_segment = my_storage;
         }
 
-        //! An operation on an n-lement array starting at begin.
+        //! An operation on an n-element array starting at begin.
         typedef void(__TBB_EXPORTED_FUNC *internal_array_op1)(void* begin, size_type n );
 
         //! An operation on n-element destination array and n-element source array.
@@ -132,7 +139,6 @@ namespace internal {
 private:
         //! Private functionality that does not cross DLL boundary.
         class helper;
-
         friend class helper;
     };
 
@@ -140,8 +146,8 @@ private:
     /** Value is either the T or const T type of the container.
         @ingroup containers */
     template<typename Container, typename Value>
-    class vector_iterator 
-#if defined(_WIN64) && defined(_MSC_VER) 
+    class vector_iterator
+#if defined(_WIN64) && defined(_MSC_VER)
         // Ensure that Microsoft's internal template function _Val_type works correctly.
         : public std::iterator<std::random_access_iterator_tag,Value>
 #endif /* defined(_WIN64) && defined(_MSC_VER) */
@@ -149,13 +155,13 @@ private:
         //! concurrent_vector over which we are iterating.
         Container* my_vector;
 
-        //! Index into the vector 
+        //! Index into the vector
         size_t my_index;
 
         //! Caches my_vector-&gt;internal_subscript(my_index)
         /** NULL if cached value is not available */
         mutable Value* my_item;
-    
+
         template<typename C, typename T, typename U>
         friend bool operator==( const vector_iterator<C,T>& i, const vector_iterator<C,U>& j );
 
@@ -164,7 +170,7 @@ private:
 
         template<typename C, typename T, typename U>
         friend ptrdiff_t operator-( const vector_iterator<C,T>& i, const vector_iterator<C,U>& j );
-    
+
         template<typename C, typename U>
         friend class internal::vector_iterator;
 
@@ -173,11 +179,11 @@ private:
         friend class tbb::concurrent_vector;
 #else
 public: // workaround for MSVC
-#endif 
+#endif
 
-        vector_iterator( const Container& vector, size_t index ) : 
-            my_vector(const_cast<Container*>(&vector)), 
-            my_index(index), 
+        vector_iterator( const Container& vector, size_t index ) :
+            my_vector(const_cast<Container*>(&vector)),
+            my_index(index),
             my_item(NULL)
         {}
 
@@ -241,7 +247,7 @@ public: // workaround for MSVC
 
         //! Pre decrement
         vector_iterator& operator--() {
-            __TBB_ASSERT( my_index>0, "operator--() applied to iterator already at beginning of concurrent_vector" ); 
+            __TBB_ASSERT( my_index>0, "operator--() applied to iterator already at beginning of concurrent_vector" );
             size_t k = my_index--;
             if( my_item ) {
                 // Following test uses 2's-complement wizardry and fact that
@@ -332,7 +338,7 @@ private:
         typedef const T& const_reference;
         typedef I iterator;
         typedef ptrdiff_t difference_type;
-        generic_range_type( I begin_, I end_, size_t grainsize ) : blocked_range<I>(begin_,end_,grainsize) {} 
+        generic_range_type( I begin_, I end_, size_t grainsize_ ) : blocked_range<I>(begin_,end_,grainsize_) {}
         generic_range_type( generic_range_type& r, split ) : blocked_range<I>(r,split()) {}
     };
 
@@ -341,14 +347,17 @@ private:
 public:
     typedef T& reference;
     typedef const T& const_reference;
+    typedef T value_type;
+    typedef ptrdiff_t difference_type;
 
     //! Construct empty vector.
     concurrent_vector() {}
 
     //! Copy a vector.
-    concurrent_vector( const concurrent_vector& vector ) {internal_copy(vector,sizeof(T),&copy_array);}
+    concurrent_vector( const concurrent_vector& vector ) : internal::concurrent_vector_base()
+    { internal_copy(vector,sizeof(T),&copy_array); }
 
-    //! Assignment 
+    //! Assignment
     concurrent_vector& operator=( const concurrent_vector& vector ) {
         if( this!=&vector )
             internal_assign(vector,sizeof(T),&destroy_array,&assign_array,&copy_array);
@@ -373,7 +382,7 @@ public:
             internal_grow_to_at_least( n, sizeof(T), &initialize_array );
     };
 
-    //! Push item 
+    //! Push item
     size_type push_back( const_reference item ) {
         size_type k;
         new( internal_push_back(sizeof(T),k) ) T(item);
@@ -393,12 +402,12 @@ public:
     }
 
     //------------------------------------------------------------------------
-    // Parallel algorithm support
+    // STL support (iterators)
     //------------------------------------------------------------------------
     typedef internal::vector_iterator<concurrent_vector,T> iterator;
     typedef internal::vector_iterator<concurrent_vector,const T> const_iterator;
 
-#if !defined(_MSC_VER) || _CPPLIB_VER>=300 
+#if !defined(_MSC_VER) || _CPPLIB_VER>=300
     // Assume ISO standard definition of std::reverse_iterator
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -408,31 +417,48 @@ public:
     typedef std::reverse_iterator<const_iterator,T,const T&,const T*> const_reverse_iterator;
 #endif /* defined(_MSC_VER) && (_MSC_VER<1300) */
 
+    // Forward sequence 
+    iterator begin() {return iterator(*this,0);}
+    iterator end() {return iterator(*this,size());}
+    const_iterator begin() const {return const_iterator(*this,0);}
+    const_iterator end() const {return const_iterator(*this,size());}
+
+    // Reverse sequence
+    reverse_iterator rbegin() {return reverse_iterator(end());}
+    reverse_iterator rend() {return reverse_iterator(begin());}
+    const_reverse_iterator rbegin() const {return const_reverse_iterator(end());}
+    const_reverse_iterator rend() const {return const_reverse_iterator(begin());}
+
+    //------------------------------------------------------------------------
+    // Support for TBB algorithms (ranges)
+    //------------------------------------------------------------------------
     typedef generic_range_type<iterator> range_type;
     typedef generic_range_type<const_iterator> const_range_type;
 
+    //! Get range to use with parallel algorithms
     range_type range( size_t grainsize = 1 ) {
         return range_type( begin(), end(), grainsize );
     }
 
+    //! Get const range for iterating with parallel algorithms
     const_range_type range( size_t grainsize = 1 ) const {
         return const_range_type( begin(), end(), grainsize );
     }
 
     //------------------------------------------------------------------------
-    // Capacity
+    // Size and capacity
     //------------------------------------------------------------------------
     //! Return size of vector.
     size_type size() const {return my_early_size;}
 
-    //! Return size of vector.
+    //! Return false if vector is not empty.
     bool empty() const {return !my_early_size;}
 
     //! Maximum size to which array can grow without allocating more memory.
     size_type capacity() const {return internal_capacity();}
 
     //! Allocate enough space to grow to size n without having to allocate more memory later.
-    /** Like most of the methods provided for STL compatibility, this method is *not* thread safe. 
+    /** Like most of the methods provided for STL compatibility, this method is *not* thread safe.
         The capacity afterwards may be bigger than the requested reservation. */
     void reserve( size_type n ) {
         if( n )
@@ -442,26 +468,9 @@ public:
     //! Upper bound on argument to reserve.
     size_type max_size() const {return (~size_t(0))/sizeof(T);}
 
-    //------------------------------------------------------------------------
-    // STL support
-    //------------------------------------------------------------------------
-
-    typedef T value_type;
-    typedef ptrdiff_t difference_type;
-
-    iterator begin() {return iterator(*this,0);}
-    iterator end() {return iterator(*this,size());}
-    const_iterator begin() const {return const_iterator(*this,0);}
-    const_iterator end() const {return const_iterator(*this,size());}
-
-    reverse_iterator rbegin() {return reverse_iterator(end());}
-    reverse_iterator rend() {return reverse_iterator(begin());}
-    const_reverse_iterator rbegin() const {return const_reverse_iterator(end());}
-    const_reverse_iterator rend() const {return const_reverse_iterator(begin());}
-
     //! Not thread safe
     /** Does not change capacity. */
-    void clear() {internal_clear(&destroy_array,/*reclaim_storage=*/false);}       
+    void clear() {internal_clear(&destroy_array,/*reclaim_storage=*/false);}
 private:
     //! Get reference to element at given index.
     T& internal_subscript( size_type index ) const;

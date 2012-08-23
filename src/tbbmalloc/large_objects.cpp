@@ -38,50 +38,53 @@ static struct LargeBlockCacheStat {
     uintptr_t age;
 } loCacheStat;
 
-static uintptr_t cleanupCacheIfNeed(ExtMemoryPool *extMemPool);
-
-bool CachedLargeBlocksL::push(ExtMemoryPool *extMemPool, LargeMemoryBlock *ptr)
-{   
+bool LargeObjectCache::CacheBin::put(ExtMemoryPool *extMemPool,
+                                     LargeMemoryBlock *ptr)
+{
+    bool blockCached = true;
     ptr->prev = NULL;
-    ptr->age  = cleanupCacheIfNeed(extMemPool);
+    ptr->age  = extMemPool->loc.cleanupCacheIfNeed(extMemPool);
 
-    MallocMutex::scoped_lock scoped_cs(lock);
-    if (lastCleanedAge) {
-        ptr->next = first;
-        first = ptr;
-        if (ptr->next) ptr->next->prev = ptr;
-        if (!last) {
-            MALLOC_ASSERT(0 == oldest, ASSERT_TEXT);
-            oldest = ptr->age;
-            last = ptr;
+    {
+        MallocMutex::scoped_lock scoped_cs(lock);
+        if (lastCleanedAge) {
+            ptr->next = first;
+            first = ptr;
+            if (ptr->next) ptr->next->prev = ptr;
+            if (!last) {
+                MALLOC_ASSERT(0 == oldest, ASSERT_TEXT);
+                oldest = ptr->age;
+                last = ptr;
+            }
+        } else {
+            // 1st object of such size was released.
+            // Not cache it, and remeber when this occurs
+            // to take into account during cache miss.
+            lastCleanedAge = ptr->age;
+            blockCached = false;
         }
-        return true;
-    } else {
-        // 1st object of such size was released.
-        // Not cache it, and remeber when this occurs
-        // to take into account during cache miss.
-        lastCleanedAge = ptr->age;
-        return false;
     }
+    return blockCached;
 }
 
-LargeMemoryBlock *CachedLargeBlocksL::pop(ExtMemoryPool *extMemPool)
-{   
-    uintptr_t currAge = cleanupCacheIfNeed(extMemPool);
+LargeMemoryBlock *LargeObjectCache::CacheBin::get(ExtMemoryPool *extMemPool,
+                                                  size_t size)
+{
+    uintptr_t currAge = extMemPool->loc.cleanupCacheIfNeed(extMemPool);
     LargeMemoryBlock *result=NULL;
     {
         MallocMutex::scoped_lock scoped_cs(lock);
         if (first) {
             result = first;
             first = result->next;
-            if (first)  
+            if (first)
                 first->prev = NULL;
             else {
                 last = NULL;
                 oldest = 0;
             }
         } else {
-            /* If cache miss occured, set ageThreshold to twice the difference 
+            /* If cache miss occured, set ageThreshold to twice the difference
                between current time and last time cache was cleaned. */
             ageThreshold = 2*(currAge - lastCleanedAge);
         }
@@ -89,12 +92,12 @@ LargeMemoryBlock *CachedLargeBlocksL::pop(ExtMemoryPool *extMemPool)
     return result;
 }
 
-bool CachedLargeBlocksL::releaseLastIfOld(ExtMemoryPool *extMemPool,
-                                        uintptr_t currAge)
+bool LargeObjectCache::CacheBin::cleanToThreshold(ExtMemoryPool *extMemPool,
+                                                  uintptr_t currAge)
 {
     LargeMemoryBlock *toRelease = NULL;
     bool released = false;
- 
+
     /* oldest may be more recent then age, that's why cast to signed type
        was used. age overflow is also processed correctly. */
     if (last && (intptr_t)(currAge - oldest) > ageThreshold) {
@@ -116,7 +119,7 @@ bool CachedLargeBlocksL::releaseLastIfOld(ExtMemoryPool *extMemPool,
             MALLOC_ASSERT( toRelease, ASSERT_TEXT );
             lastCleanedAge = toRelease->age;
         }
-        else 
+        else
             return false;
     }
     released = toRelease;
@@ -130,11 +133,11 @@ bool CachedLargeBlocksL::releaseLastIfOld(ExtMemoryPool *extMemPool,
     return released;
 }
 
-bool CachedLargeBlocksL::releaseAll(ExtMemoryPool *extMemPool)
+bool LargeObjectCache::CacheBin::cleanAll(ExtMemoryPool *extMemPool)
 {
     LargeMemoryBlock *toRelease = NULL;
     bool released = false;
- 
+
     if (last) {
         MallocMutex::scoped_lock scoped_cs(lock);
         // double check
@@ -143,8 +146,8 @@ bool CachedLargeBlocksL::releaseAll(ExtMemoryPool *extMemPool)
             last = NULL;
             first = NULL;
             oldest = 0;
-        } 
-        else 
+        }
+        else
             return false;
     }
     released = toRelease;
@@ -159,73 +162,71 @@ bool CachedLargeBlocksL::releaseAll(ExtMemoryPool *extMemPool)
 }
 
 // release from cache blocks that are older than ageThreshold
-bool ExtMemoryPool::doLOCacheCleanup(uintptr_t currAge)
+bool LargeObjectCache::regularCleanup(ExtMemoryPool *extMemPool, uintptr_t currAge)
 {
-    bool res = false;
+    bool released = false;
 
     for (int i = numLargeBlockBins-1; i >= 0; i--)
-        res |= cachedLargeBlocks[i].releaseLastIfOld(this, currAge);
-
-    return res;
+        if (bin[i].cleanToThreshold(extMemPool, currAge))
+            released = true;
+    return released;
 }
 
 bool ExtMemoryPool::softCachesCleanup()
 {
     // TODO: cleanup small objects as well
-    return doLOCacheCleanup(FencedLoad((intptr_t&)loCacheStat.age));
+    return loc.regularCleanup(this, FencedLoad((intptr_t&)loCacheStat.age));
 }
 
-static uintptr_t cleanupCacheIfNeed(ExtMemoryPool *extMemPool)
+uintptr_t LargeObjectCache::cleanupCacheIfNeed(ExtMemoryPool *extMemPool)
 {
-    /* loCacheStat.age overflow is OK, as we only want difference between 
+    /* loCacheStat.age overflow is OK, as we only want difference between
      * its current value and some recent.
      *
-     * Both malloc and free should increment loCacheStat.age, as in 
+     * Both malloc and free should increment loCacheStat.age, as in
      * a different case multiple cached blocks would have same age,
      * and accuracy of predictors suffers.
      */
     uintptr_t currAge = (uintptr_t)AtomicIncrement((intptr_t&)loCacheStat.age);
 
     if ( 0 == currAge % cacheCleanupFreq )
-        extMemPool->doLOCacheCleanup(currAge);
+        regularCleanup(extMemPool, currAge);
 
     return currAge;
 }
 
-static LargeMemoryBlock* getCachedLargeBlock(ExtMemoryPool *extMemPool, size_t size)
+LargeMemoryBlock *LargeObjectCache::get(ExtMemoryPool *extMemPool, size_t size)
 {
     MALLOC_ASSERT( size%largeBlockCacheStep==0, ASSERT_TEXT );
     LargeMemoryBlock *lmb = NULL;
-    // blockSize is the minimal alignment and thus the minimal size of a large object.
-    size_t idx = (size-minLargeObjectSize)/largeBlockCacheStep;
+    size_t idx = sizeToIdx(size);
     if (idx<numLargeBlockBins) {
-        lmb = extMemPool->cachedLargeBlocks[idx].pop(extMemPool);
+        lmb = bin[idx].get(extMemPool, size);
         if (lmb) {
-            MALLOC_ITT_SYNC_ACQUIRED(extMemPool->cachedLargeBlocks+idx);
+            MALLOC_ITT_SYNC_ACQUIRED(bin+idx);
             STAT_increment(getThreadId(), ThreadCommonCounters, allocCachedLargeBlk);
         }
     }
     return lmb;
 }
 
-void* mallocLargeObject(ExtMemoryPool *extMemPool, size_t size, size_t alignment,
-                        bool startupAlloc)
+void *ExtMemoryPool::mallocLargeObject(size_t size, size_t alignment)
 {
-    LargeMemoryBlock* lmb;
     size_t headersSize = sizeof(LargeMemoryBlock)+sizeof(LargeObjectHdr);
-    // TODO: take into account that they are already largeObjectAlignment-alinged
+    // TODO: take into account that they are already largeObjectAlignment-aligned
     size_t allocationSize = alignUp(size+headersSize+alignment, largeBlockCacheStep);
 
     if (allocationSize < size) // allocationSize is wrapped around after alignUp
         return NULL;
 
-    if (startupAlloc || !(lmb = getCachedLargeBlock(extMemPool, allocationSize))) {
-        BackRefIdx backRefIdx;
-
-        if ((backRefIdx = BackRefIdx::newBackRef(/*largeObj=*/true)).isInvalid()) 
+    LargeMemoryBlock* lmb = loc.get(this, allocationSize);
+    if (!lmb) {
+        BackRefIdx backRefIdx = BackRefIdx::newBackRef(/*largeObj=*/true);
+        if (backRefIdx.isInvalid())
             return NULL;
-        // unalignedSize is set in result
-        lmb = extMemPool->backend.getLargeBlock(allocationSize, startupAlloc);
+
+        // unalignedSize is set in getLargeBlock
+        lmb = backend.getLargeBlock(allocationSize);
         if (!lmb) {
             removeBackRef(backRefIdx);
             return NULL;
@@ -239,20 +240,19 @@ void* mallocLargeObject(ExtMemoryPool *extMemPool, size_t size, size_t alignment
     header->memoryBlock = lmb;
     header->backRefIdx = lmb->backRefIdx;
     setBackRef(header->backRefIdx, header);
- 
+
     lmb->objectSize = size;
 
     MALLOC_ASSERT( isLargeObject(alignedArea), ASSERT_TEXT );
     return alignedArea;
 }
 
-static bool freeLargeObjectToCache(ExtMemoryPool *extMemPool, LargeMemoryBlock* largeBlock)
+bool LargeObjectCache::put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock)
 {
-    size_t size = largeBlock->unalignedSize;
-    size_t idx = (size-minLargeObjectSize)/largeBlockCacheStep;
+    size_t idx = sizeToIdx(largeBlock->unalignedSize);
     if (idx<numLargeBlockBins) {
-        MALLOC_ITT_SYNC_RELEASING(extMemPool->cachedLargeBlocks+idx);
-        if (extMemPool->cachedLargeBlocks[idx].push(extMemPool, largeBlock)) {
+        MALLOC_ITT_SYNC_RELEASING(bin+idx);
+        if (bin[idx].put(extMemPool, largeBlock)) {
             STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeBlk);
             return true;
         } else
@@ -261,15 +261,15 @@ static bool freeLargeObjectToCache(ExtMemoryPool *extMemPool, LargeMemoryBlock* 
     return false;
 }
 
-void freeLargeObject(ExtMemoryPool *extMemPool, void *object)
+void ExtMemoryPool::freeLargeObject(void *object)
 {
     LargeObjectHdr *header = (LargeObjectHdr*)object - 1;
 
     // overwrite backRefIdx to simplify double free detection
     header->backRefIdx = BackRefIdx();
-    if (!freeLargeObjectToCache(extMemPool, header->memoryBlock)) {
+    if (!loc.put(this, header->memoryBlock)) {
         removeBackRef(header->memoryBlock->backRefIdx);
-        extMemPool->backend.putLargeBlock(header->memoryBlock);
+        backend.putLargeBlock(header->memoryBlock);
         STAT_increment(getThreadId(), ThreadCommonCounters, freeLargeObj);
     }
 }

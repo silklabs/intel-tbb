@@ -112,13 +112,25 @@ __TBB_MACHINE_DEFINE_ATOMICS(4, ptrdiff_t, ptrdiff_t, eax, ecx)
 
 #undef __TBB_MACHINE_DEFINE_ATOMICS
 
-static inline __int32 __TBB_machine_lg( unsigned __int64 i ) {
-    unsigned __int32 j;
+#if ( _MSC_VER>=1400 && !defined(__INTEL_COMPILER) ) ||  (__INTEL_COMPILER>=1200)
+// MSVC did not have this intrinsic prior to VC8.
+// ICL 11.1 fails to compile a TBB example if __TBB_Log2 uses the intrinsic.
+#define __TBB_LOG2_USE_BSR_INTRINSIC 1
+extern "C" unsigned char _BitScanReverse( unsigned long* i, unsigned long w );
+#pragma intrinsic(_BitScanReverse)
+#endif
+
+static inline intptr_t __TBB_machine_lg( uintptr_t i ) {
+    unsigned long j;
+#if __TBB_LOG2_USE_BSR_INTRINSIC
+    _BitScanReverse( &j, i );
+#else
     __asm
     {
         bsr eax, i
         mov j, eax
     }
+#endif
     return j;
 }
 
@@ -144,10 +156,10 @@ static inline void __TBB_machine_pause (__int32 delay ) {
     _asm 
     {
         mov eax, delay
-      L1: 
+      __TBB_L1: 
         pause
         add eax, -1
-        jne L1  
+        jne __TBB_L1  
     }
     return;
 }
@@ -155,9 +167,13 @@ static inline void __TBB_machine_pause (__int32 delay ) {
 #define __TBB_AtomicOR(P,V) __TBB_machine_OR(P,V)
 #define __TBB_AtomicAND(P,V) __TBB_machine_AND(P,V)
 
-#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE   1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
-#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+//TODO: Check if it possible and profitable for IA-32 on (Linux and Windows)
+//to use of 64-bit load/store via floating point registers together with full fence
+//for sequentially consistent load/store, instead of CAS.
+#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
 // Definition of other functions
 extern "C" __declspec(dllimport) int __stdcall SwitchToThread( void );

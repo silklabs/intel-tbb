@@ -30,10 +30,10 @@
     with SPIN tool using <TBB directory>/tools/spin_models/ReaderWriterMutex.pml.
     There could be some code looking as "can be restructured" but its structure does matter! */
 
+#include "tbb/queuing_rw_mutex.h"
 #include "tbb/tbb_machine.h"
 #include "tbb/tbb_stddef.h"
 #include "tbb/tbb_machine.h"
-#include "tbb/queuing_rw_mutex.h"
 #include "itt_notify.h"
 
 
@@ -43,26 +43,21 @@ using namespace internal;
 
 //! Flag bits in a state_t that specify information about a locking request.
 enum state_t_flags {
-    STATE_NONE = 0,
-    STATE_WRITER = 1,
-    STATE_READER = 1<<1,
-    STATE_READER_UNBLOCKNEXT = 1<<2,
+    STATE_NONE                   = 0,
+    STATE_WRITER                 = 1<<0,
+    STATE_READER                 = 1<<1,
+    STATE_READER_UNBLOCKNEXT     = 1<<2,
+    STATE_ACTIVEREADER           = 1<<3,
+    STATE_UPGRADE_REQUESTED      = 1<<4,
+    STATE_UPGRADE_WAITING        = 1<<5,
+    STATE_UPGRADE_LOSER          = 1<<6,
     STATE_COMBINED_WAITINGREADER = STATE_READER | STATE_READER_UNBLOCKNEXT,
-    STATE_ACTIVEREADER = 1<<3,
-    STATE_COMBINED_READER = STATE_COMBINED_WAITINGREADER | STATE_ACTIVEREADER,
-    STATE_UPGRADE_REQUESTED = 1<<4,
-    STATE_UPGRADE_WAITING = 1<<5,
-    STATE_UPGRADE_LOSER = 1<<6,
-    STATE_COMBINED_UPGRADING = STATE_UPGRADE_WAITING | STATE_UPGRADE_LOSER
+    STATE_COMBINED_READER        = STATE_COMBINED_WAITINGREADER | STATE_ACTIVEREADER,
+    STATE_COMBINED_UPGRADING     = STATE_UPGRADE_WAITING | STATE_UPGRADE_LOSER
 };
 
 const unsigned char RELEASED = 0;
 const unsigned char ACQUIRED = 1;
-
-template<typename T>
-inline atomic<T>& as_atomic( T& t ) {
-    return *(atomic<T>*)&t;
-}
 
 inline bool queuing_rw_mutex::scoped_lock::try_acquire_internal_lock()
 {
@@ -153,6 +148,7 @@ uintptr_t get_flag( queuing_rw_mutex::scoped_lock* ptr ) {
 // Methods of queuing_rw_mutex::scoped_lock
 //------------------------------------------------------------------------
 
+//! A method to acquire queuing_rw_mutex lock
 void queuing_rw_mutex::scoped_lock::acquire( queuing_rw_mutex& m, bool write )
 {
     __TBB_ASSERT( !my_mutex, "scoped_lock is already holding a mutex");
@@ -213,6 +209,8 @@ void queuing_rw_mutex::scoped_lock::acquire( queuing_rw_mutex& m, bool write )
                 spin_wait_until_eq(my_going, 1);
             }
         }
+
+        // The protected state must have been acquired here before it can be further released to any other reader(s):
         unsigned short old_state = my_state.compare_and_swap<tbb::acquire>(STATE_ACTIVEREADER, STATE_READER);
         if( old_state!=STATE_READER ) {
 #if DO_ITT_NOTIFY
@@ -236,6 +234,7 @@ void queuing_rw_mutex::scoped_lock::acquire( queuing_rw_mutex& m, bool write )
     __TBB_load_with_acquire(my_going);
 }
 
+//! A method to acquire queuing_rw_mutex if it is free
 bool queuing_rw_mutex::scoped_lock::try_acquire( queuing_rw_mutex& m, bool write )
 {
     __TBB_ASSERT( !my_mutex, "scoped_lock is already holding a mutex");
@@ -264,6 +263,7 @@ bool queuing_rw_mutex::scoped_lock::try_acquire( queuing_rw_mutex& m, bool write
     return true;
 }
 
+//! A method to release queuing_rw_mutex lock
 void queuing_rw_mutex::scoped_lock::release( )
 {
     __TBB_ASSERT(my_mutex!=NULL, "no lock acquired");
@@ -319,7 +319,7 @@ retry:
                     // Now owner of pred is waiting for _us_ to release its lock
                     pred->release_internal_lock();
                 }
-                else ; // The "in use" flag is back -> the predecessor didn't get it and will release itself; nothing to do
+                // else the "in use" flag is back -> the predecessor didn't get it and will release itself; nothing to do
 
                 tmp = NULL;
                 goto retry;

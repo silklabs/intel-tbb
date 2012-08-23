@@ -29,15 +29,6 @@
 #ifndef _TBB_malloc_Customize_H_
 #define _TBB_malloc_Customize_H_
 
-/* Thread shutdown notification callback */
-/* redefine the name of the callback to meet TBB requirements
-   for externally visible names of service functions */
-#define mallocThreadShutdownNotification __TBB_mallocThreadShutdownNotification
-#define mallocProcessShutdownNotification __TBB_mallocProcessShutdownNotification
-
-extern "C" void mallocThreadShutdownNotification(void *);
-extern "C" void mallocProcessShutdownNotification(void);
-
 // customizing MALLOC_ASSERT macro
 #include "tbb/tbb_stddef.h"
 #define MALLOC_ASSERT(assertion, message) __TBB_ASSERT(assertion, message)
@@ -85,7 +76,7 @@ public:
                 unlock_value = __TBB_LockByte(m.value);
                 if (locked) *locked = true;
             } else {
-                if (bool res = __TBB_TryLockByte(m.value)) {
+                if (__TBB_TryLockByte(m.value)) {
                     unlock_value = 0;
                     if (locked) *locked = true;
                 } else

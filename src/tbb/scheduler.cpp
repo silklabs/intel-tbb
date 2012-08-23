@@ -58,7 +58,7 @@ uintptr_t the_context_state_propagation_epoch = 0;
 //! Context to be associated with dummy tasks of worker threads schedulers.
 /** It is never used for its direct purpose, and is introduced solely for the sake
     of avoiding one extra conditional branch in the end of wait_for_all method. **/
-static task_group_context dummy_context(task_group_context::isolated);
+static task_group_context the_dummy_context(task_group_context::isolated);
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 void Scheduler_OneTimeInitialization ( bool itt_present ) {
@@ -67,7 +67,7 @@ void Scheduler_OneTimeInitialization ( bool itt_present ) {
 #if __TBB_TASK_GROUP_CONTEXT && __TBB_TASK_PRIORITY
     // There are no tasks belonging to this fake task group. So it should never
     // prevent tasks from being passed to execution.
-    dummy_context.my_priority = num_priority_levels - 1;
+    the_dummy_context.my_priority = num_priority_levels - 1;
 #endif /* __TBB_TASK_GROUP_CONTEXT && __TBB_TASK_PRIORITY */
 }
 
@@ -112,7 +112,7 @@ generic_scheduler::generic_scheduler( arena* a, size_t index )
     , my_small_task_count(1)   // Extra 1 is a guard reference
     , my_return_list(NULL)
 #if __TBB_TASK_GROUP_CONTEXT
-    , my_local_ctx_list_update(0)
+    , my_local_ctx_list_update(make_atomic(uintptr_t(0)))
 #endif /* __TBB_TASK_GROUP_CONTEXT */
     , my_dispatching_task(NULL)
 #if __TBB_TASK_PRIORITY
@@ -124,7 +124,7 @@ generic_scheduler::generic_scheduler( arena* a, size_t index )
     , my_pool_reshuffling_pending(false)
 #endif /* __TBB_TASK_PRIORITY */
 #if __TBB_TASK_GROUP_CONTEXT
-    , my_nonlocal_ctx_list_update(0)
+    , my_nonlocal_ctx_list_update(make_atomic(uintptr_t(0)))
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 #if __TBB_SURVIVE_THREAD_SWITCH && TBB_USE_ASSERT
     , my_cilk_state(cs_none)
@@ -212,6 +212,7 @@ void generic_scheduler::init_stack_info () {
     // non-portable method (on all modern Linux) or the simplified approach
     // based on the common sense assumptions. The most important assumption
     // is that the main thread's stack size is not less than that of other threads.
+    // See also comment 3 at the end of this file
     void    *stack_base = &stack_size;
 #if __TBB_ipf
     void    *rsb_base = __TBB_get_bsp();
@@ -219,27 +220,25 @@ void generic_scheduler::init_stack_info () {
 #if __linux__
     size_t  np_stack_size = 0;
     void    *stack_limit = NULL;
-    pthread_attr_t  attr_stack, np_attr_stack;
-    #if __bgp__
+    pthread_attr_t  np_attr_stack;
+#if __bgp__
     // Workaround pthread_attr_init() before pthread_getattr_np() prevents subsequent abort() in pthread_attr_destroy() when
     // freeing an erroneously invalid pointer value for cpuset (refers to the implementation of opaque type pthread_attr_t).
     if( 0 == pthread_attr_init(&np_attr_stack) )
-    #endif
+#endif
     if( 0 == pthread_getattr_np(pthread_self(), &np_attr_stack) ) {
         if ( 0 == pthread_attr_getstack(&np_attr_stack, &stack_limit, &np_stack_size) ) {
+#if __TBB_ipf
+            pthread_attr_t  attr_stack;
             if ( 0 == pthread_attr_init(&attr_stack) ) {
-                if ( 0 == pthread_attr_getstacksize(&attr_stack, &stack_size) )
-                {
-                    stack_base = (char*)stack_limit + np_stack_size;
+                if ( 0 == pthread_attr_getstacksize(&attr_stack, &stack_size) ) {
                     if ( np_stack_size < stack_size ) {
                         // We are in a secondary thread. Use reliable data.
-#if __TBB_ipf
                         // IA64 stack is split into RSE backup and memory parts
                         rsb_base = stack_limit;
                         stack_size = np_stack_size/2;
-#else
-                        stack_size = np_stack_size;
-#endif /* !__TBB_ipf */
+                        // Limit of the memory part of the stack
+                        stack_limit = (char*)stack_limit + stack_size;
                     }
                     // We are either in the main thread or this thread stack
                     // is bigger that that of the main one. As we cannot discern
@@ -247,15 +246,17 @@ void generic_scheduler::init_stack_info () {
                 }
                 pthread_attr_destroy(&attr_stack);
             }
+            // IA64 stack is split into RSE backup and memory parts
+            my_rsb_stealing_threshold = (uintptr_t)((char*)rsb_base + stack_size/2);
+#endif /* __TBB_ipf */
+            // Size of the stack free part 
+            stack_size = size_t((char*)stack_base - (char*)stack_limit);
         }
         pthread_attr_destroy(&np_attr_stack);
     }
 #endif /* __linux__ */
     __TBB_ASSERT( stack_size>0, "stack size must be positive" );
     my_stealing_threshold = (uintptr_t)((char*)stack_base - stack_size/2);
-#if __TBB_ipf
-    my_rsb_stealing_threshold = (uintptr_t)((char*)rsb_base + stack_size/2);
-#endif
 #endif /* USE_PTHREAD */
 }
 
@@ -269,7 +270,7 @@ void generic_scheduler::cleanup_local_context_list () {
     // Detach contexts remaining in the local list
     bool wait_for_concurrent_destroyers_to_leave = false;
     uintptr_t local_count_snapshot = my_context_state_propagation_epoch;
-    my_local_ctx_list_update = 1;
+    my_local_ctx_list_update.store<relaxed>(1);
     {
         // This is just a definition. Actual lock is acquired only in case of conflict.
         spin_mutex::scoped_lock lock;
@@ -277,7 +278,7 @@ void generic_scheduler::cleanup_local_context_list () {
         // load from my_nonlocal_ctx_list_update.
         atomic_fence();
         // Check for the conflict with concurrent destroyer or cancelation propagator
-        if ( my_nonlocal_ctx_list_update || local_count_snapshot != the_context_state_propagation_epoch )
+        if ( my_nonlocal_ctx_list_update.load<relaxed>() || local_count_snapshot != the_context_state_propagation_epoch )
             lock.acquire(my_context_list_mutex);
         // No acquire fence is necessary for loading my_context_list_head.my_next,
         // as the list can be updated by this thread only.
@@ -293,7 +294,7 @@ void generic_scheduler::cleanup_local_context_list () {
                 wait_for_concurrent_destroyers_to_leave = true;
         }
     }
-    __TBB_store_with_release( my_local_ctx_list_update, 0 );
+    my_local_ctx_list_update.store<release>(0);
     // Wait until other threads referencing this scheduler object finish with it
     if ( wait_for_concurrent_destroyers_to_leave )
         spin_wait_until_eq( my_nonlocal_ctx_list_update, 0u );
@@ -342,7 +343,7 @@ task& generic_scheduler::allocate_task( size_t number_of_bytes,
             my_free_list = t->prefix().next;
         } else if( my_return_list ) {
             // No fence required for read of my_return_list above, because __TBB_FetchAndStoreW has a fence.
-            t = (task*)__TBB_FetchAndStoreW( &my_return_list, 0 );
+            t = (task*)__TBB_FetchAndStoreW( &my_return_list, 0 ); // with acquire
             __TBB_ASSERT( t, "another thread emptied the my_return_list" );
             __TBB_ASSERT( t->prefix().origin==this, "task returned to wrong my_return_list" );
             ITT_NOTIFY( sync_acquired, &my_return_list );
@@ -1032,7 +1033,7 @@ void generic_scheduler::leave_arena() {
 generic_scheduler* generic_scheduler::create_worker( market& m, size_t index ) {
     generic_scheduler* s = allocate_scheduler( NULL, index );
 #if __TBB_TASK_GROUP_CONTEXT
-    s->my_dummy_task->prefix().context = &dummy_context;
+    s->my_dummy_task->prefix().context = &the_dummy_context;
     // Sync up the local cancellation state with the global one. No need for fence here.
     s->my_context_state_propagation_epoch = the_context_state_propagation_epoch;
 #endif /* __TBB_TASK_GROUP_CONTEXT */
@@ -1089,12 +1090,11 @@ generic_scheduler* generic_scheduler::create_master( arena& a ) {
     return s;
 }
 
-void generic_scheduler::cleanup_worker( void* arg, bool is_worker ) {
+void generic_scheduler::cleanup_worker( void* arg, bool worker ) {
     generic_scheduler& s = *(generic_scheduler*)arg;
     __TBB_ASSERT( s.my_dummy_slot.task_pool, "cleaning up worker with missing task pool" );
-// APM TODO: Decide how observers should react to each entry/leave to/from arena
 #if __TBB_SCHEDULER_OBSERVER
-    s.notify_exit_observers( is_worker );
+    s.notify_exit_observers( worker );
 #endif /* __TBB_SCHEDULER_OBSERVER */
     // When comparing "head" and "tail" indices ">=" is used because this worker's
     // task pool may still be published in the arena, and thieves can optimistically
@@ -1109,7 +1109,7 @@ void generic_scheduler::cleanup_master() {
     generic_scheduler& s = *this; // for similarity with cleanup_worker
     __TBB_ASSERT( s.my_dummy_slot.task_pool, "cleaning up master with missing task pool" );
 #if __TBB_SCHEDULER_OBSERVER
-    s.notify_exit_observers(/*is_worker=*/false);
+    s.notify_exit_observers(/*worker=*/false);
 #endif /* __TBB_SCHEDULER_OBSERVER */
     if( in_arena() ) {
         acquire_task_pool();
@@ -1156,7 +1156,7 @@ void generic_scheduler::cleanup_master() {
 #if __TBB_STATISTICS_EARLY_DUMP
     GATHER_STATISTIC( a->dump_arena_statistics() );
 #endif
-    a->on_thread_leaving();
+    a->on_thread_leaving( /*is_master*/ true );
 }
 
 #if __TBB_SCHEDULER_OBSERVER
@@ -1164,8 +1164,8 @@ void generic_scheduler::cleanup_master() {
         my_local_last_observer_proxy = observer_proxy::process_list(my_local_last_observer_proxy,is_worker(),/*is_entry=*/true);
     }
 
-    void generic_scheduler::notify_exit_observers( bool is_worker ) {
-        observer_proxy::process_list(my_local_last_observer_proxy,is_worker,/*is_entry=*/false);
+    void generic_scheduler::notify_exit_observers( bool worker ) {
+        observer_proxy::process_list(my_local_last_observer_proxy,worker,/*is_entry=*/false);
     }
 #endif /* __TBB_SCHEDULER_OBSERVER */
 

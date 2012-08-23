@@ -795,9 +795,9 @@ OSStatus BuildGLForWindow (WindowRef window)
         SetPort ((GrafPtr) GetWindowPort (window)); // set port to the current window
         // set parameters for Carbon SetupGL
         pWindowInfo->glInfo.fAcceleratedMust = false; // must renderer be accelerated?
-        pWindowInfo->glInfo.VRAM = 0 * 1048576; // minimum VRAM (if not zero this is always required)
-        pWindowInfo->glInfo.textureRAM = 0 * 1048576; // minimum texture RAM (if not zero this is always required)
-           pWindowInfo->glInfo.fDraggable = true; // is this a draggable window
+        pWindowInfo->glInfo.VRAM = 0 * 1024*1024; // minimum VRAM (if not zero this is always required)
+        pWindowInfo->glInfo.textureRAM = 0 * 1024*1024; // minimum texture RAM (if not zero this is always required)
+        pWindowInfo->glInfo.fDraggable = true; // is this a draggable window
         pWindowInfo->glInfo.fmt = 0; // output pixel format
 
         i = 0; // first attribute in array

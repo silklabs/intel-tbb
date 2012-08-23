@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::task_scheduler_init Class Reference</title>
+<title>tbb::flow::interface6::sender&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,142 +21,67 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00327.html">task_scheduler_init</a></div>
-<h1>tbb::task_scheduler_init Class Reference<br>
-<small>
-[<a class="el" href="a00413.html">Task Scheduling</a>]</small>
-</h1><!-- doxytag: class="tbb::task_scheduler_init" -->Class delimiting the scope of task scheduler activity.  
+<a class="el" href="a00412.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00327.html">sender</a></div>
+<h1>tbb::flow::interface6::sender&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::sender" -->Pure virtual template class that defines a sender of messages of type T.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00606.html">task_scheduler_init.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00509.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00136.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::sender&lt; T &gt;:
+<p><center><img src="a00327.png" usemap="#tbb::flow::interface6::sender< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::sender< T >_map">
+<area href="a00262.html" alt="tbb::flow::interface6::broadcast_node< T >" shape="rect" coords="0,56,352,80">
+<area href="a00263.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
+<area href="a00292.html" alt="tbb::flow::interface6::limiter_node< T >" shape="rect" coords="724,56,1076,80">
+<area href="a00312.html" alt="tbb::flow::interface6::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
+<area href="a00313.html" alt="tbb::flow::interface6::queue_node< T, A >" shape="rect" coords="543,112,895,136">
+<area href="a00328.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
+</map>
+<a href="a00053.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="127af99916cc085cd9dbc09c53299928"></a><!-- doxytag: member="tbb::flow::interface6::sender::output_type" ref="127af99916cc085cd9dbc09c53299928" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#127af99916cc085cd9dbc09c53299928">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d690e8a54e358968f0ee4fdf9ee73068"></a><!-- doxytag: member="tbb::flow::interface6::sender::successor_type" ref="d690e8a54e358968f0ee4fdf9ee73068" args="" -->
+typedef <a class="el" href="a00321.html">receiver</a>&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#d690e8a54e358968f0ee4fdf9ee73068">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#d476053cc712e572554823492a5229ce">initialize</a> (int number_of_threads=<a class="el" href="a00327.html#8f5988e2b0fbb2d533fcbb7f2583743f">automatic</a>)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="68b8941ad77b9303cf3bcb8cf1f2d28a"></a><!-- doxytag: member="tbb::flow::interface6::sender::register_successor" ref="68b8941ad77b9303cf3bcb8cf1f2d28a" args="(successor_type &amp;r)=0" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#68b8941ad77b9303cf3bcb8cf1f2d28a">register_successor</a> (<a class="el" href="a00321.html">successor_type</a> &amp;r)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ensure that scheduler exists for this thread.  <a href="#d476053cc712e572554823492a5229ce"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#d5ed214a8bb53b0466ed91ff4734b9a3">initialize</a> (int number_of_threads, stack_size_type thread_stack_size)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a new successor to this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="82f363bfb1738bb8789e167590b10ef9"></a><!-- doxytag: member="tbb::flow::interface6::sender::remove_successor" ref="82f363bfb1738bb8789e167590b10ef9" args="(successor_type &amp;r)=0" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#82f363bfb1738bb8789e167590b10ef9">remove_successor</a> (<a class="el" href="a00321.html">successor_type</a> &amp;r)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The overloaded method with stack size parameter.  <a href="#d5ed214a8bb53b0466ed91ff4734b9a3"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f73257e04cb7fb9bd5be2b635d9016f1"></a><!-- doxytag: member="tbb::task_scheduler_init::terminate" ref="f73257e04cb7fb9bd5be2b635d9016f1" args="()" -->
-void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#f73257e04cb7fb9bd5be2b635d9016f1">terminate</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="922fb56b0aad090b90a98b7d56b76a59"></a><!-- doxytag: member="tbb::flow::interface6::sender::try_get" ref="922fb56b0aad090b90a98b7d56b76a59" args="(T &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#922fb56b0aad090b90a98b7d56b76a59">try_get</a> (T &amp;)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Inverse of method initialize. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="421600bf9bf9338bcf937063f2ff0e90"></a><!-- doxytag: member="tbb::task_scheduler_init::task_scheduler_init" ref="421600bf9bf9338bcf937063f2ff0e90" args="(int number_of_threads=automatic, stack_size_type thread_stack_size=0)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#421600bf9bf9338bcf937063f2ff0e90">task_scheduler_init</a> (int number_of_threads=<a class="el" href="a00327.html#8f5988e2b0fbb2d533fcbb7f2583743f">automatic</a>, stack_size_type thread_stack_size=0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request an item from the sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="02c05b472271db1b68a48ea2618fa72f"></a><!-- doxytag: member="tbb::flow::interface6::sender::try_reserve" ref="02c05b472271db1b68a48ea2618fa72f" args="(T &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#02c05b472271db1b68a48ea2618fa72f">try_reserve</a> (T &amp;)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Shorthand for default constructor followed by call to initialize(number_of_threads). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4da6c86292d80c703a66c1f6f5299488"></a><!-- doxytag: member="tbb::task_scheduler_init::~task_scheduler_init" ref="4da6c86292d80c703a66c1f6f5299488" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#4da6c86292d80c703a66c1f6f5299488">~task_scheduler_init</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reserves an item in the sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27036b06d6a91e97007e14f400529199"></a><!-- doxytag: member="tbb::flow::interface6::sender::try_release" ref="27036b06d6a91e97007e14f400529199" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#27036b06d6a91e97007e14f400529199">try_release</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy scheduler for this thread if thread has no other live task_scheduler_inits. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="12752282977029f23416642bc03e8b74"></a><!-- doxytag: member="tbb::task_scheduler_init::is_active" ref="12752282977029f23416642bc03e8b74" args="() const " -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#12752282977029f23416642bc03e8b74">is_active</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Releases the reserved item. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7b840f50da117a0d6848707c1857ea2e"></a><!-- doxytag: member="tbb::flow::interface6::sender::try_consume" ref="7b840f50da117a0d6848707c1857ea2e" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#7b840f50da117a0d6848707c1857ea2e">try_consume</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns true if scheduler is active (initialized); false otherwise. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#ba00714c33a41a3c2216f48613971cab">default_num_threads</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of threads TBB scheduler would create if initialized by default.  <a href="#ba00714c33a41a3c2216f48613971cab"></a><br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8f5988e2b0fbb2d533fcbb7f2583743f"></a><!-- doxytag: member="tbb::task_scheduler_init::automatic" ref="8f5988e2b0fbb2d533fcbb7f2583743f" args="" -->
-static const int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#8f5988e2b0fbb2d533fcbb7f2583743f">automatic</a> = -1</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Typedef for number of threads that is automatic. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e6c860f1e559026ff3ef4599c0d6c514"></a><!-- doxytag: member="tbb::task_scheduler_init::deferred" ref="e6c860f1e559026ff3ef4599c0d6c514" args="" -->
-static const int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html#e6c860f1e559026ff3ef4599c0d6c514">deferred</a> = -2</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Argument to <a class="el" href="a00327.html#d476053cc712e572554823492a5229ce">initialize()</a> or constructor that causes initialization to be deferred. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Consumes the reserved item. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Class delimiting the scope of task scheduler activity. 
-<p>
-A thread can construct a <a class="el" href="a00327.html">task_scheduler_init</a> object and keep it alive while it uses TBB's tasking subsystem (including parallel algorithms).<p>
-This class allows to customize properties of the TBB task pool to some extent. For example it can limit concurrency level of parallel work initiated by the given thread. It also can be used to specify stack size of the TBB worker threads, though this setting is not effective if the thread pool has already been created.<p>
-If a parallel construct is used without <a class="el" href="a00327.html">task_scheduler_init</a> object previously created, the scheduler will be initialized automatically with default settings, and will persist until this thread exits. Default concurrency level is defined as described in <a class="el" href="a00327.html#d476053cc712e572554823492a5229ce">task_scheduler_init::initialize()</a>. 
-<p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="ba00714c33a41a3c2216f48613971cab"></a><!-- doxytag: member="tbb::task_scheduler_init::default_num_threads" ref="ba00714c33a41a3c2216f48613971cab" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int __TBB_EXPORTED_FUNC tbb::task_scheduler_init::default_num_threads           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [static]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface6::sender&lt; T &gt;</h3>
 
+Pure virtual template class that defines a sender of messages of type T. 
 <p>
-Returns the number of threads TBB scheduler would create if initialized by default. 
-<p>
-Result returned by this method does not depend on whether the scheduler has already been initialized.<p>
-Because tbb 2.0 does not support blocking tasks yet, you may use this method to boost the number of threads in the tbb's internal pool, if your tasks are doing I/O operations. The optimal number of additional threads depends on how much time your tasks spend in the blocked state.<p>
-Before TBB 3.0 U4 this method returned the number of logical CPU in the system. Currently on Windows, Linux and FreeBSD it returns the number of logical CPUs available to the current process in accordance with its affinity mask.<p>
-NOTE: The return value of this method never changes after its first invocation. This means that changes in the process affinity mask that took place after this method was first invoked will not affect the number of worker threads in the TBB worker threads pool. 
-</div>
-</div><p>
-<a class="anchor" name="d5ed214a8bb53b0466ed91ff4734b9a3"></a><!-- doxytag: member="tbb::task_scheduler_init::initialize" ref="d5ed214a8bb53b0466ed91ff4734b9a3" args="(int number_of_threads, stack_size_type thread_stack_size)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void __TBB_EXPORTED_METHOD tbb::task_scheduler_init::initialize           </td>
-          <td>(</td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>number_of_threads</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">stack_size_type&nbsp;</td>
-          <td class="paramname"> <em>thread_stack_size</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-The overloaded method with stack size parameter. 
-<p>
-Overloading is necessary to preserve ABI compatibility 
-</div>
-</div><p>
-<a class="anchor" name="d476053cc712e572554823492a5229ce"></a><!-- doxytag: member="tbb::task_scheduler_init::initialize" ref="d476053cc712e572554823492a5229ce" args="(int number_of_threads=automatic)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void __TBB_EXPORTED_METHOD tbb::task_scheduler_init::initialize           </td>
-          <td>(</td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>number_of_threads</em> = <code><a class="el" href="a00327.html#8f5988e2b0fbb2d533fcbb7f2583743f">automatic</a></code>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Ensure that scheduler exists for this thread. 
-<p>
-A value of -1 lets TBB decide on the number of threads, which is usually maximal hardware concurrency for this process, that is the number of logical CPUs on the machine (possibly limited by the processor affinity mask of this process (Windows) or of this thread (Linux, FreeBSD). It is preferable option for production code because it helps to avoid nasty surprises when several TBB based components run side-by-side or in a nested fashion inside the same process.<p>
-The number_of_threads is ignored if any other task_scheduler_inits currently exist. A thread may construct multiple task_scheduler_inits. Doing so does no harm because the underlying scheduler is reference counted. 
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00606.html">task_scheduler_init.h</a></ul>
+<li><a class="el" href="a00509.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

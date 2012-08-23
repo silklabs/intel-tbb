@@ -39,7 +39,7 @@
 //   E. V()
 //
 
-#include "tbb/semaphore.h"
+#include "../tbb/semaphore.h"
 #include "tbb/atomic.h"
 #include "tbb/blocked_range.h"
 
@@ -124,8 +124,10 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
     }
 }
 
-#include "tbb/semaphore.cpp"
-#include "tbb/dynamic_link.cpp"
+#include "../tbb/semaphore.cpp"
+#if _WIN32||_WIN64
+#include "../tbb/dynamic_link.cpp"
+#endif
 
 #define N_TIMES 1000
 

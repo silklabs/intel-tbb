@@ -122,15 +122,11 @@ extern "C" size_t safer_scalable_msize (void *, size_t (*)(void*))
 #else  // _USRDLL
 
 #include <cstdlib>
-#if _WIN32 || _WIN64
-#include "tbb/machine/windows_api.h"
-#else
-#include <dlfcn.h>
-#endif
 #include "tbb/tbb_stddef.h"
 #define HARNESS_NO_PARSE_COMMAND_LINE 1
 #include "harness.h"
 #include "harness_memory.h"
+#include "harness_dynamic_libs.h"
 
 #if TBB_USE_DEBUG
 #define SUFFIX1 "_debug"
@@ -160,14 +156,6 @@ extern "C" size_t safer_scalable_msize (void *, size_t (*)(void*))
 #define MALLOCLIB_NAME1 PREFIX "tbbmalloc" SUFFIX1 EXT
 #define MALLOCLIB_NAME2 PREFIX "tbbmalloc" SUFFIX2 EXT
 
-#if _WIN32 || _WIN64
-#define LIBRARY_HANDLE HMODULE
-#define LOAD_LIBRARY(name) LoadLibrary((name))
-#else
-#define LIBRARY_HANDLE void*
-#define LOAD_LIBRARY(name) dlopen((name), RTLD_NOW|RTLD_GLOBAL)
-#endif
-
 extern "C" {
 #if _WIN32||_WIN64
 extern __declspec(dllimport)
@@ -177,35 +165,25 @@ void *scalable_malloc(size_t);
 
 struct Run {
     void operator()( int /*id*/ ) const {
+        using namespace Harness;
+
         void* (*malloc_ptr)(std::size_t);
         void (*free_ptr)(void*);
-        
+
         void* (*aligned_malloc_ptr)(size_t size, size_t alignment);
         void  (*aligned_free_ptr)(void*);
 
         const char* actual_name;
-        LIBRARY_HANDLE lib = LOAD_LIBRARY(actual_name = MALLOCLIB_NAME1);
-        if (!lib)      lib = LOAD_LIBRARY(actual_name = MALLOCLIB_NAME2);
+        LIBRARY_HANDLE lib = OpenLibrary(actual_name = MALLOCLIB_NAME1);
+        if (!lib)      lib = OpenLibrary(actual_name = MALLOCLIB_NAME2);
         if (!lib) {
             REPORT("Can't load " MALLOCLIB_NAME1 " or " MALLOCLIB_NAME2 "\n");
             exit(1);
         }
-#if _WIN32 || _WIN64
-        // casts at both sides are to soothe MinGW compiler
-        (void *&)malloc_ptr = (void*)GetProcAddress(lib, "scalable_malloc");
-        (void *&)free_ptr = (void*)GetProcAddress(lib, "scalable_free");
-        (void *&)aligned_malloc_ptr = (void*)GetProcAddress(lib, "scalable_aligned_malloc");
-        (void *&)aligned_free_ptr = (void*)GetProcAddress(lib, "scalable_aligned_free");
-#else
-        (void *&)malloc_ptr = dlsym(lib, "scalable_malloc");
-        (void *&)free_ptr = dlsym(lib, "scalable_free");
-        (void *&)aligned_malloc_ptr = dlsym(lib, "scalable_aligned_malloc");
-        (void *&)aligned_free_ptr = dlsym(lib, "scalable_aligned_free");
-#endif
-        if (!malloc_ptr || !free_ptr)  {
-            REPORT("Can't find scalable_(malloc|free) in %s \n", actual_name);
-            exit(1);
-        }
+        (FunctionAddress&)malloc_ptr = GetAddress(lib, "scalable_malloc");
+        (FunctionAddress&)free_ptr = GetAddress(lib, "scalable_free");
+        (FunctionAddress&)aligned_malloc_ptr = GetAddress(lib, "scalable_aligned_malloc");
+        (FunctionAddress&)aligned_free_ptr = GetAddress(lib, "scalable_aligned_free");
 
         for (size_t sz = 1024; sz <= 10*1024 ; sz*=10) {
             void *p1 = aligned_malloc_ptr(sz, 16);
@@ -217,14 +195,11 @@ struct Run {
         memset(p, 1, 100);
         free_ptr(p);
 
+        CloseLibrary(lib);
 #if _WIN32 || _WIN64
-        BOOL ret = FreeLibrary(lib);
-        ASSERT(ret, "FreeLibrary must be successful");
         ASSERT(GetModuleHandle(actual_name),  
                "allocator library must not be unloaded");
 #else
-        int ret = dlclose(lib);
-        ASSERT(ret == 0, "dlclose must be successful");
         ASSERT(dlsym(RTLD_DEFAULT, "scalable_malloc"),  
                "allocator library must not be unloaded");
 #endif

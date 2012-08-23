@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface6::enumerable_thread_specific&lt; T, Allocator, ETS_key_type &gt; Class Template Reference</title>
+<title>tbb::captured_exception Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,171 +21,131 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00266.html">enumerable_thread_specific</a></div>
-<h1>tbb::interface6::enumerable_thread_specific&lt; T, Allocator, ETS_key_type &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00409.html">Containers</a>]</small>
-</h1><!-- doxytag: class="tbb::interface6::enumerable_thread_specific" -->The <a class="el" href="a00266.html">enumerable_thread_specific</a> container.  
+<a class="el" href="a00412.html">tbb</a>::<a class="el" href="a00266.html">captured_exception</a></div>
+<h1>tbb::captured_exception Class Reference</h1><!-- doxytag: class="tbb::captured_exception" --><!-- doxytag: inherits="tbb::tbb_exception" -->This class is used by TBB to propagate information about unhandled exceptions into the root thread.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00477.html">enumerable_thread_specific.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00635.html">tbb_exception.h</a>&gt;</code>
 <p>
-<a href="a00043.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::captured_exception:
+<p><center><img src="a00266.png" usemap="#tbb::captured_exception_map" border="0" alt=""></center>
+<map name="tbb::captured_exception_map">
+<area href="a00345.html" alt="tbb::tbb_exception" shape="rect" coords="0,0,146,24">
+</map>
+<a href="a00158.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3c03eb40955b933b01987222722ac4bd"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::allocator_type" ref="3c03eb40955b933b01987222722ac4bd" args="" -->
-typedef Allocator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#3c03eb40955b933b01987222722ac4bd">allocator_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Basic types. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e93f3b75e82eaa845cc1a0514eaba31a"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::value_type" ref="e93f3b75e82eaa845cc1a0514eaba31a" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0fd259a6b20641c768079f41d3213904"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::reference" ref="0fd259a6b20641c768079f41d3213904" args="" -->
-typedef T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c1d47e24439524fea72d9c10df25d54"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::const_reference" ref="2c1d47e24439524fea72d9c10df25d54" args="" -->
-typedef const T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27cf20b87f4381a69203aed11e5a34dc"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::pointer" ref="27cf20b87f4381a69203aed11e5a34dc" args="" -->
-typedef T *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0e132e2a40dd6ce5472f8e13a1e80947"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::const_pointer" ref="0e132e2a40dd6ce5472f8e13a1e80947" args="" -->
-typedef const T *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c67c208bec3e8b77190d545bd1f150e3"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::size_type" ref="c67c208bec3e8b77190d545bd1f150e3" args="" -->
-typedef internal_collection_type::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eda9be9a80bed094d4657948b5b7831f"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::difference_type" ref="eda9be9a80bed094d4657948b5b7831f" args="" -->
-typedef internal_collection_type::difference_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>difference_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bd6f8e0af3c5e5166a4223f88b03e0a5"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::iterator" ref="bd6f8e0af3c5e5166a4223f88b03e0a5" args="" -->
-typedef internal::enumerable_thread_specific_iterator&lt;<br>
- <a class="el" href="a00261.html">internal_collection_type</a>,<br>
- value_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8ff2ff1a117048f5d57aedebb12d57e1"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::const_iterator" ref="8ff2ff1a117048f5d57aedebb12d57e1" args="" -->
-typedef internal::enumerable_thread_specific_iterator&lt;<br>
- <a class="el" href="a00261.html">internal_collection_type</a>,<br>
- const value_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_iterator</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d4c23a666adbf88bd3280873de9d7f39"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::range_type" ref="d4c23a666adbf88bd3280873de9d7f39" args="" -->
-typedef generic_range_type&lt;<br>
- iterator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>range_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ce41c6603d8f547f11df05d1ccb2184"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::const_range_type" ref="0ce41c6603d8f547f11df05d1ccb2184" args="" -->
-typedef generic_range_type&lt;<br>
- const_iterator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_range_type</b></td></tr>
-
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0cfa3a5c8f2be3bbf313d93b1fa8cdb3"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="0cfa3a5c8f2be3bbf313d93b1fa8cdb3" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#0cfa3a5c8f2be3bbf313d93b1fa8cdb3">enumerable_thread_specific</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b50d9716bcdd281df574ec758a3952f9"></a><!-- doxytag: member="tbb::captured_exception::captured_exception" ref="b50d9716bcdd281df574ec758a3952f9" args="(const captured_exception &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>captured_exception</b> (const <a class="el" href="a00266.html">captured_exception</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default constructor. Each local instance of T is default constructed. <br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="8d4b456ff9d7b289c73254eccc11db45"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="8d4b456ff9d7b289c73254eccc11db45" args="(Finit finit)" -->
-template&lt;typename Finit&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00266.html#8d4b456ff9d7b289c73254eccc11db45">enumerable_thread_specific</a> (Finit finit)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="179076f146699724f652a9b1e81bd791"></a><!-- doxytag: member="tbb::captured_exception::captured_exception" ref="179076f146699724f652a9b1e81bd791" args="(const char *name_, const char *info)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>captured_exception</b> (const char *name_, const char *info)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor with initializer functor. Each local instance of T is constructed by T(finit()). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7bce6829981c9efe3f59cae2355e383e"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="7bce6829981c9efe3f59cae2355e383e" args="(const T &amp;exemplar)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#7bce6829981c9efe3f59cae2355e383e">enumerable_thread_specific</a> (const T &amp;exemplar)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e95b8eb99ec9dea22934ac528a08654c"></a><!-- doxytag: member="tbb::captured_exception::operator=" ref="e95b8eb99ec9dea22934ac528a08654c" args="(const captured_exception &amp;src)" -->
+<a class="el" href="a00266.html">captured_exception</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00266.html">captured_exception</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constuctor with exemplar. Each local instance of T is copied-constructed from the exemplar. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5a7907d9e3e5b18e7a7b55211ef3213f"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::~enumerable_thread_specific" ref="5a7907d9e3e5b18e7a7b55211ef3213f" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#5a7907d9e3e5b18e7a7b55211ef3213f">~enumerable_thread_specific</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="a00266.html">captured_exception</a> *__TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#837a50b8f6a800bda225c39d1699643f">move</a> ()  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c8d5265ccbd5e4485996b3f3baaa5ba1"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::local" ref="c8d5265ccbd5e4485996b3f3baaa5ba1" args="()" -->
-reference&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#c8d5265ccbd5e4485996b3f3baaa5ba1">local</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates and returns pointer to the deep copy of this exception object.  <a href="#837a50b8f6a800bda225c39d1699643f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#93d875d3555502ff6f18513525de204c">destroy</a> ()  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">returns reference to local, discarding exists <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7dc79058d2832f7447de8e691c3455ea"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::local" ref="7dc79058d2832f7447de8e691c3455ea" args="(bool &amp;exists)" -->
-reference&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#7dc79058d2832f7447de8e691c3455ea">local</a> (bool &amp;exists)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys objects created by the <a class="el" href="a00266.html#837a50b8f6a800bda225c39d1699643f">move()</a> method.  <a href="#93d875d3555502ff6f18513525de204c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#2dd1be66ab32fa27e0ddef5707fa67ef">throw_self</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns reference to calling thread's local copy, creating one if necessary. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="33fd6593da1ed14340f10f67d5a69130"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::size" ref="33fd6593da1ed14340f10f67d5a69130" args="() const " -->
-size_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#33fd6593da1ed14340f10f67d5a69130">size</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Throws this exception object.  <a href="#2dd1be66ab32fa27e0ddef5707fa67ef"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5af82fd677449c5ca727fa1d7e16f9f5"></a><!-- doxytag: member="tbb::captured_exception::name" ref="5af82fd677449c5ca727fa1d7e16f9f5" args="() const " -->
+const char *__TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#5af82fd677449c5ca727fa1d7e16f9f5">name</a> () const   throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of local copies. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="72595886d0ac8fd0543f90038570510d"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::empty" ref="72595886d0ac8fd0543f90038570510d" args="() const " -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#72595886d0ac8fd0543f90038570510d">empty</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns RTTI name of the originally intercepted exception. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6b5988ef74a1fe2a58998d110b3633e0"></a><!-- doxytag: member="tbb::captured_exception::what" ref="6b5988ef74a1fe2a58998d110b3633e0" args="() const " -->
+const char *__TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#6b5988ef74a1fe2a58998d110b3633e0">what</a> () const   throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">true if there have been no local copies created <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="01d7baf8e913ab2819e97917a2ac795f"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::begin" ref="01d7baf8e913ab2819e97917a2ac795f" args="()" -->
-iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#01d7baf8e913ab2819e97917a2ac795f">begin</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the result of originally intercepted exception's <a class="el" href="a00266.html#6b5988ef74a1fe2a58998d110b3633e0">what()</a> method. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="92ed4100413eef26969f8299f6845e18"></a><!-- doxytag: member="tbb::captured_exception::set" ref="92ed4100413eef26969f8299f6845e18" args="(const char *name, const char *info)" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>set</b> (const char *name, const char *info)  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">begin iterator <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2456ff88252fc921b01cd8907628a4ee"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::end" ref="2456ff88252fc921b01cd8907628a4ee" args="()" -->
-iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#2456ff88252fc921b01cd8907628a4ee">end</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d5f56d05102acdba6c2f09ba6db3baeb"></a><!-- doxytag: member="tbb::captured_exception::clear" ref="d5f56d05102acdba6c2f09ba6db3baeb" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">end iterator <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="84afb3906a39e399cde1c950d6351300"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::begin" ref="84afb3906a39e399cde1c950d6351300" args="() const " -->
-const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#84afb3906a39e399cde1c950d6351300">begin</a> () const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">begin const iterator <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cb448bb4977ce366ceb7344085cc7050"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::end" ref="cb448bb4977ce366ceb7344085cc7050" args="() const " -->
-const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#cb448bb4977ce366ceb7344085cc7050">end</a> () const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">end const iterator <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b22c54990b2362cd93c1a8f73de140bc"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::range" ref="b22c54990b2362cd93c1a8f73de140bc" args="(size_t grainsize=1)" -->
-range_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#b22c54990b2362cd93c1a8f73de140bc">range</a> (size_t grainsize=1)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get range for parallel algorithms. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3b068000cf4dbf9b40f8bb7e3fc53e0b"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::range" ref="3b068000cf4dbf9b40f8bb7e3fc53e0b" args="(size_t grainsize=1) const " -->
-const_range_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#3b068000cf4dbf9b40f8bb7e3fc53e0b">range</a> (size_t grainsize=1) const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get const range for parallel algorithms. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a8764176d4b6014c5d65f1051851abc8"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::clear" ref="a8764176d4b6014c5d65f1051851abc8" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00266.html#a8764176d4b6014c5d65f1051851abc8">clear</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys local copies. <br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="43bbf3a313c5431559df2946f76221e0"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="43bbf3a313c5431559df2946f76221e0" args="(const enumerable_thread_specific&lt; U, Alloc, Cachetype &gt; &amp;other)" -->
-template&lt;typename U, typename Alloc, ets_key_usage_type Cachetype&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>enumerable_thread_specific</b> (const <a class="el" href="a00266.html">enumerable_thread_specific</a>&lt; U, Alloc, Cachetype &gt; &amp;other)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="25a9c336cfd5a171c29cbdd0feb84249"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="25a9c336cfd5a171c29cbdd0feb84249" args="(const enumerable_thread_specific &amp;other)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>enumerable_thread_specific</b> (const <a class="el" href="a00266.html">enumerable_thread_specific</a> &amp;other)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1f8f467eb4c44c58614d0f9dce687477"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::operator=" ref="1f8f467eb4c44c58614d0f9dce687477" args="(const enumerable_thread_specific &amp;other)" -->
-<a class="el" href="a00266.html">enumerable_thread_specific</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00266.html">enumerable_thread_specific</a> &amp;other)</td></tr>
-
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="0e7ebbfd8e04eb22fe59b581206e7888"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::operator=" ref="0e7ebbfd8e04eb22fe59b581206e7888" args="(const enumerable_thread_specific&lt; U, Alloc, Cachetype &gt; &amp;other)" -->
-template&lt;typename U, typename Alloc, ets_key_usage_type Cachetype&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top"><a class="el" href="a00266.html">enumerable_thread_specific</a> &amp;&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00266.html">enumerable_thread_specific</a>&lt; U, Alloc, Cachetype &gt; &amp;other)</td></tr>
-
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="1eac7eff6e21b7fc299b67acb36eb3c7"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::combine" ref="1eac7eff6e21b7fc299b67acb36eb3c7" args="(combine_func_t f_combine)" -->
-template&lt;typename combine_func_t&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">T&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine</b> (combine_func_t f_combine)</td></tr>
-
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="f671d7bd4c1d3a750b4be4c32a489c55"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::combine_each" ref="f671d7bd4c1d3a750b4be4c32a489c55" args="(combine_func_t f_combine)" -->
-template&lt;typename combine_func_t&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine_each</b> (combine_func_t f_combine)</td></tr>
-
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45364b2f249ceb935cff05c29fcfcf5c"></a><!-- doxytag: member="tbb::interface6::enumerable_thread_specific::enumerable_thread_specific" ref="45364b2f249ceb935cff05c29fcfcf5c" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>enumerable_thread_specific</b></td></tr>
-
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>generic_range_type</b></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A generic range, used to create range objects from the iterators. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, typename Allocator = cache_aligned_allocator&lt;T&gt;, ets_key_usage_type ETS_key_type = ets_no_key&gt;<br>
- class tbb::interface6::enumerable_thread_specific&lt; T, Allocator, ETS_key_type &gt;</h3>
-
-The <a class="el" href="a00266.html">enumerable_thread_specific</a> container. 
+This class is used by TBB to propagate information about unhandled exceptions into the root thread. 
 <p>
-<a class="el" href="a00266.html">enumerable_thread_specific</a> has the following properties:<ul>
-<li>thread-local copies are lazily created, with default, exemplar or function initialization.</li><li>thread-local copies do not move (during lifetime, and excepting <a class="el" href="a00266.html#a8764176d4b6014c5d65f1051851abc8">clear()</a>) so the address of a copy is invariant.</li><li>the contained objects need not have operator=() defined if combine is not used.</li><li><a class="el" href="a00266.html">enumerable_thread_specific</a> containers may be copy-constructed or assigned.</li><li>thread-local copies can be managed by hash-table, or can be accessed via TLS storage for speed.</li><li>outside of parallel contexts, the contents of all thread-local copies are accessible by iterator or using combine or combine_each methods</li></ul>
-<p>
-<dl compact><dt><b>Segmented iterator</b></dt><dd>When the thread-local objects are containers with input_iterators defined, a segmented iterator may be used to iterate over all the elements of all thread-local copies.</dd></dl>
-<dl compact><dt><b>combine and combine_each</b></dt><dd><ul>
-<li>Both methods are defined for <a class="el" href="a00266.html">enumerable_thread_specific</a>.</li><li>combine() requires the the type T have operator=() defined.</li><li>neither method modifies the contents of the object (though there is no guarantee that the applied methods do not modify the object.)</li><li>Both are evaluated in serial context (the methods are assumed to be non-benign.) </li></ul>
-</dd></dl>
+Exception of this type is thrown by TBB in the root thread (thread that started a parallel algorithm ) if an unhandled exception was intercepted during the algorithm execution in one of the workers. <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="a00345.html">tbb::tbb_exception</a> </dd></dl>
 
 <p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="93d875d3555502ff6f18513525de204c"></a><!-- doxytag: member="tbb::captured_exception::destroy" ref="93d875d3555502ff6f18513525de204c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __TBB_EXPORTED_METHOD tbb::captured_exception::destroy           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%">  throw ()<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Destroys objects created by the <a class="el" href="a00266.html#837a50b8f6a800bda225c39d1699643f">move()</a> method. 
+<p>
+Frees memory and calls destructor for this exception object. Can and must be used only on objects created by the move method. 
+<p>
+Implements <a class="el" href="a00345.html#66c94938eca8bf88b76f3eccaaf215d8">tbb::tbb_exception</a>.
+</div>
+</div><p>
+<a class="anchor" name="837a50b8f6a800bda225c39d1699643f"></a><!-- doxytag: member="tbb::captured_exception::move" ref="837a50b8f6a800bda225c39d1699643f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00266.html">captured_exception</a>* __TBB_EXPORTED_METHOD tbb::captured_exception::move           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%">  throw ()<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Creates and returns pointer to the deep copy of this exception object. 
+<p>
+Move semantics is allowed. 
+<p>
+Implements <a class="el" href="a00345.html#3e3482bf264d4ca4dde046cd9c02c766">tbb::tbb_exception</a>.
+</div>
+</div><p>
+<a class="anchor" name="2dd1be66ab32fa27e0ddef5707fa67ef"></a><!-- doxytag: member="tbb::captured_exception::throw_self" ref="2dd1be66ab32fa27e0ddef5707fa67ef" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::captured_exception::throw_self           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Throws this exception object. 
+<p>
+Make sure that if you have several levels of derivation from this interface you implement or override this method on the most derived level. The implementation is as simple as "throw *this;". Failure to do this will result in exception of a base class type being thrown. 
+<p>
+Implements <a class="el" href="a00345.html#8588e07fa49692f4d734e4f2e4f048f4">tbb::tbb_exception</a>.
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00477.html">enumerable_thread_specific.h</a></ul>
+<li><a class="el" href="a00635.html">tbb_exception.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

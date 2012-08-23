@@ -35,10 +35,26 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # icc
 
+ifeq ($(offload), mic)
+override CXXFLAGS += -D__TBB_MIC=1
+# Currently only console mode is supported in offload version
+override UI=con
+SOURCES = $(UI)video.o universe.cpp seismic_video.cpp main.cpp
+OFFLOAD_SOURCES = ../../common/gui/$(UI)video.cpp
+else
+SOURCES = ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cpp
+endif
+
+ifeq ($(CXX), icc)
+TBBLIB = -tbb
+TBBLIB_DEBUG = -tbb
+else
+TBBLIB = -ltbb
+TBBLIB_DEBUG = -ltbb_debug
+endif
+
 include ../../common/gui/Makefile.gmake
 override CXXFLAGS += $(UI_CXXFLAGS)
-
-SOURCES= ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cpp
 
 ifeq ($(shell uname), Linux)
 LIBS+= -lrt 
@@ -53,11 +69,17 @@ ifeq ($(UI),mac)
 	$(PBXCP) xcode/Info.plist $(APPRES)
 endif
 
-release: $(SOURCES) resources
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) -ltbb $(LIBS)
-
+release: resources
+ifeq ($(offload), mic)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
+endif
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(TBBLIB) $(LIBS)
+	
 debug: resources
-	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) -ltbb_debug $(LIBS)
+ifeq ($(offload), mic)
+	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
+endif
+	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(TBBLIB_DEBUG) $(LIBS)
 
 clean:
 	$(RM) $(EXE) *.o *.d

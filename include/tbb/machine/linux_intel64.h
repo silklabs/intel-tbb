@@ -78,7 +78,7 @@ static inline  T __TBB_machine_fetchstore##S(volatile void *ptr, T value)       
                           : "memory");                                               \
     return result;                                                                   \
 }                                                                                    \
-                                                                                     
+
 __TBB_MACHINE_DEFINE_ATOMICS(1,int8_t,"")
 __TBB_MACHINE_DEFINE_ATOMICS(2,int16_t,"")
 __TBB_MACHINE_DEFINE_ATOMICS(4,int32_t,"")
@@ -87,17 +87,18 @@ __TBB_MACHINE_DEFINE_ATOMICS(8,int64_t,"q")
 #undef __TBB_MACHINE_DEFINE_ATOMICS
 
 static inline int64_t __TBB_machine_lg( uint64_t x ) {
+    __TBB_ASSERT(x, "__TBB_Log2(0) undefined");
     int64_t j;
     __asm__ ("bsr %1,%0" : "=r"(j) : "r"(x));
     return j;
 }
 
-static inline void __TBB_machine_or( volatile void *ptr, uint64_t addend ) {
-    __asm__ __volatile__("lock\norq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(addend), "m"(*(volatile uint64_t*)ptr) : "memory");
+static inline void __TBB_machine_or( volatile void *ptr, uint64_t value ) {
+    __asm__ __volatile__("lock\norq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
 }
 
-static inline void __TBB_machine_and( volatile void *ptr, uint64_t addend ) {
-    __asm__ __volatile__("lock\nandq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(addend), "m"(*(volatile uint64_t*)ptr) : "memory");
+static inline void __TBB_machine_and( volatile void *ptr, uint64_t value ) {
+    __asm__ __volatile__("lock\nandq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
 }
 
 #define __TBB_AtomicOR(P,V) __TBB_machine_or(P,V)
@@ -116,9 +117,10 @@ static inline void __TBB_machine_pause( int32_t delay ) {
 
 #define __TBB_Log2(V)  __TBB_machine_lg(V)
 
-#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE   1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
-#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+#define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
 // API to retrieve/update FPU control setting
 #ifndef __TBB_CPU_CTL_ENV_PRESENT

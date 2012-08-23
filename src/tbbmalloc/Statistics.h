@@ -84,9 +84,9 @@ static inline void initStatisticsCollection() {
 #define STAT_increment(a,b,c) ((void)0)
 #endif /* COLLECT_STATISTICS */
 
+#if COLLECT_STATISTICS
 static inline void STAT_print(int thread)
 {
-#if COLLECT_STATISTICS
     if (!reportAllocationStatistics)
         return;
 
@@ -133,5 +133,5 @@ static inline void STAT_print(int thread)
     fprintf(outfile, "\n");
 
     fclose(outfile);
-#endif
 }
+#endif

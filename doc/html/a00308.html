@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::recursive_mutex::scoped_lock Class Reference</title>
+<title>tbb::parallel_while&lt; Body &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,51 +21,114 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00307.html">recursive_mutex</a>::<a class="el" href="a00308.html">scoped_lock</a></div>
-<h1>tbb::recursive_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::recursive_mutex::scoped_lock" -->The scoped locking pattern.  
+<a class="el" href="a00412.html">tbb</a>::<a class="el" href="a00308.html">parallel_while</a></div>
+<h1>tbb::parallel_while&lt; Body &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00424.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::parallel_while" -->Parallel iteration over a stream, with optional addition of more work.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00582.html">recursive_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00569.html">parallel_while.h</a>&gt;</code>
 <p>
-<a href="a00112.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00098.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa297e53d3af2a101e712bc200233e9c"></a><!-- doxytag: member="tbb::parallel_while::value_type" ref="fa297e53d3af2a101e712bc200233e9c" args="" -->
+typedef Body::argument_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#fa297e53d3af2a101e712bc200233e9c">value_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type of items. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d82d4d36fbf9727a493d26ae50855fe7"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::scoped_lock" ref="d82d4d36fbf9727a493d26ae50855fe7" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#d82d4d36fbf9727a493d26ae50855fe7">scoped_lock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="36e26ba3880c7bcf804a97ba0cbe133f"></a><!-- doxytag: member="tbb::parallel_while::parallel_while" ref="36e26ba3880c7bcf804a97ba0cbe133f" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#36e26ba3880c7bcf804a97ba0cbe133f">parallel_while</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct lock that has not acquired a <a class="el" href="a00307.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dec17713c4c1321ac8fec66816d0c602"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::scoped_lock" ref="dec17713c4c1321ac8fec66816d0c602" args="(recursive_mutex &amp;mutex)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#dec17713c4c1321ac8fec66816d0c602">scoped_lock</a> (<a class="el" href="a00307.html">recursive_mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct empty non-running parallel while. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6fcfc973cc56b79c6d0fbb8a31be7e84"></a><!-- doxytag: member="tbb::parallel_while::~parallel_while" ref="6fcfc973cc56b79c6d0fbb8a31be7e84" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#6fcfc973cc56b79c6d0fbb8a31be7e84">~parallel_while</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c1197ffb8f3cd9d4fed71d7e06265b7c"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::~scoped_lock" ref="c1197ffb8f3cd9d4fed71d7e06265b7c" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#c1197ffb8f3cd9d4fed71d7e06265b7c">~scoped_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor cleans up data members before returning. <br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Stream&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00308.html#b32a0a6e5e09ebb7fad3e6652c19afe5">run</a> (Stream &amp;stream, const Body &amp;body)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock (if lock is held). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7fb04da37cccf8c99b1f9102d9074f9a"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::acquire" ref="7fb04da37cccf8c99b1f9102d9074f9a" args="(recursive_mutex &amp;mutex)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#7fb04da37cccf8c99b1f9102d9074f9a">acquire</a> (<a class="el" href="a00307.html">recursive_mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Apply body.apply to each item in the stream.  <a href="#b32a0a6e5e09ebb7fad3e6652c19afe5"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#e131c560057a58229992b61eb8dba4c6">add</a> (const <a class="el" href="a00308.html#fa297e53d3af2a101e712bc200233e9c">value_type</a> &amp;item)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="36bfc3e93e3ef6340abef4901444d340"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::try_acquire" ref="36bfc3e93e3ef6340abef4901444d340" args="(recursive_mutex &amp;mutex)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#36bfc3e93e3ef6340abef4901444d340">try_acquire</a> (<a class="el" href="a00307.html">recursive_mutex</a> &amp;<a class="el" href="a00286.html">mutex</a>)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquire lock on given <a class="el" href="a00307.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ac480ea0e9d5ea0345a67d57008b6263"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::release" ref="ac480ea0e9d5ea0345a67d57008b6263" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00308.html#ac480ea0e9d5ea0345a67d57008b6263">release</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="459818b78a3e9985dc5a9d5638b6593e"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::recursive_mutex" ref="459818b78a3e9985dc5a9d5638b6593e" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>recursive_mutex</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a work item while running.  <a href="#e131c560057a58229992b61eb8dba4c6"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The scoped locking pattern. 
+<h3>template&lt;typename Body&gt;<br>
+ class tbb::parallel_while&lt; Body &gt;</h3>
+
+Parallel iteration over a stream, with optional addition of more work. 
 <p>
-It helps to avoid the common problem of forgetting to release lock. It also nicely provides the "node" for queuing locks. 
+The Body b has the requirement: <br>
+ "b(v)" <br>
+ "b.argument_type" <br>
+ where v is an argument_type 
 <p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="e131c560057a58229992b61eb8dba4c6"></a><!-- doxytag: member="tbb::parallel_while::add" ref="e131c560057a58229992b61eb8dba4c6" args="(const value_type &amp;item)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00308.html">tbb::parallel_while</a>&lt; Body &gt;::add           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00308.html#fa297e53d3af2a101e712bc200233e9c">value_type</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>item</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a work item while running. 
+<p>
+Should be executed only by body.apply or a thread spawned therefrom. 
+</div>
+</div><p>
+<a class="anchor" name="b32a0a6e5e09ebb7fad3e6652c19afe5"></a><!-- doxytag: member="tbb::parallel_while::run" ref="b32a0a6e5e09ebb7fad3e6652c19afe5" args="(Stream &amp;stream, const Body &amp;body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+<div class="memtemplate">
+template&lt;typename Stream&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00308.html">tbb::parallel_while</a>&lt; Body &gt;::run           </td>
+          <td>(</td>
+          <td class="paramtype">Stream &amp;&nbsp;</td>
+          <td class="paramname"> <em>stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Body &amp;&nbsp;</td>
+          <td class="paramname"> <em>body</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Apply body.apply to each item in the stream. 
+<p>
+A Stream s has the requirements <br>
+ "S::value_type" <br>
+ "s.pop_if_present(value) is convertible to bool 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00582.html">recursive_mutex.h</a></ul>
+<li><a class="el" href="a00569.html">parallel_while.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

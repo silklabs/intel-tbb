@@ -70,20 +70,59 @@ extern char *global_window_title;
 extern bool global_usegraphics;
 
 void tachyon_video::on_process() {
-    char buf[128];
+    char buf[8192];
     flt runtime;
-    timer start_timer = gettimer();
-    rt_renderscene(global_scene);
-    timer end_timer = gettimer();
-    runtime=timertime(start_timer, end_timer);
-    sprintf(buf, "\nCPU Time: %.3f seconds.", runtime);
-    rt_ui_message(MSG_0, buf); buf[0] = ' ';
-    strcat(global_window_title, buf);
-    title = global_window_title; updating = true;
-    show_title();
-    rt_finalize();
+    scenedef *scene = (scenedef *) global_scene;
+    updating_mode = scene->displaymode == RT_DISPLAY_ENABLED;
+    recycling = false;
+    pausing = false;
+    do {
+        updating = updating_mode;
+        timer start_timer = gettimer();
+        rt_renderscene(global_scene);
+        timer end_timer = gettimer();
+        runtime = timertime(start_timer, end_timer);
+        sprintf(buf, "%s: %.3f seconds", global_window_title, runtime);
+        rt_ui_message(MSG_0, buf);
+        title = buf; show_title(); // show time spent for rendering
+        if(!updating) {
+            updating = true;
+            drawing_memory dm = get_drawing_memory();
+            drawing_area drawing(0, 0, dm.sizex, dm.sizey);// invalidate whole screen
+        }
+        rt_finalize();
+        title = global_window_title; show_title(); // reset title to default
+    } while(recycling && running);
 }
 
 void tachyon_video::on_key(int key) {
-    key &= 0xff; if(key == 27) running = false;
+    key &= 0xff;
+    recycling = true;
+    if(key == esc_key) running = false;
+    else if(key == ' ') {
+        if(!updating) {
+            updating = true;
+            drawing_memory dm = get_drawing_memory();
+            drawing_area drawing(0, 0, dm.sizex, dm.sizey);// invalidate whole screen
+        }
+        updating = updating_mode = !updating_mode;
+    }
+    else if(key == 'p') {
+        pausing = !pausing;
+        if(pausing) {
+            title = "Press ESC to exit or 'p' to continue after rendering completion";
+            show_title();
+        }
+    }
+}
+
+void rt_finalize(void) {
+    timer t0, t1;
+    t0 = gettimer();
+    if(global_usegraphics)
+        do { rt_sleep(1); t1 = gettimer(); }
+        while( (timertime(t0, t1) < 10 || video->pausing) && video->next_frame());
+#ifdef _WINDOWS
+    else rt_sleep(10000);
+#endif
 }

@@ -58,7 +58,7 @@
 /*
  * imap.h - This file contains defines etc for doing image map type things.  
  *
- *  $Id: imap.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: imap.h,v 1.2 2007-02-22 17:54:15  Exp $
  */
 
 void       ResetImage(void);

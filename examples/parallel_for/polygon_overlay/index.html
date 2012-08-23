@@ -80,17 +80,13 @@ One limitation of the program is that if the number of polygons in the source ma
 <H2>Directories</H2>
 <DL>
 <DT><A HREF="msvs">msvs</A>
-<DD>Contains Microsoft* Visual Studio* 2005 workspace for building and running the example.
-<DT><A HREF="xcode">xcode</A>
-<DD>Contains Mac OS* Xcode* workspace for building and running the example.
-</DL>
+<DD>Contains Microsoft* Visual Studio* 2005 workspace for building and running the 
+    example (Windows* systems only).<DT><A HREF="xcode">xcode</A>
+<DD>Contains Xcode* IDE workspace for building and running the example (Mac OS* X 
+    systems only).</DL>
 
 <H2>To Build</H2>
 General build directions can be found <A HREF="../../index.html#build">here</A>.  For the various UI options, see the <A HREF="../../common/index.html">common GUI code</A> build instructions.
-
-<P>
-For Windows* systems, Microsoft* Visual Studio* projects are provided for each of the above versions.
-</P>
 
 <H2>Usage</H2>
 Building via the above make commands, or via Visual Studio projects on Windows* systems, produces executable files
@@ -110,9 +106,6 @@ named pover.exe.  To run these executables directly, use one or more of the foll
 <UL>
 <LI>While running with the GUI display should yield reasonable performance in most cases, <I>running with no GUI
     display is strongly recommended</I> in order to demonstrate the full performance and scalability of the example.
-<LI>If using the X-windows (X11) GUI on Mac OS* systems, X11 might not be installed on the system by default.
-    To install X11 on Mac OS* systems, use the operating system install disk, choose "Optional installs" and select X11 from
-    the "Applications" list.  Alternatively, if X11 is not available, build without the GUI (see build targets above).
 </UL>
 
 <HR>

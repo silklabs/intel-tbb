@@ -165,6 +165,9 @@ bool  pool_free(MemoryPool *memPool, void *object);
     #include "tbb_stddef.h"
 #endif
 
+#if __TBB_CPP11_RVALUE_REF_PRESENT && !__TBB_CPP11_STD_FORWARD_BROKEN
+ #include <utility> // std::forward
+#endif
 
 namespace tbb {
 
@@ -214,7 +217,17 @@ public:
         size_type absolutemax = static_cast<size_type>(-1) / sizeof (value_type);
         return (absolutemax > 0 ? absolutemax : 1);
     }
+#if __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
+    template<typename... Args>
+    void construct(pointer p, Args&&... args)
+ #if __TBB_CPP11_STD_FORWARD_BROKEN
+        { ::new((void *)p) T((args)...); }
+ #else
+        { ::new((void *)p) T(std::forward<Args>(args)...); }
+ #endif
+#else // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
     void construct( pointer p, const value_type& value ) {::new((void*)(p)) value_type(value);}
+#endif // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
     void destroy( pointer p ) {p->~value_type();}
 };
 

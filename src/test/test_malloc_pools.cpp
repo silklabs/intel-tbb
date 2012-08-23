@@ -37,7 +37,7 @@ static inline T alignUp  (T arg, uintptr_t alignment) {
     return T(((uintptr_t)arg+(alignment-1)) & ~(alignment-1));
 }
 
-struct PoolSpace {
+struct PoolSpace: NoCopy {
     size_t pos;
     int    regions;
     size_t bufSize;
@@ -45,9 +45,9 @@ struct PoolSpace {
 
     static const size_t BUF_SIZE = 8*1024*1024;
 
-    PoolSpace(size_t bufSize = BUF_SIZE) :
+    PoolSpace(size_t bufSz = BUF_SIZE) :
         pos(0), regions(0),
-        bufSize(bufSize), space(new char[bufSize]) {
+        bufSize(bufSz), space(new char[bufSize]) {
         memset(space, 0, bufSize);
     }
     ~PoolSpace() {

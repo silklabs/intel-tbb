@@ -58,7 +58,7 @@
         endif
         LINK_FLAGS =
     endif
-    override CXXFLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0
+    override CXXFLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0 -D__TBB_SOURCE_DIRECTLY_INCLUDED=1
     ITT_NOTIFY =
     LIBEXT = a
     LIBPREF = lib

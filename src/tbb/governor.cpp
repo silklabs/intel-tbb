@@ -44,7 +44,7 @@ namespace internal {
 //------------------------------------------------------------------------
 
 #if __TBB_SURVIVE_THREAD_SWITCH
-// Suuport for interoperability with Intel(R) Cilk(tm) Plus.
+// Support for interoperability with Intel(R) Cilk(tm) Plus.
 
 #if _WIN32
 #define CILKLIB_NAME "cilkrts20.dll"
@@ -106,7 +106,7 @@ rml::tbb_server* governor::create_rml_server ( rml::tbb_client& client ) {
         ::rml::factory::status_type status = theRMLServerFactory.make_server( server, client );
         if( status != ::rml::factory::st_success ) {
             UsePrivateRML = true;
-            runtime_warning( "rml::tbb_factorymake_server failed with status %x, falling back on private rml", status );
+            runtime_warning( "rml::tbb_factory::make_server failed with status %x, falling back on private rml", status );
         }
     }
     if ( !server ) {
@@ -138,6 +138,7 @@ void governor::sign_on(generic_scheduler* s) {
 }
 
 void governor::sign_off(generic_scheduler* s) {
+    suppress_unused_warning(s);
     __TBB_ASSERT( theTLS.get()==s, "attempt to unregister a wrong scheduler instance" );
     theTLS.set(NULL);
 #if __TBB_SURVIVE_THREAD_SWITCH

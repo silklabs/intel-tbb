@@ -47,7 +47,7 @@ RD?=rmdir
 MD?=mkdir -p
 NUL= /dev/null
 SLASH=/
-MAKE_VERSIONS=sh $(tbb_root)/build/version_info_aix.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.tmp
+MAKE_VERSIONS=sh $(tbb_root)/build/version_info_aix.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.ver
 MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh
 
 ifdef LIBPATH

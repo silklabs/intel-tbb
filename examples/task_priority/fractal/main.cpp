@@ -41,6 +41,7 @@
 
 bool silent = false;
 bool single = false;
+bool schedule_auto = false;
 int grain_size = 8;
 
 int main(int argc, char *argv[])
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
             .positional_arg(num_frames,"n-of-frames","number of frames the example processes internally")
             .positional_arg(max_iterations,"max-of-iterations","maximum number of the fractal iterations")
             .positional_arg(grain_size,"grain-size","the grain size value")
+            .arg(schedule_auto, "use-auto-partitioner", "use tbb::auto_partitioner")
             .arg(silent, "silent", "no output except elapsed time")
             .arg(single, "single", "process only one fractal")
         );

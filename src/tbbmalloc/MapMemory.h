@@ -49,6 +49,16 @@ void *ErrnoPreservingMalloc(size_t bytes)
 #endif
 
 #include <sys/mman.h>
+#if __linux__
+/* __TBB_MAP_HUGETLB is MAP_HUGETLB from system header linux/mman.h.
+   The header do not included here, as on some Linux flavors inclusion of
+   linux/mman.h leads to compilation error,
+   while changing of MAP_HUGETLB is highly unexpected.
+*/
+#define __TBB_MAP_HUGETLB 0x40000
+#else
+#define __TBB_MAP_HUGETLB 0
+#endif
 
 #if XPG4_WAS_DEFINED
  #undef _XPG4_2
@@ -56,7 +66,7 @@ void *ErrnoPreservingMalloc(size_t bytes)
 #endif
 
 #define MEMORY_MAPPING_USES_MALLOC 0
-void* MapMemory (size_t bytes)
+void* MapMemory (size_t bytes, bool hugePages)
 {
     void* result = 0;
     int prevErrno = errno;
@@ -64,7 +74,8 @@ void* MapMemory (size_t bytes)
 // Mac OS* X defines MAP_ANON, which is deprecated in Linux.
 #define MAP_ANONYMOUS MAP_ANON
 #endif /* MAP_ANONYMOUS */
-    result = mmap(NULL, bytes, (PROT_READ | PROT_WRITE), MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    int addFlags = hugePages? __TBB_MAP_HUGETLB : 0;
+    result = mmap(NULL, bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|addFlags, -1, 0);
     if (result==MAP_FAILED)
         errno = prevErrno;
     return result==MAP_FAILED? 0: result;
@@ -83,10 +94,10 @@ int UnmapMemory(void *area, size_t bytes)
 #include <windows.h>
 
 #define MEMORY_MAPPING_USES_MALLOC 0
-void* MapMemory (size_t bytes)
+void* MapMemory (size_t bytes, bool)
 {
     /* Is VirtualAlloc thread safe? */
-    return VirtualAlloc(NULL, bytes, (MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN), PAGE_READWRITE);
+    return VirtualAlloc(NULL, bytes, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 }
 
 int UnmapMemory(void *area, size_t bytes)
@@ -98,7 +109,7 @@ int UnmapMemory(void *area, size_t bytes)
 #else
 
 #define MEMORY_MAPPING_USES_MALLOC 1
-void* MapMemory (size_t bytes)
+void* MapMemory (size_t bytes, bool)
 {
     return ErrnoPreservingMalloc( bytes );
 }

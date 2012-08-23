@@ -26,6 +26,15 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
+
+#if !TBB_IMPLEMENT_CPP0X
+#include "harness.h"
+
+int TestMain() {
+    return Harness::Skipped;
+}
+#else
 #include "test_condition_variable.h"
 
 int TestMain() {
@@ -33,3 +42,4 @@ int TestMain() {
     DoCondVarTest<tbb::mutex,tbb::recursive_mutex>();
     return Harness::Done;
 }
+#endif

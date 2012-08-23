@@ -89,7 +89,15 @@ static inline int64_t __TBB_machine_cmpswp8_OsX(volatile void *ptr, int64_t valu
 #define __TBB_WORDSIZE 4
 #endif
 
-#define __TBB_BIG_ENDIAN __BIG_ENDIAN__
+#ifdef __TBB_BIG_ENDIAN
+    // Already determined based on hardware architecture.
+#elif __BIG_ENDIAN__
+    #define __TBB_BIG_ENDIAN 1
+#elif __LITTLE_ENDIAN__
+    #define __TBB_BIG_ENDIAN 0
+#else
+    #define __TBB_BIG_ENDIAN -1 // not currently supported
+#endif
 
 /** As this generic implementation has absolutely no information about underlying
     hardware, its performance most likely will be sub-optimal because of full memory
@@ -124,13 +132,14 @@ static inline int64_t __TBB_machine_fetchadd8(volatile void *ptr, int64_t addend
     return OSAtomicAdd64Barrier(addend, (int64_t*)ptr) - addend;
 }
 
-#define __TBB_USE_GENERIC_PART_WORD_CAS             1
-#define __TBB_USE_GENERIC_PART_WORD_FETCH_ADD       1
-#define __TBB_USE_GENERIC_FETCH_STORE               1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
-#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+#define __TBB_USE_GENERIC_PART_WORD_CAS                     1
+#define __TBB_USE_GENERIC_PART_WORD_FETCH_ADD               1
+#define __TBB_USE_GENERIC_FETCH_STORE                       1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
 #if __TBB_WORDSIZE == 4
-    #define __TBB_USE_GENERIC_DWORD_LOAD_STORE      1
+    #define __TBB_USE_GENERIC_DWORD_LOAD_STORE              1
 #endif
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
 #endif /* __TBB_UnknownArchitecture */

@@ -34,6 +34,18 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # icc
 
+ifeq ($(offload), mic)
+override CXXFLAGS += -opt-report-phase:offload -D__TBB_MIC=1
+endif
+
+ifeq ($(CXX), icc)
+TBBLIB = -tbb
+TBBLIB_DEBUG = -tbb
+else
+TBBLIB = -ltbb
+TBBLIB_DEBUG = -ltbb_debug
+endif
+
 ifeq ($(shell uname), Linux)
 LIBS+= -lrt 
 endif
@@ -41,14 +53,18 @@ endif
 all:	release test
 
 release: *.cpp
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder sub_string_finder.cpp -ltbb $(LIBS)
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder_extended sub_string_finder_extended.cpp -ltbb $(LIBS)
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder_pretty sub_string_finder_pretty.cpp -ltbb $(LIBS)
+ifeq ($(offload),)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder sub_string_finder.cpp $(TBBLIB) $(LIBS)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder_pretty sub_string_finder_pretty.cpp $(TBBLIB) $(LIBS)
+endif
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o sub_string_finder_extended sub_string_finder_extended.cpp $(TBBLIB) $(LIBS)
 
 debug: *.cpp
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder sub_string_finder.cpp -ltbb_debug $(LIBS)
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder_extended sub_string_finder_extended.cpp -ltbb_debug $(LIBS)
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder_pretty sub_string_finder_pretty.cpp -ltbb_debug $(LIBS)
+ifeq ($(offload),)
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder sub_string_finder.cpp $(TBBLIB_DEBUG) $(LIBS)
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder_pretty sub_string_finder_pretty.cpp  $(TBBLIB_DEBUG) $(LIBS)
+endif
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o sub_string_finder_extended sub_string_finder_extended.cpp $(TBBLIB_DEBUG) $(LIBS)
 
 clean:
 	$(RM) sub_string_finder sub_string_finder_extended sub_string_finder_pretty *.o *.d

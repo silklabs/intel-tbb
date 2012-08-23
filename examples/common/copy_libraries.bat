@@ -66,7 +66,7 @@ if exist "%TBBROOT%\%interim_path%\%vc_dir%\tbb_preview%postfix%.pdb" copy "%TBB
 
 goto end
 :error
-echo Error occured in libraries copying during post-build step.
+echo Error occurred in libraries copying during post-build step.
 exit /B 1
 
 :end

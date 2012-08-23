@@ -26,13 +26,15 @@
     the GNU General Public License.
 */
 
-#if __TBB_TEST_PIC && !__PIC__
-// Position independent code test was requested but __PIC__ is not defined; skip
+#include "harness_defs.h"
+
+#if __TBB_TEST_SKIP_PIC_MODE || __TBB_TEST_SKIP_BUILTINS_MODE
 #include "harness.h"
 int TestMain() {
+    REPORT("Known issue: %s\n",
+           __TBB_TEST_SKIP_PIC_MODE? "PIC mode is not supported" : "GCC builtins aren't available");
     return Harness::Skipped;
 }
-
 #else
 
 // Put tbb/atomic.h first, so if it is missing a prerequisite header, we find out about it.
@@ -395,84 +397,88 @@ void TestAtomicFloat( const char* name ) {
     TestParallel<T>( name );
 }
 
-const int numMaskedOperations = 100000;
-const int testSpaceSize = 8;
-int prime[testSpaceSize] = {3,5,7,11,13,17,19,23};
+#if __TBB_BIG_ENDIAN!=-1
+namespace masked_cas_helpers {
+    const int numMaskedOperations = 100000;
+    const int testSpaceSize = 8;
+    int prime[testSpaceSize] = {3,5,7,11,13,17,19,23};
 
-template<typename T>
-class TestMaskedCAS_Body: NoAssign {
-    T*  test_space_uncontended;
-    T*  test_space_contended;
-public:
-    TestMaskedCAS_Body( T* _space1, T* _space2 ) : test_space_uncontended(_space1), test_space_contended(_space2) {}
-    void operator()( int my_idx ) const {
-        using tbb::internal::__TBB_MaskedCompareAndSwap;
-        const T my_prime = T(prime[my_idx]);
-        T* const my_ptr = test_space_uncontended+my_idx;
-        T old_value=0;
-        for( int i=0; i<numMaskedOperations; ++i, old_value+=my_prime ){
-            T result;
-        // Test uncontended case
-            T new_value = old_value + my_prime;
-            // The following CAS should always fail
-            result = __TBB_MaskedCompareAndSwap<sizeof(T),T>(my_ptr,new_value,old_value-1);
-            ASSERT(result!=old_value-1, "masked CAS succeeded while it should fail");
-            ASSERT(result==*my_ptr, "masked CAS result mismatch with real value");
-            // The following one should succeed
-            result = __TBB_MaskedCompareAndSwap<sizeof(T),T>(my_ptr,new_value,old_value);
-            ASSERT(result==old_value && *my_ptr==new_value, "masked CAS failed while it should succeed");
-            // The following one should fail again
-            result = __TBB_MaskedCompareAndSwap<sizeof(T),T>(my_ptr,new_value,old_value);
-            ASSERT(result!=old_value, "masked CAS succeeded while it should fail");
-            ASSERT(result==*my_ptr, "masked CAS result mismatch with real value");
-        // Test contended case
-            for( int j=0; j<testSpaceSize; ++j ){
-                // try adding my_prime until success
-                T value;
-                do {
-                    value = test_space_contended[j];
-                    result = __TBB_MaskedCompareAndSwap<sizeof(T),T>(test_space_contended+j,value+my_prime,value);
-                } while( result!=value );
+
+    template<typename T>
+    class TestMaskedCAS_Body: NoAssign {
+        T*  test_space_uncontended;
+        T*  test_space_contended;
+    public:
+        TestMaskedCAS_Body( T* _space1, T* _space2 ) : test_space_uncontended(_space1), test_space_contended(_space2) {}
+        void operator()( int my_idx ) const {
+            using tbb::internal::__TBB_MaskedCompareAndSwap;
+            const T my_prime = T(prime[my_idx]);
+            T* const my_ptr = test_space_uncontended+my_idx;
+            T old_value=0;
+            for( int i=0; i<numMaskedOperations; ++i, old_value+=my_prime ){
+                T result;
+            // Test uncontended case
+                T new_value = old_value + my_prime;
+                // The following CAS should always fail
+                result = __TBB_MaskedCompareAndSwap<T>(my_ptr,new_value,old_value-1);
+                ASSERT(result!=old_value-1, "masked CAS succeeded while it should fail");
+                ASSERT(result==*my_ptr, "masked CAS result mismatch with real value");
+                // The following one should succeed
+                result = __TBB_MaskedCompareAndSwap<T>(my_ptr,new_value,old_value);
+                ASSERT(result==old_value && *my_ptr==new_value, "masked CAS failed while it should succeed");
+                // The following one should fail again
+                result = __TBB_MaskedCompareAndSwap<T>(my_ptr,new_value,old_value);
+                ASSERT(result!=old_value, "masked CAS succeeded while it should fail");
+                ASSERT(result==*my_ptr, "masked CAS result mismatch with real value");
+            // Test contended case
+                for( int j=0; j<testSpaceSize; ++j ){
+                    // try adding my_prime until success
+                    T value;
+                    do {
+                        value = test_space_contended[j];
+                        result = __TBB_MaskedCompareAndSwap<T>(test_space_contended+j,value+my_prime,value);
+                    } while( result!=value );
+                }
             }
         }
-    }
-};
-
-template<typename T>
-struct intptr_as_array_of
-{
-    static const int how_many_Ts = sizeof(intptr_t)/sizeof(T);
-    union {
-        intptr_t result;
-        T space[ how_many_Ts ];
     };
-};
 
-template<typename T>
-intptr_t getCorrectUncontendedValue(int slot_idx) {
-    intptr_as_array_of<T> slot;
-    slot.result = 0;
-    for( int i=0; i<slot.how_many_Ts; ++i ) {
-        const T my_prime = T(prime[slot_idx*slot.how_many_Ts + i]);
-        for( int j=0; j<numMaskedOperations; ++j )
-            slot.space[i] += my_prime;
-    }
-    return slot.result;
-}
+    template<typename T>
+    struct intptr_as_array_of
+    {
+        static const int how_many_Ts = sizeof(intptr_t)/sizeof(T);
+        union {
+            intptr_t result;
+            T space[ how_many_Ts ];
+        };
+    };
 
-template<typename T>
-intptr_t getCorrectContendedValue() {
-    intptr_as_array_of<T>  slot;
-    slot.result = 0;
-    for( int i=0; i<slot.how_many_Ts; ++i )
-        for( int primes=0; primes<testSpaceSize; ++primes )
+    template<typename T>
+    intptr_t getCorrectUncontendedValue(int slot_idx) {
+        intptr_as_array_of<T> slot;
+        slot.result = 0;
+        for( int i=0; i<slot.how_many_Ts; ++i ) {
+            const T my_prime = T(prime[slot_idx*slot.how_many_Ts + i]);
             for( int j=0; j<numMaskedOperations; ++j )
-                slot.space[i] += prime[primes];
-    return slot.result;
-}
+                slot.space[i] += my_prime;
+        }
+        return slot.result;
+    }
 
+    template<typename T>
+    intptr_t getCorrectContendedValue() {
+        intptr_as_array_of<T>  slot;
+        slot.result = 0;
+        for( int i=0; i<slot.how_many_Ts; ++i )
+            for( int primes=0; primes<testSpaceSize; ++primes )
+                for( int j=0; j<numMaskedOperations; ++j )
+                    slot.space[i] += prime[primes];
+        return slot.result;
+    }
+} // namespace masked_cas_helpers
 template<typename T>
 void TestMaskedCAS() {
+    using namespace masked_cas_helpers;
     REMARK("testing masked CAS<%d>\n",int(sizeof(T)));
 
     const int num_slots = sizeof(T)*testSpaceSize/sizeof(intptr_t);
@@ -492,7 +498,7 @@ void TestMaskedCAS() {
         ASSERT( arr2[i+1]==correctContendedValue, "unexpected value in a contended slot" );
     }
 }
-
+#endif
 template <typename T>
 class TestRelaxedLoadStorePlainBody {
     static T s_turn,
@@ -572,15 +578,14 @@ class ArrayElement {
 
 #include "harness_barrier.h"
 namespace bit_operation_test_suite{
-    struct fixture{
-    #if __TBB_WORDSIZE == 4
-        static const uintptr_t random_value = 0x9E3779B9;
-    #else
-        static const uintptr_t random_value = 0x9E3779B97F4A7C15;
-    #endif
-
-        static const uintptr_t inverted_random_value = ~random_value;
+    struct fixture : NoAssign{
         static const uintptr_t zero = 0;
+        const uintptr_t random_value ;
+        const uintptr_t inverted_random_value ;
+        fixture():
+            random_value (tbb::internal::size_t_select(0x9E3779B9,0x9E3779B97F4A7C15ULL)),
+            inverted_random_value ( ~random_value)
+        {}
     };
 
     struct TestAtomicORSerially : fixture {
@@ -688,8 +693,12 @@ int TestMain () {
     ASSERT(sizeof(double)==8, "type double is not 64 bits");
     #endif
     ASSERT( !ParallelError, NULL );
-    TestMaskedCAS<unsigned char>();
-    TestMaskedCAS<unsigned short>();
+    #if __TBB_BIG_ENDIAN!=-1
+        TestMaskedCAS<unsigned char>();
+        TestMaskedCAS<unsigned short>();
+    #else
+        REPORT("Generic part-word CAS is not available\n");
+    #endif
 #if __TBB_64BIT_ATOMICS
     TestRegisterPromotionSuppression<tbb::internal::int64_t>();
 #endif
@@ -1158,4 +1167,4 @@ void TestParallel( const char* name ) {
     TestDekkerArbitration<T, UseGlobalHelperFullyFenced>();
 }
 
-#endif // __TBB_TEST_PIC && !__PIC__
+#endif // __TBB_TEST_SKIP_PIC_MODE || __TBB_TEST_SKIP_BUILTINS_MODE

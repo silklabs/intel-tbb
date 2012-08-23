@@ -155,6 +155,9 @@ private:
     int my_total_demand;
 #endif /* !__TBB_TASK_PRIORITY */
 
+    //! ABA prevention marker to assign to newly created arenas
+    uintptr_t my_arenas_aba_epoch;
+
 #if __TBB_COUNT_TASK_NODES
     //! Net number of nodes that have been allocated from heap.
     /** Updated each time a scheduler or arena is destroyed. */
@@ -169,6 +172,8 @@ private:
 
     //! Destroys and deallocates market object created by market::create()
     void destroy ();
+
+    void try_destroy_arena ( arena*, uintptr_t aba_epoch );
 
 #if __TBB_TASK_PRIORITY
     //! Returns next arena that needs more workers, or NULL.
@@ -261,6 +266,9 @@ public:
     /** If necessary, also creates global market instance, and boosts its ref count.
         Each call to create_arena() must be matched by the call to arena::free_arena(). **/
     static arena& create_arena ( unsigned max_num_workers, size_t stack_size );
+
+    //! Removes the arena from the market's list
+    static void try_destroy_arena ( market*, arena*, uintptr_t aba_epoch, bool master );
 
     //! Removes the arena from the market's list
     void detach_arena ( arena& );

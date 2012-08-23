@@ -1,6 +1,39 @@
-TBB 4.0 Update 3 commercial-aligned release
+Changes (w.r.t. TBB 4.0 Update 3):
 
-Changes (w.r.t. TBB 4.0 Update 2 commercial-aligned release):
+- The TBB memory allocator transparently supports large pages on Linux.
+- A new flow_graph example, logic_sim, was added. 
+
+Community Preview Features:
+
+- Added: aggregator, a new concurrency control mechanism.
+
+Bugs fixed:
+
+- The abort operation on concurrent_bounded_queue now leaves the queue
+    in a reusable state. If a bad_alloc or bad_last_alloc exception is
+    thrown while the queue is recovering from an abort, that exception
+    will be reported instead of user_abort on the thread on which it
+    occurred, and the queue will not be reusable.
+- Steal limiting heuristic fixed to avoid premature stealing disabling
+    when large amount of __thread data is allocated on thread stack.
+- Fixed a low-probability leak of arenas in the task scheduler.
+- In STL-compatible allocator classes, the method construct() was fixed
+    to comply with C++11 requirements.
+- Fixed a bug that prevented creation of fixed-size memory pools
+    smaller than 2M.
+- Significantly reduced the amount of warnings from various compilers.
+
+Open-source contributions integrated:
+
+- Multiple improvements by Raf Schietekat.
+- Basic support for Clang on Mac OS X* by Blas Rodriguez Somoza.
+- Fixes for warnings and corner-case bugs by Blas Rodriguez Somoza
+    and Edward Lam.
+
+------------------------------------------------------------------------
+TBB 4.0 Update 3
+
+Changes (w.r.t. TBB 4.0 Update 2):
 
 - Modifications to the low-level API for memory pools:
     added support for aligned allocations;
@@ -1168,8 +1201,8 @@ Features / APIs:
 - Timers.
 
 Tools Support:
-- Thread Checker 3.0.
-- Thread Profiler 3.0.
+- Intel(R) Thread Checker 3.0.
+- Intel(R) Thread Profiler 3.0.
 
 Documentation:
 - First Use Documents: README.txt, INSTALL.txt, Release_Notes.txt,

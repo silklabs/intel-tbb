@@ -28,14 +28,13 @@
 
 // Just the tracing portion of the harness.
 //
-// This header defines TRACE and TRCAENL macros, which use REPORT like syntax and 
+// This header defines TRACE and TRACENL macros, which use REPORT like syntax and 
 // are useful for duplicating trace output to the standard debug output on Windows.
 // It is possible to add the ability of automatic extending messages with additional
 // info (file, line, function, time, thread ID, ...).
 //
 // Macros output nothing when test app runs in non-verbose mode (default).
 //
-// The full "harness.h" must be included before this header.
 
 #ifndef tbb_tests_harness_report_H
 #define tbb_tests_harness_report_H

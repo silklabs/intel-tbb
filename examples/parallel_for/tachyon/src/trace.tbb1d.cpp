@@ -197,13 +197,17 @@ void * thread_trace(thr_parms * parms)
     jitterscale = 40.0*(scene.hres + scene.vres);
     totaly = parms->scene.vres-1;
 
-    int g, grain_size = 50;
+    int g, grain_size = 1;
     char *grain_str = getenv ("TBB_GRAINSIZE");
     if (grain_str && (sscanf (grain_str, "%d", &g) > 0) && (g > 0)) grain_size = g;
-  
-    // Uses the preview feature: auto_partitioner.
-    // Note that no grainsize is provided to the blocked_range object.
-    tbb::parallel_for (tbb::blocked_range<int> (starty, stopy), parallel_task (), tbb::auto_partitioner() );
+    char *sched_str = getenv ("TBB_PARTITIONER");
+    static tbb::affinity_partitioner g_ap;
+    if ( sched_str && !strncmp(sched_str, "aff", 3) )
+        tbb::parallel_for (tbb::blocked_range<int> (starty, stopy, grain_size), parallel_task (), g_ap );
+    else if ( sched_str && !strncmp(sched_str, "simp", 4) )
+        tbb::parallel_for (tbb::blocked_range<int> (starty, stopy, grain_size), parallel_task (), tbb::simple_partitioner() );
+    else
+        tbb::parallel_for (tbb::blocked_range<int> (starty, stopy, grain_size), parallel_task (), tbb::auto_partitioner() );
 
     return(NULL);  
 }

@@ -40,11 +40,11 @@ class UnboundedlyRecursiveOnUnboundedStealingTask : public tbb::task {
     typedef UnboundedlyRecursiveOnUnboundedStealingTask this_type;
 
     this_type *m_Parent;
-    const int m_Depth; 
+    const int m_Depth;
     volatile bool m_GoAhead;
 
     // Well, virtually unboundedly, for any practical purpose
-    static const int max_depth = 1000000; 
+    static const int max_depth = 1000000;
 
 public:
     UnboundedlyRecursiveOnUnboundedStealingTask( this_type *parent_ = NULL, int depth_ = max_depth )
@@ -55,12 +55,12 @@ public:
 
     /*override*/
     tbb::task* execute() {
-        // Using large padding array sppeds up reaching stealing limit
+        // Using large padding array speeds up reaching stealing limit
         const int paddingSize = 16 * 1024;
         volatile char padding[paddingSize];
         if( !m_Parent || (m_Depth > 0 &&  m_Parent->m_GoAhead) ) {
             if ( m_Parent ) {
-                // We are stolen, let our parent to start waiting for us
+                // We are stolen, let our parent start waiting for us
                 m_Parent->m_GoAhead = false;
             }
             tbb::task &t = *new( allocate_child() ) this_type(this, m_Depth - 1);
@@ -71,7 +71,7 @@ public:
                 ++padding[i % paddingSize];
                 __TBB_Yield();
             }
-            // If our child has not been stolen yet, then prohibit it siring ones 
+            // If our child has not been stolen yet, then prohibit it siring ones
             // of its own (when this thread executes it inside the next wait_for_all)
             m_GoAhead = false;
             wait_for_all();
@@ -84,7 +84,7 @@ tbb::atomic<int> Count;
 
 class RecursiveTask: public tbb::task {
     const int m_ChildCount;
-    const int m_Depth; 
+    const int m_Depth;
     //! Spawn tasks in list.  Exact method depends upon m_Depth&bit_mask.
     void SpawnList( tbb::task_list& list, int bit_mask ) {
         if( m_Depth&bit_mask ) {
@@ -152,13 +152,13 @@ void TestSpawnRootList( int nthread ) {
     for( int j=0; j<5; ++j )
         for( int k=0; k<10; ++k ) {
             Count = 0;
-            tbb::task_list list; 
+            tbb::task_list list;
             for( int i=0; i<k; ++i )
                 list.push_back( *new( tbb::task::allocate_root() ) RecursiveTask(j,4) );
             tbb::task::spawn_root_and_wait(list);
             int expected = k*Expected(j,4);
             ASSERT( Count==expected, NULL );
-        }    
+        }
 }
 
 //------------------------------------------------------------------------
@@ -180,18 +180,18 @@ void TestSafeContinuation( int nthread ) {
 tbb::atomic<int> TotalCount;
 
 struct AffinityTask: public tbb::task {
-    const affinity_id expected_affinity_id; 
+    const affinity_id expected_affinity_id;
     bool noted;
     /** Computing affinities is NOT supported by TBB, and may disappear in the future.
         It is done here for sake of unit testing. */
-    AffinityTask( int expected_affinity_id_ ) : 
-        expected_affinity_id(affinity_id(expected_affinity_id_)), 
-        noted(false) 
+    AffinityTask( int expected_affinity_id_ ) :
+        expected_affinity_id(affinity_id(expected_affinity_id_)),
+        noted(false)
     {
         set_affinity(expected_affinity_id);
-        ASSERT( 0u-expected_affinity_id>0u, "affinity_id not an unsigned integral type?" );  
+        ASSERT( 0u-expected_affinity_id>0u, "affinity_id not an unsigned integral type?" );
         ASSERT( affinity()==expected_affinity_id, NULL );
-    } 
+    }
     /*override*/ tbb::task* execute() {
         ++TotalCount;
         return NULL;
@@ -213,7 +213,7 @@ struct AffinityTask: public tbb::task {
 void TestAffinity( int nthread ) {
     TotalCount = 0;
     int n = tbb::task_scheduler_init::default_num_threads();
-    if( n>nthread ) 
+    if( n>nthread )
         n = nthread;
     tbb::task_scheduler_init init(n);
     tbb::empty_task* t = new( tbb::task::allocate_root() ) tbb::empty_task;
@@ -222,11 +222,11 @@ void TestAffinity( int nthread ) {
     // Set ref_count for n-1 children, plus 1 for the wait.
     t->set_ref_count(n);
     // Spawn n-1 affinitized children.
-    for( int i=1; i<n; ++i ) 
+    for( int i=1; i<n; ++i )
         tbb::task::spawn( *new(t->allocate_child()) AffinityTask(i) );
     if( n>1 ) {
         // Keep master from stealing
-        while( TotalCount!=n-1 ) 
+        while( TotalCount!=n-1 )
             __TBB_Yield();
     }
     // Wait for the children
@@ -254,16 +254,16 @@ struct NoteAffinityTask: public tbb::task {
     }
 };
 
-// This test checks one of the paths inside the scheduler by affinitizing the child task 
-// to non-existent thread so that it is proxied in the local task pool but not retrieved 
-// by another thread. 
+// This test checks one of the paths inside the scheduler by affinitizing the child task
+// to non-existent thread so that it is proxied in the local task pool but not retrieved
+// by another thread.
 // If no workers requested, the extra slot #2 is allocated for a worker thread to serve
 // "enqueued" tasks. In this test, it is used only for the affinity purpose.
 void TestNoteAffinityContext() {
     tbb::task_scheduler_init init(1);
     tbb::empty_task* t = new( tbb::task::allocate_root() ) tbb::empty_task;
     t->set_ref_count(2);
-    // This master in the absence of workers will have an affinity id of 1. 
+    // This master in the absence of workers will have an affinity id of 1.
     // So use another number to make the task get proxied.
     tbb::task::spawn( *new(t->allocate_child()) NoteAffinityTask(2) );
     t->wait_for_all();
@@ -287,7 +287,7 @@ struct ConstructionFailure {
     #pragma warning (disable: 4702)
 #endif
 
-//! Task that cannot be constructed.  
+//! Task that cannot be constructed.
 template<size_t N>
 struct UnconstructibleTask: public tbb::empty_task {
     char space[N];
@@ -347,14 +347,14 @@ void TestUnconstructibleTask() {
 
 //! Task with members of type T.
 /** The task recursively creates tasks. */
-template<typename T> 
+template<typename T>
 class TaskWithMember: public tbb::task {
     T x;
     T y;
     unsigned char count;
     /*override*/ tbb::task* execute() {
         x = y;
-        if( count>0 ) { 
+        if( count>0 ) {
             set_ref_count(2);
             tbb::task* t = new( allocate_child() ) TaskWithMember<T>(count-1);
             spawn_and_wait_for_all(*t);
@@ -369,7 +369,7 @@ public:
     #pragma warning (pop)
 #endif
 
-template<typename T> 
+template<typename T>
 void TestAlignmentOfOneClass() {
     typedef TaskWithMember<T> task_type;
     tbb::task* t = new( tbb::task::allocate_root() ) task_type(10);
@@ -410,7 +410,7 @@ struct RightFibTask: public tbb::task {
     task* execute() {
         *y = Fib(n-1);
         return 0;
-    } 
+    }
 };
 
 int Fib( int n ) {
@@ -418,7 +418,7 @@ int Fib( int n ) {
         return n;
     } else {
         // y actually does not need to be initialized.  It is initialized solely to suppress
-        // a gratuitous warning "potentially uninitialized local variable". 
+        // a gratuitous warning "potentially uninitialized local variable".
         int y=-1;
         tbb::task* root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
         root_task->set_ref_count(2);
@@ -433,7 +433,7 @@ int Fib( int n ) {
 void TestLeftRecursion( int p ) {
     REMARK("testing non-spawned roots for %d threads\n",p);
     tbb::task_scheduler_init init(p);
-    int sum = 0; 
+    int sum = 0;
     for( int i=0; i<100; ++i )
         sum +=Fib(10);
     ASSERT( sum==5500, NULL );
@@ -449,9 +449,9 @@ class DagTask: public tbb::task {
     number_t sum_from_left, sum_from_above;
     void check_sum( number_t sum ) {
         number_t expected_sum = 1;
-        for( int k=i+1; k<=i+j; ++k ) 
+        for( int k=i+1; k<=i+j; ++k )
             expected_sum *= k;
-        for( int k=1; k<=j; ++k ) 
+        for( int k=1; k<=j; ++k )
             expected_sum /= k;
         ASSERT(sum==expected_sum, NULL);
     }
@@ -471,11 +471,11 @@ public:
         }
         if( DagTask* t = successor_to_below ) {
             t->sum_from_above = sum;
-            if( t->decrement_ref_count()==0 ) 
+            if( t->decrement_ref_count()==0 )
                 // Test using bypass to evaluate DAG
                 return t;
-        } 
-        return NULL;  
+        }
+        return NULL;
     }
     ~DagTask() {++destruction_count;}
     static tbb::atomic<int> execution_count;
@@ -492,10 +492,10 @@ void TestDag( int p ) {
     DagTask::destruction_count=0;
     const int n = 10;
     DagTask* a[n][n];
-    for( int i=0; i<n; ++i ) 
+    for( int i=0; i<n; ++i )
         for( int j=0; j<n; ++j )
             a[i][j] = new( tbb::task::allocate_root() ) DagTask(i,j);
-    for( int i=0; i<n; ++i ) 
+    for( int i=0; i<n; ++i )
         for( int j=0; j<n; ++j ) {
             a[i][j]->successor_to_below = i+1<n ? a[i+1][j] : NULL;
             a[i][j]->successor_to_right = j+1<n ? a[i][j+1] : NULL;
@@ -591,7 +591,7 @@ void TestUserThread( int p ) {
 }
 
 class TaskWithChildToSteal : public tbb::task {
-    const int m_Depth; 
+    const int m_Depth;
     volatile bool m_GoAhead;
 
 public:

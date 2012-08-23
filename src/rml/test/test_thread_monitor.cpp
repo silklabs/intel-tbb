@@ -73,7 +73,7 @@ void ThreadState::loop() {
     }
 }
 
-// Linux on Itanium seems to require at least 1<<18 bytes per stack.
+// Linux on IA-64 seems to require at least 1<<18 bytes per stack.
 const size_t MinStackSize = 1<<18;
 const size_t MaxStackSize = 1<<22;
 

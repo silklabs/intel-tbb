@@ -78,7 +78,8 @@ struct task_proxy : public task {
             const intptr_t cleaner_bit = location_mask & ~from_bit;
             // Attempt to transition the proxy to the "empty" state with
             // cleaner_bit specifying entity responsible for its eventual freeing.
-            if ( __TBB_CompareAndSwapW( &task_and_tag, cleaner_bit, tat ) == tat ) {
+            // Explicit cast to void* is to work around a seeming ICC 11.1 bug.
+            if ( __TBB_CompareAndSwapW( (void*)&task_and_tag, cleaner_bit, tat ) == tat ) {
                 // Successfully grabbed the task, and left new owner with the job of freeing the proxy
                 return task_ptr(tat);
             }
@@ -132,7 +133,7 @@ class mail_outbox : unpadded_mail_outbox {
             } else {
                 // Some other thread updated my_last but has not filled in first->next_in_mailbox
                 // Wait until first item points to second item.
-                for( atomic_backoff backoff; !(second = first->next_in_mailbox); backoff.pause() );
+                for( atomic_backoff backoff; !(second = first->next_in_mailbox); backoff.pause() ) {}
                 my_first = second;
             }
         }

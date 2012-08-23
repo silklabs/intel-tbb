@@ -152,13 +152,14 @@ arena::arena ( market& m, unsigned max_num_workers ) {
     my_market = &m;
     my_limit = 1;
     // Two slots are mandatory: for the master, and for 1 worker (required to support starvation resistant tasks).
-    my_num_slots = max(2u, max_num_workers + 1);
+    my_num_slots = num_slots_to_reserve(max_num_workers);
     my_max_num_workers = max_num_workers;
     my_num_threads_active = 1; // accounts for the master
     __TBB_get_cpu_ctl_env(&my_cpu_ctl_env);
 #if __TBB_TASK_PRIORITY
     my_bottom_priority = my_top_priority = normalized_normal_priority;
 #endif /* __TBB_TASK_PRIORITY */
+    my_aba_epoch = m.my_arenas_aba_epoch;
     __TBB_ASSERT ( my_max_num_workers < my_num_slots, NULL );
     // Construct mailboxes. Mark internal synchronization elements for the tools.
     for( unsigned i = 0; i < my_num_slots; ++i ) {
@@ -197,7 +198,13 @@ arena& arena::allocate_arena( market& m, unsigned max_num_workers ) {
 }
 
 void arena::free_arena () {
+    __TBB_ASSERT( is_alive(my_guard), NULL );
     __TBB_ASSERT( !my_num_threads_active, "There are threads in the dying arena" );
+    __TBB_ASSERT( !my_num_workers_requested && !my_num_workers_allotted, "Dying arena requests workers" );
+    __TBB_ASSERT( my_pool_state == SNAPSHOT_EMPTY || !my_max_num_workers, "Inconsistent state of a dying arena" );
+#if !__TBB_STATISTICS_EARLY_DUMP
+    GATHER_STATISTIC( dump_arena_statistics() );
+#endif
     poison_value( my_guard );
     intptr_t drained = 0;
     for ( unsigned i = 1; i <= my_num_slots; ++i )
@@ -229,15 +236,6 @@ void arena::free_arena () {
     memset( storage, 0, allocation_size(my_max_num_workers) );
 #endif /* TBB_USE_ASSERT */
     NFS_Free( storage );
-}
-
-void arena::close_arena () {
-#if !__TBB_STATISTICS_EARLY_DUMP
-    GATHER_STATISTIC( dump_arena_statistics() );
-#endif
-    my_market->detach_arena( *this );
-    __TBB_ASSERT( is_alive(my_guard), NULL );
-    free_arena();
 }
 
 #if __TBB_STATISTICS
@@ -272,11 +270,13 @@ void arena::dump_arena_statistics () {
 #endif /* __TBB_STATISTICS */
 
 #if __TBB_TASK_PRIORITY
+// TODO: This function seems deserving refactoring
 inline bool arena::may_have_tasks ( generic_scheduler* s, arena_slot& slot, bool& tasks_present, bool& dequeuing_possible ) {
+    suppress_unused_warning(slot);
     if ( !s ) {
         // This slot is vacant
         __TBB_ASSERT( slot.task_pool == EmptyTaskPool, NULL );
-        __TBB_ASSERT ( slot.tail == slot.head, "Someone is tinkering with a vacant arena slot" );
+        __TBB_ASSERT( slot.tail == slot.head, "Someone is tinkering with a vacant arena slot" );
         return false;
     }
     dequeuing_possible |= s->worker_outermost_level();

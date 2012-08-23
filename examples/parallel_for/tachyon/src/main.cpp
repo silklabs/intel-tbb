@@ -78,7 +78,7 @@ bool global_usegraphics;
 
 bool silent_mode = false; /* silent mode */
 
-class video *video = 0;
+class tachyon_video *video = 0;
 
 typedef struct {
   int foundfilename;      /* was a model file name found in the args? */
@@ -100,10 +100,13 @@ static char *window_title_string (int argc, const char **argv)
     char *name;
 
     name = (char *) malloc (8192);
-    
-    if(strrchr(argv[0], '\\')) strcpy (name, strrchr(argv[0], '\\')+1);
-    else if(strrchr(argv[0], '/')) strcpy (name, strrchr(argv[0], '/')+1);
-    else strcpy (name, *argv[0]?argv[0]:"Tachyon");
+    char *title = getenv ("TITLE");
+    if( title ) strcpy( name, title );
+    else {
+        if(strrchr(argv[0], '\\')) strcpy (name, strrchr(argv[0], '\\')+1);
+        else if(strrchr(argv[0], '/')) strcpy (name, strrchr(argv[0], '/')+1);
+        else strcpy (name, *argv[0]?argv[0]:"Tachyon");
+    }
     for (i = 1; i < argc; i++) {
         strcat (name, " ");
         strcat (name, argv[i]);
@@ -112,17 +115,6 @@ static char *window_title_string (int argc, const char **argv)
     strcat (name, " (DEBUG BUILD)");
 #endif
     return name;
-}
-
-void rt_finalize(void) {
-    timer t0, t1;
-    t0 = gettimer();
-    if(global_usegraphics)
-        do { rt_sleep(10); t1 = gettimer(); }
-        while(timertime(t0, t1) < 10 && video->next_frame());
-#ifdef _WINDOWS
-    else rt_sleep(10000);
-#endif
 }
 
 void initoptions(argoptions * opt) {
@@ -227,7 +219,6 @@ int CreateScene(argoptions &opt) {
     global_ysize = scene->vres;
     global_xwinsize = global_xsize;
     global_ywinsize = global_ysize;  // add some here to leave extra blank space on bottom for status etc.
-    global_usegraphics = (scene->displaymode == RT_DISPLAY_ENABLED);
 
     return 0;
 }
@@ -248,7 +239,6 @@ int main (int argc, char *argv[]) {
         tachyon.init_console();
 
         tachyon.title = global_window_title;
-        tachyon.updating = global_usegraphics;
         // always using window even if(!global_usegraphics)
         global_usegraphics = 
             tachyon.init_window(global_xwinsize, global_ywinsize);

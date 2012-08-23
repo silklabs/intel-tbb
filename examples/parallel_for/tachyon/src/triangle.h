@@ -58,7 +58,7 @@
 /* 
  * triangle.h - This file contains the defines for triangles etc.
  *
- *  $Id: triangle.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: triangle.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 object * newtri(void *, vector, vector, vector);

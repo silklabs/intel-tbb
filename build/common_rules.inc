@@ -99,13 +99,13 @@ endif
 $(KNOWN_WARNINGS): %.$(OBJ): %.cpp
 	$(CPLUS) $(COMPILE_ONLY) $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(CXX_ONLY_FLAGS) $(INCLUDES) $<
 
-tbb_misc.$(OBJ): tbb_misc.cpp version_string.tmp
+tbb_misc.$(OBJ): tbb_misc.cpp version_string.ver
 	$(CPLUS) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDE_KEY). $(INCLUDES) $<
 
-tbb_misc.E: tbb_misc.cpp version_string.tmp
+tbb_misc.E: tbb_misc.cpp version_string.ver
 	$(CPLUS) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(INCLUDE_KEY). $(INCLUDES) $(PREPROC_ONLY) $< >$@
 
-%.res: %.rc version_string.tmp $(TBB.MANIFEST)
+%.res: %.rc version_string.ver $(TBB.MANIFEST)
 	rc /Fo$@ $(INCLUDES) $(filter /D%,$(CPLUS_FLAGS)) $<
 
 ifneq (,$(TBB.MANIFEST))
@@ -114,12 +114,12 @@ $(TBB.MANIFEST):
 	cmd /C "echo int main(){return 0;} >>tbbmanifest.c"
 	cl /nologo $(C_FLAGS) tbbmanifest.c
 
-version_string.tmp: $(TBB.MANIFEST)
+version_string.ver: $(TBB.MANIFEST)
 	$(MAKE_VERSIONS)
-	cmd /C "echo #define TBB_MANIFEST 1 >> version_string.tmp"
+	cmd /C "echo #define TBB_MANIFEST 1 >> version_string.ver"
 
 else
-version_string.tmp:
+version_string.ver:
 	$(MAKE_VERSIONS)
 endif
 

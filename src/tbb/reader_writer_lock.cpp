@@ -31,36 +31,35 @@
 #include "tbb/tbb_exception.h"
 #include "itt_notify.h"
 
+#if defined(_MSC_VER) && defined(_Wp64)
+    // Workaround for overzealous compiler warnings in /Wp64 mode
+    #pragma warning (disable: 4244)
+#endif
+
 namespace tbb {
 namespace interface5 {
 
-const unsigned WFLAG1 = 0x1;  // writer interested or active
-const unsigned WFLAG2 = 0x2;  // writers interested, no entering readers
-const unsigned RFLAG = 0x4;   // reader interested but not active
-const unsigned RC_INCR = 0x8; // to adjust reader count
+const uintptr_t WFLAG1 = 0x1;  // writer interested or active
+const uintptr_t WFLAG2 = 0x2;  // writers interested, no entering readers
+const uintptr_t RFLAG = 0x4;   // reader interested but not active
+const uintptr_t RC_INCR = 0x8; // to adjust reader count
 
 
-// Perform an atomic bitwise-OR on the operand with the addend, and return
-// the previous value of the operand.
-inline unsigned fetch_and_or(atomic<unsigned>& operand, unsigned addend) {
-    tbb::internal::atomic_backoff backoff;
-    for (;;) {
-        unsigned old = operand;
-        unsigned result = operand.compare_and_swap(old|addend, old);
-        if (result==old) return old;
-        backoff.pause();
+// Perform an atomic bitwise-OR on the operand, and return its previous value.
+inline uintptr_t fetch_and_or(atomic<uintptr_t>& operand, uintptr_t value) {
+    for (tbb::internal::atomic_backoff b;;b.pause()) {
+        uintptr_t old = operand;
+        uintptr_t result = operand.compare_and_swap(old|value, old);
+        if (result==old) return result;
     }
 }
 
-// Perform an atomic bitwise-AND on the operand with the addend, and return
-// the previous value of the operand.
-inline unsigned fetch_and_and(atomic<unsigned>& operand, unsigned addend) {
-    tbb::internal::atomic_backoff backoff;
-    for (;;) {
-        unsigned old = operand;
-        unsigned result = operand.compare_and_swap(old&addend, old);
-        if (result==old) return old;
-        backoff.pause();
+// Perform an atomic bitwise-AND on the operand, and return its previous value.
+inline uintptr_t fetch_and_and(atomic<uintptr_t>& operand, uintptr_t value) {
+    for (tbb::internal::atomic_backoff b;;b.pause()) {
+        uintptr_t old = operand;
+        uintptr_t result = operand.compare_and_swap(old&value, old);
+        if (result==old) return result;
     }
 }
 
@@ -99,8 +98,8 @@ void reader_writer_lock::internal_destroy() {
     __TBB_ASSERT(writer_head==NULL, "reader_writer_lock destroyed with pending/active writers.");
 }
 
-// Acquires the reader_writer_lock for write.    If the lock is currently held in write 
-// mode by another context, the writer will block by spinning on a local variable. 
+// Acquires the reader_writer_lock for write.    If the lock is currently held in write
+// mode by another context, the writer will block by spinning on a local variable.
 // Throws exception improper_lock if the context tries to acquire a
 // reader_writer_lock that it already has write ownership of.
 void reader_writer_lock::lock() {
@@ -115,7 +114,7 @@ void reader_writer_lock::lock() {
 }
 
 // Tries to acquire the reader_writer_lock for write.    This function does not block.
-// Return Value: True or false, depending on whether the lock is acquired or not.    
+// Return Value: True or false, depending on whether the lock is acquired or not.
 // If the lock is already held by this acquiring context, try_lock() returns false.
 bool reader_writer_lock::try_lock() {
     if (is_current_writer()) { // recursive lock attempt
@@ -127,7 +126,7 @@ bool reader_writer_lock::try_lock() {
         return start_write(a_writer_lock);
     }
 }
-    
+
 bool reader_writer_lock::start_write(scoped_lock *I) {
     tbb_thread::id id = this_tbb_thread::get_id();
     scoped_lock *pred = NULL;
@@ -141,7 +140,7 @@ bool reader_writer_lock::start_write(scoped_lock *I) {
         ITT_NOTIFY(sync_prepare, this);
         pred = writer_tail.fetch_and_store(I);
     }
-    if (pred) 
+    if (pred)
         pred->next = I;
     else {
         set_next_writer(I);
@@ -166,7 +165,7 @@ bool reader_writer_lock::start_write(scoped_lock *I) {
     my_current_writer = id;
     return true;
 }
-    
+
 void reader_writer_lock::set_next_writer(scoped_lock *W) {
     writer_head = W;
     if (W->status == waiting_nonblocking) {
@@ -180,15 +179,15 @@ void reader_writer_lock::set_next_writer(scoped_lock *W) {
         }
         else { // no reader in timing window
             __TBB_AtomicOR(&rdr_count_and_flags, WFLAG2);
-        } 
+        }
         spin_wait_while_geq(rdr_count_and_flags, RC_INCR); // block until readers finish
         W->status = active;
    }
 }
-    
+
 // Acquires the reader_writer_lock for read.    If the lock is currently held by a writer,
-// this reader will block and wait until the writers are done. 
-// Throws exception improper_lock when the context tries to acquire a reader_writer_lock 
+// this reader will block and wait until the writers are done.
+// Throws exception improper_lock when the context tries to acquire a reader_writer_lock
 // that it already has write ownership of.
 void reader_writer_lock::lock_read() {
     if (is_current_writer()) { // recursive lock attempt
@@ -200,9 +199,9 @@ void reader_writer_lock::lock_read() {
         start_read(&a_reader_lock);
     }
 }
-    
+
 // Tries to acquire the reader_writer_lock for read.    This function does not block.
-// Return Value: True or false, depending on whether the lock is acquired or not.    
+// Return Value: True or false, depending on whether the lock is acquired or not.
 bool reader_writer_lock::try_lock_read() {
     if (is_current_writer()) { // recursive lock attempt
         return false;
@@ -247,13 +246,13 @@ void reader_writer_lock::unblock_readers() {
     if (rdr_count_and_flags & WFLAG1 && !(rdr_count_and_flags & WFLAG2)) {
         __TBB_AtomicOR(&rdr_count_and_flags, WFLAG2);
     }
-    // unblock waiting readers 
+    // unblock waiting readers
     scoped_lock_read *head = reader_head.fetch_and_store(NULL);
     __TBB_ASSERT(head, NULL);
     __TBB_ASSERT(head->status == waiting, NULL);
     head->status = active;
 }
-    
+
 // Releases the reader_writer_lock
 void reader_writer_lock::unlock() {
     if( my_current_writer!=tbb_thread::id() ) {
@@ -269,7 +268,7 @@ void reader_writer_lock::unlock() {
         end_read();
     }
 }
-    
+
 void reader_writer_lock::end_write(scoped_lock *I) {
     __TBB_ASSERT(I==writer_head, "Internal error: can't unlock a thread that is not holding the lock.");
     my_current_writer = tbb_thread::id();
@@ -291,7 +290,7 @@ void reader_writer_lock::end_write(scoped_lock *I) {
         }
     }
 }
-    
+
 void reader_writer_lock::end_read() {
     ITT_NOTIFY(sync_releasing, this);
     __TBB_ASSERT(rdr_count_and_flags >= RC_INCR, "unlock() called but no readers hold the lock.");
@@ -302,7 +301,7 @@ inline bool reader_writer_lock::is_current_writer() {
     return my_current_writer==this_tbb_thread::get_id();
 }
 
-// Construct with a blocking attempt to acquire a write lock on the passed reader_writer_lock 
+// Construct with a blocking attempt to acquire a write lock on the passed reader_writer_lock
 void reader_writer_lock::scoped_lock::internal_construct (reader_writer_lock& lock) {
     mutex = &lock;
     next = NULL;
@@ -320,7 +319,7 @@ inline reader_writer_lock::scoped_lock::scoped_lock() : mutex(NULL), next(NULL) 
     status = waiting;
 }
 
-// Construct with a blocking attempt to acquire a write lock on the passed reader_writer_lock 
+// Construct with a blocking attempt to acquire a write lock on the passed reader_writer_lock
 void reader_writer_lock::scoped_lock_read::internal_construct (reader_writer_lock& lock) {
     mutex = &lock;
     next = NULL;
@@ -333,7 +332,7 @@ void reader_writer_lock::scoped_lock_read::internal_construct (reader_writer_loc
         mutex->start_read(this);
     }
 }
-  
+
 inline reader_writer_lock::scoped_lock_read::scoped_lock_read() : mutex(NULL), next(NULL) {
     status = waiting;
 }
@@ -346,9 +345,9 @@ void reader_writer_lock::scoped_lock::internal_destroy() {
     status = invalid;
 }
 
-void reader_writer_lock::scoped_lock_read::internal_destroy() { 
-    if (mutex)  
-        mutex->end_read(); 
+void reader_writer_lock::scoped_lock_read::internal_destroy() {
+    if (mutex)
+        mutex->end_read();
     status = invalid;
 }
 

@@ -33,10 +33,10 @@
 #ifndef ENDL
 #define ENDL "\n"
 #endif
-#include "version_string.tmp"
+#include "version_string.ver"
 
 #ifndef __TBB_VERSION_STRINGS
-#pragma message("Warning: version_string.tmp isn't generated properly by version_info.sh script!")
+#pragma message("Warning: version_string.ver isn't generated properly by version_info.sh script!")
 // here is an example of macros value:
 #define __TBB_VERSION_STRINGS \
 "TBB: BUILD_HOST\tUnknown\n" \
@@ -54,47 +54,68 @@
 #endif
 #endif
 
-#define __TBB_VERSION_NUMBER "TBB: VERSION\t\t" __TBB_STRING(TBB_VERSION_MAJOR.TBB_VERSION_MINOR) ENDL
-#define __TBB_INTERFACE_VERSION_NUMBER "TBB: INTERFACE VERSION\t" __TBB_STRING(TBB_INTERFACE_VERSION) ENDL
-#define __TBB_VERSION_DATETIME "TBB: BUILD_DATE\t\t" __TBB_DATETIME ENDL
+#define __TBB_VERSION_NUMBER(N) #N ": VERSION\t\t" __TBB_STRING(TBB_VERSION_MAJOR.TBB_VERSION_MINOR) ENDL
+#define __TBB_INTERFACE_VERSION_NUMBER(N) #N ": INTERFACE VERSION\t" __TBB_STRING(TBB_INTERFACE_VERSION) ENDL
+
+#define __TBB_VERSION_DATETIME(N) #N ": BUILD_DATE\t\t" __TBB_DATETIME ENDL
 #ifndef TBB_USE_DEBUG
-    #define __TBB_VERSION_USE_DEBUG "TBB: TBB_USE_DEBUG\tundefined" ENDL
+    #define __TBB_VERSION_USE_DEBUG(N) #N ": TBB_USE_DEBUG\tundefined" ENDL
 #elif TBB_USE_DEBUG==0
-    #define __TBB_VERSION_USE_DEBUG "TBB: TBB_USE_DEBUG\t0" ENDL
+    #define __TBB_VERSION_USE_DEBUG(N) #N ": TBB_USE_DEBUG\t0" ENDL
 #elif TBB_USE_DEBUG==1
-    #define __TBB_VERSION_USE_DEBUG "TBB: TBB_USE_DEBUG\t1" ENDL
+    #define __TBB_VERSION_USE_DEBUG(N) #N ": TBB_USE_DEBUG\t1" ENDL
 #elif TBB_USE_DEBUG==2
-    #define __TBB_VERSION_USE_DEBUG "TBB: TBB_USE_DEBUG\t2" ENDL
+    #define __TBB_VERSION_USE_DEBUG(N) #N ": TBB_USE_DEBUG\t2" ENDL
 #else
     #error Unexpected value for TBB_USE_DEBUG
 #endif
+
+/* Make __TBB_VERSION_USE_ASSERT and __TBB_VERSION_DO_NOTIFY empty for rc
+ * because rc from VS2005 crashed with fatal error RC10056 for too complex
+ * macros (for example, when __TBB_CPF_BUILD is enabled).
+ * All information is available in BUILD_COMMAND anyway.
+ */
+
+#ifdef RC_INVOKED
+    #define __TBB_VERSION_USE_ASSERT(N)
+#else // RC_INVOKED
 #ifndef TBB_USE_ASSERT
-    #define __TBB_VERSION_USE_ASSERT "TBB: TBB_USE_ASSERT\tundefined" ENDL
+    #define __TBB_VERSION_USE_ASSERT(N) #N ": TBB_USE_ASSERT\tundefined" ENDL
 #elif TBB_USE_ASSERT==0
-    #define __TBB_VERSION_USE_ASSERT "TBB: TBB_USE_ASSERT\t0" ENDL
+    #define __TBB_VERSION_USE_ASSERT(N) #N ": TBB_USE_ASSERT\t0" ENDL
 #elif TBB_USE_ASSERT==1
-    #define __TBB_VERSION_USE_ASSERT "TBB: TBB_USE_ASSERT\t1" ENDL
+    #define __TBB_VERSION_USE_ASSERT(N) #N ": TBB_USE_ASSERT\t1" ENDL
 #elif TBB_USE_ASSERT==2
-    #define __TBB_VERSION_USE_ASSERT "TBB: TBB_USE_ASSERT\t2" ENDL
+    #define __TBB_VERSION_USE_ASSERT(N) #N ": TBB_USE_ASSERT\t2" ENDL
 #else
     #error Unexpected value for TBB_USE_ASSERT
 #endif
+#endif // RC_INVOKED
+
 #ifndef __TBB_CPF_BUILD
-    #define __TBB_VERSION_TBB_PREVIEW_BINARY
+    #define __TBB_VERSION_TBB_PREVIEW_BINARY(N)
 #else
-    #define __TBB_VERSION_TBB_PREVIEW_BINARY "TBB: TBB_PREVIEW_BINARY\t1" ENDL
+    #define __TBB_VERSION_TBB_PREVIEW_BINARY(N) #N ": TBB_PREVIEW_BINARY\t1" ENDL
 #endif
+
+#ifdef RC_INVOKED
+    #define __TBB_VERSION_DO_NOTIFY(N)
+#else
 #ifndef DO_ITT_NOTIFY
-    #define __TBB_VERSION_DO_NOTIFY "TBB: DO_ITT_NOTIFY\tundefined" ENDL
+    #define __TBB_VERSION_DO_NOTIFY(N) #N ": DO_ITT_NOTIFY\tundefined" ENDL
 #elif DO_ITT_NOTIFY==1
-    #define __TBB_VERSION_DO_NOTIFY "TBB: DO_ITT_NOTIFY\t1" ENDL
+    #define __TBB_VERSION_DO_NOTIFY(N) #N ": DO_ITT_NOTIFY\t1" ENDL
 #elif DO_ITT_NOTIFY==0
-    #define __TBB_VERSION_DO_NOTIFY
+    #define __TBB_VERSION_DO_NOTIFY(N)
 #else
     #error Unexpected value for DO_ITT_NOTIFY
 #endif
+#endif // RC_INVOKED
 
-#define TBB_VERSION_STRINGS __TBB_VERSION_NUMBER __TBB_INTERFACE_VERSION_NUMBER __TBB_VERSION_DATETIME __TBB_VERSION_STRINGS __TBB_VERSION_USE_DEBUG __TBB_VERSION_USE_ASSERT __TBB_VERSION_TBB_PREVIEW_BINARY __TBB_VERSION_DO_NOTIFY
+#define TBB_VERSION_STRINGS_P(N) __TBB_VERSION_NUMBER(N) __TBB_INTERFACE_VERSION_NUMBER(N) __TBB_VERSION_DATETIME(N) __TBB_VERSION_STRINGS(N) __TBB_VERSION_USE_DEBUG(N) __TBB_VERSION_USE_ASSERT(N) __TBB_VERSION_TBB_PREVIEW_BINARY(N) __TBB_VERSION_DO_NOTIFY(N)
+
+#define TBB_VERSION_STRINGS TBB_VERSION_STRINGS_P(TBB)
+#define TBBMALLOC_VERSION_STRINGS TBB_VERSION_STRINGS_P(TBBmalloc)
 
 // numbers
 #ifndef __TBB_VERSION_YMD

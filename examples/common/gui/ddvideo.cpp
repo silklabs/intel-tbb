@@ -28,6 +28,13 @@
 
 // common Windows parts
 #include "winvideo.h"
+
+#include <dxsdkver.h>
+#if _DXSDK_PRODUCT_MAJOR >= 9
+// new implementation based on Direct2D
+#include "d2dvideo.cpp"
+#else // _DXSDK_PRODUCT_MAJOR >= 9
+
 // and another headers
 #include <cassert>
 #include <stdio.h>
@@ -578,3 +585,5 @@ drawing_area::drawing_area(int x, int y, int sizex, int sizey)
 void drawing_area::update()
 {
 }
+
+#endif //_DXSDK_PRODUCT_MAJOR >= 9

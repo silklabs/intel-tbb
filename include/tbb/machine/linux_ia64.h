@@ -176,8 +176,9 @@ namespace internal {
 
 #undef __TBB_MACHINE_DEFINE_ATOMICS
 
-#define __TBB_USE_FENCED_ATOMICS 1
-#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE 1
+#define __TBB_USE_FENCED_ATOMICS                            1
+#define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
+#define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
 // Definition of Lock functions
 #define __TBB_TryLockByte(P) __TBB_machine_trylockbyte(P)

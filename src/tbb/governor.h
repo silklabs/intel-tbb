@@ -60,9 +60,9 @@ class governor {
     //! TLS for scheduler instances associated with individual threads
     static basic_tls<generic_scheduler*> theTLS;
 
-    //! Caches the maximal level of paralellism supported by the hardware 
+    //! Caches the maximal level of paralellism supported by the hardware
     static unsigned DefaultNumberOfThreads;
-    
+
     static rml::tbb_factory theRMLServerFactory;
 
     static bool UsePrivateRML;
@@ -83,7 +83,7 @@ class governor {
 public:
     static unsigned default_num_threads () {
         // No memory fence required, because at worst each invoking thread calls AvailableHwConcurrency once.
-        return DefaultNumberOfThreads ? DefaultNumberOfThreads : 
+        return DefaultNumberOfThreads ? DefaultNumberOfThreads :
                                         DefaultNumberOfThreads = AvailableHwConcurrency();
     }
     //! Processes scheduler initialization request (possibly nested) in a master thread
@@ -97,10 +97,10 @@ public:
     //! Returns number of worker threads in the currently active arena.
     inline static unsigned max_number_of_workers ();
 
-    //! Register TBB scheduler instance in thread local storage.
+    //! Register TBB scheduler instance in thread-local storage.
     static void sign_on(generic_scheduler* s);
 
-    //! Unregister TBB scheduler instance from thread local storage.
+    //! Unregister TBB scheduler instance from thread-local storage.
     static void sign_off(generic_scheduler* s);
 
     //! Used to check validity of the local scheduler TLS contents.
@@ -109,7 +109,7 @@ public:
     //! Temporarily set TLS slot to the given scheduler
     static void assume_scheduler( generic_scheduler* s ) { theTLS.set( s ); }
 
-    //! Obtain the thread local instance of the TBB scheduler.
+    //! Obtain the thread-local instance of the TBB scheduler.
     /** If the scheduler has not been initialized yet, initialization is done automatically.
         Note that auto-initialized scheduler instance is destroyed only when its thread terminates. **/
     static generic_scheduler* local_scheduler () {

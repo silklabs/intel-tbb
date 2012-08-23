@@ -58,7 +58,7 @@
 /* 
  * quadric.h - This file contains the defines for quadrics.
  *
- *  $Id: quadric.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: quadric.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 typedef struct {

@@ -24,7 +24,7 @@
 			IntermediateDirectory="$(TEMP)\tbb_examples\$(SolutionName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -46,7 +46,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="DEFAULT_MODELFILE=balls.dat;EMULATE_PTHREADS;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -92,7 +92,7 @@
 			IntermediateDirectory="$(TEMP)\tbb_examples\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -115,7 +115,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="DEFAULT_MODELFILE=balls.dat;EMULATE_PTHREADS;WIN64;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -423,7 +423,7 @@
 			IntermediateDirectory="$(TEMP)\tbb_examples\$(SolutionName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -446,7 +446,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="DEFAULT_MODELFILE=balls.dat;EMULATE_PTHREADS;WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -492,7 +492,7 @@
 			IntermediateDirectory="$(TEMP)\tbb_examples\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -516,7 +516,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="DEFAULT_MODELFILE=balls.dat;EMULATE_PTHREADS;WIN64;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

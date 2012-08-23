@@ -61,7 +61,13 @@ namespace Harness {
     before including harness.h **/
 int TestMain ();
 
-#define __TBB_LAMBDAS_PRESENT  ( _MSC_VER >= 1600 && !__INTEL_COMPILER || __INTEL_COMPILER > 1100 && _TBB_CPP0X )
+#if __INTEL_COMPILER
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
+#elif __GNUC__
+#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
+#elif _MSC_VER
+#define __TBB_LAMBDAS_PRESENT ( _MSC_VER>=1600 )
+#endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1400
     #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 1
@@ -139,8 +145,11 @@ void ReportWarning( const char* filename, int line, const char* expression, cons
     REPORT("Warning: %s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
 }
 #else
-#define ASSERT(p,msg) ((void)0)
-#define ASSERT_WARNING(p,msg) ((void)0)
+//! Utility template function to prevent "unused" warnings by various compilers.
+template<typename T> void suppress_unused_warning( const T& ) {}
+
+#define ASSERT(p,msg) (suppress_unused_warning(p), (void)0)
+#define ASSERT_WARNING(p,msg) (suppress_unused_warning(p), (void)0)
 #endif /* HARNESS_NO_ASSERT */
 
 #if !HARNESS_NO_PARSE_COMMAND_LINE
@@ -325,7 +334,8 @@ public:
         // launched by make, the default stack size is set to the hard limit, and
         // calls to pthread_create fail with out-of-memory error.
         // Therefore we set the stack size explicitly (as for TBB worker threads).
-        const size_t MByte = 1<<20;
+// TODO: make a single definition of MByte used by all tests.
+        const size_t MByte = 1024*1024;
 #if __i386__||__i386
         const size_t stack_size = 1*MByte;
 #elif __x86_64__

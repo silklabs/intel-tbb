@@ -138,13 +138,12 @@ namespace helpers{
             typedef native_for_concurrent_op_repeated<object_instanses_counting_concurent_type>  native_for_concurrent_op;
 
             struct native_for_single_op_repeated_fixture{
-                //TODO: to think - is it needed to setup number of thread automatically
-                //TODO: refactor number of threads into separate fixture
-                static const size_t number_of_threads = 4;
-                static const size_t repeats_per_thread = 8000000;
-
                 object_instanses_counting_concurent_type source;
                 void run_native_for_and_assert_source_is_unique(native_for_concurrent_op::test_function_pointer_type operation,const char* msg){
+                    //TODO: refactor number of threads into separate fixture
+                    const size_t number_of_threads = min(4,tbb::task_scheduler_init::default_num_threads());
+                    const size_t repeats_per_thread = 1000000;
+
                     NativeParallelFor(number_of_threads , native_for_concurrent_op(source,operation,repeats_per_thread));
                     ASSERT(source.instances_count()==1,msg);
                 }

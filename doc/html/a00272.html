@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt; Class Template Reference</title>
+<title>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,72 +21,76 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00396.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00272.html">function_node&lt; Input, Output, queueing, Allocator &gt;</a></div>
-<h1>tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->Implements a function node that supports Input -&gt; Output.  
+<a class="el" href="a00412.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00269.html">concurrent_hash_map</a>::<a class="el" href="a00272.html">const_accessor</a></div>
+<h1>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor Class Reference</h1><!-- doxytag: class="tbb::interface5::concurrent_hash_map::const_accessor" -->Combines data access, locking, and garbage collection.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00489.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00453.html">concurrent_hash_map.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;:
-<p><center><img src="a00272.png" usemap="#tbb::flow::interface6::function_node< Input, Output, queueing, Allocator >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::function_node< Input, Output, queueing, Allocator >_map">
-<area href="a00274.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,424,24">
+<p>Inheritance diagram for tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor:
+<p><center><img src="a00272.png" usemap="#tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::const_accessor_map" border="0" alt=""></center>
+<map name="tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::const_accessor_map">
+<area href="a00270.html" alt="tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::accessor" shape="rect" coords="0,56,530,80">
 </map>
-<a href="a00057.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00022.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d2d8e92791b85100f8a53f7b2335c60c"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::input_type" ref="d2d8e92791b85100f8a53f7b2335c60c" args="" -->
-typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a8e50238483ba451363dccebd981d346"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::value_type" ref="a8e50238483ba451363dccebd981d346" args="" -->
+typedef const concurrent_hash_map::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#a8e50238483ba451363dccebd981d346">value_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="df1b2d30d065b64efcee71021129760a"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::output_type" ref="df1b2d30d065b64efcee71021129760a" args="" -->
-typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8d8519eb42d5ddbba668a575b24a720a"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::predecessor_type" ref="8d8519eb42d5ddbba668a575b24a720a" args="" -->
-typedef <a class="el" href="a00312.html">sender</a>&lt; input_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb82369d652cd58b169f9a2e8f7ed023"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::successor_type" ref="eb82369d652cd58b169f9a2e8f7ed023" args="" -->
-typedef <a class="el" href="a00306.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6083108a1ca5a4f1464511e378e4bedf"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::fInput_type" ref="6083108a1ca5a4f1464511e378e4bedf" args="" -->
-typedef internal::function_input&lt;<br>
- input_type, output_type,<br>
- Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4259f2853fb3af09518df3efb44ed8d5"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::queue_type" ref="4259f2853fb3af09518df3efb44ed8d5" args="" -->
-typedef internal::function_input_queue&lt;<br>
- input_type, Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>queue_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="431ce7232e788562d9152493961ee4b9"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::fOutput_type" ref="431ce7232e788562d9152493961ee4b9" args="" -->
-typedef internal::function_output&lt;<br>
- output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type of value. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5b9019c1e6e9b2c41c986a384bd179db"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::function_node" ref="5b9019c1e6e9b2c41c986a384bd179db" args="(graph &amp;g, size_t concurrency, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00272.html#5b9019c1e6e9b2c41c986a384bd179db">function_node</a> (<a class="el" href="a00273.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="84c3080d0c6124d55c8bb4cf6055e65f"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::empty" ref="84c3080d0c6124d55c8bb4cf6055e65f" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#84c3080d0c6124d55c8bb4cf6055e65f">empty</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="01055081ed477714503820035db3a965"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::function_node" ref="01055081ed477714503820035db3a965" args="(const function_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#01055081ed477714503820035db3a965">function_node</a> (const <a class="el" href="a00271.html">function_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if result is empty. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7db006d41b49dc5f1716a913769d4698"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::release" ref="7db006d41b49dc5f1716a913769d4698" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#7db006d41b49dc5f1716a913769d4698">release</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b86c76d70a008960f3261e927f846367"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::try_put" ref="b86c76d70a008960f3261e927f846367" args="(const input_type &amp;i)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_put</b> (const input_type &amp;i)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set to null. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9411df8197ceb4881ec4c7368a0a7f88"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::operator *" ref="9411df8197ceb4881ec4c7368a0a7f88" args="() const " -->
+const_reference&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#9411df8197ceb4881ec4c7368a0a7f88">operator *</a> () const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return reference to associated value in hash table. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d03a48ecb8cd9549bd8be64b09c9b0d"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::operator-&gt;" ref="3d03a48ecb8cd9549bd8be64b09c9b0d" args="() const " -->
+const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#3d03a48ecb8cd9549bd8be64b09c9b0d">operator-&gt;</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return pointer to associated value in hash table. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27399c613eb1aecd4660803955dda09d"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::const_accessor" ref="27399c613eb1aecd4660803955dda09d" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#27399c613eb1aecd4660803955dda09d">const_accessor</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create empty result. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="928769b139d53427e7075c1f86148e4c"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::~const_accessor" ref="928769b139d53427e7075c1f86148e4c" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00272.html#928769b139d53427e7075c1f86148e4c">~const_accessor</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy result after releasing the underlying reference. <br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="34125123f0c8d9c13dbd6f52148608a1"></a><!-- doxytag: member="tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;::successors" ref="34125123f0c8d9c13dbd6f52148608a1" args="()" -->
-internal::broadcast_cache&lt;<br>
- output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45ab59454c6f11fe938bbcab637cdd73"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::is_writer" ref="45ab59454c6f11fe938bbcab637cdd73" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_writer</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="21856da696b0765cc3db90663160d95e"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::my_node" ref="21856da696b0765cc3db90663160d95e" args="" -->
+node *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_node</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4936cc9432926ed38f0207828b388e24"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::my_hash" ref="4936cc9432926ed38f0207828b388e24" args="" -->
+hashcode_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_hash</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d062d8ecb243a6ec62fa30bca52a1bcf"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;" ref="d062d8ecb243a6ec62fa30bca52a1bcf" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ddd77aff56c12366acc02d0f1588a706"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::accessor" ref="ddd77aff56c12366acc02d0f1588a706" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>accessor</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Input, typename Output, typename Allocator&gt;<br>
- class tbb::flow::interface6::function_node&lt; Input, Output, queueing, Allocator &gt;</h3>
+<h3>template&lt;typename Key, typename T, typename HashCompare, typename Allocator&gt;<br>
+ class tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor</h3>
 
-Implements a function node that supports Input -&gt; Output. 
+Combines data access, locking, and garbage collection. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00489.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00453.html">concurrent_hash_map.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

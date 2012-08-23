@@ -83,7 +83,7 @@ ifeq (linux,$(tbb_os))
 omp_dynamic_link.$(OBJ): CPLUS_FLAGS+=-fno-exceptions
 endif
 
-tbb_misc_rml.$(OBJ): version_string.tmp
+tbb_misc_rml.$(OBJ): version_string.ver
 
 RML_TEST.OBJ = test_job_automaton.$(OBJ) test_thread_monitor.$(OBJ) test_rml_tbb.$(OBJ) test_rml_omp.$(OBJ) test_rml_mixed.$(OBJ)
 

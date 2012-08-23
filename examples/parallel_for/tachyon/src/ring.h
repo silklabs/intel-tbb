@@ -58,7 +58,7 @@
 /* 
  * ring.h - This file contains the defines for rings etc.
  *
- *  $Id: ring.h,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: ring.h,v 1.2 2007-02-22 17:54:16  Exp $
  */
 
 object * newring(void * tex, vector ctr, vector norm, flt in, flt out);

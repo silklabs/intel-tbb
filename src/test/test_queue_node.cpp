@@ -189,7 +189,7 @@ struct parallel_put_get : NoAssign {
 // Item can be reserved, released, consumed ( single serial receiver )
 //
 template< typename T >
-int test_reservation(int num_threads) {
+int test_reservation() {
     tbb::flow::graph g;
     T bogus_value(-1);
 

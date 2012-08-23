@@ -26,12 +26,11 @@
     the GNU General Public License.
 */
 
+#include "tbb/queuing_mutex.h"
 #include "tbb/tbb_machine.h"
 #include "tbb/tbb_stddef.h"
 #include "tbb_misc.h"
-#include "tbb/queuing_mutex.h"
 #include "itt_notify.h"
-
 
 namespace tbb {
 

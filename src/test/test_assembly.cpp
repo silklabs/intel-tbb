@@ -27,6 +27,15 @@
 */
 
 // Program for basic correctness testing of assembly-language routines.
+#include "harness_defs.h"
+
+#if __TBB_TEST_SKIP_BUILTINS_MODE
+#include "harness.h"
+int TestMain() {
+    REPORT("Known issue: GCC builtins aren't available\n");
+    return Harness::Skipped;
+}
+#else
 
 #include "tbb/task.h"
 
@@ -140,3 +149,4 @@ int TestMain () {
     }
     return Harness::Done;
 }
+#endif // __TBB_TEST_SKIP_BUILTINS_MODE

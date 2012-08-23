@@ -38,6 +38,9 @@
 **/
 
 #define __TBB_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#if __clang__
+#define __TBB_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
+#endif
 
 /** Presence of compiler features **/
 
@@ -46,9 +49,44 @@
     #define __TBB_GCC_WARNING_SUPPRESSION_PRESENT 1
 #endif
 
-/* TODO: The following condition should be extended when new compilers/runtimes 
-         with std::exception_ptr support appear. */
-#define __TBB_EXCEPTION_PTR_PRESENT  ((_MSC_VER >= 1600 || (__GXX_EXPERIMENTAL_CXX0X__ && __GNUC__==4 && __GNUC_MINOR__>=4)) && !__INTEL_COMPILER)
+
+/* Select particular features of C++11 based on compiler version.
+   ICC 12.1 (Linux), GCC 4.3 and higher, clang 2.9 and higher
+   set __GXX_EXPERIMENTAL_CXX0X__ in c++11 mode.
+
+   Compilers that mimics other compilers (ICC, clang) must be processed before
+   compilers they mimic.
+
+   TODO: The following conditions should be extended when new compilers/runtimes
+   support added.
+ */
+
+#if __INTEL_COMPILER
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT __GXX_EXPERIMENTAL_CXX0X__ && __VARIADIC_TEMPLATES
+    #define __TBB_CPP11_RVALUE_REF_PRESENT (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && (__INTEL_COMPILER >= 1200)
+    #define __TBB_EXCEPTION_PTR_PRESENT 0
+#elif __clang__
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
+    #define __TBB_CPP11_RVALUE_REF_PRESENT (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
+    #define __TBB_EXCEPTION_PTR_PRESENT __GXX_EXPERIMENTAL_CXX0X__
+#elif __GNUC__
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT __GXX_EXPERIMENTAL_CXX0X__
+    #define __TBB_CPP11_RVALUE_REF_PRESENT __GXX_EXPERIMENTAL_CXX0X__
+    #define __TBB_EXCEPTION_PTR_PRESENT __GXX_EXPERIMENTAL_CXX0X__
+#elif _MSC_VER
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT 0
+    #define __TBB_CPP11_RVALUE_REF_PRESENT 0
+    #define __TBB_EXCEPTION_PTR_PRESENT (_MSC_VER >= 1600)
+#else
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT 0
+    #define __TBB_CPP11_RVALUE_REF_PRESENT 0
+    #define __TBB_EXCEPTION_PTR_PRESENT 0
+#endif
+
+// Work around a bug in MinGW32
+#if __MINGW32__ && __TBB_EXCEPTION_PTR_PRESENT && !defined(_GLIBCXX_ATOMIC_BUILTINS_4)
+    #define _GLIBCXX_ATOMIC_BUILTINS_4
+#endif
 
 #if __GNUC__ || __SUNPRO_CC || __IBMCPP__
     /* ICC defines __GNUC__ and so is covered */
@@ -140,15 +178,20 @@
 
 /** Internal TBB features & modes **/
 
+/** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to dynamic load libraries
+    __TBB_SOURCE_DIRECTLY_INCLUDED is a mode used in whitebox testing when 
+    it's necessary to test internal functions not exported from TBB DLLs
+**/
+
 #ifndef __TBB_DYNAMIC_LOAD_ENABLED
-    #define __TBB_DYNAMIC_LOAD_ENABLED !__TBB_TASK_CPP_DIRECTLY_INCLUDED
-#elif !__TBB_DYNAMIC_LOAD_ENABLED
-    #if _WIN32||_WIN64
-        #define __TBB_NO_IMPLICIT_LINKAGE 1
-        #define __TBBMALLOC_NO_IMPLICIT_LINKAGE 1
-    #else
-        #define __TBB_WEAK_SYMBOLS 1
-    #endif
+    #define __TBB_DYNAMIC_LOAD_ENABLED 1
+#elif !(_WIN32||_WIN64) && !__TBB_DYNAMIC_LOAD_ENABLED
+    #define __TBB_WEAK_SYMBOLS 1
+#endif
+
+#if (_WIN32||_WIN64) && __TBB_SOURCE_DIRECTLY_INCLUDED
+    #define __TBB_NO_IMPLICIT_LINKAGE 1
+    #define __TBBMALLOC_NO_IMPLICIT_LINKAGE 1
 #endif
 
 #ifndef __TBB_COUNT_TASK_NODES
@@ -223,9 +266,9 @@
     #define __TBB_ICL_11_1_CODE_GEN_BROKEN 1
 #endif
 
-#if __GNUC__==3 && __GNUC_MINOR__==3 && !defined(__INTEL_COMPILER)
-    /** A bug in GCC 3.3 with access to nested classes declared in protected area */
-    #define __TBB_GCC_3_3_PROTECTED_BROKEN 1
+#if __clang__ || (__GNUC__==3 && __GNUC_MINOR__==3 && !defined(__INTEL_COMPILER))
+    /** Bugs with access to nested classes declared in protected area */
+    #define __TBB_PROTECTED_NESTED_CLASS_BROKEN 1
 #endif
 
 #if __MINGW32__ && (__GNUC__<4 || __GNUC__==4 && __GNUC_MINOR__<2)
@@ -259,6 +302,12 @@
     /** Bug in GCC 3.2 and MSVC compilers that sometimes return 0 for __alignof(T) 
         when T has not yet been instantiated. **/
     #define __TBB_ALIGNOF_NOT_INSTANTIATED_TYPES_BROKEN 1
+#endif
+
+#if __INTEL_COMPILER
+    #define __TBB_CPP11_STD_FORWARD_BROKEN 1
+#else
+    #define __TBB_CPP11_STD_FORWARD_BROKEN 0
 #endif
 
 #endif /* __TBB_tbb_config_H */

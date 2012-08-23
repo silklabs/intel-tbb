@@ -155,18 +155,72 @@ arena& market::create_arena ( unsigned max_num_workers, size_t stack_size ) {
     return a;
 }
 
+/** This method must be invoked under my_arenas_list_mutex. **/
 void market::detach_arena ( arena& a ) {
     __TBB_ASSERT( theMarket == this, "Global market instance was destroyed prematurely?" );
-    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
     __TBB_ASSERT( !a.my_num_workers_present, NULL );
 #endif /* __TBB_TRACK_PRIORITY_LEVEL_SATURATION */
     __TBB_ASSERT( !a.my_slots[0].my_scheduler, NULL );
     remove_arena_from_list(a);
+    if ( a.my_aba_epoch == my_arenas_aba_epoch )
+        ++my_arenas_aba_epoch;
 }
 
+void market::try_destroy_arena ( arena* a, uintptr_t aba_epoch ) {
+    __TBB_ASSERT ( a, NULL );
+    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
+    assert_market_valid();
+#if __TBB_TASK_PRIORITY
+    for ( int p = my_global_top_priority; p >= my_global_bottom_priority; --p ) {
+        priority_level_info &pl = my_priority_levels[p];
+        arena_list_type &my_arenas = pl.arenas;
+#endif /* __TBB_TASK_PRIORITY */
+        arena_list_type::iterator it = my_arenas.begin();
+        for ( ; it != my_arenas.end(); ++it ) {
+            if ( a == &*it ) {
+                if ( it->my_aba_epoch == aba_epoch ) {
+                    // Arena is alive
+                    if ( !a->my_num_workers_requested && !a->my_num_threads_active ) {
+                        __TBB_ASSERT( !a->my_num_workers_allotted && (a->my_pool_state == arena::SNAPSHOT_EMPTY || !a->my_max_num_workers), "Inconsistent arena state" );
+                        // Arena is abandoned. Destroy it.
+                        detach_arena( *a );
+                        lock.release();
+                        a->free_arena();
+                    }
+                }
+                return;
+            }
+        }
+#if __TBB_TASK_PRIORITY
+    }
+#endif /* __TBB_TASK_PRIORITY */
+}
+
+void market::try_destroy_arena ( market* m, arena* a, uintptr_t aba_epoch, bool master ) {
+    // Arena may have been orphaned. Or it may have been destroyed.
+    // Thus we cannot dereference the pointer to it until its liveness is verified.
+    // Arena is alive if it is found in the market's list.
+
+    if ( m != theMarket ) {
+        // The market has already been emptied.
+        return;
+    }
+    else if ( master ) {
+        // If this is a master thread, market can be destroyed at any moment.
+        // So protect it with an extra refcount.
+        global_market_mutex_type::scoped_lock lock(theMarketMutex);
+        if ( m != theMarket )
+            return;
+        ++m->my_ref_count;
+    }
+    m->try_destroy_arena( a, aba_epoch );
+    if ( master )
+        m->release();
+}
+
+/** This method must be invoked under my_arenas_list_mutex. **/
 arena* market::arena_in_need ( arena_list_type &arenas, arena_list_type::iterator& next ) {
-    // This method is executed under my_arenas_list_mutex lock
     if ( arenas.empty() )
         return NULL;
     __TBB_ASSERT( next != arenas.end(), NULL );
@@ -244,8 +298,9 @@ arena* market::arena_in_need (
         --prev_arena->my_num_workers_present;
         --pl.workers_present;
         if ( !--prev_arena->my_num_threads_active && !prev_arena->my_num_workers_requested ) {
+            detach_arena( *a );
             lock.release();
-            prev_arena->close_arena();
+            a->free_arena();
             lock.acquire();
         }
     }
@@ -384,6 +439,7 @@ void market::adjust_demand ( arena& a, int delta ) {
 
 void market::process( job& j ) {
     generic_scheduler& s = static_cast<generic_scheduler&>(j);
+    __TBB_ASSERT( governor::is_set(&s), NULL );
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
     arena *a = NULL;
     while ( (a = arena_in_need(a)) )

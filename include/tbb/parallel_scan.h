@@ -227,26 +227,26 @@ namespace internal {
             __TBB_ASSERT( !*return_slot, NULL );
         }
 
-        static void run(  const Range& range, Body& body, const Partitioner& partitioner ) {
-            if( !range.empty() ) {
+        static void run( const Range& range_, Body& body_, const Partitioner& partitioner_ ) {
+            if( !range_.empty() ) {
                 typedef internal::start_scan<Range,Body,Partitioner> start_pass1_type;
                 internal::sum_node<Range,Body>* root = NULL;
                 typedef internal::final_sum<Range,Body> final_sum_type;
-                final_sum_type* temp_body = new(task::allocate_root()) final_sum_type( body );
+                final_sum_type* temp_body = new(task::allocate_root()) final_sum_type( body_ );
                 start_pass1_type& pass1 = *new(task::allocate_root()) start_pass1_type(
                     /*return_slot=*/root,
-                    range,
+                    range_,
                     *temp_body,
-                    partitioner );
+                    partitioner_ );
                 task::spawn_root_and_wait( pass1 );
                 if( root ) {
                     root->body = temp_body;
                     root->incoming = NULL;
-                    root->stuff_last = &body;
+                    root->stuff_last = &body_;
                     task::spawn_root_and_wait( *root );
                 } else {
-                    body.assign(temp_body->body);
-                    temp_body->finish_construction( range, NULL );
+                    body_.assign(temp_body->body);
+                    temp_body->finish_construction( range_, NULL );
                     temp_body->destroy(*temp_body);
                 }
             }

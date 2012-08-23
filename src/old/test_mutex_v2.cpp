@@ -44,12 +44,6 @@
 #include <cstdlib>
 #include <cstdio>
 
-#if __linux__
-#define STD std
-#else
-#define STD   /* Cater to broken Windows compilers that are missing "std". */
-#endif /* __linux__ */
-
 // This test deliberately avoids a "using tbb" statement,
 // so that the error of putting types in the wrong namespace will be caught.
 
@@ -62,7 +56,7 @@ struct Counter {
 
 //! Function object for use with parallel_for.h.
 template<typename C>
-struct AddOne {
+struct AddOne: NoAssign {
     C& counter;
     /** Increments counter once for each iteration in the iteration space. */
     void operator()( tbb::blocked_range<size_t>& range ) const {
@@ -95,12 +89,12 @@ void Test( const char * name ) {
     counter.value = 0;
     const int n = 100000;
     tbb::tick_count t0 = tbb::tick_count::now();
-    tbb::parallel_for(tbb::blocked_range<size_t>(0,n,10000),AddOne<Counter<M> >(counter));
+    tbb::parallel_for(tbb::blocked_range<size_t>(0,n,n/10),AddOne<Counter<M> >(counter));
     tbb::tick_count t1 = tbb::tick_count::now();
     if( Verbose )
         printf("%g usec\n",(t1-t0).seconds());
     if( counter.value!=n )
-        STD::printf("ERROR for %s: counter.value=%ld\n",name,counter.value);
+        printf("ERROR for %s: counter.value=%ld\n",name,counter.value);
 }
 
 template<typename M, size_t N>
@@ -113,7 +107,7 @@ struct Invariant {
     Invariant( const char* mutex_name_ ) :
         mutex_name(mutex_name_)
     {
-    single_value = 0;
+        single_value = 0;
         for( size_t k=0; k<N; ++k )
             value[k] = 0;
     }
@@ -124,10 +118,8 @@ struct Invariant {
     bool value_is( long expected_value ) const {
         long tmp;
         for( size_t k=0; k<N; ++k )
-//            if( value[k]!=expected_value )
-//                return false;
             if( (tmp=value[k])!=expected_value ) {
-                printf("ATTN! %ld!=%ld\n", tmp, expected_value);
+                printf("ERROR: %ld!=%ld\n", tmp, expected_value);
                 return false;
             }
         return true;
@@ -139,72 +131,60 @@ struct Invariant {
 
 //! Function object for use with parallel_for.h.
 template<typename I>
-struct TwiddleInvariant {
+struct TwiddleInvariant: NoAssign {
     I& invariant;
+    TwiddleInvariant( I& invariant_ ) : invariant(invariant_) {}
+
     /** Increments counter once for each iteration in the iteration space. */
     void operator()( tbb::blocked_range<size_t>& range ) const {
         for( size_t i=range.begin(); i!=range.end(); ++i ) {
             //! Every 8th access is a write access
-            bool write = (i%8)==7;
+            const bool write = (i%8)==7;
             bool okay = true;
             bool lock_kept = true;
             if( (i/8)&1 ) {
                 // Try implicit acquire and explicit release
                 typename I::mutex_type::scoped_lock lock(invariant.mutex,write);
-                if( write ) {
-                    long my_value = invariant.value[0];
-                    invariant.update();
-                    if( i%16==7 ) {
-                        lock_kept = lock.downgrade_to_reader();
-                        if( !lock_kept )
-                            my_value = invariant.value[0] - 1;
-                        okay = invariant.value_is(my_value+1);
-                    }
-                } else {
-                    okay = invariant.is_okay();
-                    if( i%8==3 ) {
-                        long my_value = invariant.value[0];
-                        lock_kept = lock.upgrade_to_writer();
-                        if( !lock_kept )
-                            my_value = invariant.value[0];
-                        invariant.update();
-                        okay = invariant.value_is(my_value+1);
-                    }
-                }
+                execute_aux(lock, i, write, okay, lock_kept);
                 lock.release();
             } else {
                 // Try explicit acquire and implicit release
                 typename I::mutex_type::scoped_lock lock;
                 lock.acquire(invariant.mutex,write);
-                if( write ) {
-                    long my_value = invariant.value[0];
-                    invariant.update();
-                    if( i%16==7 ) {
-                        lock_kept = lock.downgrade_to_reader();
-                        if( !lock_kept )
-                            my_value = invariant.value[0] - 1;
-                        okay = invariant.value_is(my_value+1);
-                    }
-                } else {
-                    okay = invariant.is_okay();
-                    if( i%8==3 ) {
-                        long my_value = invariant.value[0];
-                        lock_kept = lock.upgrade_to_writer();
-                        if( !lock_kept )
-                            my_value = invariant.value[0];
-                        invariant.update();
-                        okay = invariant.value_is(my_value+1);
-                    }
-                }
+                execute_aux(lock, i, write, okay, lock_kept);
             }
             if( !okay ) {
-                STD::printf( "ERROR for %s at %ld: %s %s %s %s\n",invariant.mutex_name, long(i),
-                             write?"write,":"read,", write?(i%16==7?"downgrade,":""):(i%8==3?"upgrade,":""),
-                             lock_kept?"lock kept,":"lock not kept,", (i/8)&1?"imp/exp":"exp/imp" );
+                printf( "ERROR for %s at %ld: %s %s %s %s\n",invariant.mutex_name, long(i),
+                        write     ? "write,"                  : "read,",
+                        write     ? (i%16==7?"downgrade,":"") : (i%8==3?"upgrade,":""),
+                        lock_kept ? "lock kept,"              : "lock not kept,", // TODO: only if downgrade/upgrade
+                        (i/8)&1   ? "impl/expl"               : "expl/impl" );
             }
         }
     }
-    TwiddleInvariant( I& invariant_ ) : invariant(invariant_) {}
+private:
+    void execute_aux(typename I::mutex_type::scoped_lock & lock, const size_t i, const bool write, bool & okay, bool & lock_kept) const {
+        if( write ) {
+            long my_value = invariant.value[0];
+            invariant.update();
+            if( i%16==7 ) {
+                lock_kept = lock.downgrade_to_reader();
+                if( !lock_kept )
+                    my_value = invariant.value[0] - 1;
+                okay = invariant.value_is(my_value+1);
+            }
+        } else {
+            okay = invariant.is_okay();
+            if( i%8==3 ) {
+                long my_value = invariant.value[0];
+                lock_kept = lock.upgrade_to_writer();
+                if( !lock_kept )
+                    my_value = invariant.value[0];
+                invariant.update();
+                okay = invariant.value_is(my_value+1);
+            }
+        }
+    }
 };
 
 /** This test is generic so that we can test any other kinds of ReaderWriter locks we write later. */
@@ -217,14 +197,14 @@ void TestReaderWriterLock( const char * mutex_name ) {
     Invariant<M,8> invariant(mutex_name);
     const size_t n = 500000;
     tbb::tick_count t0 = tbb::tick_count::now();
-    tbb::parallel_for(tbb::blocked_range<size_t>(0,n,5000),TwiddleInvariant<Invariant<M,8> >(invariant));
+    tbb::parallel_for(tbb::blocked_range<size_t>(0,n,n/100),TwiddleInvariant<Invariant<M,8> >(invariant));
     tbb::tick_count t1 = tbb::tick_count::now();
     // There is either a writer or a reader upgraded to a writer for each 4th iteration
     long expected_value = n/4;
     if( !invariant.value_is(expected_value) )
-        STD::printf("ERROR for %s: final invariant value is wrong\n",mutex_name);
+        printf("ERROR for %s: final invariant value is wrong\n",mutex_name);
     if( Verbose )
-        printf("%g usec\n",(t1-t0).seconds());
+        printf("%g usec\n", (t1-t0).seconds());
 }
 
 /** Test try_acquire functionality of a non-reenterable mutex */
@@ -235,16 +215,16 @@ void TestTryAcquire_OneThread( const char * mutex_name ) {
     if( lock1.try_acquire(tested_mutex) )
         lock1.release();
     else
-        STD::printf("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
+        printf("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
     {
         typename M::scoped_lock lock2(tested_mutex);
         if( lock1.try_acquire(tested_mutex) )
-            STD::printf("ERROR for %s: try_acquire succeeded though it should not\n", mutex_name);
+            printf("ERROR for %s: try_acquire succeeded though it should not\n", mutex_name);
     }
     if( lock1.try_acquire(tested_mutex) )
         lock1.release();
     else
-        STD::printf("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
+        printf("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
 }
 
 #include "tbb/task_scheduler_init.h"
@@ -254,10 +234,10 @@ int TestMain () {
         tbb::task_scheduler_init init( p );
         if( Verbose )
             printf( "testing with %d workers\n", static_cast<int>(p) );
-        // Run each test 3 times.
-        for( int i=0; i<3; ++i ) {
+        const int n = 3;
+        // Run each test several times.
+        for( int i=0; i<n; ++i ) {
             Test<tbb::spin_rw_mutex>( "Spin RW Mutex" );
-            
             TestTryAcquire_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex"); // only tests try_acquire for writers
             TestReaderWriterLock<tbb::spin_rw_mutex>( "Spin RW Mutex" );
         }

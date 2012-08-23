@@ -471,7 +471,7 @@ static tbb::runtime_loader::error_code _load( char const * dll_name, int min_ver
         if ( _handle != NULL ) {
             int rc = dlclose( _handle );
             if ( rc != 0 ) {
-                // Error occured.
+                // Error occurred.
                 __TBB_ASSERT( rc != 0, "Unexpected error: dlclose() failed" );
             } // if
         } // if

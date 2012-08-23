@@ -83,6 +83,7 @@ ifdef BUILDING_PHASE
  # Setting default configuration to release
  cfg?=release
  # No lambas or other C++0x extensions by default for compilers that implement them as experimental features
+ # TODO: it should become unnecessary when all relevant tests are "moved" to the TEST_TBB_CPP11 set
  lambdas ?= 0
  cpp0x ?= 0
  # include compiler-specific build configurations

@@ -29,6 +29,7 @@
 #ifndef __TBB_function_replacement_H
 #define __TBB_function_replacement_H
 
+#include <stddef.h> //for ptrdiff_t
 typedef enum {
     FRR_OK,     /* Succeeded in replacing the function */
     FRR_NODLL,  /* The requested DLL was not found */

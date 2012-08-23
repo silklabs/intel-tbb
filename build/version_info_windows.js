@@ -28,10 +28,10 @@ var WshShell = WScript.CreateObject("WScript.Shell");
 
 var tmpExec;
 
-WScript.Echo("#define __TBB_VERSION_STRINGS \\");
+WScript.Echo("#define __TBB_VERSION_STRINGS(N) \\");
 
 //Getting BUILD_HOST
-WScript.echo( "\"TBB: BUILD_HOST\\t\\t" + 
+WScript.echo( "#N \": BUILD_HOST\\t\\t" + 
               WshShell.ExpandEnvironmentStrings("%COMPUTERNAME%") +
               "\" ENDL \\" );
 
@@ -42,13 +42,13 @@ while ( tmpExec.Status == 0 ) {
 }
 tmpExec.StdOut.ReadLine();
 
-WScript.echo( "\"TBB: BUILD_OS\\t\\t" + 
+WScript.echo( "#N \": BUILD_OS\\t\\t" + 
               tmpExec.StdOut.ReadLine() +
               "\" ENDL \\" );
 
 if ( WScript.Arguments(0).toLowerCase().match("gcc") ) {
     tmpExec = WshShell.Exec("gcc --version");
-    WScript.echo( "\"TBB: BUILD_COMPILER\\t" + 
+    WScript.echo( "#N \": BUILD_COMPILER\\t" + 
                   tmpExec.StdOut.ReadLine() + 
                   "\" ENDL \\" );
 
@@ -60,7 +60,7 @@ if ( WScript.Arguments(0).toLowerCase().match("gcc") ) {
         WScript.Sleep(100);
     }
     var clVersion = tmpExec.StdErr.ReadLine();
-    WScript.echo( "\"TBB: BUILD_CL\\t\\t" + 
+    WScript.echo( "#N \": BUILD_CL\\t\\t" + 
                   clVersion +
                   "\" ENDL \\" );
 
@@ -70,11 +70,11 @@ if ( WScript.Arguments(0).toLowerCase().match("gcc") ) {
         while ( tmpExec.Status == 0 ) {
             WScript.Sleep(100);
         }
-        WScript.echo( "\"TBB: BUILD_COMPILER\\t" + 
+        WScript.echo( "#N \": BUILD_COMPILER\\t" + 
                       tmpExec.StdErr.ReadLine() + 
                       "\" ENDL \\" );
     } else {
-        WScript.echo( "\"TBB: BUILD_COMPILER\\t\\t" + 
+        WScript.echo( "#N \": BUILD_COMPILER\\t\\t" + 
                       clVersion +
                       "\" ENDL \\" );
     }
@@ -82,12 +82,12 @@ if ( WScript.Arguments(0).toLowerCase().match("gcc") ) {
 }
 
 //Getting BUILD_TARGET
-WScript.echo( "\"TBB: BUILD_TARGET\\t" + 
+WScript.echo( "#N \": BUILD_TARGET\\t" + 
               WScript.Arguments(1) + 
               "\" ENDL \\" );
 
 //Getting BUILD_COMMAND
-WScript.echo( "\"TBB: BUILD_COMMAND\\t" + WScript.Arguments(2) + "\" ENDL" );
+WScript.echo( "#N \": BUILD_COMMAND\\t" + WScript.Arguments(2) + "\" ENDL" );
 
 //Getting __TBB_DATETIME and __TBB_VERSION_YMD
 var date = new Date();

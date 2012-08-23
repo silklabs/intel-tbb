@@ -32,7 +32,7 @@
 #include <cstddef>
 #include "tbb_stddef.h"
 
-#if _MSC_VER 
+#if _MSC_VER
 #define __TBB_LONG_LONG __int64
 #else
 #define __TBB_LONG_LONG long long
@@ -41,20 +41,20 @@
 #include "tbb_machine.h"
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-    // Workaround for overzealous compiler warnings 
+    // Workaround for overzealous compiler warnings
     #pragma warning (push)
     #pragma warning (disable: 4244 4267)
 #endif
 
 namespace tbb {
 
-//! Specifies memory fencing.
+//! Specifies memory semantics.
 enum memory_semantics {
-    //! Sequentially consistent fence.
+    //! Sequential consistency
     full_fence,
-    //! Acquire fence
+    //! Acquire
     acquire,
-    //! Release fence
+    //! Release
     release,
     //! No ordering
     relaxed
@@ -67,7 +67,7 @@ namespace internal {
     #define __TBB_DECL_ATOMIC_FIELD(t,f,a) t f  __attribute__ ((aligned(a)));
 #elif __TBB_DECLSPEC_ALIGN_PRESENT
     #define __TBB_DECL_ATOMIC_FIELD(t,f,a) __declspec(align(a)) t f;
-#else 
+#else
     #error Do not know syntax for forcing alignment.
 #endif
 
@@ -86,7 +86,7 @@ struct atomic_rep<2> {       // Specialization
 };
 template<>
 struct atomic_rep<4> {       // Specialization
-#if _MSC_VER && __TBB_WORDSIZE==4
+#if _MSC_VER && !_WIN64
     // Work-around that avoids spurious /Wp64 warnings
     typedef intptr_t word;
 #else
@@ -188,7 +188,7 @@ __TBB_DECL_ATOMIC_LOAD_STORE_PRIMITIVES(relaxed);
 #define __TBB_MINUS_ONE(T) (T(T(0)-T(1)))
 
 //! Base class that provides basic functionality for atomic<T> without fetch_and_add.
-/** Works for any type T that has the same size as an integral type, has a trivial constructor/destructor, 
+/** Works for any type T that has the same size as an integral type, has a trivial constructor/destructor,
     and can be copied/compared by memcpy/memcmp. */
 template<typename T>
 struct atomic_impl {
@@ -228,7 +228,7 @@ public:
         return compare_and_swap<full_fence>(value,comparand);
     }
 
-    operator value_type() const volatile {                // volatile qualifier here for backwards compatibility 
+    operator value_type() const volatile {                // volatile qualifier here for backwards compatibility
         converter w;
         w.bits = __TBB_load_with_acquire( rep.value );
         return w.value;
@@ -302,14 +302,14 @@ public:
     }
 
 public:
-    value_type operator+=( D addend ) {
-        return fetch_and_add(addend)+addend;
+    value_type operator+=( D value ) {
+        return fetch_and_add(value)+value;
     }
 
-    value_type operator-=( D addend ) {
-        // Additive inverse of addend computed using binary minus,
+    value_type operator-=( D value ) {
+        // Additive inverse of value computed using binary minus,
         // instead of unary minus, for sake of avoiding compiler warnings.
-        return operator+=(D(0)-addend);    
+        return operator+=(D(0)-value);
     }
 
     value_type operator++() {
@@ -359,9 +359,9 @@ __TBB_DECL_ATOMIC(unsigned __TBB_LONG_LONG)
 __TBB_DECL_ATOMIC(long)
 __TBB_DECL_ATOMIC(unsigned long)
 
-#if defined(_MSC_VER) && __TBB_WORDSIZE==4
-/* Special version of __TBB_DECL_ATOMIC that avoids gratuitous warnings from cl /Wp64 option. 
-   It is identical to __TBB_DECL_ATOMIC(unsigned) except that it replaces operator=(T) 
+#if _MSC_VER && !_WIN64
+/* Special version of __TBB_DECL_ATOMIC that avoids gratuitous warnings from cl /Wp64 option.
+   It is identical to __TBB_DECL_ATOMIC(unsigned) except that it replaces operator=(T)
    with an operator=(U) that explicitly converts the U to a T.  Types T and U should be
    type synonyms on the platform.  Type U should be the wider variant of T from the
    perspective of /Wp64. */
@@ -375,7 +375,7 @@ __TBB_DECL_ATOMIC_ALT(int,ptrdiff_t)
 #else
 __TBB_DECL_ATOMIC(unsigned)
 __TBB_DECL_ATOMIC(int)
-#endif /* defined(_MSC_VER) && __TBB_WORDSIZE==4 */
+#endif /* _MSC_VER && !_WIN64 */
 
 __TBB_DECL_ATOMIC(unsigned short)
 __TBB_DECL_ATOMIC(short)
@@ -383,7 +383,7 @@ __TBB_DECL_ATOMIC(char)
 __TBB_DECL_ATOMIC(signed char)
 __TBB_DECL_ATOMIC(unsigned char)
 
-#if !defined(_MSC_VER)||defined(_NATIVE_WCHAR_T_DEFINED) 
+#if !_MSC_VER || defined(_NATIVE_WCHAR_T_DEFINED)
 __TBB_DECL_ATOMIC(wchar_t)
 #endif /* _MSC_VER||!defined(_NATIVE_WCHAR_T_DEFINED) */
 
@@ -421,9 +421,29 @@ T load ( const atomic<T>& a ) { return a.template load<M>(); }
 template <memory_semantics M, typename T>
 void store ( atomic<T>& a, T value ) { return a.template store<M>(value); }
 
+namespace interface6{
+//! Make an atomic for use in an initialization (list), as an alternative to zero-initializaton or normal assignment.
+template<typename T>
+atomic<T> make_atomic(T t) {
+    atomic<T> a;
+    store<relaxed>(a,t);
+    return a;
+}
+}
+using interface6::make_atomic;
+
+namespace internal {
+
+// only to aid in the gradual conversion of ordinary variables to proper atomics
+template<typename T>
+inline atomic<T>& as_atomic( T& t ) {
+    return (atomic<T>&)t;
+}
+} // namespace tbb::internal
+
 } // namespace tbb
 
-#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
+#if _MSC_VER && !__INTEL_COMPILER
     #pragma warning (pop)
 #endif // warnings 4244, 4267 are back
 

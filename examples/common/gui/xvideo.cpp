@@ -227,7 +227,7 @@ bool video::init_window(int xsize, int ysize)
             XSetWindowBackgroundPixmap(dpy, win, pixmap);
         } else
 #endif//!X_NOSHMPIX
-        { // Standart
+        { // Standard
             vidtype = 1; vidstr = "X11 shared memory";
             ximage = XShmCreateImage(dpy, vis, dispdepth,
                 ZPixmap, 0, &shmseginfo, xsize, ysize);
@@ -241,7 +241,9 @@ bool video::init_window(int xsize, int ysize)
     } else
 #endif
     {
+#ifndef X_NOSHMEM
 generic:
+#endif
         vidtype = 0; vidstr = "generic X11";
         g_pImg = new unsigned int[imgbytes/sizeof(int)];
         ximage = XCreateImage(dpy, vis, dispdepth, ZPixmap, 0, (char*)g_pImg, xsize, ysize, 32, imgbytes/ysize);
@@ -253,7 +255,7 @@ generic:
     printf("Note: using %s with %s visual for %d-bit color depth\n", vidstr, vis==DefaultVisual(dpy, theScreen)?"default":"non-default", dispdepth);
     running = true;
     return true;
-    } // end of enclosing local varables
+    } // end of enclosing local variables
 fail:
     terminate(); init_console();
     return false;

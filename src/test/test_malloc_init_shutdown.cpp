@@ -38,7 +38,7 @@ tbb::atomic<int> FinishedTasks;
 const int MaxTasks = 16;
 
 /*--------------------------------------------------------------------*/
-// The regression test against a bug triggered when malloc initialization 
+// The regression test against a bug triggered when malloc initialization
 // and thread shutdown were called simultaneously, in which case
 // Windows dynamic loader lock and allocator initialization/termination lock
 // were taken in different order.
@@ -68,7 +68,7 @@ void Test1 () {
         new(t) TestTask1(i%2==0, tf);
         t->start();
     }
-    
+
     Harness::Sleep(1000); // wait a second :)
     ASSERT( FinishedTasks==NTasks, "Some threads appear to deadlock" );
 
@@ -83,14 +83,14 @@ void Test1 () {
 // The regression test against a bug when cross-thread deallocation
 // caused livelock at thread shutdown.
 
-void* ptr = NULL;
+void* gPtr = NULL;
 
 class TestFunc2a {
     Harness::SpinBarrier* my_barr;
 public:
     TestFunc2a (Harness::SpinBarrier& barr) : my_barr(&barr) {}
     void operator() (int) const {
-        ptr = scalable_malloc(8);
+        gPtr = scalable_malloc(8);
         my_barr->wait();
         ++FinishedTasks;
     }
@@ -104,8 +104,8 @@ class TestFunc2b: NoAssign {
 public:
     TestFunc2b (Harness::SpinBarrier& barr, TestTask2a& t) : my_barr(&barr), my_ward(t) {}
     void operator() (int) const {
-        tbb::internal::spin_wait_while_eq(ptr, (void*)NULL);
-        scalable_free(ptr);
+        tbb::internal::spin_wait_while_eq(gPtr, (void*)NULL);
+        scalable_free(gPtr);
         my_barr->wait();
         my_ward.wait_to_finish();
         ++FinishedTasks;
@@ -124,8 +124,52 @@ void Test2() {
     t2b.wait_to_finish(); // t2a is monitored by t2b
 }
 
+#if _WIN32||_WIN64
+
+void TestKeyDtor() {}
+
+#else
+
+void *currSmall, *prevSmall, *currLarge, *prevLarge;
+
+extern "C" void threadDtor(void*) {
+    // First, release memory that was allocated before;
+    // it will not re-initialize the thread-local data if already deleted
+    prevSmall = currSmall;
+    scalable_free(currSmall);
+    prevLarge = currLarge;
+    scalable_free(currLarge);
+    // Then, allocate more memory.
+    // It will re-initialize the allocator data in the thread.
+    scalable_free(scalable_malloc(8));
+}
+
+struct TestThread: NoAssign {
+    TestThread(int ) {}
+
+    void operator()( int /*id*/ ) const {
+        pthread_key_t key;
+
+        currSmall = scalable_malloc(8);
+        ASSERT(!prevSmall || currSmall==prevSmall, "Possible memory leak");
+        currLarge = scalable_malloc(32*1024);
+        ASSERT(!prevLarge || currLarge==prevLarge, "Possible memory leak");
+        pthread_key_create( &key, &threadDtor );
+        pthread_setspecific(key, (const void*)42);
+    }
+};
+
+// test releasing memory from pthread key destructor
+void TestKeyDtor() {
+    for (int i=0; i<4; i++)
+        NativeParallelFor( 1, TestThread(1) );
+}
+
+#endif // _WIN32||_WIN64
+
 int TestMain () {
     Test1(); // requires malloc initialization so should be first
     Test2();
+    TestKeyDtor();
     return Harness::Done;
 }

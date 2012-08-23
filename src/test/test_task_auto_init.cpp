@@ -108,7 +108,7 @@ void TestWaitForAll () {
 typedef void (*TestFnPtr)();
 
 const TestFnPtr TestFuncsTable[] = {
-        TestTaskSelf, TestRootAllocation, TestChildAllocation, TestAdditionalChildAllocation, 
+        TestTaskSelf, TestRootAllocation, TestChildAllocation, TestAdditionalChildAllocation,
 #if __TBB_TASK_GROUP_CONTEXT
         TestTaskGroupContextCreation, TestRootAllocationWithContext,
 #endif /* __TBB_TASK_GROUP_CONTEXT */
@@ -117,7 +117,7 @@ const TestFnPtr TestFuncsTable[] = {
 const int NumTestFuncs = sizeof(TestFuncsTable) / sizeof(TestFnPtr);
 
 struct TestThreadBody : NoAssign, Harness::NoAfterlife {
-    // Each invocation of operator() happens in a fresh thread with zero-based ID 
+    // Each invocation of operator() happens in a fresh thread with zero-based ID
     // id, and checks a specific auto-initialization scenario.
     void operator() ( int id ) const {
         ASSERT( id >= 0 && id < NumTestFuncs, "Test diver: NativeParallelFor is used incorrectly" );
@@ -139,7 +139,7 @@ volatile bool FafStarted   = false,
               FafCanFinish = false,
               FafCompleted = false;
 
-//! This task is supposed to be executed during termination of an auto-initialized master thread 
+//! This task is supposed to be executed during termination of an auto-initialized master thread
 class FireAndForgetTask : public tbb::task {
     tbb::task* execute () {
         // Let another master thread proceed requesting new TLS keys
@@ -177,9 +177,9 @@ struct DriverThreadBody : NoAssign, Harness::NoAfterlife {
             NativeParallelFor( NumTestFuncs, TestThreadBody() );
             ASSERT( g_NumTestsExecuted == NumTestFuncs, "Test driver: Wrong number of tests executed" );
 
-            // This test checks the validity of temporarily restoring the value of 
-            // the last TLS slot for a given key during the termination of an 
-            // auto-initialized master thread (in governor::auto_terminate). 
+            // This test checks the validity of temporarily restoring the value of
+            // the last TLS slot for a given key during the termination of an
+            // auto-initialized master thread (in governor::auto_terminate).
             // If anything goes wrong, generic_scheduler::cleanup_master() will assert.
             // The context for this task must be valid till the task completion.
 #if __TBB_TASK_GROUP_CONTEXT

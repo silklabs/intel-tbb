@@ -41,7 +41,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-//! Threading Building Blocks includes
 #include "tbb/task_scheduler_init.h"
 #include "tbb/blocked_range.h"
 #include "tbb/parallel_for.h"

@@ -91,7 +91,7 @@ struct StressRWLBody : NoAssign {
 #endif /* TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN */
             the_mutex.unlock();
             // test unscoped non-blocking write lock
-            if (the_mutex.try_lock()) { 
+            if (the_mutex.try_lock()) {
                 w_result += BusyWork(percentMax);
                 the_mutex.unlock();
             }
@@ -100,7 +100,7 @@ struct StressRWLBody : NoAssign {
             r_result += BusyWork(percentMax);
             the_mutex.unlock();
             // test unscoped non-blocking read lock
-            if(the_mutex.try_lock_read()) { 
+            if(the_mutex.try_lock_read()) {
                 r_result += BusyWork(percentMax);
                 the_mutex.unlock();
             }
@@ -113,7 +113,7 @@ struct StressRWLBody : NoAssign {
                 r_result += BusyWork(percentMax);
             }
         }
-        REMARK("%d reader %d writer iterations of busy work were completed.", r_result, w_result);
+        REMARK(" R%d/W%d", r_result, w_result); // reader/writer iterations of busy work completed
     }
 };
 
@@ -123,11 +123,8 @@ struct CorrectRWLScopedBody : NoAssign {
     CorrectRWLScopedBody(int nThread_) : nThread(nThread_) {}
 
     void operator()(const int /* threadID */ ) const {
-        bool is_reader;
-        
         for (int i=0; i<50; i++) {
-            if (i%5==0) is_reader = false; // 1 writer for every 5 readers
-            else is_reader = true;
+            const bool is_reader = i%5==0; // 1 writer for every 4 readers
 
             if (is_reader) {
                 tbb::reader_writer_lock::scoped_lock_read my_lock(the_mutex);
@@ -135,7 +132,7 @@ struct CorrectRWLScopedBody : NoAssign {
                 if (active_readers > 1) sim_readers = true;
                 ASSERT(active_writers==0, "Active writers in read-locked region.");
                 Harness::Sleep(10);
-                active_readers--; 
+                active_readers--;
             }
             else { // is writer
                 tbb::reader_writer_lock::scoped_lock my_lock(the_mutex);
@@ -155,11 +152,8 @@ struct CorrectRWLBody : NoAssign {
     CorrectRWLBody(int nThread_) : nThread(nThread_) {}
 
     void operator()(const int /* threadID */ ) const {
-        bool is_reader;
-        
         for (int i=0; i<50; i++) {
-            if (i%5==0) is_reader = false; // 1 writer for every 5 readers
-            else is_reader = true;
+            const bool is_reader = i%5==0; // 1 writer for every 4 readers
 
             if (is_reader) {
                 the_mutex.lock_read();
@@ -175,7 +169,7 @@ struct CorrectRWLBody : NoAssign {
             }
             Harness::Sleep(10);
             if (is_reader) {
-                active_readers--; 
+                active_readers--;
             }
             else { // is writer
                 active_writers--;
@@ -187,27 +181,28 @@ struct CorrectRWLBody : NoAssign {
 
 void TestReaderWriterLockOnNThreads(int nThreads) {
     // Stress-test all interfaces
-    for (int pc=0; pc<101; pc+=20) {
-        REMARK("\nTesting reader_writer_lock with %d threads, percent of MAX_WORK=%d", nThreads, pc);
+    for (int pc=0; pc<=100; pc+=20) {
+        REMARK("Testing with %d threads, percent of MAX_WORK=%d...", nThreads, pc);
         StressRWLBody myStressBody(nThreads, pc);
         NativeParallelFor(nThreads, myStressBody);
+        REMARK(" OK.\n");
     }
-    
-    // Test mutual exclusion in direct locking mode
+
+    REMARK("Testing with %d threads, direct/unscoped locking mode...", nThreads); // TODO: choose direct or unscoped?
     CorrectRWLBody myCorrectBody(nThreads);
     active_writers = active_readers = 0;
     sim_readers = false;
     NativeParallelFor(nThreads, myCorrectBody);
     ASSERT(sim_readers || nThreads<2, "There were no simultaneous readers.");
-    REMARK("Unscoped lock testing succeeded on %d threads.", nThreads);
+    REMARK(" OK.\n");
 
-    // Test mutual exclusionin scoped locking mode
+    REMARK("Testing with %d threads, scoped locking mode...", nThreads);
     CorrectRWLScopedBody myCorrectScopedBody(nThreads);
     active_writers = active_readers = 0;
     sim_readers = false;
     NativeParallelFor(nThreads, myCorrectScopedBody);
     ASSERT(sim_readers || nThreads<2, "There were no simultaneous readers.");
-    REMARK("Scoped lock testing succeeded on %d threads.", nThreads);
+    REMARK(" OK.\n");
 }
 
 void TestReaderWriterLock() {

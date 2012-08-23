@@ -174,7 +174,6 @@
 		A117DC830B8DC0DE00F62CED /* libtbb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.dylib; path = ../../../../lib/libtbb.dylib; sourceTree = SOURCE_ROOT; };
 		A1A8FB5D0B8CBB8D001C55B1 /* trace.tbb.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = trace.tbb.cpp; path = ../src/trace.tbb.cpp; sourceTree = SOURCE_ROOT; };
 		A1F58CD90B8DE90E00073279 /* tachyon-tbb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tachyon-tbb.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1F58D3D0B8DEB8E00073279 /* trace.threads.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = trace.threads.cpp; path = ../src/trace.threads.cpp; sourceTree = SOURCE_ROOT; };
 		A1F58D8B0B8DEFD900073279 /* trace.tbb1d.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = trace.tbb1d.cpp; path = ../src/trace.tbb1d.cpp; sourceTree = SOURCE_ROOT; };
 		A1F58D8C0B8DEFE900073279 /* trace.serial.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = trace.serial.cpp; path = ../src/trace.serial.cpp; sourceTree = SOURCE_ROOT; };
 		A1F58D920B8DF03600073279 /* tachyon-tbb1d.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tachyon-tbb1d.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -440,7 +439,6 @@
 			children = (
 				EA135EC813123E2200807847 /* main.cpp */,
 				A1F58D8C0B8DEFE900073279 /* trace.serial.cpp */,
-				A1F58D3D0B8DEB8E00073279 /* trace.threads.cpp */,
 				A1F58D8B0B8DEFD900073279 /* trace.tbb1d.cpp */,
 				A1A8FB5D0B8CBB8D001C55B1 /* trace.tbb.cpp */,
 				32DBCF6D0370B57F00C91783 /* tachyon.pch */,

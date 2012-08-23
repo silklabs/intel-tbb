@@ -58,7 +58,7 @@
 /* 
  * parse.c - an UltraLame (tm) parser for simple data files...
  *
- *  $Id: parse.cpp,v 1.3 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: parse.cpp,v 1.3 2007-02-22 17:54:15  Exp $
  */
 
 // Try preventing lots of GCC warnings about ignored results of fscanf etc.
@@ -66,6 +66,7 @@
 
 #if __GNUC__<4 || __GNUC__==4 && __GNUC_MINOR__<5
 // For older versions of GCC, disable use of __wur in GLIBC
+#undef _FORTIFY_SOURCE
 #define _FORTIFY_SOURCE 0
 #else
 // Starting from 4.5, GCC has a suppression option

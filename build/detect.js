@@ -51,10 +51,20 @@ function doWork() {
 				} else {
 					WScript.Echo( "unknown" );
 				}
-			}
-			else if ( WScript.Arguments(0) == "/runtime" ) {
+			} else {
 				tmpExec = WshShell.Exec("gcc -dumpversion");
-				WScript.Echo( "mingw"+tmpExec.StdOut.ReadLine() );
+				var gcc_version = tmpExec.StdOut.ReadLine();
+				if ( WScript.Arguments(0) == "/runtime" ) {
+					WScript.Echo( "mingw"+gcc_version );
+				}
+				else if ( WScript.Arguments(0) == "/minversion" ) {
+					// Comparing strings, not numbers; will not work for two-digit versions
+					if ( gcc_version >= WScript.Arguments(2) ) {
+						WScript.Echo( "ok" );
+					} else {
+						WScript.Echo( "fail" );
+					}
+				}
 			}
 			return;
 		}
@@ -64,15 +74,14 @@ function doWork() {
 		while ( tmpExec.Status == 0 ) {
 			WScript.Sleep(100);
 		}
+		//compiler banner that includes version and target arch was printed to stderr
+		var clVersion = tmpExec.StdErr.ReadAll();
 
 		if ( WScript.Arguments(0) == "/arch" ) {
-			//read compiler banner
-			var clVersion = tmpExec.StdErr.ReadAll();
-			
 			//detect target architecture
 			var intel64=/AMD64|EM64T|x64/mgi;
 			var ia64=/IA-64|Itanium/mgi;
-			var ia32=/80x86/mgi;
+			var ia32=/[80|\s]x86/mgi;
 			if ( clVersion.match(intel64) ) {
 				WScript.Echo( "intel64" );
 			} else if ( clVersion.match(ia64) ) {
@@ -82,6 +91,7 @@ function doWork() {
 			} else {
 				WScript.Echo( "unknown" );
 			}
+			return;
 		}
 
 		if ( WScript.Arguments(0) == "/runtime" ) {
@@ -89,12 +99,13 @@ function doWork() {
 			var map = fso.OpenTextFile("detect.map", 1, 0);
 			var mapContext = map.readAll();
 			map.Close();
-			
+
 			//detect runtime
 			var vc71=/MSVCR71\.DLL/mgi;
 			var vc80=/MSVCR80\.DLL/mgi;
 			var vc90=/MSVCR90\.DLL/mgi;
 			var vc100=/MSVCR100\.DLL/mgi;
+			var vc110=/MSVCR110\.DLL/mgi;
 			var psdk=/MSVCRT\.DLL/mgi;
 			if ( mapContext.match(vc71) ) {
 				WScript.Echo( "vc7.1" );
@@ -104,12 +115,38 @@ function doWork() {
 				WScript.Echo( "vc9" );
 			} else if ( mapContext.match(vc100) ) {
 				WScript.Echo( "vc10" );
-			} else if ( mapContext.match(psdk) ) {
-				// Our current naming convention assumes vc7.1 for 64-bit Windows PSDK
-				WScript.Echo( "vc7.1" ); 
+			} else if ( mapContext.match(vc110) ) {
+				WScript.Echo( "vc11" );
 			} else {
 				WScript.Echo( "unknown" );
 			}
+			return;
+		}
+
+		if ( WScript.Arguments(0) == "/minversion" ) {
+			var compiler_version;
+			if ( WScript.Arguments(1) == "cl" ) {
+				compiler_version = clVersion.match(/Compiler Version ([0-9.]+)\s/mi)[1];
+				// compiler_version is in xx.xx.xxxxx.xx format, i.e. a string.
+				// It will compare well with major.minor versions where major has two digits,
+				// which is sufficient as the versions of interest start from 13 (for VC7).
+			} else if ( WScript.Arguments(1) == "icl" ) {
+				// Get predefined ICL macros
+				tmpExec = WshShell.Run("cmd /C icl /QdM /E detect.c > detect.map", 0, true);
+				var file = fso.OpenTextFile("detect.map", 1, 0);
+				var defs = file.readAll();
+				file.Close();
+				// In #define __INTEL_COMPILER XXYY, XX is the major ICL version, YY is minor
+				compiler_version = defs.match(/__INTEL_COMPILER[ \t]*([0-9]+).*$/mi)[1]/100;
+				// compiler version is a number; it compares well with another major.minor
+				// version number, where major has one, two, and perhaps more digits (9.1, 11, etc).
+			}
+			if ( compiler_version >= WScript.Arguments(2) ) {
+				WScript.Echo( "ok" );
+			} else {
+				WScript.Echo( "fail" );
+			}
+			return;
 		}
 }
 
@@ -138,7 +175,9 @@ if ( WScript.Arguments.Count() > 0 ) {
 	doClean();
 
 } else {
-
-	WScript.Echo( "/arch or /runtime should be set" );
+	WScript.Echo( "Supported options:\n"
+	              + "\t/arch [compiler]\n"
+	              + "\t/runtime [compiler]\n"
+	              + "\t/minversion compiler version" );
 }
 

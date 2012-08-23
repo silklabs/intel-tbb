@@ -718,8 +718,8 @@ public:
             tbb::internal::context_list_node_t &node = s_Contexts[i]->my_node;
             ASSERT( !node.my_next && !node.my_prev, "Destroyed context was written to during context chain update" );
         }
-        delete s_Contexts;
-        delete s_Buffer;
+        delete []s_Contexts;
+        delete []s_Buffer;
     }
 
     void operator() ( int id ) const {

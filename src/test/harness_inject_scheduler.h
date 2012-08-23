@@ -40,7 +40,7 @@
 
 #undef DO_ITT_NOTIFY
 
-#define __TBB_TASK_CPP_DIRECTLY_INCLUDED 1
+#define __TBB_SOURCE_DIRECTLY_INCLUDED 1
 #include "../tbb/tbb_main.cpp"
 #include "../tbb/dynamic_link.cpp"
 #include "../tbb/tbb_misc_ex.cpp"
@@ -61,7 +61,9 @@
 #include "../tbb/spin_rw_mutex.cpp"
 #include "../tbb/spin_mutex.cpp"
 #include "../tbb/private_server.cpp"
+#if _WIN32||_WIN64
 #include "../tbb/semaphore.cpp"
+#endif
 #include "../rml/client/rml_tbb.cpp"
 
 #endif /* harness_inject_scheduler_H */

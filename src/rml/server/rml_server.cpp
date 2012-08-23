@@ -38,7 +38,7 @@
 #include "tbb/spin_mutex.h"
 #include "tbb/tbb_misc.h"           // Get AvailableHwConcurrency() from here.
 #if _MSC_VER==1500 && !defined(__INTEL_COMPILER)
-// VS2008/VC9 seems to have an issue; 
+// VS2008/VC9 seems to have an issue;
 #pragma warning( push )
 #pragma warning( disable: 4985 )
 #endif
@@ -92,11 +92,11 @@ class omp_connection_v2;
 //! State of a server_thread
 /** Below are diagrams of legal state transitions.
 
-                          ts_busy         
+                          ts_busy
                           ^      ^
                          /        \
                         /          V
-    ts_done <----- ts_asleep <------> ts_idle 
+    ts_done <----- ts_asleep <------> ts_idle
 */
 
 enum thread_state_t {
@@ -126,11 +126,11 @@ enum thread_grab_t {
 /** Below are diagrams of legal state transitions.
 
     OMP
-              ts_omp_busy               
-              ^          ^       
-             /            \       
-            /              V       
-    ts_asleep <-----------> ts_idle 
+              ts_omp_busy
+              ^          ^
+             /            \
+            /              V
+    ts_asleep <-----------> ts_idle
 
 
               ts_deactivated
@@ -139,11 +139,11 @@ enum thread_grab_t {
            V                \
     ts_none  <--------------> ts_reactivated
 
-    TBB 
-              ts_tbb_busy               
-              ^          ^       
-             /            \       
-            /              V       
+    TBB
+              ts_tbb_busy
+              ^          ^
+             /            \
+            /              V
     ts_asleep <-----------> ts_idle --> ts_done
 
     For TBB only. Extra state transition.
@@ -151,7 +151,7 @@ enum thread_grab_t {
     ts_created -> ts_started -> ts_visited
  */
 enum thread_state_t {
-    //! Thread not doing anything useful, but running and looking for work. 
+    //! Thread not doing anything useful, but running and looking for work.
     ts_idle,
     //! Thread not doing anything useful and is asleep */
     ts_asleep,
@@ -174,7 +174,7 @@ enum thread_state_t {
 #if TBB_USE_ASSERT
 #define PRODUCE_ARG(x) ,x
 #else
-#define PRODUCE_ARG(x) 
+#define PRODUCE_ARG(x)
 #endif /* TBB_USE_ASSERT */
 
 //! Synchronizes dispatch of OpenMP work.
@@ -205,7 +205,7 @@ public:
 };
 
 //! A reference count.
-/** No default constructor, because users of ref_count must be very careful about whether the 
+/** No default constructor, because users of ref_count must be very careful about whether the
     initial reference count is 0 or 1. */
 class ref_count: no_copy {
     friend class thread_map;
@@ -221,7 +221,7 @@ public:
     }
     //! Subtract one and return new value.
     int remove_ref() {
-        int k = --my_ref_count; 
+        int k = --my_ref_count;
         __TBB_ASSERT(k>=0,"reference count underflow");
         return k;
     }
@@ -255,7 +255,7 @@ class server_thread_rep : no_copy {
 public:
     //! Ctor
     server_thread_rep( bool assigned, IScheduler* s, IExecutionResource* r, thread_map& map, rml::client& cl ) :
-        uid( GetExecutionContextId() ), my_scheduler(s), my_proxy(NULL), 
+        uid( GetExecutionContextId() ), my_scheduler(s), my_proxy(NULL),
         my_thread_map(map), my_client(cl), my_job(NULL)
     {
         my_state = assigned ? ts_busy : ts_idle;
@@ -369,7 +369,7 @@ public:
 class omp_server_thread : public server_thread {
     friend class omp_connection_v2;
 public:
-    omp_server_thread( bool assigned, IScheduler* s, IExecutionResource* r, omp_connection_v2* con, thread_map& map, rml::client& cl ) : 
+    omp_server_thread( bool assigned, IScheduler* s, IExecutionResource* r, omp_connection_v2* con, thread_map& map, rml::client& cl ) :
         server_thread(false,assigned,s,r,map,cl), my_conn(con), my_cookie(NULL), my_index(UINT_MAX) {}
     ~omp_server_thread() {}
     /*override*/ void Dispatch( DispatchState* );
@@ -468,13 +468,13 @@ class connection_scavenger_thread {
      */
     tbb::atomic<thread_state_t> state;
 
-    /* We steal two bits from a connection pointer to encode 
+    /* We steal two bits from a connection pointer to encode
      * whether the connection is for TBB or for OMP.
      *
      * ----------------------------------
      * |                          |  |  |
      * ----------------------------------
-     *                              ^  ^ 
+     *                              ^  ^
      *                             /   |
      *            1 : tbb, 0 : omp     |
      *                  if set, terminate
@@ -490,7 +490,7 @@ public:
     connection_scavenger_thread() : thr_handle(NULL) {
         state = ts_asleep;
 #if TBB_USE_ASSERT
-        n_scavenger_threads = 0; 
+        n_scavenger_threads = 0;
 #endif
     }
 
@@ -507,8 +507,8 @@ public:
 
     static __RML_DECL_THREAD_ROUTINE thread_routine( void* arg );
 
-    void launch() { 
-        thread_monitor::launch( connection_scavenger_thread::thread_routine, this, NULL ); 
+    void launch() {
+        thread_monitor::launch( connection_scavenger_thread::thread_routine, this, NULL );
     }
 
     template<typename Server, typename Client>
@@ -542,10 +542,10 @@ struct thread_map_base {
         server_thread& wait_for_thread() const {
             for(;;) {
                 server_thread* ptr=const_cast<server_thread*volatile&>(my_thread);
-                if( ptr ) 
+                if( ptr )
                     return *ptr;
                 __TBB_Yield();
-            } 
+            }
         }
         /** Shortly after when a connection is established, it is possible for the server
             to grab a server_thread that has not yet created a job object for that server. */
@@ -557,7 +557,7 @@ struct thread_map_base {
         }
     private:
         server_thread* my_thread;
-        /** Marked mutable because though it is physically modified, conceptually it is a duplicate of 
+        /** Marked mutable because though it is physically modified, conceptually it is a duplicate of
             the job held by job_automaton. */
         mutable rml::job* my_job;
         job_automaton my_automaton;
@@ -589,8 +589,8 @@ static tbb::atomic<int> the_balance;
 static tbb::atomic<tbb::internal::do_once_state> rml_module_state;
 
 #if !RML_USE_WCRM
-//! Per thread information 
-/** ref_count holds number of clients that are using this, 
+//! Per thread information
+/** ref_count holds number of clients that are using this,
     plus 1 if a host thread owns this instance. */
 class server_thread: public ref_count {
     friend class thread_map;
@@ -619,7 +619,7 @@ private:
     bool has_active_thread;
 #endif /* TBB_USE_ASSERT */
 
-    //! Volunteer to sleep. 
+    //! Volunteer to sleep.
     void sleep_perhaps( thread_state_t asleep );
 
     //! Destroy job corresponding to given client
@@ -632,7 +632,7 @@ private:
     bool do_termination();
 
     void loop();
-    static __RML_DECL_THREAD_ROUTINE thread_routine( void* arg ); 
+    static __RML_DECL_THREAD_ROUTINE thread_routine( void* arg );
 
 public:
     server_thread();
@@ -655,7 +655,7 @@ public:
     //! Launch a thread that is bound to *this.
     void launch( size_t stack_size );
 
-    //! Attempt to wakeup a thread 
+    //! Attempt to wakeup a thread
     /** The value "to" is the new state for the thread, if it was woken up.
         Returns true if thread was woken up, false otherwise. */
     bool wakeup( thread_state_t to, thread_state_t from );
@@ -680,8 +680,8 @@ class private_thread_bag {
     };
     //! Root of atomic linked list of list_thread
     /** ABA problem is avoided because items are only atomically pushed, never popped. */
-    tbb::atomic<list_thread*> my_root; 
-    tbb::cache_aligned_allocator<padded<list_thread> > my_allocator; 
+    tbb::atomic<list_thread*> my_root;
+    tbb::cache_aligned_allocator<padded<list_thread> > my_allocator;
 public:
     //! Construct empty bag
     private_thread_bag() {my_root=NULL;}
@@ -696,10 +696,10 @@ public:
             old_root = my_root;
             t->next = old_root;
         } while( my_root.compare_and_swap( t, old_root )!=old_root );
-        return *t;  
+        return *t;
     }
 
-    //! Destroy the bag and threads in it. 
+    //! Destroy the bag and threads in it.
     ~private_thread_bag() {
         while( my_root ) {
             // Unlink thread from list.
@@ -707,7 +707,7 @@ public:
             my_root = t->next;
             // Destroy and deallocate the thread.
             t->~list_thread();
-            my_allocator.deallocate(static_cast<padded<list_thread>*>(t),1);    
+            my_allocator.deallocate(static_cast<padded<list_thread>*>(t),1);
         }
     }
 };
@@ -715,13 +715,13 @@ public:
 //! Forward declaration
 void wakeup_some_tbb_threads();
 
-//! Type-independent part of class generic_connection. 
+//! Type-independent part of class generic_connection.
 /** One to one map from server threads to jobs, and associated reference counting. */
 class thread_map : public thread_map_base {
 public:
     typedef rml::client::size_type size_type;
     //! ctor
-    thread_map( wait_counter& fc, ::rml::client& client ) : 
+    thread_map( wait_counter& fc, ::rml::client& client ) :
         all_visited_at_least_once(false), my_min_stack_size(0), my_server_ref_count(1),
         my_client_ref_count(1), my_client(client), my_factory_counter(fc)
     { my_unrealized_threads = 0; }
@@ -813,7 +813,7 @@ thread_map::value_type* thread_map::add_one_thread( bool is_omp_thread_ ) {
     return &v;
 }
 
-void thread_map::bind() { 
+void thread_map::bind() {
     ++my_factory_counter;
     my_min_stack_size = my_client.min_stack_size();
     __TBB_ASSERT( my_unrealized_threads==0, "already called bind?" );
@@ -844,7 +844,7 @@ void thread_map::assist_cleanup( bool assist_null_only ) {
                 // server thread did not get a chance to create a job.
             }
             remove_client_ref();
-        } 
+        }
     }
 }
 
@@ -866,7 +866,7 @@ thread_map::size_type thread_map::wakeup_tbb_threads( size_type n ) {
                     goto skip;
                 }
             }
-            if( --n==0 ) 
+            if( --n==0 )
                 return 0;
         } else {
             // overdraft.
@@ -895,8 +895,8 @@ class thread_map : no_copy {
     hash_map_type my_map;
     bool shutdown_in_progress;
     std::vector<IExecutionResource*> original_exec_resources;
-    tbb::cache_aligned_allocator<padded<tbb_server_thread> > my_tbb_allocator; 
-    tbb::cache_aligned_allocator<padded<omp_server_thread> > my_omp_allocator; 
+    tbb::cache_aligned_allocator<padded<tbb_server_thread> > my_tbb_allocator;
+    tbb::cache_aligned_allocator<padded<omp_server_thread> > my_omp_allocator;
     tbb::cache_aligned_allocator<padded<thread_scavenger_thread> > my_scavenger_allocator;
     IResourceManager* my_concrt_resource_manager;
     IScheduler* my_scheduler;
@@ -907,12 +907,12 @@ class thread_map : no_copy {
     tbb::atomic<int> n_thread_scavengers_created;
 #endif
 public:
-    thread_map( wait_counter& fc, ::rml::client& client ) : 
+    thread_map( wait_counter& fc, ::rml::client& client ) :
         my_min_stack_size(0), my_client(client), my_factory_counter(fc),
         my_server_ref_count(1), my_client_ref_count(1), shutdown_in_progress(false),
         my_concrt_resource_manager(NULL), my_scheduler(NULL), my_scheduler_proxy(NULL)
-    { 
-        my_thread_scavenger_thread = NULL; 
+    {
+        my_thread_scavenger_thread = NULL;
 #if TBB_USE_ASSERT
         n_add_vp_requests = 0;
         n_thread_scavengers_created;
@@ -936,14 +936,14 @@ public:
                 while( ((tbb_server_thread*)thr)->activation_count>1 )
                     __TBB_Yield();
                 ((tbb_server_thread*)thr)->~tbb_server_thread();
-                my_tbb_allocator.deallocate(static_cast<padded<tbb_server_thread>*>(thr),1);    
+                my_tbb_allocator.deallocate(static_cast<padded<tbb_server_thread>*>(thr),1);
             } else {
                 ((omp_server_thread*)thr)->~omp_server_thread();
-                my_omp_allocator.deallocate(static_cast<padded<omp_server_thread>*>(thr),1);    
+                my_omp_allocator.deallocate(static_cast<padded<omp_server_thread>*>(thr),1);
             }
         }
         if( my_scheduler_proxy ) {
-            my_scheduler_proxy->Shutdown(); 
+            my_scheduler_proxy->Shutdown();
             my_concrt_resource_manager->Release();
             __TBB_ASSERT( my_scheduler, NULL );
             delete my_scheduler;
@@ -957,7 +957,7 @@ public:
     iterator begin() {return my_map.begin();}
     iterator end() {return my_map.end();}
     iterator find( key_type k ) {return my_map.find( k );}
-    iterator insert( key_type k, server_thread* v ) { 
+    iterator insert( key_type k, server_thread* v ) {
         std::pair<iterator,bool> res = my_map.insert( value_type(k,v) );
         return res.first;
     }
@@ -994,10 +994,10 @@ public:
     void create_oversubscribers( unsigned n, std::vector<server_thread*>& thr_vec, omp_connection_v2& conn, ::tbb::spin_mutex& mtx );
     void wakeup_tbb_threads( int c, ::tbb::spin_mutex& mtx );
     void mark_virtual_processors_as_returned( IVirtualProcessorRoot** vprocs, unsigned int count, tbb::spin_mutex& mtx );
-    inline void addto_original_exec_resources( IExecutionResource* r, ::tbb::spin_mutex& mtx ) { 
+    inline void addto_original_exec_resources( IExecutionResource* r, ::tbb::spin_mutex& mtx ) {
         ::tbb::spin_mutex::scoped_lock lck(mtx);
         __TBB_ASSERT( !is_closing(), "try to regster master while connection is being shutdown?" );
-        original_exec_resources.push_back( r ); 
+        original_exec_resources.push_back( r );
     }
 #if !__RML_REMOVE_VIRTUAL_PROCESSORS_DISABLED
     void allocate_thread_scavenger( IExecutionResource* v );
@@ -1041,12 +1041,12 @@ protected:
     thread_map my_thread_map;
     generic_connection* next_conn;
     size_t my_ec;
-#if RML_USE_WCRM 
+#if RML_USE_WCRM
     // FIXME: pad it?
     tbb::spin_mutex map_mtx;
     IScheduler* my_scheduler;
-    void do_open( IScheduler* s ) { 
-        my_scheduler = s; 
+    void do_open( IScheduler* s ) {
+        my_scheduler = s;
         my_thread_map.bind( s );
     }
     bool is_closing() { return my_thread_map.is_closing(); }
@@ -1060,7 +1060,7 @@ protected:
 #if !RML_USE_WCRM
     generic_connection( wait_counter& fc, Client& c ) : my_thread_map(fc,c), next_conn(NULL), my_ec(0) {}
 #else
-    generic_connection( wait_counter& fc, Client& c ) : 
+    generic_connection( wait_counter& fc, Client& c ) :
             my_thread_map(fc,c), next_conn(NULL), my_ec(0), map_mtx(), my_scheduler(NULL) {}
     void add_virtual_processors( IVirtualProcessorRoot** vprocs, unsigned int count );
     void remove_virtual_processors( IVirtualProcessorRoot** vprocs, unsigned int count );
@@ -1112,7 +1112,7 @@ class tbb_connection_v2: public generic_connection<tbb_server,tbb_client> {
     /*override*/ void register_master ( rml::server::execution_resource_t& /*v*/ ) {}
     /*override*/ void unregister_master ( rml::server::execution_resource_t /*v*/ ) {}
 #endif
-#else 
+#else
     /*override*/ void register_master ( rml::server::execution_resource_t& v ) {
         my_thread_map.register_as_master(v);
         if( v ) ++nesting;
@@ -1126,7 +1126,7 @@ class tbb_connection_v2: public generic_connection<tbb_server,tbb_client> {
 #endif
             }
         }
-        my_thread_map.unregister(v); 
+        my_thread_map.unregister(v);
     }
     IScheduler* create_scheduler() {return( scheduler<tbb_connection_v2>::create( *this ) );}
     friend void  free_all_connections( uintptr_t );
@@ -1173,7 +1173,7 @@ public:
             client().process(job);
             visited = true;
         }
-        ++my_slack; 
+        ++my_slack;
         return visited;
     }
 
@@ -1239,7 +1239,7 @@ class omp_connection_v2: public generic_connection<omp_server,omp_client> {
     friend class scheduler<omp_connection_v2>;
     /*override*/ int current_balance() const {return my_thread_map.current_balance();}
 #endif /* !RML_USE_WCRM */
-    /*override*/ int  try_increase_load( size_type n, bool strict ); 
+    /*override*/ int  try_increase_load( size_type n, bool strict );
     /*override*/ void decrease_load( size_type n );
     /*override*/ void get_threads( size_type request_size, void* cookie, job* array[] );
 #if !RML_USE_WCRM
@@ -1288,13 +1288,13 @@ public:
 /* to deal with cases where the machine is oversubscribed; we want each thread to trip to try_process() at least once */
 /* this should not involve computing the_balance */
 bool thread_map::wakeup_next_thread( thread_map::iterator this_thr, tbb_connection_v2& conn ) {
-    if( all_visited_at_least_once ) 
+    if( all_visited_at_least_once )
         return false;
 
     iterator e = end();
 retry:
     bool exist = false;
-    iterator k=this_thr; 
+    iterator k=this_thr;
     for( ++k; k!=e; ++k ) {
         // If another thread added *k, there is a tiny timing window where thread() is invalid.
         server_thread& t = k->wait_for_thread();
@@ -1313,10 +1313,10 @@ retry:
                 return true;
     }
 
-    if( exist ) 
+    if( exist )
         if( conn.has_slack() )
             goto retry;
-    else 
+    else
         all_visited_at_least_once = true;
     return false;
 }
@@ -1343,7 +1343,7 @@ void thread_map::remove_client_ref() {
         --my_factory_counter;
         // Notify client that RML is done with the client object.
         my_client.acknowledge_close_connection();
-    } 
+    }
 }
 
 #if RML_USE_WCRM
@@ -1363,10 +1363,10 @@ void make_job( Connection& c, typename Connection::server_thread_type& t ) {
 #if _MSC_VER && !defined(__INTEL_COMPILER)
 // Suppress "conditional expression is constant" warning.
 #pragma warning( push )
-#pragma warning( disable: 4127 ) 
+#pragma warning( disable: 4127 )
 #endif
 #if RML_USE_WCRM
-template<typename Server, typename Client>    
+template<typename Server, typename Client>
 void generic_connection<Server,Client>::request_close_connection( bool exiting ) {
     // for TBB connections, exiting should always be false
     if( connection_traits<Server,Client>::is_tbb )
@@ -1389,7 +1389,7 @@ void generic_connection<Server,Client>::request_close_connection( bool exiting )
         return;
     }
 #else /* !RML_USE_WCRM */
-template<typename Server, typename Client>    
+template<typename Server, typename Client>
 void generic_connection<Server,Client>::request_close_connection( bool ) {
 #endif /* RML_USE_WCRM */
     if( connection_traits<Server,Client>::is_tbb ) {
@@ -1435,19 +1435,19 @@ void generic_connection<Server,Client>::request_close_connection( bool ) {
 
 #if RML_USE_WCRM
 
-template<typename Server, typename Client>    
+template<typename Server, typename Client>
 void generic_connection<Server,Client>::add_virtual_processors( IVirtualProcessorRoot** vproots, unsigned int count )
 {}
 
-template<>    
+template<>
 void generic_connection<tbb_server,tbb_client>::add_virtual_processors( IVirtualProcessorRoot** vproots, unsigned int count )
 {
     my_thread_map.add_virtual_processors( vproots, count, (tbb_connection_v2&)*this, map_mtx );
 }
-template<>    
+template<>
 void generic_connection<omp_server,omp_client>::add_virtual_processors( IVirtualProcessorRoot** vproots, unsigned int count )
 {
-    // For OMP, since it uses ScheudlerPolicy of MinThreads==MaxThreads, this is called once when 
+    // For OMP, since it uses ScheudlerPolicy of MinThreads==MaxThreads, this is called once when
     // RequestInitialVirtualProcessors() is  called.
     my_thread_map.add_virtual_processors( vproots, count, (omp_connection_v2&)*this, map_mtx );
 }
@@ -1459,7 +1459,7 @@ void generic_connection<Server,Client>::remove_virtual_processors( IVirtualProce
 }
 /* For OMP, RemoveVirtualProcessors() will never be called. */
 
-template<>    
+template<>
 void generic_connection<tbb_server,tbb_client>::remove_virtual_processors( IVirtualProcessorRoot** vproots, unsigned int count )
 {
     my_thread_map.remove_virtual_processors( vproots, count, map_mtx );
@@ -1521,7 +1521,7 @@ void tbb_connection_v2::adjust_job_count_estimate( int delta ) {
     if( c>0 ) {
         ++n_adjust_job_count_requests;
         // The client has work to do and there are threads available
-        thread_map::size_type n = my_thread_map.wakeup_tbb_threads(c); 
+        thread_map::size_type n = my_thread_map.wakeup_tbb_threads(c);
 
         server_thread* new_threads_anchor = NULL;
         thread_map::size_type i;
@@ -1530,7 +1530,7 @@ void tbb_connection_v2::adjust_job_count_estimate( int delta ) {
         for( i=0; i<n; ++i ) {
             // Obtain unrealized threads
             thread_map::value_type* k = my_thread_map.add_one_thread( false );
-            if( !k ) 
+            if( !k )
                 // No unrealized threads left.
                 break;
             // Eagerly start the thread off.
@@ -1544,7 +1544,7 @@ void tbb_connection_v2::adjust_job_count_estimate( int delta ) {
         // Implicit destruction of fpa resets original affinity mask.
         }
 
-        thread_map::size_type j=0; 
+        thread_map::size_type j=0;
         for( ; the_balance>0 && j<i; ++j ) {
             if( --the_balance>=0 ) {
                 // Withdraw a coin from the bank
@@ -1552,7 +1552,7 @@ void tbb_connection_v2::adjust_job_count_estimate( int delta ) {
 
                 server_thread* t = new_threads_anchor;
                 new_threads_anchor = t->link;
-                while( !t->try_grab_for( ts_tbb_busy ) ) 
+                while( !t->try_grab_for( ts_tbb_busy ) )
                     __TBB_Yield();
                 t->my_extra_state = ts_started;
             } else {
@@ -1587,7 +1587,7 @@ int omp_connection_v2::try_increase_load( size_type n, bool strict ) {
             // Don't read the_system_balance; if it changes, compare_and_swap will fail anyway.
             old = the_balance.compare_and_swap( int(n)<avail ? avail-n : 0, avail );
         } while( old!=avail );
-        if( int(n)>avail ) 
+        if( int(n)>avail )
             n=avail;
     }
 #if TBB_USE_ASSERT
@@ -1675,7 +1675,7 @@ void omp_connection_v2::deactivate( rml::job* j )
 
 void omp_connection_v2::reactivate( rml::job* j )
 {
-    // Should not adjust the_balance because OMP client is supposed to 
+    // Should not adjust the_balance because OMP client is supposed to
     // do try_increase_load() to reserve the threads to use.
     omp_server_thread* thr = (omp_server_thread*) scratch_ptr( *j );
     (thr->get_virtual_processor())->Activate( thr );
@@ -1687,9 +1687,9 @@ void omp_connection_v2::reactivate( rml::job* j )
 //! Wake up some available tbb threads
 void wakeup_some_tbb_threads()
 {
-    /* First, atomically grab the connection, then increase the server ref count to keep 
-       it from being released prematurely.  Second, check if the balance is available for TBB 
-       and the tbb conneciton has slack to exploit.  If the answer is true, go ahead and 
+    /* First, atomically grab the connection, then increase the server ref count to keep
+       it from being released prematurely.  Second, check if the balance is available for TBB
+       and the tbb conneciton has slack to exploit.  If the answer is true, go ahead and
        try to wake some up. */
     if( generic_connection<tbb_server,tbb_client >::get_addr(active_tbb_connections)==0 )
         // the next connection will see the change; return.
@@ -1709,7 +1709,7 @@ start_it_over:
     // compete with the current one to claim coins.
     // One that is about to close the connection increments the event count
     // after it removes the connection from the list.  But it will keep around
-    // the connection until all readers including this one catch up. So, reading 
+    // the connection until all readers including this one catch up. So, reading
     // the head and clearing the lock bit should be o.k.
     generic_connection<tbb_server,tbb_client>* next_conn_wake_up = generic_connection<tbb_server,tbb_client>::get_addr( active_tbb_connections );
 
@@ -1717,14 +1717,14 @@ start_it_over:
         /* some threads are creating tbb server threads; they may not see my changes made to the_balance */
         /* When a thread is in adjust_job_count_estimate() to increase the slack
            RML tries to activate worker threads on behalf of the requesting thread
-           by repeatedly drawing a coin from the bank optimistically and grabbing a 
-           thread.  If it finds the bank overdrafted, it returns the coin back to 
+           by repeatedly drawing a coin from the bank optimistically and grabbing a
+           thread.  If it finds the bank overdrafted, it returns the coin back to
            the bank and returns the control to the thread (return from the method).
-           There lies a tiny timing hole.  
+           There lies a tiny timing hole.
 
            When the overdraft occurs (note that multiple masters may be in
            adjust_job_count_estimate() so the_balance can be any negative value) and
-           a worker returns from the TBB work at that moment, its returning the coin 
+           a worker returns from the TBB work at that moment, its returning the coin
            does not bump up the_balance over 0, so it happily returns from
            wakeup_some_tbb_threads() without attempting to give coins to worker threads
            that are ready.
@@ -1740,7 +1740,7 @@ start_it_over:
         tbb_connection_v2* tbb_conn = (tbb_connection_v2*)next_conn_wake_up;
         int my_slack = tbb_conn->my_slack;
         if( my_slack>0 ) tbb_conn->wakeup_tbb_threads( my_slack );
-        next_conn_wake_up = next_conn_wake_up->next_conn; 
+        next_conn_wake_up = next_conn_wake_up->next_conn;
     }
 
     int delta = current_tbb_conn_readers -= n_curr_readers;
@@ -1771,7 +1771,7 @@ int omp_connection_v2::try_increase_load( size_type n, bool strict ) {
             // don't read the_balance; if it changes, compare_and_swap will fail anyway.
             old = the_balance.compare_and_swap( int(n)<avail ? avail-n : 0, avail );
         } while( old!=avail );
-        if( int(n)>avail ) 
+        if( int(n)>avail )
             n=avail;
     }
 #if TBB_USE_ASSERT
@@ -1790,7 +1790,7 @@ void omp_connection_v2::decrease_load( size_type n ) {
 
 void omp_connection_v2::get_threads( size_type request_size, void* cookie, job* array[] ) {
 
-    if( !request_size ) 
+    if( !request_size )
         return;
 
     unsigned index = 0;
@@ -1805,9 +1805,9 @@ void omp_connection_v2::get_threads( size_type request_size, void* cookie, job* 
                 job& j = k->wait_for_job();
                 array[index] = &j;
                 t.omp_dispatch.produce( client(), j, cookie, index PRODUCE_ARG(*this) );
-                if( ++index==request_size ) 
+                if( ++index==request_size )
                     return;
-            } 
+            }
         }
         // Need to allocate more threads
         for( unsigned i=index; i<request_size; ++i ) {
@@ -1826,7 +1826,7 @@ void omp_connection_v2::get_threads( size_type request_size, void* cookie, job* 
                 array[index] = &j;
                 // The preincrement instead of post-increment of index is deliberate.
                 t.omp_dispatch.produce( client(), j, cookie, index PRODUCE_ARG(*this) );
-                if( ++index==request_size ) 
+                if( ++index==request_size )
                     return;
             } // else someone else snatched it.
         }
@@ -1838,9 +1838,9 @@ void omp_connection_v2::get_threads( size_type request_size, void* cookie, job* 
 // Methods of omp_dispatch_type
 //------------------------------------------------------------------------
 void omp_dispatch_type::consume() {
-    job_type* j = job; 
     // Wait for short window between when master sets state of this thread to ts_omp_busy
     // and master thread calls produce.
+    job_type* j = job; 
     if( !j ) {
         tbb::internal::atomic_backoff bo;
         do {
@@ -1871,7 +1871,7 @@ void omp_connection_v2::deactivate( rml::job* j )
 
 void omp_connection_v2::reactivate( rml::job* j )
 {
-    // Should not adjust the_balance because OMP client is supposed to 
+    // Should not adjust the_balance because OMP client is supposed to
     // do try_increase_load() to reserve the threads to use.
     __TBB_ASSERT( j, NULL );
     server_thread* thr = (server_thread*) scratch_ptr( *j );
@@ -1883,7 +1883,7 @@ void omp_connection_v2::reactivate( rml::job* j )
 // Methods of server_thread
 //------------------------------------------------------------------------
 
-server_thread::server_thread() : 
+server_thread::server_thread() :
     ref_count(0),
     link(NULL),
     my_map_pos(),
@@ -1930,7 +1930,7 @@ void server_thread::launch( size_t stack_size ) {
 void server_thread::sleep_perhaps( thread_state_t asleep ) {
     if( terminate ) return;
     __TBB_ASSERT( asleep==ts_asleep, NULL );
-    thread_monitor::cookie c; 
+    thread_monitor::cookie c;
     monitor.prepare_wait(c);
     if( state.compare_and_swap( asleep, ts_idle )==ts_idle ) {
         if( !terminate ) {
@@ -1967,15 +1967,15 @@ bool server_thread::wakeup( thread_state_t to, thread_state_t from ) {
         // at worst the result is slight temporary oversubscription.
         monitor.notify();
         success = true;
-    } 
+    }
     return success;
 }
 
-//! Attempt to change a thread's state to ts_omp_busy, and waking it up if necessary. 
+//! Attempt to change a thread's state to ts_omp_busy, and waking it up if necessary.
 bool server_thread::try_grab_for( thread_state_t target_state ) {
     bool success = false;
     switch( read_state() ) {
-        case ts_asleep: 
+        case ts_asleep:
             success = wakeup( target_state, ts_asleep );
             break;
         case ts_idle:
@@ -1992,7 +1992,7 @@ bool server_thread::try_grab_for( thread_state_t target_state ) {
 void server_thread::deactivate() {
     thread_state_t es = (thread_state_t) my_extra_state.fetch_and_store( ts_deactivated );
     __TBB_ASSERT( my_extra_state==ts_deactivated, "someone else tampered with my_extra_state?" );
-    if( es==ts_none ) 
+    if( es==ts_none )
         state = ts_idle;
     else
         __TBB_ASSERT( es==ts_reactivated, "Cannot call deactivate() while in ts_deactivated" );
@@ -2052,7 +2052,7 @@ bool server_thread::destroy_job( Connection& c ) {
             // Some other thread took responsibility for cleaning up the job.
         }
     }
-    // Must do remove client reference first, because execution of 
+    // Must do remove client reference first, because execution of
     // c.remove_ref() can cause *this to be destroyed.
     int k = remove_ref();
     __TBB_ASSERT_EX( k==0, "more than one references?" );
@@ -2079,19 +2079,19 @@ void server_thread::loop() {
     for(;;) {
         __TBB_Yield();
         if( state==ts_idle )
-            sleep_perhaps( ts_asleep );   
+            sleep_perhaps( ts_asleep );
 
         // Check whether I should quit.
         if( terminate )
             if( do_termination() )
-                return;     
-             
-        // read the state 
+                return;
+
+        // read the state
         thread_state_t s = read_state();
         __TBB_ASSERT( s==ts_idle||s==ts_omp_busy||s==ts_tbb_busy, NULL );
 
         if( s==ts_omp_busy ) {
-            // Enslaved by OpenMP team.  
+            // Enslaved by OpenMP team.
             omp_dispatch.consume();
             /* here wake tbb threads up if feasible */
             if( ++the_balance>0 )
@@ -2204,13 +2204,13 @@ void scheduler<tbb_connection_v2>::RemoveVirtualProcessors( IVirtualProcessorRoo
 template<>
 void scheduler<tbb_connection_v2>::NotifyResourcesExternallyIdle( IVirtualProcessorRoot** /*vproots*/, unsigned int /*count*/)
 {
-    __TBB_ASSERT( false, "NotifyResourcesExternallyIdle() is not allowed for TBB" ); 
+    __TBB_ASSERT( false, "NotifyResourcesExternallyIdle() is not allowed for TBB" );
 }
 
 template<>
 void scheduler<tbb_connection_v2>::NotifyResourcesExternallyBusy( IVirtualProcessorRoot** /*vproots*/, unsigned int /*count*/ )
 {
-    __TBB_ASSERT( false, "NotifyResourcesExternallyBusy() is not allowed for TBB" ); 
+    __TBB_ASSERT( false, "NotifyResourcesExternallyBusy() is not allowed for TBB" );
 }
 
 template<>
@@ -2224,7 +2224,7 @@ scheduler<omp_connection_v2>::scheduler( omp_connection_v2& conn ) : uid(GetSche
 
 template<>
 void scheduler<omp_connection_v2>::RemoveVirtualProcessors( IVirtualProcessorRoot** /*vproots*/, unsigned int /*count*/ ) {
-    __TBB_ASSERT( false, "RemoveVirtualProcessors() is not allowed for OMP" ); 
+    __TBB_ASSERT( false, "RemoveVirtualProcessors() is not allowed for OMP" );
 }
 
 template<>
@@ -2247,7 +2247,7 @@ void tbb_server_thread::Dispatch( DispatchState* ) {
 
     for( ;; ) {
         // Try to wake some tbb threads if the balance is positive.
-        // When a thread is added by ConcRT and enter here for the first time, 
+        // When a thread is added by ConcRT and enter here for the first time,
         // the thread may wake itself up (i.e., atomically change its state to ts_busy.
         if( the_balance>0 )
              wakeup_some_tbb_threads();
@@ -2258,7 +2258,7 @@ void tbb_server_thread::Dispatch( DispatchState* ) {
             if( initiate_termination() )
                 return;
         if( read_state()==ts_busy ) {
-            // this thread has a coin (i.e., state=ts_busy; it should trip to the scheduler at least once 
+            // this thread has a coin (i.e., state=ts_busy; it should trip to the scheduler at least once
             if ( tbb_conn->has_slack() ) {
                 do {
                     tbb_conn->try_process( *wait_for_job() );
@@ -2282,7 +2282,7 @@ void tbb_server_thread::Dispatch( DispatchState* ) {
                 } // else the new request will see my changes to state & the_balance.
             } else {
                 __TBB_ASSERT( false, "someone tampered with my state" );
-            } 
+            }
         } // someone else might set the state to somthing other than ts_idle
     }
 }
@@ -2308,12 +2308,12 @@ void omp_server_thread::Dispatch( DispatchState* ) {
     }
 }
 
-//! Attempt to change a thread's state to ts_omp_busy, and waking it up if necessary. 
+//! Attempt to change a thread's state to ts_omp_busy, and waking it up if necessary.
 thread_grab_t server_thread_rep::try_grab_for() {
     thread_grab_t res = wk_failed;
     thread_state_t s = read_state();
     switch( s ) {
-    case ts_asleep: 
+    case ts_asleep:
         if( wakeup( ts_busy, ts_asleep ) )
             res = wk_from_asleep;
         __TBB_ASSERT( res==wk_failed||read_state()==ts_busy, NULL );
@@ -2334,9 +2334,9 @@ thread_grab_t server_thread_rep::try_grab_for() {
 bool tbb_server_thread::switch_out() {
     thread_state_t s = read_state();
     __TBB_ASSERT( s==ts_asleep||s==ts_busy, NULL );
-    // This thread comes back from the TBB scheduler, and changed its state to ts_asleep successfully.  
+    // This thread comes back from the TBB scheduler, and changed its state to ts_asleep successfully.
     // The master enlisted it and woke it up by Activate()'ing it; now it is emerging from Deactivated().
-    // ConcRT requested for removal of the vp associated with the thread, and RML marks it removed.  
+    // ConcRT requested for removal of the vp associated with the thread, and RML marks it removed.
     // Now, it has ts_busy, and removed. -- we should remove it.
     IExecutionResource* old_vp = my_execution_resource;
     if( s==ts_busy ) {
@@ -2382,7 +2382,7 @@ bool tbb_server_thread::switch_out() {
             my_client.cleanup(*j);
             my_conn->remove_client_ref();
         }
-        // Must do remove client reference first, because execution of 
+        // Must do remove client reference first, because execution of
         // c.remove_ref() can cause *this to be destroyed.
         if( !activated )
             proxy->SwitchTo( my_thread_map.get_thread_scavenger(), Idle );
@@ -2456,13 +2456,13 @@ void omp_server_thread::sleep_perhaps () {
         __TBB_ASSERT( s==ts_busy, NULL );
     }
 }
-        
+
 bool tbb_server_thread::initiate_termination() {
     if( read_state()==ts_busy ) {
-        int bal = ++the_balance; 
+        int bal = ++the_balance;
         if( bal>0 ) wakeup_some_tbb_threads();
     }
-    return destroy_job( (tbb_connection_v2*) my_conn ); 
+    return destroy_job( (tbb_connection_v2*) my_conn );
 }
 
 template<typename Connection>
@@ -2474,7 +2474,7 @@ bool server_thread_rep::destroy_job( Connection* c ) {
         my_client.cleanup(*j);
         c->remove_client_ref();
     }
-    // Must do remove client reference first, because execution of 
+    // Must do remove client reference first, because execution of
     // c.remove_ref() can cause *this to be destroyed.
     c->remove_server_ref();
     return true;
@@ -2494,7 +2494,7 @@ void thread_map::assist_cleanup( bool assist_null_only ) {
                 // server thread did not get a chance to create a job.
             }
             remove_client_ref();
-        } 
+        }
     }
 }
 
@@ -2533,7 +2533,7 @@ void thread_map::add_virtual_processors( IVirtualProcessorRoot** vproots, unsign
                 IVirtualProcessorRoot* r = t->get_virtual_processor();
                 __TBB_ASSERT( r==c_remove_prepare||r==c_remove_returned, NULL );
 #endif
-                continue;   
+                continue;
             }
 
             if( my_unrealized_threads>0 ) {
@@ -2598,7 +2598,7 @@ void thread_map::add_virtual_processors( IVirtualProcessorRoot** vproots, unsign
             }
         }
 
-        // we could check is_closing() earlier.  That requires marking the newly allocated server_thread objects 
+        // we could check is_closing() earlier.  That requires marking the newly allocated server_thread objects
         // that are not inserted into the thread_map, and deallocate them.  Doing so seems more cumbersome
         // than simply adding these to the thread_map and let thread_map's destructor take care of reclamation.
         __TBB_ASSERT( closing==is_closing(), NULL );
@@ -2636,7 +2636,7 @@ void thread_map::remove_virtual_processors( IVirtualProcessorRoot** vproots, uns
         if( i==my_map.end() ) {
             thread_scavenger_thread* tst = my_thread_scavenger_thread;
             if( !tst ) {
-                // Remove unknown vp from my scheduler; 
+                // Remove unknown vp from my scheduler;
                 vproots[c]->Remove( my_scheduler );
             } else {
                 while( (tst=my_thread_scavenger_thread)==c_claimed )
@@ -2661,7 +2661,7 @@ void thread_map::remove_virtual_processors( IVirtualProcessorRoot** vproots, uns
                 // wake the thread up so that it Switches Out itself.
                 thr->get_virtual_processor()->Activate( thr );
             } // else, it is Switched Out
-        } // else the thread will see that it is removed and proceed to switch itself out without Deactivation 
+        } // else the thread will see that it is removed and proceed to switch itself out without Deactivation
     }
 }
 
@@ -2684,7 +2684,7 @@ void thread_map::add_virtual_processors( IVirtualProcessorRoot** vproots, unsign
         if( vec[i]==end ) {
             tvec[i] = my_omp_allocator.allocate(1);
             new ( tvec[i] ) omp_server_thread( false, my_scheduler, (IExecutionResource*)vproots[i], &conn, *this, my_client );
-        } 
+        }
     }
 
     {
@@ -2699,7 +2699,7 @@ void thread_map::add_virtual_processors( IVirtualProcessorRoot** vproots, unsign
             }
         }
 
-        // we could check is_closing() earlier.  That requires marking the newly allocated server_thread objects 
+        // we could check is_closing() earlier.  That requires marking the newly allocated server_thread objects
         // that are not inserted into the thread_map, and deallocate them.  Doing so seems more cumbersome
         // than simply adding these to the thread_map and let thread_map's destructor take care of reclamation.
         if( is_closing() ) return;
@@ -2729,7 +2729,7 @@ void thread_map::mark_virtual_processors_as_lent( IVirtualProcessorRoot** vproot
         } else {
             server_thread* thr = (*i).second;
             if( ((uintptr_t)thr)&~(uintptr_t)1 ) {
-                __TBB_ASSERT( !thr->is_removed(), "incorrectly removed" ); 
+                __TBB_ASSERT( !thr->is_removed(), "incorrectly removed" );
                 ((omp_server_thread*)thr)->set_lent();
             }
         }
@@ -2745,8 +2745,8 @@ void thread_map::create_oversubscribers( unsigned n, std::vector<server_thread*>
     typedef std::vector<IExecutionResource*>::iterator iterator_er;
     typedef ::std::vector<std::pair<hash_map_type::key_type, hash_map_type::mapped_type> > hash_val_vector_t;
     hash_val_vector_t v_vec(n);
-    iterator_er begin = curr_exec_rsc.begin(); 
-    iterator_er end   = curr_exec_rsc.end(); 
+    iterator_er begin = curr_exec_rsc.begin();
+    iterator_er end   = curr_exec_rsc.end();
     iterator_er i = begin;
     for( unsigned c=0; c<n; ++c ) {
         IVirtualProcessorRoot* vpr = my_scheduler_proxy->CreateOversubscriber( *i );
@@ -2772,9 +2772,9 @@ void thread_map::create_oversubscribers( unsigned n, std::vector<server_thread*>
                 unsigned lent = (unsigned) (*i).second;
                 __TBB_ASSERT( lent<=1, "vproc map entry added incorrectly?");
                 (*i).second = thr_vec[c];
-                if( lent ) 
+                if( lent )
                     ((omp_server_thread*)thr_vec[c])->set_lent();
-                else 
+                else
                     ((omp_server_thread*)thr_vec[c])->set_returned();
             }
             my_client_ref_count.add_ref();
@@ -2801,7 +2801,7 @@ void thread_map::wakeup_tbb_threads( int c, ::tbb::spin_mutex& mtx ) {
         for( iterator i=begin(); i!=end(); ++i ) {
             tbb_server_thread* thr = (tbb_server_thread*) (*i).second;
             // ConcRT RM should take threads away from TBB scheduler instead of lending them to another scheduler
-            if( thr->is_removed() ) 
+            if( thr->is_removed() )
                 continue;
 
             if( --the_balance>=0 ) {
@@ -2858,7 +2858,7 @@ void thread_map::mark_virtual_processors_as_returned( IVirtualProcessorRoot** vp
             } else {
                 omp_server_thread* thr = (omp_server_thread*) (*i).second;
                 if( ((uintptr_t)thr)&~(uintptr_t)1 ) {
-                    __TBB_ASSERT( !thr->is_removed(), "incorrectly removed" ); 
+                    __TBB_ASSERT( !thr->is_removed(), "incorrectly removed" );
                     // we shoud not make any assumption on the initial state of an added vproc.
                     thr->set_returned();
                 }
@@ -2888,7 +2888,7 @@ void thread_map::unbind( rml::server& /*server*/, tbb::spin_mutex& mtx ) {
                     while( t->get_virtual_processor()>c_remove_returned )
                         __TBB_Yield();
 #endif
-                    // A removed thread is supposed to proceed to SwithcOut. 
+                    // A removed thread is supposed to proceed to SwithcOut.
                     // There, we remove client&server references.
                 }
             } else {
@@ -2896,7 +2896,7 @@ void thread_map::unbind( rml::server& /*server*/, tbb::spin_mutex& mtx ) {
                     if( t->tbb_thread )
                         ++((tbb_server_thread*)t)->activation_count;
                     t->get_virtual_processor()->Activate( t );
-                    // We mark in the thread_map such that when termination sequence started, we ignore 
+                    // We mark in the thread_map such that when termination sequence started, we ignore
                     // all notification from ConcRT RM.
                 }
             }
@@ -2917,7 +2917,7 @@ void thread_map::unbind( rml::server& /*server*/, tbb::spin_mutex& mtx ) {
 }
 
 #if !__RML_REMOVE_VIRTUAL_PROCESSORS_DISABLED
-void thread_map::allocate_thread_scavenger( IExecutionResource* v ) 
+void thread_map::allocate_thread_scavenger( IExecutionResource* v )
 {
     if( my_thread_scavenger_thread>c_claimed ) return;
     thread_scavenger_thread* c = my_thread_scavenger_thread.fetch_and_store((thread_scavenger_thread*)c_claimed);
@@ -2983,13 +2983,13 @@ void free_all_connections( uintptr_t conn_ex ) {
         if( is_tbb ) {
             tbb_connection_v2* tbb_conn = reinterpret_cast<tbb_connection_v2*>(curr_conn);
             conn_ex = reinterpret_cast<uintptr_t>(tbb_conn->next_conn);
-            while( tbb_conn->my_thread_map.remove_server_ref()>0 ) 
+            while( tbb_conn->my_thread_map.remove_server_ref()>0 )
                 __TBB_Yield();
             delete tbb_conn;
         } else {
             omp_connection_v2* omp_conn = reinterpret_cast<omp_connection_v2*>(curr_conn);
             conn_ex = reinterpret_cast<uintptr_t>(omp_conn->next_conn);
-            while( omp_conn->my_thread_map.remove_server_ref()>0 ) 
+            while( omp_conn->my_thread_map.remove_server_ref()>0 )
                 __TBB_Yield();
             delete omp_conn;
         }
@@ -2998,7 +2998,7 @@ void free_all_connections( uintptr_t conn_ex ) {
 
 void assist_cleanup_connections()
 {
-    //signal to connection_scavenger_thread to terminate 
+    //signal to connection_scavenger_thread to terminate
     uintptr_t tail = connections_to_reclaim.tail;
     while( connections_to_reclaim.tail.compare_and_swap( garbage_connection_queue::plugged, tail )!=tail ) {
         __TBB_Yield();
@@ -3032,11 +3032,11 @@ void assist_cleanup_connections()
 
 void connection_scavenger_thread::sleep_perhaps() {
     uintptr_t tail = connections_to_reclaim.tail;
-    // connections_to_reclaim.tail==garbage_connection_queue::plugged --> terminate, 
+    // connections_to_reclaim.tail==garbage_connection_queue::plugged --> terminate,
     // connections_to_reclaim.tail>garbage_connection_queue::plugged : we got work to do
-    if( tail>=garbage_connection_queue::plugged ) return; 
+    if( tail>=garbage_connection_queue::plugged ) return;
     __TBB_ASSERT( !tail, NULL );
-    thread_monitor::cookie c; 
+    thread_monitor::cookie c;
     monitor.prepare_wait(c);
     if( state.compare_and_swap( ts_asleep, ts_busy )==ts_busy ) {
         if( connections_to_reclaim.tail!=garbage_connection_queue::plugged ) {
@@ -3074,12 +3074,12 @@ void connection_scavenger_thread::process_requests( uintptr_t conn_ex )
         if( is_tbb ) {
             tbb_conn = reinterpret_cast<tbb_connection_v2*>(curr_conn);
             next_conn = reinterpret_cast<uintptr_t>(tbb_conn->next_conn);
-            while( tbb_conn->my_thread_map.get_server_ref_count()>1 ) 
+            while( tbb_conn->my_thread_map.get_server_ref_count()>1 )
                 __TBB_Yield();
         } else {
             omp_conn = reinterpret_cast<omp_connection_v2*>(curr_conn);
             next_conn = reinterpret_cast<uintptr_t>(omp_conn->next_conn);
-            while( omp_conn->my_thread_map.get_server_ref_count()>1 ) 
+            while( omp_conn->my_thread_map.get_server_ref_count()>1 )
                 __TBB_Yield();
         }
 
@@ -3088,7 +3088,7 @@ void connection_scavenger_thread::process_requests( uintptr_t conn_ex )
 
         if( next_conn==0 ) {
             uintptr_t tail = connections_to_reclaim.tail;
-            if( tail==garbage_connection_queue::plugged ) { 
+            if( tail==garbage_connection_queue::plugged ) {
                 tail = garbage_connection_queue::plugged_acked; // connection scavenger saw the flag, and it freed all connections.
                 done = true;
             } else if( tail==conn_ex ) {
@@ -3097,16 +3097,16 @@ void connection_scavenger_thread::process_requests( uintptr_t conn_ex )
                     done = true;
                 }
             }
-            
+
             if( !done ) {
-                // A new connection to close is added to connections_to_reclaim.tail; 
+                // A new connection to close is added to connections_to_reclaim.tail;
                 // Wait for curr_conn->next_conn to be set.
                 if( is_tbb ) {
-                    while( !tbb_conn->next_conn ) 
+                    while( !tbb_conn->next_conn )
                         __TBB_Yield();
                     conn_ex = reinterpret_cast<uintptr_t>(tbb_conn->next_conn);
                 } else {
-                    while( !omp_conn->next_conn ) 
+                    while( !omp_conn->next_conn )
                         __TBB_Yield();
                     conn_ex = reinterpret_cast<uintptr_t>(omp_conn->next_conn);
                 }
@@ -3130,10 +3130,10 @@ __RML_DECL_THREAD_ROUTINE connection_scavenger_thread::thread_routine( void* arg
     thr->thr_handle = GetCurrentThread();
 #if TBB_USE_ASSERT
     ++thr->n_scavenger_threads;
-#endif 
+#endif
     for(;;) {
         __TBB_Yield();
-        thr->sleep_perhaps();   
+        thr->sleep_perhaps();
         if( connections_to_reclaim.tail==garbage_connection_queue::plugged || connections_to_reclaim.tail==garbage_connection_queue::plugged_acked ) {
             thr->state = ts_asleep;
             return 0;
@@ -3185,7 +3185,7 @@ uintptr_t connection_scavenger_thread::grab_and_prepend( generic_connection<omp_
 {
     uintptr_t conn_ex = (uintptr_t)last_conn_to_close;
     uintptr_t head = connections_to_reclaim.head.fetch_and_store( garbage_connection_queue::empty );
-    reinterpret_cast<omp_connection_v2*>(last_conn_to_close)->next_conn = reinterpret_cast<omp_connection_v2*>(head); 
+    reinterpret_cast<omp_connection_v2*>(last_conn_to_close)->next_conn = reinterpret_cast<omp_connection_v2*>(head);
     return conn_ex;
 }
 
@@ -3205,7 +3205,7 @@ bool is_windows7_or_later ()
 template<typename Connection, typename Server, typename Client>
 static factory::status_type connect( factory& f, Server*& server, Client& client ) {
     server = new Connection(*static_cast<wait_counter*>(f.scratch_ptr),client);
-    return factory::st_success; 
+    return factory::st_success;
 }
 
 void init_rml_module () {
@@ -3216,7 +3216,7 @@ void init_rml_module () {
 }
 
 extern "C" factory::status_type __RML_open_factory( factory& f, version_type& server_version, version_type client_version ) {
-    // Hack to keep this library from being closed by causing the first client's dlopen to not have a corresponding dlclose. 
+    // Hack to keep this library from being closed by causing the first client's dlopen to not have a corresponding dlclose.
     // This code will be removed once we figure out how to do shutdown of the RML perfectly.
     static tbb::atomic<bool> one_time_flag;
     if( one_time_flag.compare_and_swap(true,false)==false) {
@@ -3265,7 +3265,7 @@ extern "C" void __RML_close_factory( factory& f ) {
 
 void call_with_build_date_str( ::rml::server_info_callback_t cb, void* arg );
 
-}} // rml::internal 
+}} // rml::internal
 
 namespace tbb {
 namespace internal {
@@ -3297,10 +3297,10 @@ extern "C" void __KMP_call_with_my_server_info( ::rml::server_info_callback_t cb
 /*
  * RML server info
  */
-#include "version_string.tmp"
+#include "version_string.ver"
 
 #ifndef __TBB_VERSION_STRINGS
-#pragma message("Warning: version_string.tmp isn't generated properly by version_info.sh script!")
+#pragma message("Warning: version_string.ver isn't generated properly by version_info.sh script!")
 #endif
 
 // We use the build time as the RML server info. TBB is required to build RML, so we make it the same as the TBB build time.
@@ -3324,4 +3324,4 @@ void call_with_build_date_str( ::rml::server_info_callback_t cb, void* arg )
     (*cb)( arg, RML_SERVER_BUILD_TIME );
     (*cb)( arg, RML_SERVER_VERSION_ST );
 }
-}} // rml::internal 
+}} // rml::internal

@@ -58,7 +58,7 @@
 /*  
  * objbound.h - defines for object bounding code.
  *
- *  $Id: objbound.h,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: objbound.h,v 1.2 2007-02-22 17:54:15  Exp $
  */
 
 void dividespace(int, object **);

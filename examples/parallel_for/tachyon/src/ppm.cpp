@@ -58,7 +58,7 @@
 /*
  *  ppm.c - This file deals with PPM format image files (reading/writing)
  *
- *  $Id: ppm.cpp,v 1.2 2007-02-22 17:54:16 dpoulsen Exp $
+ *  $Id: ppm.cpp,v 1.2 2007-02-22 17:54:16 Exp $
  */ 
 
 /* For our puposes, we're interested only in the 3 byte per pixel 24 bit
@@ -70,6 +70,7 @@
 
 #if __GNUC__<4 || __GNUC__==4 && __GNUC_MINOR__<5
 // For older versions of GCC, disable use of __wur in GLIBC
+#undef _FORTIFY_SOURCE
 #define _FORTIFY_SOURCE 0
 #else
 // Starting from 4.5, GCC has a suppression option

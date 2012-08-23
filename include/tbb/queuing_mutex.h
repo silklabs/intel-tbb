@@ -48,7 +48,7 @@
 
 namespace tbb {
 
-//! Queuing lock with local-only spinning.
+//! Queuing mutex with local-only spinning.
 /** @ingroup synchronization */
 class queuing_mutex {
 public:
@@ -71,6 +71,7 @@ public:
             internal::poison_pointer(next);
 #endif /* TBB_USE_ASSERT */
         }
+
     public:
         //! Construct lock that has not acquired a mutex.
         /** Equivalent to zero-initialization of *this. */
@@ -116,6 +117,7 @@ public:
     static const bool is_rw_mutex = false;
     static const bool is_recursive_mutex = false;
     static const bool is_fair_mutex = true;
+
 private:
     //! The last competitor requesting the lock
     atomic<scoped_lock*> q_tail;

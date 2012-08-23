@@ -60,7 +60,7 @@ namespace interface6 {
 #else
             typedef pthread_t key_type;
 #endif
-#if __TBB_GCC_3_3_PROTECTED_BROKEN
+#if __TBB_PROTECTED_NESTED_CLASS_BROKEN
         public:
 #endif
             struct slot;
@@ -87,7 +87,7 @@ namespace interface6 {
                     return tbb::internal::punned_cast<tbb::atomic<key_type>*>(&key)->compare_and_swap(k,0)==0;
                 }
             };
-#if __TBB_GCC_3_3_PROTECTED_BROKEN
+#if __TBB_PROTECTED_NESTED_CLASS_BROKEN
         protected:
 #endif
         
@@ -120,11 +120,7 @@ namespace interface6 {
             static size_t hash( key_type k ) {
                 // Multiplicative hashing.  Client should use *upper* bits.
                 // casts required for Mac gcc4.* compiler
-#if __TBB_WORDSIZE == 4
-                return uintptr_t(k)*0x9E3779B9;
-#else
-                return uintptr_t(k)*0x9E3779B97F4A7C15;
-#endif 
+                return uintptr_t(k)*tbb::internal::size_t_select(0x9E3779B9,0x9E3779B97F4A7C15ULL);
             } 
         
             ets_base() {my_root=NULL; my_count=0;}

@@ -44,8 +44,8 @@ class spin_rw_mutex {
     //! Internal acquire write lock.
     static bool __TBB_EXPORTED_FUNC internal_acquire_writer(spin_rw_mutex *);
 
-    //! Out of line code for releasing a write lock.  
-    /** This code is has debug checking and instrumentation for Intel(R) Thread Checker and Intel(R) Thread Profiler. */
+    //! Out of line code for releasing a write lock.
+    /** This code has debug checking and instrumentation for Intel(R) Thread Checker and Intel(R) Thread Profiler. */
     static void __TBB_EXPORTED_FUNC internal_release_writer(spin_rw_mutex *);
 
     //! Internal acquire read lock.
@@ -54,8 +54,8 @@ class spin_rw_mutex {
     //! Internal upgrade reader to become a writer.
     static bool __TBB_EXPORTED_FUNC internal_upgrade(spin_rw_mutex *);
 
-    //! Out of line code for downgrading a writer to a reader.   
-    /** This code is has debug checking and instrumentation for Intel(R) Thread Checker and Intel(R) Thread Profiler. */
+    //! Out of line code for downgrading a writer to a reader.
+    /** This code has debug checking and instrumentation for Intel(R) Thread Checker and Intel(R) Thread Profiler. */
     static void __TBB_EXPORTED_FUNC internal_downgrade(spin_rw_mutex *);
 
     //! Internal release read lock.
@@ -82,14 +82,13 @@ public:
     //! The scoped locking pattern
     /** It helps to avoid the common problem of forgetting to release lock.
         It also nicely provides the "node" for queuing locks. */
-    class scoped_lock : private internal::no_copy {
+    class scoped_lock : internal::no_copy {
     public:
         //! Construct lock that has not acquired a mutex.
         /** Equivalent to zero-initialization of *this. */
         scoped_lock() : mutex(NULL) {}
 
-        //! Acquire lock on given mutex.
-        /** Upon entry, *this should not be in the "have acquired a mutex" state. */
+        //! Construct and acquire lock on given mutex.
         scoped_lock( spin_rw_mutex& m, bool write = true ) : mutex(NULL) {
             acquire(m, write);
         }
@@ -102,18 +101,18 @@ public:
         //! Acquire lock on given mutex.
         void acquire( spin_rw_mutex& m, bool write = true ) {
             __TBB_ASSERT( !mutex, "holding mutex already" );
-            is_writer = write; 
             mutex = &m;
+            is_writer = write;
             if( write ) internal_acquire_writer(mutex);
             else        internal_acquire_reader(mutex);
         }
 
         //! Upgrade reader to become a writer.
-        /** Returns true if the upgrade happened without re-acquiring the lock and false if opposite */
+        /** Returns whether the upgrade happened without releasing and re-acquiring the lock */
         bool upgrade_to_writer() {
             __TBB_ASSERT( mutex, "lock is not acquired" );
             __TBB_ASSERT( !is_writer, "not a reader" );
-            is_writer = true; 
+            is_writer = true;
             return internal_upgrade(mutex);
         }
 
@@ -135,15 +134,14 @@ public:
 
         //! Downgrade writer to become a reader.
         bool downgrade_to_reader() {
-#if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             __TBB_ASSERT( mutex, "lock is not acquired" );
             __TBB_ASSERT( is_writer, "not a writer" );
+#if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             internal_downgrade(mutex);
 #else
             mutex->state = 4; // Bit 2 - reader, 00..00100
 #endif
             is_writer = false;
-
             return true;
         }
 
@@ -162,7 +160,7 @@ public:
         //! The pointer to the current mutex that is held, or NULL if no mutex is held.
         spin_rw_mutex* mutex;
 
-        //! True if holding a writer lock, false if holding a reader lock.
+        //! If mutex!=NULL, then is_writer is true if holding a writer lock, false if holding a reader lock.
         /** Not defined if not holding a lock. */
         bool is_writer;
     };
@@ -180,6 +178,6 @@ private:
     volatile state_t state;
 };
 
-} // namespace ThreadingBuildingBlocks
+} // namespace tbb
 
 #endif /* __TBB_spin_rw_mutex_H */

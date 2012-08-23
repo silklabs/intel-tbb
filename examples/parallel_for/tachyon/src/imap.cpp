@@ -58,7 +58,7 @@
 /*
  * imap.c - This file contains code for doing image map type things.  
  *
- *  $Id: imap.cpp,v 1.2 2007-02-22 17:54:15 dpoulsen Exp $
+ *  $Id: imap.cpp,v 1.2 2007-02-22 17:54:15  Exp $
  */
 
 #include "machine.h"
