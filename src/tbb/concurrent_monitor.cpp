@@ -31,6 +31,11 @@
 namespace tbb {
 namespace internal {
 
+concurrent_monitor::~concurrent_monitor() {
+    abort_all();
+    __TBB_ASSERT( waitset_ec.empty(), "waitset not empty?" );
+}
+
 void concurrent_monitor::prepare_wait( thread_context& thr, void* ctx ) {
     // this is good place to pump previous spurious wakeup
     if( thr.spurious ) {
@@ -40,7 +45,7 @@ void concurrent_monitor::prepare_wait( thread_context& thr, void* ctx ) {
     thr.context = ctx;
     thr.in_waitset = true;
     {
-        spin_mutex::scoped_lock l( mutex_ec );
+        tbb::spin_mutex::scoped_lock l( mutex_ec );
         __TBB_store_relaxed( thr.epoch, __TBB_load_relaxed(epoch) );
         waitset_ec.add( (waitset_t::node_t*)&thr );
     }
@@ -98,6 +103,30 @@ void concurrent_monitor::notify_all_relaxed() {
     waitset_node_t* nxt;
     for( waitset_node_t* n=temp.front(); n!=end; n=nxt ) {
         nxt = n->next;
+        to_thread_context(n)->sema.V();
+    }
+#if TBB_USE_DEBUG
+    temp.clear();
+#endif
+}
+
+void concurrent_monitor::abort_all_relaxed() {
+    if( waitset_ec.empty() )
+        return;
+    dllist_t temp;
+    const waitset_node_t* end;
+    {
+        tbb::spin_mutex::scoped_lock l( mutex_ec );
+        __TBB_store_relaxed( epoch, __TBB_load_relaxed(epoch) + 1 );
+        waitset_ec.flush_to( temp );
+        end = temp.end();
+        for( waitset_node_t* n=temp.front(); n!=end; n=n->next )
+            to_thread_context(n)->in_waitset = false;
+    }
+    waitset_node_t* nxt;
+    for( waitset_node_t* n=temp.front(); n!=end; n=nxt ) {
+        nxt = n->next;
+        to_thread_context(n)->aborted = true;
         to_thread_context(n)->sema.V();
     }
 #if TBB_USE_DEBUG

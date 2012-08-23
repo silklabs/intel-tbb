@@ -131,6 +131,8 @@ generic_scheduler::generic_scheduler( arena* a, size_t index )
 #endif /* __TBB_SURVIVE_THREAD_SWITCH && TBB_USE_ASSERT */
 {
     my_dummy_slot.task_pool = allocate_task_pool(min_task_pool_size);
+    my_dummy_slot.hint_for_push = index ^ unsigned(this-(generic_scheduler*)NULL)>>16; // randomizer seed
+    my_dummy_slot.hint_for_pop  = index; // initial value for round-robin
     __TBB_ASSERT( my_task_pool_size == min_task_pool_size, NULL );
     __TBB_store_relaxed(my_dummy_slot.head, 0);
     __TBB_store_relaxed(my_dummy_slot.tail, 0);
@@ -932,6 +934,7 @@ task* generic_scheduler::steal_task( arena_slot& victim_slot ) {
     task* result = NULL;
     size_t H = __TBB_load_relaxed(victim_slot.head); // mirror
     const size_t H0 = H;
+    int skip_and_bump = 0; // +1 for skipped task and +1 for bumped head&tail
 retry:
     __TBB_store_relaxed( victim_slot.head, ++H );
     atomic_fence();
@@ -939,6 +942,7 @@ retry:
         // Stealing attempt failed, deque contents has not been changed by us
         GATHER_STATISTIC( ++my_counters.thief_backoffs );
         __TBB_store_relaxed( victim_slot.head, /*dead: H = */ H0 );
+        skip_and_bump++; // trigger that we bumped head and tail
         __TBB_ASSERT ( !result, NULL );
     }
     else {
@@ -952,6 +956,8 @@ retry:
             {
                 GATHER_STATISTIC( ++my_counters.proxies_bypassed );
                 result = NULL;
+                __TBB_ASSERT( skip_and_bump < 2, NULL );
+                skip_and_bump = 1; // note we skipped a task
                 goto retry;
             }
         }
@@ -970,10 +976,18 @@ retry:
             // These changes in the deque must be released to the owner.
             memmove( victim_pool + H1, victim_pool + H0, (H - H1) * sizeof(task*) );
             __TBB_store_with_release( victim_slot.head, /*dead: H = */ H1 );
+            if ( (intptr_t)H >= (intptr_t)__TBB_load_relaxed(victim_slot.tail) )
+                skip_and_bump++; // trigger that we bumped head and tail
         }
         poison_pointer( victim_pool[H0] );
     }
     unlock_task_pool( &victim_slot, victim_pool );
+    __TBB_ASSERT( skip_and_bump <= 2, NULL );
+    if( --skip_and_bump > 0 ) { // if both: task skipped and head&tail bumped
+        // Synchronize with snapshot as we bumped head and tail which can falsely trigger EMPTY state
+        atomic_fence();
+        my_arena->advertise_new_work</*Spawned=*/true>();
+    }
     return result;
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface6::memory_pool_allocator&lt; void, P &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::graph Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,69 +21,199 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00383.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00271.html">memory_pool_allocator&lt; void, P &gt;</a></div>
-<h1>tbb::interface6::memory_pool_allocator&lt; void, P &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00397.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::interface6::memory_pool_allocator&lt; void, P &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+<a class="el" href="a00394.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00271.html">graph</a></div>
+<h1>tbb::flow::interface6::graph Class Reference</h1><!-- doxytag: class="tbb::flow::interface6::graph" -->The graph class.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00480.html">memory_pool.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00487.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00070.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00051.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7cc2e35b1d34d0543b5a029414ef41f8"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::pool_type" ref="7cc2e35b1d34d0543b5a029414ef41f8" args="" -->
-typedef P&nbsp;</td><td class="memItemRight" valign="bottom"><b>pool_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48afbf9aed30662f09217c1fe229861d"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::pointer" ref="48afbf9aed30662f09217c1fe229861d" args="" -->
-typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="94ac6954c897981fc8adf6bf5978145b"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::const_pointer" ref="94ac6954c897981fc8adf6bf5978145b" args="" -->
-typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2b9b8af832a8b240cf22c5cc37406f45"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::value_type" ref="2b9b8af832a8b240cf22c5cc37406f45" args="" -->
-typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
-
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1601367c80ed73278e1234012631df24"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="1601367c80ed73278e1234012631df24" args="(pool_type &amp;pool)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (pool_type &amp;pool)  throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4ab3d4b5208ece28c4c3ced647e26e12"></a><!-- doxytag: member="tbb::flow::interface6::graph::graph" ref="4ab3d4b5208ece28c4c3ced647e26e12" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#4ab3d4b5208ece28c4c3ced647e26e12">graph</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4ce5d3f231c9e786aee8f64d53c7f1a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="e4ce5d3f231c9e786aee8f64d53c7f1a" args="(const memory_pool_allocator &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00270.html">memory_pool_allocator</a> &amp;src)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructs a graph withy no nodes. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#8a7d424c0616a1c37a908ead182e2fe5">~graph</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="49bd821cb72e23714d7efc480ac4cc9d"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="49bd821cb72e23714d7efc480ac4cc9d" args="(const memory_pool_allocator&lt; U, P &gt; &amp;src)" -->
-template&lt;typename U&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00270.html">memory_pool_allocator</a>&lt; U, P &gt; &amp;src)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys the graph.  <a href="#8a7d424c0616a1c37a908ead182e2fe5"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#a993b789d1e488e0c3929135beae560e">increment_wait_count</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="67b8e6e057db62e7fdbe985ce275b039"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::my_pool" ref="67b8e6e057db62e7fdbe985ce275b039" args="" -->
-pool_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_pool</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used to register that an external entity may still interact with the graph.  <a href="#a993b789d1e488e0c3929135beae560e"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#29b85506870f13a884a21655aec2a65d">decrement_wait_count</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="193c7eeb6ed852d587b652828f52ca92"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="193c7eeb6ed852d587b652828f52ca92" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deregisters an external entity that may have interacted with the graph.  <a href="#29b85506870f13a884a21655aec2a65d"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Receiver, typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00271.html#50a7938df01b6148ab2c0696835f002e">run</a> (Receiver &amp;r, Body body)</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="f4fe0fa75b911081eff469ddb3e7e52a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::operator==" ref="f4fe0fa75b911081eff469ddb3e7e52a" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
-template&lt;typename V, typename U, typename R&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="a00270.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00270.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Spawns a task that runs a body and puts its output to a specific receiver.  <a href="#50a7938df01b6148ab2c0696835f002e"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00271.html#c1145b00e063793a7e7bf994d202c7a0">run</a> (Body body)</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="4bb06a39de4a5290b4ec03be19d61c36"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::operator!=" ref="4bb06a39de4a5290b4ec03be19d61c36" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
-template&lt;typename V, typename U, typename R&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="a00270.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00270.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Spawns a task that runs a function object.  <a href="#c1145b00e063793a7e7bf994d202c7a0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#a66b0020f7514b86d030fa8aea073d37">wait_for_all</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Waits until the graph is idle and the number of decrement_wait_count calls equals the number of increment_wait_count calls.  <a href="#a66b0020f7514b86d030fa8aea073d37"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7f4e3ae90811a5d8b597146b5b586d10"></a><!-- doxytag: member="tbb::flow::interface6::graph::root_task" ref="7f4e3ae90811a5d8b597146b5b586d10" args="()" -->
+<a class="el" href="a00320.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00271.html#7f4e3ae90811a5d8b597146b5b586d10">root_task</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the root task of the graph. <br></td></tr>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>run_and_put_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>run_task</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename P&gt;<br>
- class tbb::interface6::memory_pool_allocator&lt; void, P &gt;</h3>
-
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+The graph class. 
 <p>
+This class serves as a handle to the graph 
+<p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="8a7d424c0616a1c37a908ead182e2fe5"></a><!-- doxytag: member="tbb::flow::interface6::graph::~graph" ref="8a7d424c0616a1c37a908ead182e2fe5" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">tbb::flow::interface6::graph::~graph           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Destroys the graph. 
+<p>
+Calls wait_for_all on the graph, deletes all of the nodes appended by calls to add, and then destroys the root task of the graph. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="29b85506870f13a884a21655aec2a65d"></a><!-- doxytag: member="tbb::flow::interface6::graph::decrement_wait_count" ref="29b85506870f13a884a21655aec2a65d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::decrement_wait_count           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Deregisters an external entity that may have interacted with the graph. 
+<p>
+The graph will not return from wait_for_all until all the number of decrement_wait_count calls matches the number of increment_wait_count calls. 
+</div>
+</div><p>
+<a class="anchor" name="a993b789d1e488e0c3929135beae560e"></a><!-- doxytag: member="tbb::flow::interface6::graph::increment_wait_count" ref="a993b789d1e488e0c3929135beae560e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::increment_wait_count           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Used to register that an external entity may still interact with the graph. 
+<p>
+The graph will not return from wait_for_all until a matching number of decrement_wait_count calls is made. 
+</div>
+</div><p>
+<a class="anchor" name="c1145b00e063793a7e7bf994d202c7a0"></a><!-- doxytag: member="tbb::flow::interface6::graph::run" ref="c1145b00e063793a7e7bf994d202c7a0" args="(Body body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::run           </td>
+          <td>(</td>
+          <td class="paramtype">Body&nbsp;</td>
+          <td class="paramname"> <em>body</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Spawns a task that runs a function object. 
+<p>
+The task is spawned as a child of the graph. This is useful for running tasks that need to block a <a class="el" href="a00271.html#a66b0020f7514b86d030fa8aea073d37">wait_for_all()</a> on the graph. For example a one-off source. 
+</div>
+</div><p>
+<a class="anchor" name="50a7938df01b6148ab2c0696835f002e"></a><!-- doxytag: member="tbb::flow::interface6::graph::run" ref="50a7938df01b6148ab2c0696835f002e" args="(Receiver &amp;r, Body body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Receiver, typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::run           </td>
+          <td>(</td>
+          <td class="paramtype">Receiver &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Body&nbsp;</td>
+          <td class="paramname"> <em>body</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Spawns a task that runs a body and puts its output to a specific receiver. 
+<p>
+The task is spawned as a child of the graph. This is useful for running tasks that need to block a <a class="el" href="a00271.html#a66b0020f7514b86d030fa8aea073d37">wait_for_all()</a> on the graph. For example a one-off source. 
+</div>
+</div><p>
+<a class="anchor" name="a66b0020f7514b86d030fa8aea073d37"></a><!-- doxytag: member="tbb::flow::interface6::graph::wait_for_all" ref="a66b0020f7514b86d030fa8aea073d37" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::wait_for_all           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Waits until the graph is idle and the number of decrement_wait_count calls equals the number of increment_wait_count calls. 
+<p>
+The waiting thread will go off and steal work while it is block in the wait_for_all. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00480.html">memory_pool.h</a></ul>
+<li><a class="el" href="a00487.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.

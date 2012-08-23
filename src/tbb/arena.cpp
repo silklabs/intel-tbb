@@ -307,7 +307,7 @@ bool arena::is_out_of_work() {
                 return true;
             case SNAPSHOT_FULL: {
                 // Use unique id for "busy" in order to avoid ABA problems.
-                const pool_state_t busy = pool_state_t(this);
+                const pool_state_t busy = pool_state_t(&busy);
                 // Request permission to take snapshot
                 if( my_pool_state.compare_and_swap( busy, SNAPSHOT_FULL )==SNAPSHOT_FULL ) {
                     // Got permission. Take the snapshot.

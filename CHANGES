@@ -1,3 +1,22 @@
+TBB 4.0 Update 2 commercial-aligned release
+
+Changes (w.r.t. TBB 4.0 Update 1 commercial-aligned release):
+
+- concurrent_bounded_queue now has an abort() operation that releases 
+    threads involved in pending push or pop operations. The released 
+    threads will receive a tbb::user_abort exception.
+- Added Community Preview Feature:  concurrent_lru_cache container, 
+    a concurrent implementation of LRU (least-recently-used) cache.
+
+Bugs fixed:
+
+- fixed a race condition in the TBB scalable allocator.
+- concurrent_queue counter wraparound bug was fixed, which occurred when
+    the number of push and pop operations exceeded ~>4 billion on IA32.
+- fixed races in the TBB scheduler that could put workers asleep too
+    early, especially in presense of affinitized tasks.
+
+------------------------------------------------------------------------
 TBB 4.0 Update 1 commercial-aligned release
 
 Changes (w.r.t. TBB 4.0 commercial-aligned release):
@@ -10,33 +29,33 @@ TBB 4.0 commercial-aligned release
 
 Changes (w.r.t. TBB 3.0 Update 8 commercial-aligned release):
 
-- concurrent_priority_queue is now a supported feature. Capacity
-    control methods were removed.
-- Flow graph is now a supported feature of TBB,
-    rather than being a community preview feature.
+- concurrent_priority_queue is now a fully supported feature.
+    Capacity control methods were removed.
+- Flow graph is now a fully supported feature.
 - A new memory backend has been implemented in the TBB allocator.
-    It can return small memory blocks to the OS and thus later reuse
-    that memory for large object allocation.
+    It can reuse freed memory for both small and large objects, and
+    returns unused memory blocks to the OS more actively.
 - Improved partitioning algorithms for parallel_for and parallel_reduce
     to better handle load imbalance.
-- The convex_hull example has been refactored to produce reproducible
+- The convex_hull example has been refactored for reproducible
     performance results.
-- The Major Interface version has changed from 5 to 6. Deprecated interfaces
-    might be removed in future releases.
+- The major interface version has changed from 5 to 6.
+    Deprecated interfaces might be removed in future releases.
 
 Community Preview Features:
 
-- Added Community Preview Feature: serial subset of TBB for modeling
-    a sequential execution of a parallel algorithm. This release introduces
-    serial parallel_for.
-- Added Community Preview Feature: or_node (accepts multiple inputs,
-    forwarding each input separately to successors), split_node (accepts
-    tuples, and forwards each element to a corresponding successor),
-    and multioutput_function_node (accepts one input, and passes the input
+- Added: serial subset, i.e. sequential implementations of TBB generic
+    algorithms (currently, only provided for parallel_for).
+- Preview of new flow graph nodes:
+    or_node (accepts multiple inputs, forwards each input separately
+      to all successors),
+    split_node (accepts tuples, and forwards each element of a tuple
+      to a corresponding successor), and
+    multioutput_function_node (accepts one input, and passes the input
     and a tuple of output ports to the function body to support outputs
     to multiple successors).
-- Added Community Preview Feature: Scalable Memory Pools (more control on
-    memory source, grouping, collective deallocatation).
+- Added: memory pools for more control on memory source, grouping,
+    and collective deallocation.
 
 ------------------------------------------------------------------------
 TBB 3.0 Update 8 commercial-aligned release
@@ -60,12 +79,12 @@ Community Preview Features:
 
 - Graph community preview feature was renamed to flow graph.
     Multiple improvements in the implementation.
-    Binpack example of the feature was added.
+    Binpack example was added for the feature.
 - A number of improvements to concurrent_priority_queue.
     Shortpath example was added for the feature.
 - TBB runtime loaded functionality was added (Windows*-only).
-    This allows set exact versions of TBB library to be used in run-time,
-    while setting directories for the library search.
+    It allows to specify which versions of TBB should be used,
+    as well as to set directories for the library search.
 - parallel_deterministic_reduce template function was added.
 
 ------------------------------------------------------------------------
@@ -79,8 +98,8 @@ Changes (w.r.t. TBB 3.0 Update 6 commercial-aligned release):
 
 Community Preview Features:
 
-- Graph's dining_philosophers example added
-- A number of improvements to graph and concurrent_priority_queue
+- Graph's dining_philosophers example added.
+- A number of improvements to graph and concurrent_priority_queue.
 
 
 ------------------------------------------------------------------------

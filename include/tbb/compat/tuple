@@ -78,7 +78,7 @@ template<int N, class T>
 struct component<N, const T>
 {
     typedef typename T::tail_type next;
-    typedef typename component<N-1,next>::type type;
+    typedef const typename component<N-1,next>::type type;
 };
 
 template<class T>
@@ -95,12 +95,20 @@ template<class HT, class TT>
 inline static typename component<N, cons<HT,TT> >::type& get(cons<HT,TT>& ti) {
     return get_helper<N-1>::get(ti.tail);
 }
+template<class HT, class TT>
+inline static typename component<N, cons<HT,TT> >::type const& get(const cons<HT,TT>& ti) {
+    return get_helper<N-1>::get(ti.tail);
+}
 };
 
 template<>
 struct get_helper<0> {
 template<class HT, class TT>
 inline static typename component<0, cons<HT,TT> >::type& get(cons<HT,TT>& ti) {
+    return ti.head;
+}
+template<class HT, class TT>
+inline static typename component<0, cons<HT,TT> >::type const& get(const cons<HT,TT>& ti) {
     return ti.head;
 }
 };
@@ -299,6 +307,9 @@ public:
     template<int N>
     typename internal_tuple_element<N>::type& get() { return internal::get_helper<N>::get(*this); }
 
+    template<int N>
+    typename internal_tuple_element<N>::type const& get() const { return internal::get_helper<N>::get(*this); }
+
     template<class U1, class U2>
     tuple& operator=(const internal::cons<U1,U2>& other) {
         my_cons::operator=(other);
@@ -383,13 +394,13 @@ struct tuple_element {
     typedef typename internal::component<N, typename T::my_cons>::type type;
 };
 
-template<int N, class T>
-inline static typename tuple_element<N,T>::type& get(T &t) { return t.get<N>(); }
+template<int N, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9>
+inline static typename tuple_element<N,tuple<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9> >::type&
+    get(tuple<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>& t) { return t.get<N>(); }
 
-template<int N, class T>
-inline static typename tuple_element<N,T>::type const& get(T const &t) { return 
-    const_cast<typename tuple_element<N,T>::type const &>
-        (const_cast<T &>(t).get<N>()); }
+template<int N, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9>
+inline static typename tuple_element<N,tuple<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9> >::type const&
+    get(const tuple<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>& t) { return t.get<N>(); }
 
 }  // interface5
 } // tbb

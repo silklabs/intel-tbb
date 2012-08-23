@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::recursive_mutex Class Reference</title>
+<title>tbb::flow::interface6::queue_node&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,92 +21,95 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00383.html">tbb</a>::<a class="el" href="a00296.html">recursive_mutex</a></div>
-<h1>tbb::recursive_mutex Class Reference<br>
-<small>
-[<a class="el" href="a00398.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::recursive_mutex" -->Mutex that allows recursive mutex acquisition.  
+<a class="el" href="a00394.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00296.html">queue_node</a></div>
+<h1>tbb::flow::interface6::queue_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::queue_node" --><!-- doxytag: inherits="tbb::flow::interface6::buffer_node" -->Forwards messages in FIFO order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00560.html">recursive_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00487.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00103.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::queue_node&lt; T, A &gt;:
+<p><center><img src="a00296.png" usemap="#tbb::flow::interface6::queue_node< T, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::queue_node< T, A >_map">
+<area href="a00246.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="280,56,550,80">
+<area href="a00272.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,270,24">
+<area href="a00304.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="280,0,550,24">
+<area href="a00310.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="560,0,830,24">
+<area href="a00311.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="280,168,550,192">
+</map>
+<a href="a00067.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="889fa8cc32dd707eef7c0f52dda09c0d"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="889fa8cc32dd707eef7c0f52dda09c0d" args="" -->
-typedef LPCRITICAL_SECTION&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#889fa8cc32dd707eef7c0f52dda09c0d">native_handle_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1e71030845210b6c4c7380eb9e11a2ac"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::input_type" ref="1e71030845210b6c4c7380eb9e11a2ac" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#1e71030845210b6c4c7380eb9e11a2ac">input_type</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return native_handle. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="26a40fae42bf6cd9f3f77ee7482d6164"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="26a40fae42bf6cd9f3f77ee7482d6164" args="" -->
-typedef pthread_mutex_t *&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="25b5a53ab1f9a342644fa3759bc0b1ad"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::output_type" ref="25b5a53ab1f9a342644fa3759bc0b1ad" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#25b5a53ab1f9a342644fa3759bc0b1ad">output_type</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5e2fdd33c45d44549dee9c1638e19898"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::predecessor_type" ref="5e2fdd33c45d44549dee9c1638e19898" args="" -->
+typedef <a class="el" href="a00310.html">sender</a>&lt; <a class="el" href="a00296.html#1e71030845210b6c4c7380eb9e11a2ac">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#5e2fdd33c45d44549dee9c1638e19898">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f35076a19f256f9e7a61bed77ca1ccc5"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::successor_type" ref="f35076a19f256f9e7a61bed77ca1ccc5" args="" -->
+typedef <a class="el" href="a00304.html">receiver</a>&lt; <a class="el" href="a00296.html#25b5a53ab1f9a342644fa3759bc0b1ad">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#f35076a19f256f9e7a61bed77ca1ccc5">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d2fceb7f95c24a8cd1457d4527e4b8c6"></a><!-- doxytag: member="tbb::recursive_mutex::recursive_mutex" ref="d2fceb7f95c24a8cd1457d4527e4b8c6" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#d2fceb7f95c24a8cd1457d4527e4b8c6">recursive_mutex</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c716593a92448b0f429d1f3a38e67996"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_node" ref="c716593a92448b0f429d1f3a38e67996" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#c716593a92448b0f429d1f3a38e67996">queue_node</a> (<a class="el" href="a00271.html">graph</a> &amp;g)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired <a class="el" href="a00296.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4c342c69d47f4bb0b393535dee4015d6"></a><!-- doxytag: member="tbb::recursive_mutex::lock" ref="4c342c69d47f4bb0b393535dee4015d6" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#4c342c69d47f4bb0b393535dee4015d6">lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0226762d9ebba28311b7b1518d948ab1"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_node" ref="0226762d9ebba28311b7b1518d948ab1" args="(const queue_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#0226762d9ebba28311b7b1518d948ab1">queue_node</a> (const <a class="el" href="a00296.html">queue_node</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#86e719b0afee25704af11ab97694d240">try_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a84ab6bb43d056468ac5df3626219513"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::size_type" ref="a84ab6bb43d056468ac5df3626219513" args="" -->
+typedef <a class="el" href="a00246.html">buffer_node</a>&lt; T, A <br>
+&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#86e719b0afee25704af11ab97694d240"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0a96e26b7f074588dc31e32524856ae"></a><!-- doxytag: member="tbb::recursive_mutex::unlock" ref="f0a96e26b7f074588dc31e32524856ae" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#f0a96e26b7f074588dc31e32524856ae">unlock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="63c3b0a76cd7964dec2f3d54afbb05f3"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_operation" ref="63c3b0a76cd7964dec2f3d54afbb05f3" args="" -->
+typedef <a class="el" href="a00246.html">buffer_node</a>&lt; T, A <br>
+&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>queue_operation</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6baa9ce4b394c39622456fd8a68f8bd8"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle" ref="6baa9ce4b394c39622456fd8a68f8bd8" args="()" -->
-<a class="el" href="a00296.html#889fa8cc32dd707eef7c0f52dda09c0d">native_handle_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab979763449c8716cdd38fda58e607551f1"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::WAIT" ref="b748e310297e1e3f88952a2a9876bab979763449c8716cdd38fda58e607551f1" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
 
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="718cc53f6b33d8c396ccca0e4ebc5606"></a><!-- doxytag: member="tbb::recursive_mutex::is_rw_mutex" ref="718cc53f6b33d8c396ccca0e4ebc5606" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab923e845160e46a20fb8550132f04e94aa"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::SUCCEEDED" ref="b748e310297e1e3f88952a2a9876bab923e845160e46a20fb8550132f04e94aa" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6149d7541063d8b35afd98df6f0f89d"></a><!-- doxytag: member="tbb::recursive_mutex::is_recursive_mutex" ref="f6149d7541063d8b35afd98df6f0f89d" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = true</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab9ad699b139814d0746be2266041081474"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::FAILED" ref="b748e310297e1e3f88952a2a9876bab9ad699b139814d0746be2266041081474" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f01aacad6b9b9d51573c0803323182fe"></a><!-- doxytag: member="tbb::recursive_mutex::is_fair_mutex" ref="f01aacad6b9b9d51573c0803323182fe" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
 
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a36f15b770a1bb0b56e33d7fa75ebd1a"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock" ref="a36f15b770a1bb0b56e33d7fa75ebd1a" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eadcbbb81f9a9d223afabe0f40e77ecb"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_forward" ref="eadcbbb81f9a9d223afabe0f40e77ecb" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00296.html#eadcbbb81f9a9d223afabe0f40e77ecb">internal_forward</a> (queue_operation *op)</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00297.html">scoped_lock</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cfd2350a4c9d14486a8a9285acb9ca49"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_pop" ref="cfd2350a4c9d14486a8a9285acb9ca49" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (queue_operation *op)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00297.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bf478ff2ae265ec859928191e2f7dbe3"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_reserve" ref="bf478ff2ae265ec859928191e2f7dbe3" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (queue_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d67eee760d9fd829064927e7fe1b54fb"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_consume" ref="d67eee760d9fd829064927e7fe1b54fb" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (queue_operation *op)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Mutex that allows recursive mutex acquisition. 
-<p>
-Mutex that allows recursive mutex acquisition. 
-<p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="86e719b0afee25704af11ab97694d240"></a><!-- doxytag: member="tbb::recursive_mutex::try_lock" ref="86e719b0afee25704af11ab97694d240" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool tbb::recursive_mutex::try_lock           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
+<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface6::queue_node&lt; T, A &gt;</h3>
 
+Forwards messages in FIFO order. 
 <p>
-Try acquiring lock (non-blocking). 
-<p>
-Return true if lock acquired; false otherwise. 
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00560.html">recursive_mutex.h</a></ul>
+<li><a class="el" href="a00487.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.

@@ -100,6 +100,7 @@ __TBB_SYMBOL( ?what@bad_last_alloc@tbb@@UEBAPEBDXZ )
 __TBB_SYMBOL( ?what@missing_wait@tbb@@UEBAPEBDXZ )
 __TBB_SYMBOL( ?what@invalid_multiple_scheduling@tbb@@UEBAPEBDXZ )
 __TBB_SYMBOL( ?what@improper_lock@tbb@@UEBAPEBDXZ )
+__TBB_SYMBOL( ?what@user_abort@tbb@@UEBAPEBDXZ )
 
 // tbb_misc.cpp
 __TBB_SYMBOL( ?assertion_failure@tbb@@YAXPEBDH00@Z )
@@ -237,6 +238,7 @@ __TBB_SYMBOL( ?internal_push@concurrent_queue_base_v3@internal@tbb@@IEAAXPEBX@Z 
 __TBB_SYMBOL( ?internal_push_if_not_full@concurrent_queue_base_v3@internal@tbb@@IEAA_NPEBX@Z )
 __TBB_SYMBOL( ?internal_pop@concurrent_queue_base_v3@internal@tbb@@IEAAXPEAX@Z )
 __TBB_SYMBOL( ?internal_pop_if_present@concurrent_queue_base_v3@internal@tbb@@IEAA_NPEAX@Z )
+__TBB_SYMBOL( ?internal_abort@concurrent_queue_base_v3@internal@tbb@@IEAAXXZ )
 __TBB_SYMBOL( ?internal_size@concurrent_queue_base_v3@internal@tbb@@IEBA_JXZ )
 __TBB_SYMBOL( ?internal_empty@concurrent_queue_base_v3@internal@tbb@@IEBA_NXZ )
 __TBB_SYMBOL( ?internal_finish_clear@concurrent_queue_base_v3@internal@tbb@@IEAAXXZ )

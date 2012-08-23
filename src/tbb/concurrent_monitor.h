@@ -32,6 +32,7 @@
 #include "tbb/tbb_stddef.h"
 #include "tbb/atomic.h"
 #include "tbb/spin_mutex.h"
+#include "tbb/tbb_exception.h"
 
 #include "semaphore.h"
 
@@ -100,8 +101,6 @@ typedef circular_doubly_linked_list_with_sentinel waitset_t;
 typedef circular_doubly_linked_list_with_sentinel dllist_t;
 typedef circular_doubly_linked_list_with_sentinel::node_t waitset_node_t;
 
-class concurrent_monitor;
-
 //! concurrent_monitor
 /** fine-grained concurrent_monitor implementation */
 class concurrent_monitor : no_copy {
@@ -110,18 +109,22 @@ public:
     class thread_context : waitset_node_t, no_copy {
         friend class concurrent_monitor;
     public:
-        thread_context() : spurious(false), context(NULL) {epoch = 0; in_waitset = false;}
+        thread_context() : spurious(false), aborted(false), context(NULL) {epoch = 0; in_waitset = false;}
         ~thread_context() { if( spurious ) sema.P(); }
     private:
         binary_semaphore   sema;
         __TBB_atomic unsigned epoch;
         tbb::atomic<bool>     in_waitset;
         bool         spurious;
+        bool aborted;
         void*        context;
     };
 
     //! ctor
     concurrent_monitor() {__TBB_store_relaxed(epoch, 0);}
+
+    //! dtor
+    ~concurrent_monitor() ; 
 
     //! prepare wait by inserting 'thr' into the wailt queue
     void prepare_wait( thread_context& thr, void* ctx = 0 );
@@ -134,6 +137,8 @@ public:
         if( do_it ) {
             thr.sema.P();
             __TBB_ASSERT( !thr.in_waitset, "still in the queue?" );
+            if( thr.aborted )
+                throw_exception( eid_user_abort );
         } else {
             cancel_wait( thr );
         }
@@ -141,6 +146,10 @@ public:
     }
     //! Cancel the wait. Removes the thread from the wait queue if not removed yet.
     void cancel_wait( thread_context& thr );
+
+    //! Wait for a condition to be satisfied with waiting-on context
+    template<typename WaitUntil, typename Context>
+    void wait( WaitUntil until, Context on );
 
     //! Notify one thread about the event
     void notify_one() {atomic_fence(); notify_one_relaxed();}
@@ -160,12 +169,34 @@ public:
     //! Notify waiting threads of the event that satisfies the given predicate; Relaxed version
     template<typename P> void notify_relaxed( const P& predicate );
 
+    //! Abort any sleeping threads at the time of the call
+    void abort_all() {atomic_fence(); abort_all_relaxed(); }
+ 
+    //! Abort any sleeping threads at the time of the call; Relaxed version
+    void abort_all_relaxed();
+
 private:
     tbb::spin_mutex mutex_ec;
     waitset_t       waitset_ec;
     __TBB_atomic unsigned epoch;
     thread_context* to_thread_context( waitset_node_t* n ) { return static_cast<thread_context*>(n); }
 };
+
+template<typename WaitUntil, typename Context>
+void concurrent_monitor::wait( WaitUntil until, Context on )
+{
+    bool slept = false;
+    thread_context thr_ctx;
+    prepare_wait( thr_ctx, on() );
+    while( !until() ) {
+        if( (slept = commit_wait( thr_ctx ) )==true )
+            if( until() ) break;
+        slept = false;
+        prepare_wait( thr_ctx, on() );
+    }
+    if( !slept )
+        cancel_wait( thr_ctx );
+}
 
 template<typename P>
 void concurrent_monitor::notify_relaxed( const P& predicate ) {

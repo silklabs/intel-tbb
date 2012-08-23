@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::tbb_allocator&lt; T &gt; Class Template Reference</title>
+<title>tbb::spin_rw_mutex_v3::scoped_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,104 +21,123 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00383.html">tbb</a>::<a class="el" href="a00317.html">tbb_allocator</a></div>
-<h1>tbb::tbb_allocator&lt; T &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00397.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::tbb_allocator" -->Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5.  
+<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00316.html">spin_rw_mutex_v3</a>::<a class="el" href="a00317.html">scoped_lock</a></div>
+<h1>tbb::spin_rw_mutex_v3::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::spin_rw_mutex_v3::scoped_lock" -->The scoped locking pattern.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00588.html">tbb_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00585.html">spin_rw_mutex.h</a>&gt;</code>
 <p>
-<a href="a00130.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00121.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3cdd9619bc0a802763e7823068f83a4c"></a><!-- doxytag: member="tbb::tbb_allocator::value_type" ref="3cdd9619bc0a802763e7823068f83a4c" args="" -->
-typedef internal::allocator_type&lt;<br>
- T &gt;::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f979d0e74d7c6e5aeb0d26408776a9e1"></a><!-- doxytag: member="tbb::tbb_allocator::pointer" ref="f979d0e74d7c6e5aeb0d26408776a9e1" args="" -->
-typedef value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1622504886ef265016a5821d61bf7adc"></a><!-- doxytag: member="tbb::tbb_allocator::const_pointer" ref="1622504886ef265016a5821d61bf7adc" args="" -->
-typedef const value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b8e58d23c5c98fd65d4432c1e324f4c0"></a><!-- doxytag: member="tbb::tbb_allocator::reference" ref="b8e58d23c5c98fd65d4432c1e324f4c0" args="" -->
-typedef value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="532f36f99650b1c26a2b8899383c5411"></a><!-- doxytag: member="tbb::tbb_allocator::const_reference" ref="532f36f99650b1c26a2b8899383c5411" args="" -->
-typedef const value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="639df0fb169cfcb94ba1b12429b736f4"></a><!-- doxytag: member="tbb::tbb_allocator::size_type" ref="639df0fb169cfcb94ba1b12429b736f4" args="" -->
-typedef size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="54828b5d0b937d608f76650a5df0e39f"></a><!-- doxytag: member="tbb::tbb_allocator::difference_type" ref="54828b5d0b937d608f76650a5df0e39f" args="" -->
-typedef ptrdiff_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>difference_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09a7f81fb2c3055aaecf058b11538544d524c717485b74aa552fb45b45562cb5"></a><!-- doxytag: member="tbb::tbb_allocator::scalable" ref="09a7f81fb2c3055aaecf058b11538544d524c717485b74aa552fb45b45562cb5" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scalable</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09a7f81fb2c3055aaecf058b11538544e108c3168e3be5de1d98e74723136fbf"></a><!-- doxytag: member="tbb::tbb_allocator::standard" ref="09a7f81fb2c3055aaecf058b11538544e108c3168e3be5de1d98e74723136fbf" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>standard</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#09a7f81fb2c3055aaecf058b11538544">malloc_type</a> { <b>scalable</b>, 
-<b>standard</b>
- }</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Specifies current allocator. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d85cd071047b52eeb207d458d54098cc"></a><!-- doxytag: member="tbb::tbb_allocator::tbb_allocator" ref="d85cd071047b52eeb207d458d54098cc" args="(const tbb_allocator &amp;)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>tbb_allocator</b> (const <a class="el" href="a00317.html">tbb_allocator</a> &amp;)  throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#d6ea60dee5563f702379bf5e51aa8806">scoped_lock</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5c3cb04a50d15d38f4c66ca3e5d2f6af"></a><!-- doxytag: member="tbb::tbb_allocator::tbb_allocator" ref="5c3cb04a50d15d38f4c66ca3e5d2f6af" args="(const tbb_allocator&lt; U &gt; &amp;)" -->
-template&lt;typename U&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>tbb_allocator</b> (const <a class="el" href="a00317.html">tbb_allocator</a>&lt; U &gt; &amp;)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct lock that has not acquired a mutex.  <a href="#d6ea60dee5563f702379bf5e51aa8806"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="42a92d4f8fdde425b111cfa8a9228071"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock" ref="42a92d4f8fdde425b111cfa8a9228071" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#42a92d4f8fdde425b111cfa8a9228071">scoped_lock</a> (<a class="el" href="a00316.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="08d3822344271d0a1c2e64e8c9c16b58"></a><!-- doxytag: member="tbb::tbb_allocator::address" ref="08d3822344271d0a1c2e64e8c9c16b58" args="(reference x) const " -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d7eaaa3f2e2c5dc11e7005811b1bdd04"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::~scoped_lock" ref="d7eaaa3f2e2c5dc11e7005811b1bdd04" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#d7eaaa3f2e2c5dc11e7005811b1bdd04">~scoped_lock</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2b388f25858f783d995d61506de24656"></a><!-- doxytag: member="tbb::tbb_allocator::address" ref="2b388f25858f783d995d61506de24656" args="(const_reference x) const " -->
-const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (const_reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock (if lock is held). <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b0b646ec5be02a127d159bbb7ca65353"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::acquire" ref="b0b646ec5be02a127d159bbb7ca65353" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#b0b646ec5be02a127d159bbb7ca65353">acquire</a> (<a class="el" href="a00316.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6cb487b1bdce0b581f265a77dca6d53"></a><!-- doxytag: member="tbb::tbb_allocator::allocate" ref="f6cb487b1bdce0b581f265a77dca6d53" args="(size_type n, const void *=0)" -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#f6cb487b1bdce0b581f265a77dca6d53">allocate</a> (size_type n, const void *=0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#3f0b1e3f2efab63336400348bd070226">upgrade_to_writer</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allocate space for n objects. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdd011fdf2f9ad07006dc7c0a7ec1da2"></a><!-- doxytag: member="tbb::tbb_allocator::deallocate" ref="fdd011fdf2f9ad07006dc7c0a7ec1da2" args="(pointer p, size_type)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#fdd011fdf2f9ad07006dc7c0a7ec1da2">deallocate</a> (pointer p, size_type)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Upgrade reader to become a writer.  <a href="#3f0b1e3f2efab63336400348bd070226"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="61b14d00a78185c9b2d206ebfc379124"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::release" ref="61b14d00a78185c9b2d206ebfc379124" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#61b14d00a78185c9b2d206ebfc379124">release</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Free previously allocated block of memory. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f059ca2c96243024f0d562ee3a87a3a5"></a><!-- doxytag: member="tbb::tbb_allocator::max_size" ref="f059ca2c96243024f0d562ee3a87a3a5" args="() const " -->
-size_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#f059ca2c96243024f0d562ee3a87a3a5">max_size</a> () const   throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c2c2c38a08cb9080e87099fac3e5bc94"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::downgrade_to_reader" ref="c2c2c38a08cb9080e87099fac3e5bc94" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#c2c2c38a08cb9080e87099fac3e5bc94">downgrade_to_reader</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Largest value for which method allocate might succeed. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ab228ab9e324ed041c2226e1d717df5f"></a><!-- doxytag: member="tbb::tbb_allocator::construct" ref="ab228ab9e324ed041c2226e1d717df5f" args="(pointer p, const value_type &amp;value)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#ab228ab9e324ed041c2226e1d717df5f">construct</a> (pointer p, const value_type &amp;value)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Downgrade writer to become a reader. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9879626968d9b9a04cd2ec0fb2e84ae1"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::try_acquire" ref="9879626968d9b9a04cd2ec0fb2e84ae1" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#9879626968d9b9a04cd2ec0fb2e84ae1">try_acquire</a> (<a class="el" href="a00316.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy-construct value at location pointed to by p. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ef133522bf55f05a605bee0763208281"></a><!-- doxytag: member="tbb::tbb_allocator::destroy" ref="ef133522bf55f05a605bee0763208281" args="(pointer p)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#ef133522bf55f05a605bee0763208281">destroy</a> (pointer p)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquire lock on given mutex. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d96d1a1fcc3d79ef3e5c06a53b8ffeaa"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::mutex" ref="d96d1a1fcc3d79ef3e5c06a53b8ffeaa" args="" -->
+<a class="el" href="a00316.html">spin_rw_mutex</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#d96d1a1fcc3d79ef3e5c06a53b8ffeaa">mutex</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy value at location pointed to by p. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="78701e7454ef8e1a25b5acd364367080"></a><!-- doxytag: member="tbb::tbb_allocator::allocator_type" ref="78701e7454ef8e1a25b5acd364367080" args="()" -->
-static <a class="el" href="a00317.html#09a7f81fb2c3055aaecf058b11538544">malloc_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#78701e7454ef8e1a25b5acd364367080">allocator_type</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The pointer to the current mutex that is held, or NULL if no mutex is held. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00317.html#6b5a7c3c67a36b05c4df8410d32627d8">is_writer</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns current allocator. <br></td></tr>
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If mutex!=NULL, then is_writer is true if holding a writer lock, false if holding a reader lock.  <a href="#6b5a7c3c67a36b05c4df8410d32627d8"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::tbb_allocator&lt; T &gt;</h3>
+The scoped locking pattern. 
+<p>
+It helps to avoid the common problem of forgetting to release lock. It also nicely provides the "node" for queuing locks. 
+<p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="d6ea60dee5563f702379bf5e51aa8806"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock" ref="d6ea60dee5563f702379bf5e51aa8806" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
 
-Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5. 
 <p>
-The class selects the best memory allocation mechanism available from scalable_malloc and standard malloc. The members are ordered the same way they are in section 20.4.1 of the ISO C++ standard. 
+Construct lock that has not acquired a mutex. 
 <p>
+Equivalent to zero-initialization of *this. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="3f0b1e3f2efab63336400348bd070226"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::upgrade_to_writer" ref="3f0b1e3f2efab63336400348bd070226" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::spin_rw_mutex_v3::scoped_lock::upgrade_to_writer           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Upgrade reader to become a writer. 
+<p>
+Returns true if the upgrade happened without re-acquiring the lock and false if opposite 
+</div>
+</div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="6b5a7c3c67a36b05c4df8410d32627d8"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::is_writer" ref="6b5a7c3c67a36b05c4df8410d32627d8" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00317.html#6b5a7c3c67a36b05c4df8410d32627d8">tbb::spin_rw_mutex_v3::scoped_lock::is_writer</a><code> [protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+If mutex!=NULL, then is_writer is true if holding a writer lock, false if holding a reader lock. 
+<p>
+Not defined if not holding a lock. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00588.html">tbb_allocator.h</a></ul>
+<li><a class="el" href="a00585.html">spin_rw_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.

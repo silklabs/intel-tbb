@@ -373,8 +373,17 @@ void concurrent_queue_base_v3::internal_push( const void* src ) {
             bool slept = false;
             r.slots_avail.prepare_wait( thr_ctx, (void*) ((ptrdiff_t)(k-e)) );
             while( (ptrdiff_t)(k-r.head_counter)>=const_cast<volatile ptrdiff_t&>(e = my_capacity) ) {
-                if( (slept = r.slots_avail.commit_wait( thr_ctx ) )==true )
-                    break;
+                __TBB_TRY {
+                    slept = r.slots_avail.commit_wait( thr_ctx );
+                } __TBB_CATCH( tbb::user_abort& ) {
+                    // invalidate element
+                    ++r.n_invalid_entries;
+                    r.choose(k).make_invalid(k);
+                    //__TBB_RETHROW();
+                } __TBB_CATCH(...) {
+                    __TBB_RETHROW();
+                }
+                if (slept == true) break;
                 r.slots_avail.prepare_wait( thr_ctx, (void*) ((ptrdiff_t)(k-e)) );
             }
             if( !slept )
@@ -398,7 +407,7 @@ void concurrent_queue_base_v3::internal_pop( void* dst ) {
 #endif
     do {
         k=r.head_counter++;
-        while( r.tail_counter<=k ) {
+        while( (ptrdiff_t)(r.tail_counter-k)<=0 ) {
 #if DO_ITT_NOTIFY
             if( !sync_prepare_done ) {
                 ITT_NOTIFY( sync_prepare, dst );
@@ -409,9 +418,16 @@ void concurrent_queue_base_v3::internal_pop( void* dst ) {
             if( !backoff.bounded_pause() ) {
                 bool slept = false;
                 r.items_avail.prepare_wait( thr_ctx, (void*)k );
-                while( r.tail_counter<=k ) {
-                    if( (slept = r.items_avail.commit_wait( thr_ctx ) )==true )
-                        break;
+                while( (ptrdiff_t)(r.tail_counter-k)<=0 ) {
+                    __TBB_TRY {
+                        slept = r.items_avail.commit_wait( thr_ctx );
+                    } __TBB_CATCH( tbb::user_abort& ) {
+                        r.head_counter--;
+                        __TBB_RETHROW();
+                    } __TBB_CATCH(...) {
+                        __TBB_RETHROW();
+                    }
+                    if (slept == true) break;
                     r.items_avail.prepare_wait( thr_ctx, (void*)k );
                 }
                 if( !slept )
@@ -425,13 +441,19 @@ void concurrent_queue_base_v3::internal_pop( void* dst ) {
     r.slots_avail.notify( predicate_leq(k) );
 }
 
+void concurrent_queue_base_v3::internal_abort() {
+    concurrent_queue_rep& r = *my_rep;
+    r.items_avail.abort_all();
+    r.slots_avail.abort_all();
+}
+
 bool concurrent_queue_base_v3::internal_pop_if_present( void* dst ) {
     concurrent_queue_rep& r = *my_rep;
     ticket k;
     do {
         k = r.head_counter;
         for(;;) {
-            if( r.tail_counter<=k ) {
+            if( (ptrdiff_t)(r.tail_counter-k)<=0 ) {
                 // Queue is empty 
                 return false;
             }

@@ -245,7 +245,7 @@ void micro_queue<T>::push( const void* item, ticket k, concurrent_queue_base_v3<
 
     if( tail_counter!=k ) spin_wait_until_my_turn( tail_counter, k, *base.my_rep );
     call_itt_notify(acquired, &tail_counter);
-        
+
     if( p ) {
         spin_mutex::scoped_lock lock( page_mutex );
         page* q = tail_page;
@@ -304,7 +304,7 @@ micro_queue<T>& micro_queue<T>::assign( const micro_queue<T>& src, concurrent_qu
     if( is_valid_page(srcp) ) {
         ticket g_index = head_counter;
         __TBB_TRY {
-            size_t n_items  = (tail_counter-head_counter)/concurrent_queue_rep_base::n_queue;
+            size_t n_items = (tail_counter-head_counter)/concurrent_queue_rep_base::n_queue;
             size_t index = head_counter/concurrent_queue_rep_base::n_queue & (base.my_rep->items_per_page-1);
             size_t end_in_first_page = (index+n_items<base.my_rep->items_per_page)?(index+n_items):base.my_rep->items_per_page;
 
@@ -526,7 +526,7 @@ bool concurrent_queue_base_v3<T>::internal_try_pop( void* dst ) {
     do {
         k = r.head_counter;
         for(;;) {
-            if( r.tail_counter<=k ) {
+            if( (ptrdiff_t)(r.tail_counter-k)<=0 ) {
                 // Queue is empty 
                 return false;
             }
@@ -863,6 +863,9 @@ protected:
 
     //! Dequeue item from head of queue
     void __TBB_EXPORTED_METHOD internal_pop( void* dst );
+
+    //! Abort all pending queue operations
+    void __TBB_EXPORTED_METHOD internal_abort();
 
     //! Attempt to enqueue item onto queue.
     bool __TBB_EXPORTED_METHOD internal_push_if_not_full( const void* src );

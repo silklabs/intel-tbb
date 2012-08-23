@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::null_mutex::scoped_lock Class Reference</title>
+<title>tbb::interface6::memory_pool&lt; Alloc &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,33 +21,32 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00383.html">tbb</a>::<a class="el" href="a00277.html">null_mutex</a>::<a class="el" href="a00278.html">scoped_lock</a></div>
-<h1>tbb::null_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_mutex::scoped_lock" -->Represents acquisition of a mutex.  
+<a class="el" href="a00394.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00278.html">memory_pool</a></div>
+<h1>tbb::interface6::memory_pool&lt; Alloc &gt; Class Template Reference</h1><!-- doxytag: class="tbb::interface6::memory_pool" -->Thread-safe growable pool allocator for variable-size requests.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00489.html">null_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00499.html">memory_pool.h</a>&gt;</code>
 <p>
-<a href="a00077.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00079.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="765e64065919fdd9665e78b5ec4d3c6f"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::scoped_lock" ref="765e64065919fdd9665e78b5ec4d3c6f" args="(null_mutex &amp;)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00277.html">null_mutex</a> &amp;)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2822528265718a4c779591fc37c02ca8"></a><!-- doxytag: member="tbb::interface6::memory_pool::memory_pool" ref="2822528265718a4c779591fc37c02ca8" args="(const Alloc &amp;src=Alloc())" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00278.html#2822528265718a4c779591fc37c02ca8">memory_pool</a> (const Alloc &amp;src=Alloc())</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6889f00ca3946906e89e856988bb890"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::acquire" ref="f6889f00ca3946906e89e856988bb890" args="(null_mutex &amp;)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00277.html">null_mutex</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">construct pool with underlying allocator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdad7c4ed08332ec384491a71b721957"></a><!-- doxytag: member="tbb::interface6::memory_pool::~memory_pool" ref="fdad7c4ed08332ec384491a71b721957" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00278.html#fdad7c4ed08332ec384491a71b721957">~memory_pool</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90eb562a9de52b33362a6fe237b3df42"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::try_acquire" ref="90eb562a9de52b33362a6fe237b3df42" args="(null_mutex &amp;)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00277.html">null_mutex</a> &amp;)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b29fdf07b4c295850a6e433001c2c6a7"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::release" ref="b29fdf07b4c295850a6e433001c2c6a7" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destroy pool <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Represents acquisition of a mutex. 
+<h3>template&lt;typename Alloc&gt;<br>
+ class tbb::interface6::memory_pool&lt; Alloc &gt;</h3>
+
+Thread-safe growable pool allocator for variable-size requests. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00489.html">null_mutex.h</a></ul>
+<li><a class="el" href="a00499.html">memory_pool.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.

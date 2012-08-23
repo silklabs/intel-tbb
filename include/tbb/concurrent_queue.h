@@ -269,6 +269,13 @@ public:
         internal_pop( &destination );
     }
 
+#if TBB_USE_EXCEPTIONS
+    //! Abort all pending queue operations
+    void abort() {
+        internal_abort();
+    }
+#endif
+
     //! Enqueue an item at tail of queue if queue is not already full.
     /** Does not wait for queue to become not full.
         Returns true if item is pushed; false if queue was already full. */

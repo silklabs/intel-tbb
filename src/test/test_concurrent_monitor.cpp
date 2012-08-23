@@ -58,9 +58,9 @@ public:
         void Initialize() { mutex = NULL; }
     public:
         ScopedLock() {Initialize();}
-        ScopedLock( QueuingMutex& m ) { Initialize(); Acquire(m); }
+        ScopedLock( QueuingMutex& m, size_t test_mode ) { Initialize(); Acquire(m,test_mode); }
         ~ScopedLock() { if( mutex ) Release(); }
-        void Acquire( QueuingMutex& m );
+        void Acquire( QueuingMutex& m, size_t test_mode );
         void Release();
         void SleepPerhaps();
 
@@ -84,8 +84,20 @@ struct PredicateEq {
     bool operator() ( void* v ) const {return p==v;}
 };
 
+struct QueuingMutex_Context {
+    const QueuingMutex::ScopedLock* lck;
+    QueuingMutex_Context( QueuingMutex::ScopedLock* l_ ) : lck(l_) {}
+    void* operator()() { return (void*)lck; }
+};
+
+struct QueuingMutex_Until : NoAssign {
+    uintptr_t& flag;
+    QueuingMutex_Until( uintptr_t& f_ ) : flag(f_) {}
+    bool operator()() { return flag!=0ul; }
+};
+
 //! A method to acquire QueuingMutex lock
-void QueuingMutex::ScopedLock::Acquire( QueuingMutex& m )
+void QueuingMutex::ScopedLock::Acquire( QueuingMutex& m, size_t test_mode )
 {
     // Must set all fields before the fetch_and_store, because once the
     // fetch_and_store executes, *this becomes accessible to other threads.
@@ -106,7 +118,20 @@ void QueuingMutex::ScopedLock::Acquire( QueuingMutex& m )
             if( going!=0ul ) break;
             __TBB_Yield();
         }
-        SleepPerhaps();
+        int x = int( test_mode%3 );
+        switch( x ) {
+        case 0:
+            mutex->waitq.wait( QueuingMutex_Until(going), QueuingMutex_Context(this) );
+            break;
+#if __TBB_LAMBDAS_PRESENT
+        case 1:
+            mutex->waitq.wait( [&](){ return going!=0ul; }, [=]() { return (void*)this; } );
+            break;
+#endif
+        default:
+            SleepPerhaps();
+            break;
+        }
     }
 
     // Acquire critical section indirectly from previous owner or directly from predecessor.
@@ -157,9 +182,9 @@ public:
         void Initialize() { mutex = NULL; }
     public:
         ScopedLock() {Initialize();}
-        ScopedLock( SpinMutex& m ) { Initialize(); Acquire(m); }
+        ScopedLock( SpinMutex& m, size_t test_mode ) { Initialize(); Acquire(m,test_mode); }
         ~ScopedLock() { if( mutex ) Release(); }
-        void Acquire( SpinMutex& m );
+        void Acquire( SpinMutex& m, size_t test_mode );
         void Release();
         void SleepPerhaps();
 
@@ -169,19 +194,45 @@ public:
     };
 
     friend class ScopedLock;
+    friend struct SpinMutex_Until;
 private:
     tbb::atomic<unsigned> flag;
     bool toggle;
     internal::concurrent_monitor waitq;
 };
 
+struct SpinMutex_Context {
+    const SpinMutex::ScopedLock* lck;
+    SpinMutex_Context( SpinMutex::ScopedLock* l_ ) : lck(l_) {}
+    void* operator()() { return (void*)lck; }
+};
+
+struct SpinMutex_Until {
+    const SpinMutex* mtx;
+    SpinMutex_Until( SpinMutex* m_ ) : mtx(m_) {}
+    bool operator()() { return mtx->flag==0; }
+};
+
 //! A method to acquire SpinMutex lock
-void SpinMutex::ScopedLock::Acquire( SpinMutex& m )
+void SpinMutex::ScopedLock::Acquire( SpinMutex& m, size_t test_mode )
 {
     mutex = &m;
 retry:
     if( m.flag.compare_and_swap( 1, 0 )!=0 ) {
-        SleepPerhaps();
+        int x = int( test_mode%3 );
+        switch( x ) {
+        case 0:
+            mutex->waitq.wait( SpinMutex_Until(mutex), SpinMutex_Context(this) );
+            break;
+#if __TBB_LAMBDAS_PRESENT
+        case 1:
+            mutex->waitq.wait( [&](){ return mutex->flag==0; }, [=]() { return (void*)this; } );
+            break;
+#endif
+        default:
+            SleepPerhaps();
+            break;
+        }
         goto retry;
     }
 }
@@ -228,7 +279,7 @@ struct AddOne: NoAssign {
     /** Increments counter once for each iteration in the iteration space. */
     void operator()( tbb::blocked_range<size_t>& range ) const {
         for( size_t i=range.begin(); i!=range.end(); ++i ) {
-            typename C::mutex_type::ScopedLock lock(counter.mutex);
+            typename C::mutex_type::ScopedLock lock(counter.mutex, i);
             counter.value = counter.value+1;
             if( D>0 )
                 for( int j=0; j<D; ++j ) __TBB_Yield();
@@ -249,6 +300,60 @@ void Test( int p ) {
         REPORT("ERROR : counter.value=%ld (instead of %ld)\n",counter.value,n);
 }
 
+#if TBB_USE_EXCEPTIONS
+#define NTHRS_USED_IN_DESTRUCTOR_TEST 8
+
+atomic<size_t> n_sleepers;
+
+struct AllButOneSleep : NoAssign {
+    internal::concurrent_monitor*& mon;
+    static const size_t VLN = 1024*1024;
+    //void operator()( tbb::blocked_range<size_t>& range ) const {
+    void operator()( int i ) const {
+        internal::concurrent_monitor::thread_context thr_ctx;
+
+        if( i==0 ) {
+            size_t n_expected_sleepers = NTHRS_USED_IN_DESTRUCTOR_TEST-1;
+            while( n_sleepers<n_expected_sleepers )
+                __TBB_Yield();
+            while( n_sleepers.compare_and_swap( VLN+NTHRS_USED_IN_DESTRUCTOR_TEST, n_expected_sleepers )!=n_expected_sleepers )
+                __TBB_Yield();
+
+            for( int j=0; j<100; ++j )
+                Harness::Sleep( 1 );
+            delete mon;
+            mon = NULL;
+        } else {
+            mon->prepare_wait( thr_ctx, (void*)this );
+            while( n_sleepers<VLN ) {
+                try {
+                    ++n_sleepers;
+                    mon->commit_wait( thr_ctx );
+                    if( --n_sleepers>VLN ) 
+                        break;
+                } catch( tbb::user_abort& ) {
+                    // can no longer access 'mon'
+                    break;
+                }
+                mon->prepare_wait( thr_ctx, (void*)this );
+            }
+        }
+    }
+    AllButOneSleep( internal::concurrent_monitor*& m_ ) : mon(m_) {}
+};
+#endif /* TBB_USE_EXCEPTIONS */
+
+void TestDestructor() {
+#if TBB_USE_EXCEPTIONS
+    tbb::task_scheduler_init init(NTHRS_USED_IN_DESTRUCTOR_TEST);
+    internal::concurrent_monitor* my_mon = new internal::concurrent_monitor;
+    REMARK( "testing the destructor\n" );
+    n_sleepers = 0;
+    NativeParallelFor(NTHRS_USED_IN_DESTRUCTOR_TEST,AllButOneSleep(my_mon));
+    ASSERT( my_mon==NULL, "" );
+#endif /* TBB_USE_EXCEPTIONS */
+}
+
 int TestMain () {
     for( int p=MinThread; p<=MaxThread; ++p ) {
         REMARK( "testing with %d workers\n", static_cast<int>(p) );
@@ -260,5 +365,6 @@ int TestMain () {
         Test<SpinMutex,1000,10000>( p );
         REMARK( "calling destructor for task_scheduler_init\n" );
     }
+    TestDestructor();
     return Harness::Done;
 }
