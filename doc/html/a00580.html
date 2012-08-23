@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>runtime_loader.h Source File</title>
+<title>queuing_rw_mutex.h Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -19,8 +19,8 @@
     <li><a href="files.html"><span>File&nbsp;List</span></a></li>
     <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
   </ul></div>
-<h1>runtime_loader.h</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
-<a name="l00002"></a>00002 <span class="comment">    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.</span>
+<h1>queuing_rw_mutex.h</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<a name="l00002"></a>00002 <span class="comment">    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.</span>
 <a name="l00003"></a>00003 <span class="comment"></span>
 <a name="l00004"></a>00004 <span class="comment">    The source code contained or described herein and all documents related</span>
 <a name="l00005"></a>00005 <span class="comment">    to the source code ("Material") are owned by Intel Corporation or its</span>
@@ -39,96 +39,127 @@
 <a name="l00018"></a>00018 <span class="comment">    writing.</span>
 <a name="l00019"></a>00019 <span class="comment">*/</span>
 <a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="preprocessor">#ifndef __TBB_runtime_loader_H</span>
-<a name="l00022"></a>00022 <span class="preprocessor"></span><span class="preprocessor">#define __TBB_runtime_loader_H</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#ifndef __TBB_queuing_rw_mutex_H</span>
+<a name="l00022"></a>00022 <span class="preprocessor"></span><span class="preprocessor">#define __TBB_queuing_rw_mutex_H</span>
 <a name="l00023"></a>00023 <span class="preprocessor"></span>
-<a name="l00024"></a>00024 <span class="preprocessor">#if ! TBB_PREVIEW_RUNTIME_LOADER</span>
-<a name="l00025"></a>00025 <span class="preprocessor"></span><span class="preprocessor">    #error Set TBB_PREVIEW_RUNTIME_LOADER to include runtime_loader.h</span>
-<a name="l00026"></a>00026 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00027"></a>00027 <span class="preprocessor"></span>
-<a name="l00028"></a>00028 <span class="preprocessor">#include "tbb/tbb_stddef.h"</span>
-<a name="l00029"></a>00029 <span class="preprocessor">#include &lt;climits&gt;</span>
-<a name="l00030"></a>00030 
-<a name="l00031"></a>00031 <span class="preprocessor">#if _MSC_VER</span>
-<a name="l00032"></a>00032 <span class="preprocessor"></span><span class="preprocessor">    #if ! __TBB_NO_IMPLICIT_LINKAGE</span>
-<a name="l00033"></a>00033 <span class="preprocessor"></span><span class="preprocessor">        #ifdef _DEBUG</span>
-<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor">            #pragma comment( linker, "/nodefaultlib:tbb_debug.lib" )</span>
-<a name="l00035"></a>00035 <span class="preprocessor"></span><span class="preprocessor">            #pragma comment( linker, "/defaultlib:tbbproxy_debug.lib" )</span>
-<a name="l00036"></a>00036 <span class="preprocessor"></span><span class="preprocessor">        #else</span>
-<a name="l00037"></a>00037 <span class="preprocessor"></span><span class="preprocessor">            #pragma comment( linker, "/nodefaultlib:tbb.lib" )</span>
-<a name="l00038"></a>00038 <span class="preprocessor"></span><span class="preprocessor">            #pragma comment( linker, "/defaultlib:tbbproxy.lib" )</span>
-<a name="l00039"></a>00039 <span class="preprocessor"></span><span class="preprocessor">        #endif</span>
-<a name="l00040"></a>00040 <span class="preprocessor"></span><span class="preprocessor">    #endif</span>
-<a name="l00041"></a>00041 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span>
-<a name="l00043"></a>00043 <span class="keyword">namespace </span>tbb {
+<a name="l00024"></a>00024 <span class="preprocessor">#include "tbb_config.h"</span>
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <span class="preprocessor">#if !TBB_USE_EXCEPTIONS &amp;&amp; _MSC_VER</span>
+<a name="l00027"></a>00027 <span class="preprocessor"></span>    <span class="comment">// Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers</span>
+<a name="l00028"></a>00028 <span class="preprocessor">    #pragma warning (push)</span>
+<a name="l00029"></a>00029 <span class="preprocessor"></span><span class="preprocessor">    #pragma warning (disable: 4530)</span>
+<a name="l00030"></a>00030 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00031"></a>00031 <span class="preprocessor"></span>
+<a name="l00032"></a>00032 <span class="preprocessor">#include &lt;cstring&gt;</span>
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034 <span class="preprocessor">#if !TBB_USE_EXCEPTIONS &amp;&amp; _MSC_VER</span>
+<a name="l00035"></a>00035 <span class="preprocessor"></span><span class="preprocessor">    #pragma warning (pop)</span>
+<a name="l00036"></a>00036 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00037"></a>00037 <span class="preprocessor"></span>
+<a name="l00038"></a>00038 <span class="preprocessor">#include "atomic.h"</span>
+<a name="l00039"></a>00039 <span class="preprocessor">#include "tbb_profiling.h"</span>
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041 <span class="keyword">namespace </span>tbb {
+<a name="l00042"></a>00042 
 <a name="l00044"></a>00044 
-<a name="l00045"></a>00045 <span class="keyword">namespace </span>interface6 {
-<a name="l00046"></a>00046 
-<a name="l00048"></a>00048 
-<a name="l00085"></a><a class="code" href="a00307.html">00085</a> <span class="keyword">class </span><a class="code" href="a00307.html">runtime_loader</a> : tbb::internal::no_copy {
-<a name="l00086"></a>00086 
-<a name="l00087"></a>00087     <span class="keyword">public</span>:
-<a name="l00088"></a>00088 
-<a name="l00090"></a><a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb">00090</a>         <span class="keyword">enum</span> <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb">error_mode</a> {
-<a name="l00091"></a>00091             <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcbdb47fe5ffbd2eaf47e6de0af433ada38">em_status</a>,     
-<a name="l00092"></a>00092             <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcbdeb59ca2912432b47fd3ec831574653b">em_throw</a>,      
-<a name="l00093"></a><a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb630dd30c9ba61d5ab187e80313bbad94">00093</a>             <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb630dd30c9ba61d5ab187e80313bbad94">em_abort</a>       
-<a name="l00094"></a>00094         }; <span class="comment">// error_mode</span>
+<a name="l00047"></a><a class="code" href="a00301.html">00047</a> <span class="keyword">class </span><a class="code" href="a00301.html">queuing_rw_mutex</a> {
+<a name="l00048"></a>00048 <span class="keyword">public</span>:
+<a name="l00050"></a><a class="code" href="a00301.html#85c90877c3447690ac4e2ac4ff8dea5e">00050</a>     <a class="code" href="a00301.html#85c90877c3447690ac4e2ac4ff8dea5e">queuing_rw_mutex</a>() {
+<a name="l00051"></a>00051         q_tail = NULL;
+<a name="l00052"></a>00052 <span class="preprocessor">#if TBB_USE_THREADING_TOOLS</span>
+<a name="l00053"></a>00053 <span class="preprocessor"></span>        internal_construct();
+<a name="l00054"></a>00054 <span class="preprocessor">#endif</span>
+<a name="l00055"></a>00055 <span class="preprocessor"></span>    }
+<a name="l00056"></a>00056 
+<a name="l00058"></a><a class="code" href="a00301.html#1ba73e3d95cfdf8323880bc623af9099">00058</a>     <a class="code" href="a00301.html#1ba73e3d95cfdf8323880bc623af9099">~queuing_rw_mutex</a>() {
+<a name="l00059"></a>00059 <span class="preprocessor">#if TBB_USE_ASSERT</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span>        __TBB_ASSERT( !q_tail, <span class="stringliteral">"destruction of an acquired mutex"</span>);
+<a name="l00061"></a>00061 <span class="preprocessor">#endif</span>
+<a name="l00062"></a>00062 <span class="preprocessor"></span>    }
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064     <span class="keyword">class </span>scoped_lock;
+<a name="l00065"></a>00065     <span class="keyword">friend</span> <span class="keyword">class </span>scoped_lock;
+<a name="l00066"></a>00066 
+<a name="l00068"></a>00068 
+<a name="l00070"></a><a class="code" href="a00302.html">00070</a>     <span class="keyword">class </span><a class="code" href="a00302.html">scoped_lock</a>: internal::no_copy {
+<a name="l00072"></a>00072         <span class="keywordtype">void</span> initialize() {
+<a name="l00073"></a>00073             my_mutex = NULL;
+<a name="l00074"></a>00074 <span class="preprocessor">#if TBB_USE_ASSERT</span>
+<a name="l00075"></a>00075 <span class="preprocessor"></span>            my_state = 0xFF; <span class="comment">// Set to invalid state</span>
+<a name="l00076"></a>00076             internal::poison_pointer(my_next);
+<a name="l00077"></a>00077             internal::poison_pointer(my_prev);
+<a name="l00078"></a>00078 <span class="preprocessor">#endif </span><span class="comment">/* TBB_USE_ASSERT */</span>
+<a name="l00079"></a>00079         }
+<a name="l00080"></a>00080     <span class="keyword">public</span>:
+<a name="l00082"></a>00082 
+<a name="l00083"></a><a class="code" href="a00302.html#c62e365be7bcbba091c9ea7454a4d22c">00083</a>         <a class="code" href="a00302.html#c62e365be7bcbba091c9ea7454a4d22c">scoped_lock</a>() {initialize();}
+<a name="l00084"></a>00084 
+<a name="l00086"></a><a class="code" href="a00302.html#fbb8798792d3aebb136c46fc63d2529e">00086</a>         <a class="code" href="a00302.html#c62e365be7bcbba091c9ea7454a4d22c">scoped_lock</a>( <a class="code" href="a00301.html">queuing_rw_mutex</a>&amp; m, <span class="keywordtype">bool</span> write=<span class="keyword">true</span> ) {
+<a name="l00087"></a>00087             initialize();
+<a name="l00088"></a>00088             <a class="code" href="a00302.html#a8dd5ab8686e76de21587544dbb681e0">acquire</a>(m,write);
+<a name="l00089"></a>00089         }
+<a name="l00090"></a>00090 
+<a name="l00092"></a><a class="code" href="a00302.html#32c7d67a660d23ebbaab1a1d2826d31a">00092</a>         <a class="code" href="a00302.html#32c7d67a660d23ebbaab1a1d2826d31a">~scoped_lock</a>() {
+<a name="l00093"></a>00093             <span class="keywordflow">if</span>( my_mutex ) <a class="code" href="a00302.html#67ae221109ddc69510ab593874e435d4">release</a>();
+<a name="l00094"></a>00094         }
 <a name="l00095"></a>00095 
-<a name="l00097"></a><a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789">00097</a>         <span class="keyword">enum</span> <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789">error_code</a> {
-<a name="l00098"></a>00098             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde0187891e3a364f63f419e5ea2f1d1e52289b27">ec_ok</a>,         
-<a name="l00099"></a>00099             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789e6ce2b091083b80878cbb70cd00782a1">ec_bad_call</a>,   
-<a name="l00100"></a>00100             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde01878927e94a7b173bb8d0623bf48aad8fc703">ec_bad_arg</a>,    
-<a name="l00101"></a>00101             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde01878903ee81d8c05966bc1125666713dee5f6">ec_bad_lib</a>,    
-<a name="l00102"></a>00102             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde01878907790f32918e60d670a96c1f0349e8d6">ec_bad_ver</a>,    
-<a name="l00103"></a><a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde01878902acc03ebfcdb16e3e26b24f64da2bdb">00103</a>             <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde01878902acc03ebfcdb16e3e26b24f64da2bdb">ec_no_lib</a>      
-<a name="l00104"></a>00104         }; <span class="comment">// error_code</span>
-<a name="l00105"></a>00105 
-<a name="l00107"></a>00107         <a class="code" href="a00307.html#7caa4ff6e44c2348e67f601cc5d97c34">runtime_loader</a>( <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb">error_mode</a> mode = <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb630dd30c9ba61d5ab187e80313bbad94">em_abort</a> );
+<a name="l00097"></a>00097         <span class="keywordtype">void</span> <a class="code" href="a00302.html#a8dd5ab8686e76de21587544dbb681e0">acquire</a>( <a class="code" href="a00301.html">queuing_rw_mutex</a>&amp; m, <span class="keywordtype">bool</span> write=<span class="keyword">true</span> );
+<a name="l00098"></a>00098 
+<a name="l00100"></a>00100         <span class="keywordtype">bool</span> <a class="code" href="a00302.html#2e4ff6c9ec2fee6682f95290d1f42baa">try_acquire</a>( <a class="code" href="a00301.html">queuing_rw_mutex</a>&amp; m, <span class="keywordtype">bool</span> write=<span class="keyword">true</span> );
+<a name="l00101"></a>00101 
+<a name="l00103"></a>00103         <span class="keywordtype">void</span> <a class="code" href="a00302.html#67ae221109ddc69510ab593874e435d4">release</a>();
+<a name="l00104"></a>00104 
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107         <span class="keywordtype">bool</span> <a class="code" href="a00302.html#11ba1da4a722c9e6f73339a52c487e82">upgrade_to_writer</a>();
 <a name="l00108"></a>00108 
-<a name="l00110"></a>00110 
-<a name="l00115"></a>00115         <a class="code" href="a00307.html#7caa4ff6e44c2348e67f601cc5d97c34">runtime_loader</a>(
-<a name="l00116"></a>00116             <span class="keywordtype">char</span> <span class="keyword">const</span> * path[],                           
-<a name="l00117"></a>00117             <span class="keywordtype">int</span>          min_ver = TBB_INTERFACE_VERSION,  
-<a name="l00118"></a>00118             <span class="keywordtype">int</span>          max_ver = INT_MAX,                
-<a name="l00119"></a>00119             <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb">error_mode</a>   mode    = <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb630dd30c9ba61d5ab187e80313bbad94">em_abort</a>                
-<a name="l00120"></a>00120         );
-<a name="l00121"></a>00121 
-<a name="l00123"></a>00123         <a class="code" href="a00307.html#c25fec923a751a3e03f5cbe969f1f0c5">~runtime_loader</a>();
-<a name="l00124"></a>00124 
-<a name="l00126"></a>00126 
-<a name="l00150"></a>00150         <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789">error_code</a>
-<a name="l00151"></a>00151         <a class="code" href="a00307.html#5f3f6f1683386705a6931acae45f0862">load</a>(
-<a name="l00152"></a>00152             <span class="keywordtype">char</span> <span class="keyword">const</span> * path[],                           
-<a name="l00153"></a>00153             <span class="keywordtype">int</span>          min_ver = TBB_INTERFACE_VERSION,  
-<a name="l00154"></a>00154             <span class="keywordtype">int</span>          max_ver = INT_MAX                 
-<a name="l00155"></a>00155 
-<a name="l00156"></a>00156         );
-<a name="l00157"></a>00157 
+<a name="l00110"></a>00110         <span class="keywordtype">bool</span> <a class="code" href="a00302.html#0d2f93edf7b15ec4bcee138823220c52">downgrade_to_reader</a>();
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112     <span class="keyword">private</span>:
+<a name="l00114"></a>00114         <a class="code" href="a00301.html">queuing_rw_mutex</a>* my_mutex;
+<a name="l00115"></a>00115 
+<a name="l00117"></a>00117         <a class="code" href="a00302.html">scoped_lock</a> *__TBB_atomic my_prev, *__TBB_atomic my_next;
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119         <span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> state_t;
+<a name="l00120"></a>00120 
+<a name="l00122"></a>00122         <a class="code" href="a00239.html">atomic&lt;state_t&gt;</a> my_state;
+<a name="l00123"></a>00123 
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126         <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> __TBB_atomic my_going;
+<a name="l00127"></a>00127 
+<a name="l00129"></a>00129         <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> my_internal_lock;
+<a name="l00130"></a>00130 
+<a name="l00132"></a>00132         <span class="keywordtype">void</span> acquire_internal_lock();
+<a name="l00133"></a>00133 
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136         <span class="keywordtype">bool</span> try_acquire_internal_lock();
+<a name="l00137"></a>00137 
+<a name="l00139"></a>00139         <span class="keywordtype">void</span> release_internal_lock();
+<a name="l00140"></a>00140 
+<a name="l00142"></a>00142         <span class="keywordtype">void</span> wait_for_release_of_internal_lock();
+<a name="l00143"></a>00143 
+<a name="l00145"></a>00145         <span class="keywordtype">void</span> unblock_or_wait_on_internal_lock( uintptr_t );
+<a name="l00146"></a>00146     };
+<a name="l00147"></a>00147 
+<a name="l00148"></a>00148     <span class="keywordtype">void</span> __TBB_EXPORTED_METHOD internal_construct();
+<a name="l00149"></a>00149 
+<a name="l00150"></a>00150     <span class="comment">// Mutex traits</span>
+<a name="l00151"></a>00151     <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> is_rw_mutex = <span class="keyword">true</span>;
+<a name="l00152"></a>00152     <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> is_recursive_mutex = <span class="keyword">false</span>;
+<a name="l00153"></a>00153     <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> is_fair_mutex = <span class="keyword">true</span>;
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155 <span class="keyword">private</span>:
+<a name="l00157"></a>00157     <a class="code" href="a00239.html">atomic&lt;scoped_lock*&gt;</a> q_tail;
 <a name="l00158"></a>00158 
+<a name="l00159"></a>00159 };
 <a name="l00160"></a>00160 
-<a name="l00163"></a>00163         <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789">error_code</a> <a class="code" href="a00307.html#78d938ed2e54d38dd38d6609e6c60389">status</a>();
+<a name="l00161"></a>00161 __TBB_DEFINE_PROFILING_SET_NAME(queuing_rw_mutex)
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163 } <span class="comment">// namespace tbb</span>
 <a name="l00164"></a>00164 
-<a name="l00165"></a>00165     <span class="keyword">private</span>:
-<a name="l00166"></a>00166 
-<a name="l00167"></a>00167         <a class="code" href="a00307.html#bb0130fe0f596399707e61431231ebcb">error_mode</a> <span class="keyword">const</span> my_mode;
-<a name="l00168"></a>00168         <a class="code" href="a00307.html#6831be91cdc64e57e565ce0dde018789">error_code</a>       my_status;
-<a name="l00169"></a>00169         <span class="keywordtype">bool</span>             my_loaded;
-<a name="l00170"></a>00170 
-<a name="l00171"></a>00171 }; <span class="comment">// class runtime_loader</span>
-<a name="l00172"></a>00172 
-<a name="l00173"></a>00173 } <span class="comment">// namespace interface6</span>
-<a name="l00174"></a>00174 
-<a name="l00175"></a>00175 <span class="keyword">using</span> interface6::runtime_loader;
-<a name="l00176"></a>00176 
-<a name="l00177"></a>00177 } <span class="comment">// namespace tbb</span>
-<a name="l00178"></a>00178 
-<a name="l00179"></a>00179 <span class="preprocessor">#endif </span><span class="comment">/* __TBB_runtime_loader_H */</span>
-<a name="l00180"></a>00180 
+<a name="l00165"></a>00165 <span class="preprocessor">#endif </span><span class="comment">/* __TBB_queuing_rw_mutex_H */</span>
 </pre></div><hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

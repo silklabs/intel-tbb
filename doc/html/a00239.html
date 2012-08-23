@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::atomic_backoff Class Reference</title>
+<title>tbb::atomic&lt; T &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,36 +21,38 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<b>internal</b>::<a class="el" href="a00239.html">atomic_backoff</a></div>
-<h1>tbb::internal::atomic_backoff Class Reference</h1><!-- doxytag: class="tbb::internal::atomic_backoff" -->Class that implements exponential backoff.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00239.html">atomic</a></div>
+<h1>tbb::atomic&lt; T &gt; Struct Template Reference<br>
+<small>
+[<a class="el" href="a00411.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::atomic" -->Primary template for atomic.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00613.html">tbb_machine.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00416.html">atomic.h</a>&gt;</code>
 <p>
-<a href="a00158.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00002.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a174ea93e3bd3d5cce82389c2f28d037"></a><!-- doxytag: member="tbb::internal::atomic_backoff::pause" ref="a174ea93e3bd3d5cce82389c2f28d037" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00239.html#a174ea93e3bd3d5cce82389c2f28d037">pause</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1e29e03a31436bad5eb1aa5a9d46a2da"></a><!-- doxytag: member="tbb::atomic::operator=" ref="1e29e03a31436bad5eb1aa5a9d46a2da" args="(T rhs)" -->
+T&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (T rhs)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pause for a while. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6179b19e2e8dedd73a36d523af2fe12"></a><!-- doxytag: member="tbb::internal::atomic_backoff::bounded_pause" ref="c6179b19e2e8dedd73a36d523af2fe12" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>bounded_pause</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45edb535489eb0e76ecc59a19fd952de"></a><!-- doxytag: member="tbb::internal::atomic_backoff::reset" ref="45edb535489eb0e76ecc59a19fd952de" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90791297d59b1659cfaf0d93c7cc59ae"></a><!-- doxytag: member="tbb::atomic::operator=" ref="90791297d59b1659cfaf0d93c7cc59ae" args="(const atomic&lt; T &gt; &amp;rhs)" -->
+<a class="el" href="a00239.html">atomic</a>&lt; T &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00239.html">atomic</a>&lt; T &gt; &amp;rhs)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Class that implements exponential backoff. 
+<h3>template&lt;typename T&gt;<br>
+ struct tbb::atomic&lt; T &gt;</h3>
+
+Primary template for atomic. 
 <p>
-See implementation of spin_wait_while_eq for an example. 
+See the Reference for details. 
 <p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00613.html">tbb_machine.h</a></ul>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li><a class="el" href="a00416.html">atomic.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

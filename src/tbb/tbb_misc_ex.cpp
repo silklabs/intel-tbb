@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -274,7 +274,7 @@ static void initialize_hardware_concurrency_info () {
                 ProcessorGroupInfo  &pgi = theProcessorGroups[i];
                 pgi.numProcs = (int)TBB_GetMaximumProcessorCount(i);
                 __TBB_ASSERT( pgi.numProcs <= (int)sizeof(DWORD_PTR) * CHAR_BIT, NULL );
-                pgi.mask = pgi.numProcs == sizeof(DWORD_PTR) * CHAR_BIT ? ~(DWORD_PTR)0 : (1 << pgi.numProcs) - 1;
+                pgi.mask = pgi.numProcs == sizeof(DWORD_PTR) * CHAR_BIT ? ~(DWORD_PTR)0 : (DWORD_PTR(1) << pgi.numProcs) - 1;
                 pgi.numProcsRunningTotal = nprocs += pgi.numProcs;
             }
             __TBB_ASSERT( nprocs == (int)TBB_GetMaximumProcessorCount( TBB_ALL_PROCESSOR_GROUPS ), NULL );
@@ -283,6 +283,11 @@ static void initialize_hardware_concurrency_info () {
     }
     // Either the process has restricting affinity mask or only a single processor groups is present
     theProcessorGroups[0].numProcs = theProcessorGroups[0].numProcsRunningTotal = nproc;
+
+    PrintExtraVersionInfo("Processor groups", "%d", ProcessorGroupInfo::NumGroups);
+    if (ProcessorGroupInfo::NumGroups>1)
+        for (int i=0; i<ProcessorGroupInfo::NumGroups; ++i)
+            PrintExtraVersionInfo( "----- Group", "%d: size %d", i, theProcessorGroups[i].numProcs);
 }
 
 int AvailableHwConcurrency() {
@@ -309,7 +314,11 @@ int FindProcessorGroupIndex ( int procIdx ) {
     else
         holeIdx = ProcessorGroupInfo::HoleIndex;
     __TBB_ASSERT( hardware_concurrency_info == initialization_complete, "FindProcessorGroupIndex is used before AvailableHwConcurrency" );
+    // Approximate the likely group index assuming all groups are of the same size
     int i = procIdx / theProcessorGroups[0].numProcs;
+    // Make sure the approximation is a valid group index
+    if (i >= ProcessorGroupInfo::NumGroups) i = ProcessorGroupInfo::NumGroups-1;
+    // Now adjust the approximation up or down
     if ( theProcessorGroups[i].numProcsRunningTotal > HoleAdjusted(procIdx, i) ) {
         while ( theProcessorGroups[i].numProcsRunningTotal - theProcessorGroups[i].numProcs > HoleAdjusted(procIdx, i) ) {
             __TBB_ASSERT( i > 0, NULL );

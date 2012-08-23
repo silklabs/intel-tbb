@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -32,6 +32,10 @@
     #ifndef UNICODE
         #define UNICODE
     #endif
+#else
+    #pragma weak dlopen
+    #pragma weak dlsym
+    #pragma weak dlerror
 #endif /* WIN */
 
 extern "C" void ITT_DoOneTimeInitialization();

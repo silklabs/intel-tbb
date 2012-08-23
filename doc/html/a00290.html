@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</title>
+<title>tbb::null_rw_mutex Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,42 +21,42 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00290.html">parallel_do_feeder</a></div>
-<h1>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</h1><!-- doxytag: class="tbb::parallel_do_feeder" -->Class the user supplied algorithm body uses to add new tasks.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00290.html">null_rw_mutex</a></div>
+<h1>tbb::null_rw_mutex Class Reference<br>
+<small>
+[<a class="el" href="a00411.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::null_rw_mutex" -->A rw mutex which does nothing.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00510.html">parallel_do.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00512.html">null_rw_mutex.h</a>&gt;</code>
 <p>
-<a href="a00087.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00086.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="40baaf0f6856f4491dd0adf896c93516"></a><!-- doxytag: member="tbb::parallel_do_feeder::add" ref="40baaf0f6856f4491dd0adf896c93516" args="(const Item &amp;item)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00290.html#40baaf0f6856f4491dd0adf896c93516">add</a> (const Item &amp;item)</td></tr>
+<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2f3235cbf63812f72e5755a4c820f523"></a><!-- doxytag: member="tbb::null_rw_mutex::is_rw_mutex" ref="2f3235cbf63812f72e5755a4c820f523" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = true</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a work item to a running parallel_do. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b381179b22f5f5e8511470c73d64b37f"></a><!-- doxytag: member="tbb::parallel_do_feeder::internal::parallel_do_feeder_impl" ref="b381179b22f5f5e8511470c73d64b37f" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::parallel_do_feeder_impl</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e33ac3b047901e69e7997a16e221a330"></a><!-- doxytag: member="tbb::null_rw_mutex::is_recursive_mutex" ref="e33ac3b047901e69e7997a16e221a330" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = true</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e5248faf1412f9283185a0b5d72d7456"></a><!-- doxytag: member="tbb::null_rw_mutex::is_fair_mutex" ref="e5248faf1412f9283185a0b5d72d7456" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = true</td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00291.html">scoped_lock</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Represents acquisition of a mutex.  <a href="a00291.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Item&gt;<br>
- class tbb::parallel_do_feeder&lt; Item &gt;</h3>
-
-Class the user supplied algorithm body uses to add new tasks. 
+A rw mutex which does nothing. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>Item</em>&nbsp;</td><td>Work item type </td></tr>
-  </table>
-</dl>
-
+A <a class="el" href="a00290.html">null_rw_mutex</a> is a rw mutex that does nothing and simulates successful operation. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00510.html">parallel_do.h</a></ul>
+<li><a class="el" href="a00512.html">null_rw_mutex.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

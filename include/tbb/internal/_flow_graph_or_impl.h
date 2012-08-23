@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -138,7 +138,7 @@ namespace internal {
             or_helper<StructTypes,N>::set_or_node_pointer(my_inputs, this);
         }
 
-        input_type &inputs() { return my_inputs; }
+        input_type &input_ports() { return my_inputs; }
     protected:
         input_type my_inputs;
     };
@@ -147,6 +147,7 @@ namespace internal {
     template<typename InputTuple, typename OutputType, typename StructTypes>
     class or_node_base : public graph_node, public or_node_FE<InputTuple, OutputType,StructTypes>,
                            public sender<OutputType> {
+       using graph_node::my_graph;
     public:
         static const size_t N = std::tuple_size<InputTuple>::value;
         typedef OutputType output_type;
@@ -207,12 +208,12 @@ namespace internal {
         }
         // ---------- end aggregator -----------
     public:
-        or_node_base( ) : input_ports_type() {
+        or_node_base(graph& g) : graph_node(g), input_ports_type() {
             my_successors.set_owner(this);
             my_aggregator.initialize_handler(my_handler(this));
         }
 
-        or_node_base( const or_node_base& /*other*/) : input_ports_type() {
+        or_node_base(const or_node_base& other) : graph_node(other.my_graph), input_ports_type(), sender<output_type>() {
             my_successors.set_owner(this);
             my_aggregator.initialize_handler(my_handler(this));
         }
@@ -243,22 +244,23 @@ namespace internal {
     template<typename OutputTuple>
     struct or_types {
         static const int N = std::tuple_size<OutputTuple>::value;
-        typedef typename wrap_tuple_elements<N,or_input_port,OutputTuple>::type input_ports_tuple_type;
+        typedef typename wrap_tuple_elements<N,or_input_port,OutputTuple>::type input_ports_type;
         typedef typename or_output_type<OutputTuple>::type output_type;
-        typedef internal::or_node_FE<input_ports_tuple_type,output_type,OutputTuple> or_FE_type;
-        typedef internal::or_node_base<input_ports_tuple_type, output_type, OutputTuple> or_base_type;
+        typedef internal::or_node_FE<input_ports_type,output_type,OutputTuple> or_FE_type;
+        typedef internal::or_node_base<input_ports_type, output_type, OutputTuple> or_base_type;
     };
 
     template<class OutputTuple>
     class unfolded_or_node : public or_types<OutputTuple>::or_base_type {
     public:
-        typedef typename or_types<OutputTuple>::input_ports_tuple_type input_ports_tuple_type;
+        typedef typename or_types<OutputTuple>::input_ports_type input_ports_type;
         typedef OutputTuple tuple_types;
         typedef typename or_types<OutputTuple>::output_type output_type;
     private:
         typedef typename or_types<OutputTuple>::or_base_type base_type;
     public:
-        unfolded_or_node() : base_type() {}
+        unfolded_or_node(graph& g) : base_type(g) {}
+        unfolded_or_node(const unfolded_or_node &other) : base_type(other) {}
     };
 
 

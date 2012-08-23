@@ -20,24 +20,18 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>tbb::interface5::reader_writer_lock Member List</h1>This is the complete list of members for <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>, including all inherited members.<p><table>
-  <tr bgcolor="#f0f0f0"><td><b>active</b> enum value (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>invalid</b> enum value (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#2653d1a2d560059a51219a8ceab3ade9">lock</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#d9d16a24d9f6c3dada73c6b9ff214f5b">lock_read</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#c1431c4293e777efd9aab9a95c2a46e1">reader_writer_lock</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>scoped_lock</b> (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td><code> [friend]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>scoped_lock_read</b> (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td><code> [friend]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#6f921f0d7c1812ceb5674418c8b6ccaf">status_t</a> enum name</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#721eb173e154ab38292273e9266a9b07">try_lock</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#595fb23952e3b89426b1f7938dea9b11">try_lock_read</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#5113b32689305599b2c36b5831547704">unlock</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>waiting</b> enum value (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>waiting_nonblocking</b> enum value (defined in <a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a>)</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00301.html#5135f64f7b7339017f33d956445edbee">~reader_writer_lock</a>()</td><td><a class="el" href="a00301.html">tbb::interface5::reader_writer_lock</a></td><td><code> [inline]</code></td></tr>
+<h1>tbb::queuing_rw_mutex::scoped_lock Member List</h1>This is the complete list of members for <a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a>, including all inherited members.<p><table>
+  <tr class="memlist"><td><a class="el" href="a00302.html#a8dd5ab8686e76de21587544dbb681e0">acquire</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#0d2f93edf7b15ec4bcee138823220c52">downgrade_to_reader</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#67ae221109ddc69510ab593874e435d4">release</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#c62e365be7bcbba091c9ea7454a4d22c">scoped_lock</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#fbb8798792d3aebb136c46fc63d2529e">scoped_lock</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#2e4ff6c9ec2fee6682f95290d1f42baa">try_acquire</a>(queuing_rw_mutex &amp;m, bool write=true)</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#11ba1da4a722c9e6f73339a52c487e82">upgrade_to_writer</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00302.html#32c7d67a660d23ebbaab1a1d2826d31a">~scoped_lock</a>()</td><td><a class="el" href="a00302.html">tbb::queuing_rw_mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
 </table><hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     The source code contained or described herein and all documents related
     to the source code ("Material") are owned by Intel Corporation or its
@@ -29,8 +29,11 @@ _scalable_aligned_free
 _scalable_msize
 /* memory pool stuff */
 __ZN3rml11pool_createElPKNS_13MemPoolPolicyE
+__ZN3rml14pool_create_v1ElPKNS_13MemPoolPolicyEPPNS_10MemoryPoolE
 __ZN3rml10pool_resetEPNS_10MemoryPoolE
 __ZN3rml12pool_destroyEPNS_10MemoryPoolE
 __ZN3rml11pool_mallocEPNS_10MemoryPoolEm
 __ZN3rml9pool_freeEPNS_10MemoryPoolEPv
 __ZN3rml12pool_reallocEPNS_10MemoryPoolEPvm
+__ZN3rml20pool_aligned_reallocEPNS_10MemoryPoolEPvmm
+__ZN3rml19pool_aligned_mallocEPNS_10MemoryPoolEmm

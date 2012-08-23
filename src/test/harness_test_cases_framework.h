@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -85,7 +85,7 @@ namespace test_framework{
         void register_test_case(std::string const& name, test_class * ){
             test_cases.push_back(tc_record_pair(name,& run_test<test_class>));
         }
-        std::string operator()(){
+        std::string operator()(bool silent=false){
             std::stringstream str;
             size_t failed=0;
             for (size_t i=0;i<test_cases.size();++i){
@@ -96,19 +96,26 @@ namespace test_framework{
                     str<<"test case \""<<test_cases[i].first<<"\" failed with exception. what():\""<<e.what()<<"\""<<std::endl;
                 }
             }
-            str<<test_cases.size()<<" test cases are run; "<<failed<<" failed"<<std::endl;
+            if (!silent) {
+                str<<test_cases.size()<<" test cases are run; "<<failed<<" failed"<<std::endl;
+            }
             return str.str();
         }
     };
     test_suite& get_suite_ref(){static test_suite ts; return ts;}
-    void run_all_and_print_results(test_suite& ts,std::ostream& o ){
-        o<<ts();
+    void run_all_and_print_results(test_suite& ts,std::ostream& o , bool silent=false){
+        o<<ts(silent);
     }
 }
 using test_framework::get_suite_ref;
 #define TEST_CASE_WITH_FIXTURE(TC_NAME,FIXTURE_NAME)       \
         struct TC_NAME;                                    \
-        struct TC_NAME:FIXTURE_NAME { void operator()();}; \
+        struct TC_NAME:FIXTURE_NAME {                      \
+            /* explicitly implemented default constructor  \
+              is need here to please gcc 4.3.2*/           \
+            TC_NAME(){}                                    \
+            void operator()();                             \
+        };                                                 \
         bool TC_NAME##_registerd =  (get_suite_ref().register_test_case(#TC_NAME,static_cast<TC_NAME*>(0)),true);\
         void TC_NAME::operator()()
 
@@ -126,15 +133,41 @@ namespace test_framework_unit_tests{
 
     }
     using namespace test_framework;
-    void run_all_runs_all_registered_test_cases(){
-        test_suite s;
-        using test_helper::tag;
-        test_helper::test_case<tag<__LINE__> > tc1;
-        test_helper::test_case<tag<__LINE__> > tc2;
-        s.register_test_case("tc1",&tc1);
-        s.register_test_case("tc2",&tc2);
-        s();
-        ASSERT(tc1.is_run && tc2.is_run,"test_suite::operator() should run all the tests");
+    namespace test_test_suite_ref{
+        void run_all_runs_all_registered_test_cases(){
+            test_suite s;
+            using test_helper::tag;
+            test_helper::test_case<tag<__LINE__> > tc1;
+            test_helper::test_case<tag<__LINE__> > tc2;
+            s.register_test_case("tc1",&tc1);
+            s.register_test_case("tc2",&tc2);
+            s();
+            ASSERT(tc1.is_run && tc2.is_run,"test_suite::operator() should run all the tests");
+        }
+
+        struct silent_switch_fixture{
+            test_helper::test_case<test_helper::tag<__LINE__> > do_nothing_tc;
+        };
+        struct run_all_and_print_results_should_respect_silent_mode: silent_switch_fixture{
+            void operator()(){
+                using test_helper::tag;
+                test_helper::test_case<tag<__LINE__> > do_nothing_tc;
+                test_suite ts;
+                ts.register_test_case("tc_name",&do_nothing_tc);
+                bool silent =true;
+                ASSERT(ts(silent).empty(),"in silent mode no message except error should be output");
+            }
+        };
+        struct run_all_and_print_results_should_respect_verbose_mode: silent_switch_fixture{
+            void operator()(){
+                using test_helper::tag;
+                test_helper::test_case<tag<__LINE__> > do_nothing_tc;
+                test_suite ts;
+                ts.register_test_case("tc_name",&do_nothing_tc);
+                bool silent =true;
+                ASSERT(!ts(!silent).empty(),"in verbose mode all messages should be outputed");
+            }
+        };
     }
     namespace test_test_case_macro{
         test_suite& get_suite_ref(){static test_suite ts; return ts;}
@@ -185,11 +218,13 @@ namespace test_framework_unit_tests{
 
     }
     void run_all_test(){
-        run_all_runs_all_registered_test_cases();
+        test_test_suite_ref::run_all_runs_all_registered_test_cases();
+        test_test_suite_ref::run_all_and_print_results_should_respect_silent_mode()();
+        test_test_suite_ref::run_all_and_print_results_should_respect_verbose_mode()();
         test_test_case_macro::run_test_test_case_macro();
         //TODO: uncomment and implement
 //        test_test_case_macro::test_test_case_macro_does_not_create_test_case_object();
-        run_all_and_print_results(internal_assertions_failure_test_cases::get_suite_ref(),std::cout);
+        run_all_and_print_results(internal_assertions_failure_test_cases::get_suite_ref(),std::cout,!Verbose);
     }
 }
 
@@ -200,8 +235,8 @@ int TestMain (){
     {
         test_framework_unit_tests::run_all_test();
     }
-
-    run_all_and_print_results(test_framework::get_suite_ref(),std::cout);
+    bool silent = !Verbose;
+    run_all_and_print_results(test_framework::get_suite_ref(),std::cout,silent);
     return Harness::Done;
 }
 

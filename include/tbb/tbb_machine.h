@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -801,7 +801,9 @@ inline __TBB_Flag __TBB_LockByte( __TBB_atomic_flag& flag ) {
 }
 #endif
 
+#ifndef  __TBB_UnlockByte
 #define __TBB_UnlockByte __TBB_store_with_release
+#endif
 
 #ifndef __TBB_ReverseByte
 inline unsigned char __TBB_ReverseByte(unsigned char src) {

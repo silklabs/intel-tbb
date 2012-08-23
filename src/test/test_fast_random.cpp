@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -39,8 +39,6 @@
 
 #undef HARNESS_USE_PROXY
 #include "harness.h"
-#undef __TBB_DYNAMIC_LOAD_ENABLED
-#include "harness_tbb_independence.h"
 
 int TestMain () {
     return Harness::Skipped;

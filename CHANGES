@@ -1,3 +1,42 @@
+TBB 4.0 Update 3 commercial-aligned release
+
+Changes (w.r.t. TBB 4.0 Update 2 commercial-aligned release):
+
+- Modifications to the low-level API for memory pools:
+    added support for aligned allocations;
+    pool policies reworked to allow backward-compatible extensions;
+    added a policy to not return memory space till destruction;
+    pool_reset() does not return memory space anymore.
+- Class tbb::flow::graph_iterator added to iterate over all nodes
+    registered with a graph instance.
+- multioutput_function_node has been renamed multifunction_node.
+    multifunction_node and split_node are now fully-supported features.
+- For the tagged join node, the policy for try_put of an item with
+    already existing tag has been defined: the item will be rejected.
+- Matching the behavior on Windows, on other platforms the optional
+    shared libraries (libtbbmalloc, libirml) now are also searched
+    only in the directory where libtbb is located.
+- The platform isolation layer based on GCC built-ins is extended.
+
+Backward-incompatible API changes:
+
+- a graph reference parameter is now required to be passed to the
+    constructors of the following flow graph nodes: overwrite_node, 
+    write_once_node, broadcast_node, and the CPF or_node.
+- the following tbb::flow node methods and typedefs have been renamed:
+       Old                             New
+    join_node and or_node:
+       inputs()                 ->     input_ports()
+       input_ports_tuple_type   ->     input_ports_type
+    multifunction_node and split_node:
+       ports_type               ->     output_ports_type
+
+Bugs fixed:
+
+- Not all logical processors were utilized on systems with more than
+    64 cores split by Windows into several processor groups.
+
+------------------------------------------------------------------------
 TBB 4.0 Update 2 commercial-aligned release
 
 Changes (w.r.t. TBB 4.0 Update 1 commercial-aligned release):

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -96,7 +96,6 @@ void limitMem( size_t limit )
 #include <errno.h>
 #define __TBB_NO_IMPLICIT_LINKAGE 1
 #include "tbb/scalable_allocator.h"
-#include "tbb/tbb_machine.h"
 
 #define HARNESS_CUSTOM_MAIN 1
 #include "harness.h"

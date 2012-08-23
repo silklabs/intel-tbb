@@ -20,17 +20,27 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>tbb::mutex::scoped_lock Member List</h1>This is the complete list of members for <a class="el" href="a00285.html">tbb::mutex::scoped_lock</a>, including all inherited members.<p><table>
-  <tr class="memlist"><td><a class="el" href="a00285.html#862e022841cdc522e4296a5533b22efd">acquire</a>(mutex &amp;mutex)</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>mutex</b> (defined in <a class="el" href="a00285.html">tbb::mutex::scoped_lock</a>)</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [friend]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00285.html#0d51d18cd99df3b2e93bf07378d0992c">release</a>()</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00285.html#1d403ae51b484df5d86d85ae38f11e6e">scoped_lock</a>()</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00285.html#605a6b9af0f8cdabdf81825e0de99600">scoped_lock</a>(mutex &amp;mutex)</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00285.html#591e0c49b82bcedffcbe0923f1b915ec">try_acquire</a>(mutex &amp;mutex)</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="a00285.html#0ebbbecaf4311e9df7362cb76ceaa368">~scoped_lock</a>()</td><td><a class="el" href="a00285.html">tbb::mutex::scoped_lock</a></td><td><code> [inline]</code></td></tr>
+<h1>tbb::mutex Member List</h1>This is the complete list of members for <a class="el" href="a00286.html">tbb::mutex</a>, including all inherited members.<p><table>
+  <tr bgcolor="#f0f0f0"><td><b>DESTROYED</b> enum value (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>HELD</b> enum value (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>INITIALIZED</b> enum value (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>is_fair_mutex</b> (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [static]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>is_recursive_mutex</b> (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [static]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>is_rw_mutex</b> (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#4470e61c24c129a0299ca6c17240adbb">lock</a>()</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#05313cb77d4f85213103d4dab74ed454">mutex</a>()</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>native_handle</b>() (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#9f1ec84d5815263ceae853f06ddb4cac">native_handle_type</a> typedef</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>native_handle_type</b> typedef (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>scoped_lock</b> (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [friend]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#795649a185b0d6af6dc81c5f378616dd">set_state</a>(state_t to)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>state_t</b> enum name (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#4331652c79dea1c1131bd59ab161b234">try_lock</a>()</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="a00286.html#5fc9ef443ae75d966695546be399cc6b">unlock</a>()</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>~mutex</b>() (defined in <a class="el" href="a00286.html">tbb::mutex</a>)</td><td><a class="el" href="a00286.html">tbb::mutex</a></td><td><code> [inline]</code></td></tr>
 </table><hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -488,8 +488,8 @@ namespace internal {
                 switch(current->type) {
                 case try__put: {
                         bool was_inserted = this->tagged_insert(current->my_tag_value, current->my_val);
-                        if(!was_inserted) __TBB_ASSERT( false, "multiple insertions of same tag");
-                        __TBB_store_with_release(current->status, SUCCEEDED);
+                        // return failure if a duplicate insertion occurs
+                        __TBB_store_with_release(current->status, was_inserted ? SUCCEEDED : FAILED);
                     }
                     break;
                 case get__item:
@@ -626,7 +626,7 @@ namespace internal {
             }
         }
 
-        input_type &inputs() { return my_inputs; }
+        input_type &input_ports() { return my_inputs; }
     protected:
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
@@ -686,7 +686,7 @@ namespace internal {
 
         void increment_port_count() { __TBB_ASSERT(false, NULL); }  // should never be called
 
-        input_type &inputs() { return my_inputs; }
+        input_type &input_ports() { return my_inputs; }
     protected:
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
@@ -861,7 +861,7 @@ namespace internal {
 
         void increment_port_count() { __TBB_ASSERT(false, NULL); }  // should never be called
 
-        input_type &inputs() { return my_inputs; }
+        input_type &input_ports() { return my_inputs; }
     protected:
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
@@ -895,6 +895,7 @@ namespace internal {
     template<graph_buffer_policy JP, typename InputTuple, typename OutputTuple>
     class join_node_base : public graph_node, public join_node_FE<JP, InputTuple, OutputTuple>,
                            public sender<OutputTuple> {
+        using graph_node::my_graph;
     public:
         typedef OutputTuple output_type;
 
@@ -985,14 +986,14 @@ namespace internal {
         }
         // ---------- end aggregator -----------
     public:
-        join_node_base(graph &g) : input_ports_type(g), forwarder_busy(false) {
+        join_node_base(graph &g) : graph_node(g), input_ports_type(g), forwarder_busy(false) {
             my_successors.set_owner(this);
             input_ports_type::set_my_node(this);
             my_aggregator.initialize_handler(my_handler(this));
         }
 
         join_node_base(const join_node_base& other) :
-            graph_node(), input_ports_type(other),
+            graph_node(other.my_graph), input_ports_type(other),
             sender<OutputTuple>(), forwarder_busy(false), my_successors() {
             my_successors.set_owner(this);
             input_ports_type::set_my_node(this);
@@ -1000,7 +1001,7 @@ namespace internal {
         }
 
         template<typename FunctionTuple>
-        join_node_base(graph &g, FunctionTuple f) : input_ports_type(g, f), forwarder_busy(false) {
+        join_node_base(graph &g, FunctionTuple f) : graph_node(g), input_ports_type(g, f), forwarder_busy(false) {
             my_successors.set_owner(this);
             input_ports_type::set_my_node(this);
             my_aggregator.initialize_handler(my_handler(this));
@@ -1035,7 +1036,7 @@ namespace internal {
         }
     };
 
-    //! unfolded_join_node : passes input_ports_tuple_type to join_node_base.  We build the input port type
+    //! unfolded_join_node : passes input_ports_type to join_node_base.  We build the input port type
     //  using tuple_element.  The class PT is the port type (reserving_port, queueing_port, tag_matching_port)
     //  and should match the graph_buffer_policy.
     template<int N, template<class> class PT, typename OutputTuple, graph_buffer_policy JP>
@@ -1052,10 +1053,10 @@ namespace internal {
     public:
         typedef typename std::tuple<
                 PT<typename std::tuple_element<0,OutputTuple>::type>, 
-                PT<typename std::tuple_element<1,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<1,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1074,10 +1075,10 @@ namespace internal {
         typedef typename std::tuple<
                 PT<typename std::tuple_element<0,OutputTuple>::type>, 
                 PT<typename std::tuple_element<1,OutputTuple>::type>, 
-                PT<typename std::tuple_element<2,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<2,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1097,10 +1098,10 @@ namespace internal {
                 PT<typename std::tuple_element<0,OutputTuple>::type>, 
                 PT<typename std::tuple_element<1,OutputTuple>::type>, 
                 PT<typename std::tuple_element<2,OutputTuple>::type>, 
-                PT<typename std::tuple_element<3,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<3,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1122,10 +1123,10 @@ namespace internal {
                 PT<typename std::tuple_element<1,OutputTuple>::type>, 
                 PT<typename std::tuple_element<2,OutputTuple>::type>, 
                 PT<typename std::tuple_element<3,OutputTuple>::type>, 
-                PT<typename std::tuple_element<4,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<4,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1149,10 +1150,10 @@ namespace internal {
                 PT<typename std::tuple_element<2,OutputTuple>::type>, 
                 PT<typename std::tuple_element<3,OutputTuple>::type>, 
                 PT<typename std::tuple_element<4,OutputTuple>::type>, 
-                PT<typename std::tuple_element<5,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<5,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1178,10 +1179,10 @@ namespace internal {
                 PT<typename std::tuple_element<3,OutputTuple>::type>, 
                 PT<typename std::tuple_element<4,OutputTuple>::type>, 
                 PT<typename std::tuple_element<5,OutputTuple>::type>, 
-                PT<typename std::tuple_element<6,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<6,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1209,10 +1210,10 @@ namespace internal {
                 PT<typename std::tuple_element<4,OutputTuple>::type>, 
                 PT<typename std::tuple_element<5,OutputTuple>::type>, 
                 PT<typename std::tuple_element<6,OutputTuple>::type>, 
-                PT<typename std::tuple_element<7,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<7,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1242,10 +1243,10 @@ namespace internal {
                 PT<typename std::tuple_element<5,OutputTuple>::type>, 
                 PT<typename std::tuple_element<6,OutputTuple>::type>, 
                 PT<typename std::tuple_element<7,OutputTuple>::type>, 
-                PT<typename std::tuple_element<8,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<8,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1277,10 +1278,10 @@ namespace internal {
                 PT<typename std::tuple_element<6,OutputTuple>::type>, 
                 PT<typename std::tuple_element<7,OutputTuple>::type>, 
                 PT<typename std::tuple_element<8,OutputTuple>::type>, 
-                PT<typename std::tuple_element<9,OutputTuple>::type> > input_ports_tuple_type;
+                PT<typename std::tuple_element<9,OutputTuple>::type> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<JP, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<JP, input_ports_type, output_type > base_type;
     public:
         unfolded_join_node(graph &g) : base_type(g) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
@@ -1300,10 +1301,10 @@ namespace internal {
         typedef typename std::tuple_element<0, OutputTuple>::type T0;
         typedef typename std::tuple_element<1, OutputTuple>::type T1;
     public:
-        typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1> > input_ports_tuple_type;
+        typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename std::tuple< f0_p, f1_p > func_initializer_type;
@@ -1331,10 +1332,10 @@ namespace internal {
         typedef typename std::tuple_element<2, OutputTuple>::type T2;
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>
-            > input_ports_tuple_type;
+            > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1365,10 +1366,10 @@ namespace internal {
         typedef typename std::tuple_element<3, OutputTuple>::type T3;
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
-                tag_matching_port<T3> > input_ports_tuple_type;
+                tag_matching_port<T3> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1403,10 +1404,10 @@ namespace internal {
         typedef typename std::tuple_element<4, OutputTuple>::type T4;
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
-                tag_matching_port<T3>, tag_matching_port<T4> > input_ports_tuple_type;
+                tag_matching_port<T3>, tag_matching_port<T4> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1445,10 +1446,10 @@ namespace internal {
         typedef typename std::tuple_element<5, OutputTuple>::type T5;
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
-                tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5> > input_ports_tuple_type;
+                tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1492,10 +1493,10 @@ namespace internal {
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
                 tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5>, tag_matching_port<T6>
-            > input_ports_tuple_type;
+            > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1543,10 +1544,10 @@ namespace internal {
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
                 tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5>, tag_matching_port<T6>,
-                tag_matching_port<T7> > input_ports_tuple_type;
+                tag_matching_port<T7> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1598,10 +1599,10 @@ namespace internal {
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
                 tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5>, tag_matching_port<T6>,
-                tag_matching_port<T7>, tag_matching_port<T8> > input_ports_tuple_type;
+                tag_matching_port<T7>, tag_matching_port<T8> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1657,10 +1658,10 @@ namespace internal {
     public:
         typedef typename std::tuple< tag_matching_port<T0>, tag_matching_port<T1>, tag_matching_port<T2>,
                 tag_matching_port<T3>, tag_matching_port<T4>, tag_matching_port<T5>, tag_matching_port<T6>,
-                tag_matching_port<T7>, tag_matching_port<T8>, tag_matching_port<T9> > input_ports_tuple_type;
+                tag_matching_port<T7>, tag_matching_port<T8>, tag_matching_port<T9> > input_ports_type;
         typedef OutputTuple output_type;
     private:
-        typedef join_node_base<tag_matching, input_ports_tuple_type, output_type > base_type;
+        typedef join_node_base<tag_matching, input_ports_type, output_type > base_type;
         typedef typename internal::function_body<T0, tag_value> *f0_p;
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename internal::function_body<T2, tag_value> *f2_p;
@@ -1692,8 +1693,8 @@ namespace internal {
 
     //! templated function to refer to input ports of the join node
     template<size_t N, typename JNT>
-    typename std::tuple_element<N, typename JNT::input_ports_tuple_type>::type &input_port(JNT &jn) {
-        return std::get<N>(jn.inputs());
+    typename std::tuple_element<N, typename JNT::input_ports_type>::type &input_port(JNT &jn) {
+        return std::get<N>(jn.input_ports());
     }
 
 } 

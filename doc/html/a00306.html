@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::recursive_mutex::scoped_lock Class Reference</title>
+<title>tbb::flow::interface6::receiver&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,54 +21,63 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00305.html">recursive_mutex</a>::<a class="el" href="a00306.html">scoped_lock</a></div>
-<h1>tbb::recursive_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::recursive_mutex::scoped_lock" -->The scoped locking pattern.  
+<a class="el" href="a00396.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00306.html">receiver</a></div>
+<h1>tbb::flow::interface6::receiver&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::receiver" -->Pure virtual template class that defines a receiver of messages of type T.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00579.html">recursive_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00489.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00111.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::receiver&lt; T &gt;:
+<p><center><img src="a00306.png" usemap="#tbb::flow::interface6::receiver< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::receiver< T >_map">
+<area href="a00247.html" alt="tbb::flow::interface6::broadcast_node< T >" shape="rect" coords="0,56,352,80">
+<area href="a00248.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
+<area href="a00264.html" alt="tbb::flow::interface6::continue_receiver" shape="rect" coords="724,56,1076,80">
+<area href="a00277.html" alt="tbb::flow::interface6::limiter_node< T >" shape="rect" coords="1086,56,1438,80">
+<area href="a00297.html" alt="tbb::flow::interface6::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
+<area href="a00298.html" alt="tbb::flow::interface6::queue_node< T, A >" shape="rect" coords="543,112,895,136">
+<area href="a00313.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
+</map>
+<a href="a00048.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0d0524c99313dedea1e04464bbf2f7ef"></a><!-- doxytag: member="tbb::flow::interface6::receiver::input_type" ref="0d0524c99313dedea1e04464bbf2f7ef" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#0d0524c99313dedea1e04464bbf2f7ef">input_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7fa8cff811e7c1589b805a4bb4c7a74f"></a><!-- doxytag: member="tbb::flow::interface6::receiver::predecessor_type" ref="7fa8cff811e7c1589b805a4bb4c7a74f" args="" -->
+typedef <a class="el" href="a00312.html">sender</a>&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#7fa8cff811e7c1589b805a4bb4c7a74f">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d82d4d36fbf9727a493d26ae50855fe7"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::scoped_lock" ref="d82d4d36fbf9727a493d26ae50855fe7" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#d82d4d36fbf9727a493d26ae50855fe7">scoped_lock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b00699b235435f7b65b663d5063624a1"></a><!-- doxytag: member="tbb::flow::interface6::receiver::~receiver" ref="b00699b235435f7b65b663d5063624a1" args="()" -->
+virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#b00699b235435f7b65b663d5063624a1">~receiver</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct lock that has not acquired a <a class="el" href="a00305.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dec17713c4c1321ac8fec66816d0c602"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::scoped_lock" ref="dec17713c4c1321ac8fec66816d0c602" args="(recursive_mutex &amp;mutex)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#dec17713c4c1321ac8fec66816d0c602">scoped_lock</a> (<a class="el" href="a00305.html">recursive_mutex</a> &amp;<a class="el" href="a00284.html">mutex</a>)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6d5d0cb8ebe5771be91933609fe31b8"></a><!-- doxytag: member="tbb::flow::interface6::receiver::try_put" ref="c6d5d0cb8ebe5771be91933609fe31b8" args="(const T &amp;t)=0" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#c6d5d0cb8ebe5771be91933609fe31b8">try_put</a> (const T &amp;t)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c1197ffb8f3cd9d4fed71d7e06265b7c"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::~scoped_lock" ref="c1197ffb8f3cd9d4fed71d7e06265b7c" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#c1197ffb8f3cd9d4fed71d7e06265b7c">~scoped_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Put an item to the receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="30e3316466efe3a713c23062b6e806f3"></a><!-- doxytag: member="tbb::flow::interface6::receiver::register_predecessor" ref="30e3316466efe3a713c23062b6e806f3" args="(predecessor_type &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#30e3316466efe3a713c23062b6e806f3">register_predecessor</a> (<a class="el" href="a00312.html">predecessor_type</a> &amp;)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock (if lock is held). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7fb04da37cccf8c99b1f9102d9074f9a"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::acquire" ref="7fb04da37cccf8c99b1f9102d9074f9a" args="(recursive_mutex &amp;mutex)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#7fb04da37cccf8c99b1f9102d9074f9a">acquire</a> (<a class="el" href="a00305.html">recursive_mutex</a> &amp;<a class="el" href="a00284.html">mutex</a>)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a predecessor to the node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3bc76547b51d3c9b633e3987d22dce95"></a><!-- doxytag: member="tbb::flow::interface6::receiver::remove_predecessor" ref="3bc76547b51d3c9b633e3987d22dce95" args="(predecessor_type &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#3bc76547b51d3c9b633e3987d22dce95">remove_predecessor</a> (<a class="el" href="a00312.html">predecessor_type</a> &amp;)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="36bfc3e93e3ef6340abef4901444d340"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::try_acquire" ref="36bfc3e93e3ef6340abef4901444d340" args="(recursive_mutex &amp;mutex)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#36bfc3e93e3ef6340abef4901444d340">try_acquire</a> (<a class="el" href="a00305.html">recursive_mutex</a> &amp;<a class="el" href="a00284.html">mutex</a>)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquire lock on given <a class="el" href="a00305.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ac480ea0e9d5ea0345a67d57008b6263"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::release" ref="ac480ea0e9d5ea0345a67d57008b6263" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00306.html#ac480ea0e9d5ea0345a67d57008b6263">release</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="459818b78a3e9985dc5a9d5638b6593e"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock::recursive_mutex" ref="459818b78a3e9985dc5a9d5638b6593e" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>recursive_mutex</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a predecessor from the node. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The scoped locking pattern. 
-<p>
-It helps to avoid the common problem of forgetting to release lock. It also nicely provides the "node" for queuing locks. 
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface6::receiver&lt; T &gt;</h3>
+
+Pure virtual template class that defines a receiver of messages of type T. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00579.html">recursive_mutex.h</a></ul>
+<li><a class="el" href="a00489.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -36,7 +36,8 @@
 
 template< typename R >
 void simple_read_write_tests() {
-    tbb::flow::write_once_node<R> n;
+    tbb::flow::graph g;
+    tbb::flow::write_once_node<R> n(g);
 
     for ( int t = 0; t < T; ++t ) {
         R v0(0);
@@ -120,7 +121,8 @@ public:
 
 template< typename R >
 void parallel_read_write_tests() {
-    tbb::flow::write_once_node<R> n;
+    tbb::flow::graph g;
+    tbb::flow::write_once_node<R> n(g);
     //Create a vector of identical nodes
     std::vector< tbb::flow::write_once_node<R> > wo_vec(2, n);
 

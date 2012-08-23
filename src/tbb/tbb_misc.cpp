@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -170,9 +170,14 @@ void PrintVersion() {
     fputs(VersionString+1,stderr);
 }
 
-void PrintExtraVersionInfo( const char* category, const char* description ) {
-    if( PrintVersionFlag ) 
-        fprintf(stderr, "TBB: %s\t%s\n", category, description );
+void PrintExtraVersionInfo( const char* category, const char* format, ... ) {
+    if( PrintVersionFlag ) {
+        char str[1024]; memset(str, 0, 1024);
+        va_list args; va_start(args, format);
+        // Note: correct vsnprintf definition obtained from tbb_assert_impl.h
+        vsnprintf( str, 1024-1, format, args);
+        fprintf(stderr, "TBB: %s\t%s\n", category, str );
+    }
 }
 
 void PrintRMLVersionInfo( void* arg, const char* server_info ) {

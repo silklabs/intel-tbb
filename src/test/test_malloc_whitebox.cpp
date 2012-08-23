@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -349,26 +349,27 @@ int putMallocMem(intptr_t /*pool_id*/, void *ptr, size_t bytes)
 }
 
 void TestPools() {
-    rml::MemPoolPolicy pol;
+    rml::MemPoolPolicy pol(getMem, putMem);
     size_t beforeNumBackRef, afterNumBackRef;
 
-    pol.pAlloc = getMem;
-    pol.pFree = putMem;
-    pol.granularity = 8;
-    rml::MemoryPool *pool1 = pool_create(0, &pol);
-    rml::MemoryPool *pool2 = pool_create(0, &pol);
+    rml::MemoryPool *pool1;
+    rml::MemoryPool *pool2;
+    pool_create_v1(0, &pol, &pool1);
+    pool_create_v1(0, &pol, &pool2);
     pool_destroy(pool1);
     pool_destroy(pool2);
 
     cleanObjectCache();
     beforeNumBackRef = allocatedBackRefCount();
-    rml::MemoryPool *fixedPool = pool_create(0, &pol);
+    rml::MemoryPool *fixedPool;
 
+    pool_create_v1(0, &pol, &fixedPool);
     pol.pAlloc = getMallocMem;
     pol.pFree = putMallocMem;
     pol.granularity = 8;
-    rml::MemoryPool *mallocPool = pool_create(0, &pol);
+    rml::MemoryPool *mallocPool;
 
+    pool_create_v1(0, &pol, &mallocPool);
 /* check that large object cache (LOC) returns correct size for cached objects
    passBackendSz Byte objects are cached in LOC, but bypassed the backend, so
    memory requested directly from allocation callback.
@@ -513,12 +514,9 @@ public:
 
 void TestBackend()
 {
-    rml::MemPoolPolicy pol;
-
-    pol.pAlloc = getMallocMem;
-    pol.pFree = putMallocMem;
-    pol.granularity = 8;
-    rml::MemoryPool *mPool = pool_create(0, &pol);
+    rml::MemPoolPolicy pol(getMallocMem, putMallocMem);
+    rml::MemoryPool *mPool;
+    pool_create_v1(0, &pol, &mPool);
     rml::internal::ExtMemoryPool *ePool = 
         &((rml::internal::MemoryPool*)mPool)->extMemPool;
     rml::internal::Backend *backend = &ePool->backend;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -35,7 +35,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#define __TBB_WORDSIZE      __SIZEOF_INT__
+#define __TBB_WORDSIZE      __SIZEOF_POINTER__
 
 // For some reason straight mapping does not work on mingw
 #if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
@@ -60,6 +60,10 @@
 inline T __TBB_machine_cmpswp##S( volatile void *ptr, T value, T comparand ) {                    \
     return __sync_val_compare_and_swap(reinterpret_cast<volatile T *>(ptr),comparand,value);      \
 }                                                                                                 \
+                                                                                                  \
+inline T __TBB_machine_fetchadd##S( volatile void *ptr, T value ) {                               \
+    return __sync_fetch_and_add(reinterpret_cast<volatile T *>(ptr),value);                       \
+}                                                                                                 \
 
 __TBB_MACHINE_DEFINE_ATOMICS(1,int8_t)
 __TBB_MACHINE_DEFINE_ATOMICS(2,int16_t)
@@ -68,7 +72,50 @@ __TBB_MACHINE_DEFINE_ATOMICS(8,int64_t)
 
 #undef __TBB_MACHINE_DEFINE_ATOMICS
 
-#define __TBB_USE_GENERIC_FETCH_ADD                 1
+namespace tbb{ namespace internal { namespace gcc_builtins {
+    int clz(unsigned int x){ return __builtin_clz(x);};
+    int clz(unsigned long int x){ return __builtin_clzl(x);};
+}}}
+//gcc __builtin_clz builtin count _number_ of leading zeroes
+static inline intptr_t __TBB_machine_lg( uintptr_t x ) {
+    return sizeof(x)*8 - tbb::internal::gcc_builtins::clz(x) -1 ;
+}
+
+static inline void __TBB_machine_or( volatile void *ptr, uintptr_t addend ) {
+    __sync_fetch_and_or(reinterpret_cast<volatile uintptr_t *>(ptr),addend);
+}
+
+static inline void __TBB_machine_and( volatile void *ptr, uintptr_t addend ) {
+    __sync_fetch_and_and(reinterpret_cast<volatile uintptr_t *>(ptr),addend);
+}
+
+
+typedef unsigned char __TBB_Flag;
+
+typedef __TBB_atomic __TBB_Flag __TBB_atomic_flag;
+
+inline bool __TBB_machine_try_lock_byte( __TBB_atomic_flag &flag ) {
+    return __sync_lock_test_and_set(&flag,1)==0;
+}
+
+inline void __TBB_machine_unlock_byte( __TBB_atomic_flag &flag , __TBB_Flag) {
+    __sync_lock_release(&flag);
+}
+
+// Machine specific atomic operations
+#define __TBB_AtomicOR(P,V)     __TBB_machine_or(P,V)
+#define __TBB_AtomicAND(P,V)    __TBB_machine_and(P,V)
+
+#define __TBB_TryLockByte   __TBB_machine_try_lock_byte
+#define __TBB_UnlockByte    __TBB_machine_unlock_byte
+
+// Definition of other functions
+#define __TBB_Log2(V)           __TBB_machine_lg(V)
+
 #define __TBB_USE_GENERIC_FETCH_STORE               1
 #define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE    1
 #define __TBB_USE_GENERIC_RELAXED_LOAD_STORE        1
+
+#if __TBB_WORDSIZE==4
+    #define __TBB_USE_GENERIC_DWORD_LOAD_STORE      1
+#endif

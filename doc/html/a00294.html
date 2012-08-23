@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::pre_scan_tag Struct Reference</title>
+<title>tbb::internal::partition_type_base Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,30 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00294.html">pre_scan_tag</a></div>
-<h1>tbb::pre_scan_tag Struct Reference<br>
-<small>
-[<a class="el" href="a00406.html">Algorithms</a>]</small>
-</h1><!-- doxytag: class="tbb::pre_scan_tag" -->Used to indicate that the initial scan is being performed.  
+<a class="el" href="a00396.html">tbb</a>::<b>internal</b>::<a class="el" href="a00294.html">partition_type_base</a></div>
+<h1>tbb::internal::partition_type_base Class Reference</h1><!-- doxytag: class="tbb::internal::partition_type_base" -->Provides backward-compatible methods for partition objects without affinity.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00537.html">parallel_scan.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00553.html">partitioner.h</a>&gt;</code>
 <p>
-<a href="a00089.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00094.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d45d2cf548e51140ad6faafbea8ca6b5"></a><!-- doxytag: member="tbb::pre_scan_tag::is_final_scan" ref="d45d2cf548e51140ad6faafbea8ca6b5" args="()" -->
-static bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_final_scan</b> ()</td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d5b43011addf53239ccf8cdeaeab76e7"></a><!-- doxytag: member="tbb::internal::partition_type_base::set_affinity" ref="d5b43011addf53239ccf8cdeaeab76e7" args="(task &amp;)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_affinity</b> (<a class="el" href="a00322.html">task</a> &amp;)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2bffce16dee5796448bf12c8ccecd94c"></a><!-- doxytag: member="tbb::internal::partition_type_base::note_affinity" ref="2bffce16dee5796448bf12c8ccecd94c" args="(task::affinity_id)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>note_affinity</b> (<a class="el" href="a00322.html#d61bb32389d3857bf7511d69beaafb76">task::affinity_id</a>)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="87962b93599ff172cd4b64f2995ebc71"></a><!-- doxytag: member="tbb::internal::partition_type_base::continue_after_execute_range" ref="87962b93599ff172cd4b64f2995ebc71" args="()" -->
+<a class="el" href="a00322.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>continue_after_execute_range</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="baca041e2b854196a411f1d0ca7ae905"></a><!-- doxytag: member="tbb::internal::partition_type_base::decide_whether_to_delay" ref="baca041e2b854196a411f1d0ca7ae905" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>decide_whether_to_delay</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="17686f1a5119802cad38369d0580d05f"></a><!-- doxytag: member="tbb::internal::partition_type_base::spawn_or_delay" ref="17686f1a5119802cad38369d0580d05f" args="(bool, task &amp;b)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>spawn_or_delay</b> (bool, <a class="el" href="a00322.html">task</a> &amp;b)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Used to indicate that the initial scan is being performed. 
+Provides backward-compatible methods for partition objects without affinity. 
 <p>
-<hr>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="a00537.html">parallel_scan.h</a></ul>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="a00553.html">partitioner.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

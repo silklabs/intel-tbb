@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -139,33 +139,31 @@ namespace internal {
         B init_body;
     };
 
-# if TBB_PREVIEW_GRAPH_NODES
     //! function_body that takes an Input and a set of output ports
     template<typename Input, typename OutputSet>
-    class multioutput_function_body {
+    class multifunction_body {
     public:
-        virtual ~multioutput_function_body () {}
+        virtual ~multifunction_body () {}
         virtual void operator()(const Input &/* input*/, OutputSet &/*oset*/) = 0;
-        virtual multioutput_function_body* clone() = 0;
+        virtual multifunction_body* clone() = 0;
     };
 
-    //! leaf for multi-output function.  OutputSet can be a std::tuple or a vector.
+    //! leaf for multifunction.  OutputSet can be a std::tuple or a vector.
     template<typename Input, typename OutputSet, typename B>
-    class multioutput_function_body_leaf : public multioutput_function_body<Input, OutputSet> {
+    class multifunction_body_leaf : public multifunction_body<Input, OutputSet> {
     public:
-        multioutput_function_body_leaf(const B &_body) : body(_body), init_body(_body) { }
+        multifunction_body_leaf(const B &_body) : body(_body), init_body(_body) { }
         void operator()(const Input &input, OutputSet &oset) {
             body(input, oset); // body should explicitly put() to one or more of oset.
         }
         B get_body() { return body; }
-        /*override*/ multioutput_function_body_leaf* clone() {
-            return new multioutput_function_body_leaf<Input, OutputSet,B>(init_body);
+        /*override*/ multifunction_body_leaf* clone() {
+            return new multifunction_body_leaf<Input, OutputSet,B>(init_body);
         }
     private:
         B body;
         B init_body;
     };
-#endif  // TBB_PREVIEW_GRAPH_NODES
     
     //! A task that calls a node's forward function
     template< typename NodeType >

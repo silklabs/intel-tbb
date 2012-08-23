@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::null_rw_mutex::scoped_lock Class Reference</title>
+<title>tbb::null_mutex::scoped_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,31 +21,25 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00288.html">null_rw_mutex</a>::<a class="el" href="a00289.html">scoped_lock</a></div>
-<h1>tbb::null_rw_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_rw_mutex::scoped_lock" -->Represents acquisition of a mutex.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00288.html">null_mutex</a>::<a class="el" href="a00289.html">scoped_lock</a></div>
+<h1>tbb::null_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_mutex::scoped_lock" -->Represents acquisition of a mutex.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00509.html">null_rw_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00511.html">null_mutex.h</a>&gt;</code>
 <p>
-<a href="a00086.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00085.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e11281a13a7b6243c6c9ab243c5ad5a8"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::scoped_lock" ref="e11281a13a7b6243c6c9ab243c5ad5a8" args="(null_rw_mutex &amp;, bool=true)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00288.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="765e64065919fdd9665e78b5ec4d3c6f"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::scoped_lock" ref="765e64065919fdd9665e78b5ec4d3c6f" args="(null_mutex &amp;)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="72c4c302fdfc20187a650348e432b0a7"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::acquire" ref="72c4c302fdfc20187a650348e432b0a7" args="(null_rw_mutex &amp;, bool=true)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00288.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6889f00ca3946906e89e856988bb890"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::acquire" ref="f6889f00ca3946906e89e856988bb890" args="(null_mutex &amp;)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa1e2a5592ee2672470ea44d98f1c498"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::upgrade_to_writer" ref="fa1e2a5592ee2672470ea44d98f1c498" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>upgrade_to_writer</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90eb562a9de52b33362a6fe237b3df42"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::try_acquire" ref="90eb562a9de52b33362a6fe237b3df42" args="(null_mutex &amp;)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00288.html">null_mutex</a> &amp;)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="efcb7948649e1652d59aaff9c8ea40f1"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::downgrade_to_reader" ref="efcb7948649e1652d59aaff9c8ea40f1" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>downgrade_to_reader</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="56686c4dfe4a32a1d9bd8e7e729130e6"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::try_acquire" ref="56686c4dfe4a32a1d9bd8e7e729130e6" args="(null_rw_mutex &amp;, bool=true)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00288.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6146c803a4ad2f14263fdc019a72b5a9"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::release" ref="6146c803a4ad2f14263fdc019a72b5a9" args="()" -->
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b29fdf07b4c295850a6e433001c2c6a7"></a><!-- doxytag: member="tbb::null_mutex::scoped_lock::release" ref="b29fdf07b4c295850a6e433001c2c6a7" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></tr>
 
 </table>
@@ -53,10 +47,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></
 Represents acquisition of a mutex. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00509.html">null_rw_mutex.h</a></ul>
+<li><a class="el" href="a00511.html">null_mutex.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

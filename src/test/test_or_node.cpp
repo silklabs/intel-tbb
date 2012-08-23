@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -243,7 +243,7 @@ public:
         }
         for(int nInputs = 1; nInputs <= MaxNSources; ++nInputs) {
             tbb::flow::graph g;
-            OType* my_or = makeOr<OType>::create();
+            OType* my_or = new OType(g); //makeOr<OType>::create(); 
             tbb::flow::queue_node<TType> outq1(g);
             tbb::flow::queue_node<TType> outq2(g);
 
@@ -397,7 +397,7 @@ public:
 static void test() {
     tbb::flow::graph g;
     static const int ELEMS = 3;
-    OType* my_or = makeOr<OType>::create();
+    OType* my_or = new OType(g); //makeOr<OType>::create(g);
 
     serial_queue_helper<SIZE, OType>::print_remark(); REMARK(" >\n");
 

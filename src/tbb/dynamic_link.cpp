@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -45,6 +45,9 @@
     #include <malloc.h>     /* alloca */
 #else
     #include <dlfcn.h>
+    #include <string.h>
+    #include <unistd.h>
+    #include <limits.h>
 #if __FreeBSD__ || __NetBSD__
     #include <stdlib.h>     /* alloca */
 #else
@@ -140,7 +143,104 @@ static size_t abs_path( char const * name, char * path, size_t len ) {
     LIBRARY_ASSERT( rc == strlen( path ), NULL );
     return rc;
 } // abs_path
+#else /* WIN */
+    class _abs_path {
+        char _path[PATH_MAX+1];
+        size_t _len;
+        enum {
+            ap_invalid = 0,
+            ap_only_cwd,
+            ap_ready
+        } _state;
 
+        bool prepare_full_path() {
+            LIBRARY_ASSERT( _state==ap_only_cwd, NULL );
+
+            Dl_info dlinfo;
+            int res = dladdr( (void*)&dynamic_unlink, &dlinfo );
+            if ( !res ) {
+                char const * err = dlerror();
+                DYNAMIC_LINK_WARNING( dl_sys_fail, "dladdr", err );
+                return false;
+            }
+
+            size_t fname_len = strlen( dlinfo.dli_fname );
+            // Find the position of the last backslash.
+            while ( fname_len>0 && dlinfo.dli_fname[fname_len-1]!='/' ) fname_len-=1;
+
+            size_t rc;
+
+            if ( dlinfo.dli_fname[0]=='/' ) {
+                rc = 0;
+                _len = fname_len;
+            } else {
+                rc = _len;
+                _len += fname_len;
+            }
+
+            if ( fname_len>0 ) {
+                if ( _len>PATH_MAX ) {
+                    DYNAMIC_LINK_WARNING( dl_buff_too_small );
+                    return false;
+                }
+                memcpy( _path+rc, dlinfo.dli_fname, fname_len*sizeof(char) );
+                _path[_len]=0;
+            }
+
+            return true;
+        }
+    public:
+        _abs_path() {
+            if ( getcwd( _path, PATH_MAX+1 ) ) {
+                _state = ap_only_cwd;
+                _len = strlen( _path );
+                _path[_len++]='/';
+            } else {
+                DYNAMIC_LINK_WARNING( dl_buff_too_small );
+                _state = ap_invalid;
+            }
+        }
+
+        /*
+            The function constructs absolute path for given relative path. Important: Base directory is not
+            current one, it is the directory libtbb.so loaded from.
+
+            Arguments:
+            in  name -- Name of a file (may be with relative path; it must not be an absolute one).
+            out path -- Buffer to save result (absolute path) to.
+            in  len  -- Size of buffer.
+            ret      -- 0         -- Error occured.
+                        > len     -- Buffer too short, required size returned.
+                        otherwise -- Ok, number of characters (not counting terminating null) written to
+                                     buffer.
+        */
+        size_t operator ()( char const * name, char * path, size_t len ) {
+            switch ( _state ) {
+                case ap_only_cwd:
+                    if ( !prepare_full_path() ) {
+                        _state = ap_invalid;
+                        return 0;
+                    }
+                    _state = ap_ready;
+                    // 'break' is missed since we really want to do next case.
+                case ap_ready: {
+                        size_t name_len = strlen( name );
+                        size_t full_len = name_len+_len;
+                        if ( full_len+_len < len ) {
+                            memcpy( path, _path, _len );
+                            memcpy( path+_len, name, name_len );
+                            path[full_len] = 0;
+                        }
+                        return full_len;
+                    }
+                default:
+                    return 0;
+            }
+        }
+
+    };
+
+_abs_path abs_path;
 #endif /* WIN */
 
 #if __TBB_WEAK_SYMBOLS
@@ -257,6 +357,7 @@ bool dynamic_link( const char* library, const dynamic_link_descriptor descriptor
     // Get library handle in case it is already loaded into the current process
 #if ! __TBB_DYNAMIC_LOAD_ENABLED
     dynamic_link_handle library_handle = NULL;
+    __TBB_ASSERT_EX( library, "library name must be provided");
 #elif _WIN32||_WIN64
     dynamic_link_handle library_handle = GetModuleHandle( library );
 #else
@@ -342,10 +443,17 @@ bool dynamic_link( const char* library, const dynamic_link_descriptor descriptor
         } // if
 #endif /* !_XBOX */
 #else /* !WIN */
-        library_handle = dlopen( library, RTLD_LAZY );
-        if ( library_handle == NULL ) {
-            char const * err = dlerror();
-            DYNAMIC_LINK_WARNING( dl_lib_not_found, library, err );
+        library_handle = NULL;
+        // Construct absolute path to the library.
+        size_t const len = PATH_MAX + 1;
+        char path[ len ];
+        size_t rc = abs_path( library, path, len );
+        if ( 0 < rc && rc < len ) {
+            library_handle = dlopen( path, RTLD_LAZY );
+            if ( library_handle == NULL ) {
+                char const * err = dlerror();
+                DYNAMIC_LINK_WARNING( dl_lib_not_found, library, err );
+            } // if
         } // if
 #endif /* !WIN */
         if( library_handle ) {

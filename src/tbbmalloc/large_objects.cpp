@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -65,27 +65,6 @@ bool CachedLargeBlocksL::push(ExtMemoryPool *extMemPool, LargeMemoryBlock *ptr)
     }
 }
 
-void LargeMemoryBlock::registerInPool(ExtMemoryPool *extMemPool)
-{
-    MallocMutex::scoped_lock scoped_cs(extMemPool->largeObjLock);
-    gPrev = NULL;
-    gNext = extMemPool->loHead;
-    if (gNext)
-        gNext->gPrev = this;
-    extMemPool->loHead = this;
-}
-
-void LargeMemoryBlock::unregisterFromPool(ExtMemoryPool *extMemPool)
-{
-    MallocMutex::scoped_lock scoped_cs(extMemPool->largeObjLock);
-    if (extMemPool->loHead == this)
-        extMemPool->loHead = gNext;
-    if (gNext)
-        gNext->gPrev = gPrev;
-    if (gPrev)
-        gPrev->gNext = gNext;
-}
-
 LargeMemoryBlock *CachedLargeBlocksL::pop(ExtMemoryPool *extMemPool)
 {   
     uintptr_t currAge = cleanupCacheIfNeed(extMemPool);
@@ -145,8 +124,6 @@ bool CachedLargeBlocksL::releaseLastIfOld(ExtMemoryPool *extMemPool,
     while ( toRelease ) {
         LargeMemoryBlock *helper = toRelease->next;
         removeBackRef(toRelease->backRefIdx);
-        if (extMemPool->userPool())
-            toRelease->unregisterFromPool(extMemPool);
         extMemPool->backend.putLargeBlock(toRelease);
         toRelease = helper;
     }
@@ -175,8 +152,6 @@ bool CachedLargeBlocksL::releaseAll(ExtMemoryPool *extMemPool)
     while ( toRelease ) {
         LargeMemoryBlock *helper = toRelease->next;
         removeBackRef(toRelease->backRefIdx);
-        if (extMemPool->userPool())
-            toRelease->unregisterFromPool(extMemPool);
         extMemPool->backend.putLargeBlock(toRelease);
         toRelease = helper;
     }
@@ -256,8 +231,6 @@ void* mallocLargeObject(ExtMemoryPool *extMemPool, size_t size, size_t alignment
             return NULL;
         }
         lmb->backRefIdx = backRefIdx;
-        if (extMemPool->userPool())
-            lmb->registerInPool(extMemPool);
         STAT_increment(getThreadId(), ThreadCommonCounters, allocNewLargeObj);
     }
 
@@ -278,7 +251,6 @@ static bool freeLargeObjectToCache(ExtMemoryPool *extMemPool, LargeMemoryBlock* 
     size_t size = largeBlock->unalignedSize;
     size_t idx = (size-minLargeObjectSize)/largeBlockCacheStep;
     if (idx<numLargeBlockBins) {
-        MALLOC_ASSERT( size%largeBlockCacheStep==0, ASSERT_TEXT );
         MALLOC_ITT_SYNC_RELEASING(extMemPool->cachedLargeBlocks+idx);
         if (extMemPool->cachedLargeBlocks[idx].push(extMemPool, largeBlock)) {
             STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeBlk);
@@ -297,8 +269,6 @@ void freeLargeObject(ExtMemoryPool *extMemPool, void *object)
     header->backRefIdx = BackRefIdx();
     if (!freeLargeObjectToCache(extMemPool, header->memoryBlock)) {
         removeBackRef(header->memoryBlock->backRefIdx);
-        if (extMemPool->userPool())
-            header->memoryBlock->unregisterFromPool(extMemPool);
         extMemPool->backend.putLargeBlock(header->memoryBlock);
         STAT_increment(getThreadId(), ThreadCommonCounters, freeLargeObj);
     }

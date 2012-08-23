@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -63,12 +63,12 @@ struct convertor<tbb::flow::continue_msg,OutputType> {
     }
 };
 
-// helper for multioutput_function_node tests.
+// helper for multifunction_node tests.
 template<size_t N>
 struct mof_helper {
     template<typename InputType, typename ports_type>
     static inline void output_converted_value(const InputType &i, ports_type &p) {
-        std::get<N-1>(p).put(convertor<InputType,typename std::tuple_element<N-1,ports_type>::type::output_type>::convert_value(i));
+        (void)std::get<N-1>(p).try_put(convertor<InputType,typename std::tuple_element<N-1,ports_type>::type::output_type>::convert_value(i));
         output_converted_value<N-1>(i, p);
     }
 };
@@ -78,7 +78,7 @@ struct mof_helper<1> {
     template<typename InputType, typename ports_type>
     static inline void output_converted_value(const InputType &i, ports_type &p) {
         // just emit a default-constructed object
-        std::get<0>(p).put(convertor<InputType,typename std::tuple_element<0,ports_type>::type::output_type>::convert_value(i));
+        (void)std::get<0>(p).try_put(convertor<InputType,typename std::tuple_element<0,ports_type>::type::output_type>::convert_value(i));
     }
 };
 
@@ -110,16 +110,14 @@ struct harness_graph_default_functor< tbb::flow::continue_msg, tbb::flow::contin
     }
 };
 
-#if TBB_PREVIEW_GRAPH_NODES
 template<typename InputType, typename OutputSet>
-struct harness_graph_default_multioutput_functor {
+struct harness_graph_default_multifunction_functor {
     static const int N = std::tuple_size<OutputSet>::value;
-    typedef typename tbb::flow::multioutput_function_node<InputType,OutputSet>::output_ports_type ports_type;
+    typedef typename tbb::flow::multifunction_node<InputType,OutputSet>::output_ports_type ports_type;
     static void construct(const InputType &i, ports_type &p) {
         mof_helper<N>::output_converted_value(i, p);
     }
 };
-#endif
 
 static tbb::atomic<size_t> current_executors;
 
@@ -162,11 +160,10 @@ struct harness_graph_executor {
 
 };
 
-#if TBB_PREVIEW_GRAPH_NODES
-//! A multioutput executor that accepts InputType and has only one Output of OutputType.
+//! A multifunction executor that accepts InputType and has only one Output of OutputType.
 template< typename InputType, typename OutputTuple, typename M=tbb::null_rw_mutex >
-struct harness_graph_multioutput_executor {
-    typedef typename tbb::flow::multioutput_function_node<InputType,OutputTuple>::output_ports_type ports_type;
+struct harness_graph_multifunction_executor {
+    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type ports_type;
     typedef typename std::tuple_element<0,OutputTuple>::type OutputType;
 
     typedef void (*mfunction_ptr_type)( const InputType& v, ports_type &p );
@@ -192,18 +189,17 @@ struct harness_graph_multioutput_executor {
         functor() { my_execute_count = 0; }
         functor( const functor &f ) { my_execute_count = f.my_execute_count; }
         void operator()( const InputType &i, ports_type &p ) {
-           typename M::scoped_lock l( harness_graph_multioutput_executor::mutex );
+           typename M::scoped_lock l( harness_graph_multifunction_executor::mutex );
            size_t c = current_executors.fetch_and_increment();
-           ASSERT( harness_graph_multioutput_executor::max_executors == 0 || c <= harness_graph_multioutput_executor::max_executors, NULL ); 
+           ASSERT( harness_graph_multifunction_executor::max_executors == 0 || c <= harness_graph_multifunction_executor::max_executors, NULL ); 
            ++execute_count;
            my_execute_count.fetch_and_increment();
-           (*harness_graph_multioutput_executor::fptr)(i,p);
+           (*harness_graph_multifunction_executor::fptr)(i,p);
            current_executors.fetch_and_decrement();
         }
     };
 
 };
-#endif //  TBB_PREVIEW_GRAPH_NODES
 
 template< typename InputType, typename OutputType, typename M >
 M harness_graph_executor<InputType, OutputType, M>::mutex;
@@ -218,21 +214,19 @@ typename harness_graph_executor<InputType, OutputType, M>::function_ptr_type har
 template< typename InputType, typename OutputType, typename M >
 size_t harness_graph_executor<InputType, OutputType, M>::max_executors = 0;
 
-#if TBB_PREVIEW_GRAPH_NODES
-// static vars for multioutput_function_node tests
+// static vars for multifunction_node tests
 template< typename InputType, typename OutputTuple, typename M >
-M harness_graph_multioutput_executor<InputType, OutputTuple, M>::mutex;
+M harness_graph_multifunction_executor<InputType, OutputTuple, M>::mutex;
 
 template< typename InputType, typename OutputTuple, typename M >
-tbb::atomic<size_t> harness_graph_multioutput_executor<InputType, OutputTuple, M>::execute_count;
+tbb::atomic<size_t> harness_graph_multifunction_executor<InputType, OutputTuple, M>::execute_count;
 
 template< typename InputType, typename OutputTuple, typename M >
-typename harness_graph_multioutput_executor<InputType, OutputTuple, M>::mfunction_ptr_type harness_graph_multioutput_executor<InputType, OutputTuple, M>::fptr
-    = harness_graph_default_multioutput_functor< InputType, OutputTuple >::construct;
+typename harness_graph_multifunction_executor<InputType, OutputTuple, M>::mfunction_ptr_type harness_graph_multifunction_executor<InputType, OutputTuple, M>::fptr
+    = harness_graph_default_multifunction_functor< InputType, OutputTuple >::construct;
 
 template< typename InputType, typename OutputTuple, typename M >
-size_t harness_graph_multioutput_executor<InputType, OutputTuple, M>::max_executors = 0;
-#endif
+size_t harness_graph_multifunction_executor<InputType, OutputTuple, M>::max_executors = 0;
 
 //! Counts the number of puts received
 template< typename T >

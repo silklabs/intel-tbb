@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -127,6 +127,8 @@ public:
     }
 
     static void print_version_info ();
+
+    static void initialize_rml_factory ();
 
 #if __TBB_SURVIVE_THREAD_SWITCH
     static __cilk_tbb_retcode stack_op_handler( __cilk_tbb_stack_op op, void* );

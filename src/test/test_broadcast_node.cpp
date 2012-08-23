@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -73,7 +73,8 @@ public:
 template< typename T >
 void test_serial_broadcasts() {
 
-    tbb::flow::broadcast_node<T> b;
+    tbb::flow::graph g;
+    tbb::flow::broadcast_node<T> b(g);
     
     for ( int num_receivers = 1; num_receivers < R; ++num_receivers ) {
         counting_array_receiver<T> *receivers = new counting_array_receiver<T>[num_receivers];
@@ -104,8 +105,8 @@ void test_serial_broadcasts() {
 
 template< typename T >
 class native_body : private NoAssign {
- 
-   tbb::flow::broadcast_node<T> &my_b;
+
+    tbb::flow::broadcast_node<T> &my_b;
 
 public:
 
@@ -148,7 +149,8 @@ void run_parallel_broadcasts(int p, tbb::flow::broadcast_node<T>& b) {
 template< typename T >
 void test_parallel_broadcasts(int p) {
 
-    tbb::flow::broadcast_node<T> b;
+    tbb::flow::graph g;
+    tbb::flow::broadcast_node<T> b(g);
     run_parallel_broadcasts(p, b);
     
     // test copy constructor

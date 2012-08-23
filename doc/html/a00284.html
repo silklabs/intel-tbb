@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::mutex Class Reference</title>
+<title>tbb::movable_exception&lt; ExceptionData &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,113 +21,148 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00284.html">mutex</a></div>
-<h1>tbb::mutex Class Reference<br>
-<small>
-[<a class="el" href="a00409.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::mutex" -->Wrapper around the platform's native reader-writer lock.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00284.html">movable_exception</a></div>
+<h1>tbb::movable_exception&lt; ExceptionData &gt; Class Template Reference</h1><!-- doxytag: class="tbb::movable_exception" --><!-- doxytag: inherits="tbb::tbb_exception" -->Template that can be used to implement exception that transfers arbitrary ExceptionData to the root thread.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00506.html">mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00615.html">tbb_exception.h</a>&gt;</code>
 <p>
-<a href="a00081.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::movable_exception&lt; ExceptionData &gt;:
+<p><center><img src="a00284.png" usemap="#tbb::movable_exception< ExceptionData >_map" border="0" alt=""></center>
+<map name="tbb::movable_exception< ExceptionData >_map">
+<area href="a00330.html" alt="tbb::tbb_exception" shape="rect" coords="0,0,248,24">
+</map>
+<a href="a00153.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f1ec84d5815263ceae853f06ddb4cac"></a><!-- doxytag: member="tbb::mutex::native_handle_type" ref="9f1ec84d5815263ceae853f06ddb4cac" args="" -->
-typedef LPCRITICAL_SECTION&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#9f1ec84d5815263ceae853f06ddb4cac">native_handle_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return native_handle. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a1f4d4b88a03eb3e95c76569b91a0792"></a><!-- doxytag: member="tbb::mutex::native_handle_type" ref="a1f4d4b88a03eb3e95c76569b91a0792" args="" -->
-typedef pthread_mutex_t *&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab196034e5963fe9e27d7c4d0a2d4ffa24a50a7"></a><!-- doxytag: member="tbb::mutex::INITIALIZED" ref="c907aa5ae5274da759c4188c8ab196034e5963fe9e27d7c4d0a2d4ffa24a50a7" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>INITIALIZED</b> = 0x1234</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab19603646f4766864612448d6f9b21ff61abcd"></a><!-- doxytag: member="tbb::mutex::DESTROYED" ref="c907aa5ae5274da759c4188c8ab19603646f4766864612448d6f9b21ff61abcd" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>DESTROYED</b> = 0x789A</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab196031de5796ebbbaa1e30d19e5d54f0f6555"></a><!-- doxytag: member="tbb::mutex::HELD" ref="c907aa5ae5274da759c4188c8ab196031de5796ebbbaa1e30d19e5d54f0f6555" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>HELD</b> = 0x56CD</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>state_t</b> { <b>INITIALIZED</b> = 0x1234, 
-<b>DESTROYED</b> = 0x789A, 
-<b>HELD</b> = 0x56CD
- }</td></tr>
-
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05313cb77d4f85213103d4dab74ed454"></a><!-- doxytag: member="tbb::mutex::mutex" ref="05313cb77d4f85213103d4dab74ed454" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#05313cb77d4f85213103d4dab74ed454">mutex</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="43dfdc5298df3aa8a7d7d146604f84ef"></a><!-- doxytag: member="tbb::movable_exception::movable_exception" ref="43dfdc5298df3aa8a7d7d146604f84ef" args="(const ExceptionData &amp;data_)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>movable_exception</b> (const ExceptionData &amp;data_)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4470e61c24c129a0299ca6c17240adbb"></a><!-- doxytag: member="tbb::mutex::lock" ref="4470e61c24c129a0299ca6c17240adbb" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#4470e61c24c129a0299ca6c17240adbb">lock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48f97fbf1e5d66c5977891f4375ee4d9"></a><!-- doxytag: member="tbb::movable_exception::movable_exception" ref="48f97fbf1e5d66c5977891f4375ee4d9" args="(const movable_exception &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>movable_exception</b> (const <a class="el" href="a00284.html">movable_exception</a> &amp;src)  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#4331652c79dea1c1131bd59ab161b234">try_lock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dfafefe27f2afaa7c7894ca9c71cc568"></a><!-- doxytag: member="tbb::movable_exception::operator=" ref="dfafefe27f2afaa7c7894ca9c71cc568" args="(const movable_exception &amp;src)" -->
+const <a class="el" href="a00284.html">movable_exception</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00284.html">movable_exception</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#4331652c79dea1c1131bd59ab161b234"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5fc9ef443ae75d966695546be399cc6b"></a><!-- doxytag: member="tbb::mutex::unlock" ref="5fc9ef443ae75d966695546be399cc6b" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#5fc9ef443ae75d966695546be399cc6b">unlock</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="47114cbc20c8e13cac3108749a3e085d"></a><!-- doxytag: member="tbb::movable_exception::data" ref="47114cbc20c8e13cac3108749a3e085d" args="()" -->
+ExceptionData &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>data</b> ()  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="caf34349c0fbe7b44f1a2ca0a3150dd0"></a><!-- doxytag: member="tbb::mutex::native_handle" ref="caf34349c0fbe7b44f1a2ca0a3150dd0" args="()" -->
-<a class="el" href="a00284.html#9f1ec84d5815263ceae853f06ddb4cac">native_handle_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7d93c000d862d2558efd9a34817adbce"></a><!-- doxytag: member="tbb::movable_exception::data" ref="7d93c000d862d2558efd9a34817adbce" args="() const " -->
+const ExceptionData &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>data</b> () const   throw ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="795649a185b0d6af6dc81c5f378616dd"></a><!-- doxytag: member="tbb::mutex::set_state" ref="795649a185b0d6af6dc81c5f378616dd" args="(state_t to)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#795649a185b0d6af6dc81c5f378616dd">set_state</a> (state_t to)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bc5f5c4739b17ac5211ac58226c2f5a5"></a><!-- doxytag: member="tbb::movable_exception::name" ref="bc5f5c4739b17ac5211ac58226c2f5a5" args="() const " -->
+const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#bc5f5c4739b17ac5211ac58226c2f5a5">name</a> () const   throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the internal state. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="17b78176054e2bac1ff35b9535d1ea0c"></a><!-- doxytag: member="tbb::mutex::is_rw_mutex" ref="17b78176054e2bac1ff35b9535d1ea0c" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns RTTI name of the originally intercepted exception. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b33a89bccf0c63106f1270c7bfaaf54f"></a><!-- doxytag: member="tbb::movable_exception::what" ref="b33a89bccf0c63106f1270c7bfaaf54f" args="() const " -->
+const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#b33a89bccf0c63106f1270c7bfaaf54f">what</a> () const   throw ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d4558e5a7c5b8d8e158ec7a1079669bd"></a><!-- doxytag: member="tbb::mutex::is_recursive_mutex" ref="d4558e5a7c5b8d8e158ec7a1079669bd" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the result of originally intercepted exception's <a class="el" href="a00284.html#b33a89bccf0c63106f1270c7bfaaf54f">what()</a> method. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="a00284.html">movable_exception</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#1aea0ad179d6f0481fe7f3495f66adf9">move</a> ()  throw ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f023a29c61451d02359095cbff0f3d45"></a><!-- doxytag: member="tbb::mutex::is_fair_mutex" ref="f023a29c61451d02359095cbff0f3d45" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates and returns pointer to the deep copy of this exception object.  <a href="#1aea0ad179d6f0481fe7f3495f66adf9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#7a46873119d9f85a7b0009c13e41a258">destroy</a> ()  throw ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a36f15b770a1bb0b56e33d7fa75ebd1a"></a><!-- doxytag: member="tbb::mutex::scoped_lock" ref="a36f15b770a1bb0b56e33d7fa75ebd1a" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys objects created by the <a class="el" href="a00284.html#1aea0ad179d6f0481fe7f3495f66adf9">move()</a> method.  <a href="#7a46873119d9f85a7b0009c13e41a258"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#17cffba35811c92b7e65d63506b69602">throw_self</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html">scoped_lock</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Throws this exception object.  <a href="#17cffba35811c92b7e65d63506b69602"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a8c0ae2089ae784b28907cf748b89416"></a><!-- doxytag: member="tbb::movable_exception::my_exception_data" ref="a8c0ae2089ae784b28907cf748b89416" args="" -->
+ExceptionData&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00284.html#a8c0ae2089ae784b28907cf748b89416">my_exception_data</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00285.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">User data. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Wrapper around the platform's native reader-writer lock. 
+<h3>template&lt;typename ExceptionData&gt;<br>
+ class tbb::movable_exception&lt; ExceptionData &gt;</h3>
+
+Template that can be used to implement exception that transfers arbitrary ExceptionData to the root thread. 
 <p>
-For testing purposes only. 
+Code using TBB can instantiate this template with an arbitrary ExceptionData type and throw this exception object. Such exceptions are intercepted by the TBB scheduler and delivered to the root thread (). <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="a00330.html">tbb::tbb_exception</a> </dd></dl>
+
 <p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="4331652c79dea1c1131bd59ab161b234"></a><!-- doxytag: member="tbb::mutex::try_lock" ref="4331652c79dea1c1131bd59ab161b234" args="()" -->
+<a class="anchor" name="7a46873119d9f85a7b0009c13e41a258"></a><!-- doxytag: member="tbb::movable_exception::destroy" ref="7a46873119d9f85a7b0009c13e41a258" args="()" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename ExceptionData&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool tbb::mutex::try_lock           </td>
+          <td class="memname">void <a class="el" href="a00284.html">tbb::movable_exception</a>&lt; ExceptionData &gt;::destroy           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
+          <td width="100%">  throw ()<code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Try acquiring lock (non-blocking). 
+Destroys objects created by the <a class="el" href="a00284.html#1aea0ad179d6f0481fe7f3495f66adf9">move()</a> method. 
 <p>
-Return true if lock acquired; false otherwise. 
+Frees memory and calls destructor for this exception object. Can and must be used only on objects created by the move method. 
+<p>
+Implements <a class="el" href="a00330.html#66c94938eca8bf88b76f3eccaaf215d8">tbb::tbb_exception</a>.
+</div>
+</div><p>
+<a class="anchor" name="1aea0ad179d6f0481fe7f3495f66adf9"></a><!-- doxytag: member="tbb::movable_exception::move" ref="1aea0ad179d6f0481fe7f3495f66adf9" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ExceptionData&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00284.html">movable_exception</a>* <a class="el" href="a00284.html">tbb::movable_exception</a>&lt; ExceptionData &gt;::move           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%">  throw ()<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Creates and returns pointer to the deep copy of this exception object. 
+<p>
+Move semantics is allowed. 
+<p>
+Implements <a class="el" href="a00330.html#3e3482bf264d4ca4dde046cd9c02c766">tbb::tbb_exception</a>.
+</div>
+</div><p>
+<a class="anchor" name="17cffba35811c92b7e65d63506b69602"></a><!-- doxytag: member="tbb::movable_exception::throw_self" ref="17cffba35811c92b7e65d63506b69602" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ExceptionData&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00284.html">tbb::movable_exception</a>&lt; ExceptionData &gt;::throw_self           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Throws this exception object. 
+<p>
+Make sure that if you have several levels of derivation from this interface you implement or override this method on the most derived level. The implementation is as simple as "throw *this;". Failure to do this will result in exception of a base class type being thrown. 
+<p>
+Implements <a class="el" href="a00330.html#8588e07fa49692f4d734e4f2e4f048f4">tbb::tbb_exception</a>.
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00506.html">mutex.h</a></ul>
+<li><a class="el" href="a00615.html">tbb_exception.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

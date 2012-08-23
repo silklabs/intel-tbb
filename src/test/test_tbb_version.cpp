@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -61,7 +61,8 @@
 
 enum string_required {
     required,
-    not_required
+    optional,
+    optional_multiple
     };
 
 typedef std::pair <std::string, string_required> string_pair;
@@ -177,30 +178,28 @@ int main(int argc, char *argv[] ) {
             exit( 1 );
         }
         
-        int skip_line = 0;
-        
         while( !feof( stream_err ) ) {
             if( fgets( psBuffer, 512, stream_err ) != NULL ){
+                bool match_found = false;
                 do{
                     if ( strings_iterator == strings_vector.end() ){
                         REPORT( "Error: version string dictionary ended prematurely.\n" );
                         REPORT( "No match for: \t%s", psBuffer );
                         exit( 1 );
                     }
-                    if ( strstr( psBuffer, strings_iterator->first.c_str() ) == NULL ){
+                    if ( strstr( psBuffer, strings_iterator->first.c_str() ) == NULL ){ // mismatch
                         if( strings_iterator->second == required ){
                             REPORT( "Error: version strings do not match.\n" );
                             REPORT( "Expected \"%s\" not found in:\n\t%s", strings_iterator->first.c_str(), psBuffer );
                             exit( 1 );
-                        }else{
-                            //Do we need to print in case there is no non-required string?
-                            skip_line = 1;
                         }
+                        ++strings_iterator;
                     }else{
-                           skip_line = 0;
+                        match_found = true;
+                        if( strings_iterator->second != optional_multiple )
+                            ++strings_iterator;
                     }
-                    if ( strings_iterator != strings_vector.end() ) strings_iterator ++;
-                }while( skip_line );
+                }while( !match_found );
             }
         }
         fclose( stream_err );
@@ -217,7 +216,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.0", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6002", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6003", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));
@@ -229,15 +228,15 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
 #elif __APPLE__
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
     vector->push_back(string_pair("TBB: BUILD_GCC", required));
-    vector->push_back(string_pair("TBB: BUILD_COMPILER", not_required)); //if( getenv("COMPILER_VERSION") )
+    vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
 #elif __sun
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
     vector->push_back(string_pair("TBB: BUILD_SUNCC", required));
-    vector->push_back(string_pair("TBB: BUILD_COMPILER", not_required)); //if( getenv("COMPILER_VERSION") )
+    vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
 #else //We use version_info_linux.sh for unsupported OSes
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
     vector->push_back(string_pair("TBB: BUILD_GCC", required));
-    vector->push_back(string_pair("TBB: BUILD_COMPILER", not_required)); //if( getenv("COMPILER_VERSION") )
+    vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
     vector->push_back(string_pair("TBB: BUILD_GLIBC", required));
     vector->push_back(string_pair("TBB: BUILD_LD", required));
 #endif
@@ -249,11 +248,15 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: TBB_PREVIEW_BINARY", required));
 #endif
     vector->push_back(string_pair("TBB: DO_ITT_NOTIFY", required));
-    vector->push_back(string_pair("TBB: ITT", not_required)); //#ifdef DO_ITT_NOTIFY
+    vector->push_back(string_pair("TBB: ITT", optional)); //#ifdef DO_ITT_NOTIFY
     vector->push_back(string_pair("TBB: ALLOCATOR", required));
-    vector->push_back(string_pair("TBB: RML", not_required));
-    vector->push_back(string_pair("TBB: Intel(R) RML library built:", not_required));
-    vector->push_back(string_pair("TBB: Intel(R) RML library version:", not_required));
+#if _WIN32||_WIN64
+    vector->push_back(string_pair("TBB: Processor groups", required));
+    vector->push_back(string_pair("TBB: ----- Group", optional_multiple));
+#endif
+    vector->push_back(string_pair("TBB: RML", optional));
+    vector->push_back(string_pair("TBB: Intel(R) RML library built:", optional));
+    vector->push_back(string_pair("TBB: Intel(R) RML library version:", optional));
     vector->push_back(string_pair("TBB: Tools support", required));
     return;
 }

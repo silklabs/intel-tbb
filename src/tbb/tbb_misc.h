@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -92,7 +92,7 @@ bool GetBoolEnvironmentVariable( const char * name );
 void PrintVersion();
 
 //! Prints arbitrary extra TBB version information on stderr
-void PrintExtraVersionInfo( const char* category, const char* description );
+void PrintExtraVersionInfo( const char* category, const char* format, ... );
 
 //! A callback routine to print RML version information on stderr
 void PrintRMLVersionInfo( void* arg, const char* server_info );

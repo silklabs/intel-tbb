@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -32,11 +32,16 @@
 
 #if !__SUNPRO_CC
 
+#if _MSC_VER
+#pragma warning (disable: 4503)  // decorated name length exceeded, name was truncated
+#endif
+
 //
 // Tests
 //
 
 const int Count = 150;
+const int Recirc_count = 1000;  // number of tuples to be generated
 const int MaxPorts = 10;
 const int MaxNSources = 5; // max # of source_nodes to register for each join_node input in parallel test
 bool outputCheck[MaxPorts][Count];  // for checking output
@@ -90,6 +95,34 @@ template<>
 class name_of<short> {
 public:
     static const char* name() { return  "short"; }
+};
+
+// for recirculating tags, input is tuple<index,continue_msg>
+// output is index*my_mult cast to the right type
+template<typename TT>
+class recirc_func_body {
+    TT my_mult;
+public:
+    typedef std::tuple<int, tbb::flow::continue_msg> input_type;
+    recirc_func_body(TT multiplier ) : my_mult(multiplier) {}
+    recirc_func_body(const recirc_func_body &other) : my_mult(other.my_mult) { }
+    void operator=( const recirc_func_body &other) { my_mult = other.my_mult; }
+    TT operator()(const input_type &v) {
+        return TT(std::get<0>(v)) * my_mult;
+    }
+};
+
+static int input_count;  // source_nodes are serial
+static tbb::atomic<int> output_count;
+
+// emit input_count continue_msg
+class recirc_source_node_body {
+public:
+    bool operator()(tbb::flow::continue_msg &v ) {
+        --input_count;
+        v = tbb::flow::continue_msg();
+        return 0 <= input_count; 
+    }
 };
 
 // T must be arithmetic, and shouldn't wrap around for reasonable sizes of Count (which is now 150, and maxPorts is 10,
@@ -365,11 +398,13 @@ template<int ELEM, typename JNT>
 class source_node_helper {
 public:
     typedef JNT join_node_type;
+    typedef tbb::flow::join_node<std::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
     typedef typename join_node_type::output_type TT;
     typedef typename std::tuple_element<ELEM-1,TT>::type IT;
     typedef typename tbb::flow::source_node<IT> my_source_node_type;
-    static void print_remark() {
-        source_node_helper<ELEM-1,JNT>::print_remark();
+    typedef typename tbb::flow::function_node<std::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
+    static void print_remark(const char * str) {
+        source_node_helper<ELEM-1,JNT>::print_remark(str);
         REMARK(", %s", name_of<IT>::name());
     }
     static void add_source_nodes(join_node_type &my_join, tbb::flow::graph &g, int nInputs) {
@@ -381,6 +416,20 @@ public:
         // add the next source_node
         source_node_helper<ELEM-1, JNT>::add_source_nodes(my_join, g, nInputs);
     }
+
+    static void add_recirc_func_nodes(join_node_type &my_join, input_join_type &my_input, tbb::flow::graph &g) {
+        my_recirc_function_type *new_node = new my_recirc_function_type(g, tbb::flow::unlimited, recirc_func_body<IT>((IT)(ELEM+1)));
+        tbb::flow::make_edge(*new_node, tbb::flow::input_port<ELEM-1>(my_join));
+        tbb::flow::make_edge(my_input, *new_node);
+        all_source_nodes[ELEM-1][0] = (void *)new_node;
+        source_node_helper<ELEM-1, JNT>::add_recirc_func_nodes(my_join, my_input, g);
+    }
+
+    static void only_check_value(const int i, const TT &v) {
+        ASSERT( std::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
+        source_node_helper<ELEM-1,JNT>::only_check_value(i, v);
+    }
+
     static void check_value(int i, TT &v, bool is_serial) {
         // the fetched value will match only if there is only one source_node.
         ASSERT(!is_serial || std::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
@@ -400,17 +449,27 @@ public:
         }
         source_node_helper<ELEM-1, JNT>::remove_source_nodes(my_join, nInputs);
     }
+
+    static void remove_recirc_func_nodes(join_node_type& my_join, input_join_type &my_input) {
+        my_recirc_function_type *fn = reinterpret_cast<my_recirc_function_type *>(all_source_nodes[ELEM-1][0]);
+        tbb::flow::remove_edge( *fn, tbb::flow::input_port<ELEM-1>(my_join) );
+        tbb::flow::remove_edge( my_input, *fn);
+        delete fn;
+        source_node_helper<ELEM-1, JNT>::remove_recirc_func_nodes(my_join,my_input);
+    }
 };
 
 template<typename JNT>
 class source_node_helper<1, JNT> {
     typedef JNT join_node_type;
+    typedef tbb::flow::join_node<std::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
     typedef typename join_node_type::output_type TT;
     typedef typename std::tuple_element<0,TT>::type IT;
     typedef typename tbb::flow::source_node<IT> my_source_node_type;
+    typedef typename tbb::flow::function_node<std::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
 public:
-    static void print_remark() {
-        REMARK("Parallel test of join_node< %s", name_of<IT>::name());
+    static void print_remark(const char * str) {
+        REMARK("%s< %s", str, name_of<IT>::name());
     }
     static void add_source_nodes(join_node_type &my_join, tbb::flow::graph &g, int nInputs) {
         for(int i=0; i < nInputs; ++i) {
@@ -419,6 +478,18 @@ public:
             all_source_nodes[0][i] = (void *)new_node;
         }
     }
+
+    static void add_recirc_func_nodes(join_node_type &my_join, input_join_type &my_input, tbb::flow::graph &g) {
+        my_recirc_function_type *new_node = new my_recirc_function_type(g, tbb::flow::unlimited, recirc_func_body<IT>((IT)(2)));
+        tbb::flow::make_edge(*new_node, tbb::flow::input_port<0>(my_join));
+        tbb::flow::make_edge(my_input, *new_node);
+        all_source_nodes[0][0] = (void *)new_node;
+    }
+
+    static void only_check_value(const int i, const TT &v) {
+        ASSERT( std::get<0>(v) == (IT)(i*2), NULL);
+    }
+
     static void check_value(int i, TT &v, bool is_serial) {
         ASSERT(!is_serial || std::get<0>(v) == (IT)(i*(2)), NULL);
         int ival = (int)std::get<0>(v);
@@ -434,6 +505,97 @@ public:
             delete dp;
         }
     }
+
+    static void remove_recirc_func_nodes(join_node_type& my_join, input_join_type &my_input) {
+        my_recirc_function_type *fn = reinterpret_cast<my_recirc_function_type *>(all_source_nodes[0][0]);
+        tbb::flow::remove_edge( *fn, tbb::flow::input_port<0>(my_join) );
+        tbb::flow::remove_edge( my_input, *fn);
+        delete fn;
+    }
+};
+
+// get the tag from the output tuple and emit it.
+// the first tuple component is tag * 2 cast to the type
+template<typename OutputTupleType>
+class recirc_output_func_body {
+public:
+    // we only need this to use source_node_helper
+    typedef typename tbb::flow::join_node<OutputTupleType, tbb::flow::tag_matching> join_node_type;
+    static const int N = std::tuple_size<OutputTupleType>::value;
+    int operator()(const OutputTupleType &v) {
+        int out = int(std::get<0>(v)) / 2;
+        source_node_helper<N,join_node_type>::only_check_value(out,v);
+        ++output_count;
+        return out;
+    }
+};
+
+template<typename JType>
+class tag_recirculation_test {
+public:
+    typedef typename JType::output_type TType;
+    typedef typename std::tuple<int, tbb::flow::continue_msg> input_tuple_type;
+    typedef tbb::flow::join_node<input_tuple_type,tbb::flow::reserving> input_join_type;
+    static const int N = std::tuple_size<TType>::value;
+    static void test() {
+        source_node_helper<N,JType>::print_remark("Recirculation test of tag-matching join");
+        REMARK(" >\n");
+        for(int maxTag = 1; maxTag <10; maxTag *= 3) {
+            for(int i=0; i < N; ++i) all_source_nodes[i][0] = NULL;
+
+            tbb::flow::graph g;
+            // this is the tag-matching join we're testing
+            JType * my_join = makeJoin<N,JType, tbb::flow::tag_matching>::create(g);
+            // source_node for continue messages
+            tbb::flow::source_node<tbb::flow::continue_msg> snode(g, recirc_source_node_body(), false);
+            // reserving join that matches recirculating tags with continue messages.
+            input_join_type * my_input_join = makeJoin<2,input_join_type,tbb::flow::reserving>::create(g);
+            // tbb::flow::make_edge(snode, tbb::flow::input_port<1>(*my_input_join));
+            tbb::flow::make_edge(snode, std::get<1>(my_input_join->input_ports()));
+            // queue to hold the tags
+            tbb::flow::queue_node<int> tag_queue(g);
+            tbb::flow::make_edge(tag_queue, tbb::flow::input_port<0>(*my_input_join));
+            // add all the function_nodes that are inputs to the tag-matching join
+            source_node_helper<N,JType>::add_recirc_func_nodes(*my_join, *my_input_join, g);
+            // add the function_node that accepts the output of the join and emits the int tag it was based on
+            tbb::flow::function_node<TType, int> recreate_tag(g, tbb::flow::unlimited, recirc_output_func_body<TType>());
+            tbb::flow::make_edge(*my_join, recreate_tag);
+            // now the recirculating part (output back to the queue)
+            tbb::flow::make_edge(recreate_tag, tag_queue);
+
+            // put the tags into the queue
+            for(int t = 1; t <= maxTag; ++t) tag_queue.try_put(t);
+
+            input_count = Recirc_count;
+            output_count = 0;
+
+            // start up the source node to get things going
+            snode.activate();
+
+            // wait for everything to stop
+            g.wait_for_all();
+
+            ASSERT(output_count == Recirc_count, "not all instances were received");
+
+            int j;
+            // grab the tags from the queue, record them
+            std::vector<bool> out_tally(maxTag, false);
+            for(int i = 0; i < maxTag; ++i) {
+                ASSERT(tag_queue.try_get(j), "not enough tags in queue");
+                ASSERT(!out_tally.at(j-1), "duplicate tag from queue");
+                out_tally[j-1] = true;
+            }
+            ASSERT(!tag_queue.try_get(j), "Extra tags in recirculation queue");
+
+            // deconstruct graph
+            source_node_helper<N, JType>::remove_recirc_func_nodes(*my_join, *my_input_join);
+            tbb::flow::remove_edge(*my_join, recreate_tag);
+            makeJoin<N,JType,tbb::flow::tag_matching>::destroy(my_join);
+            tbb::flow::remove_edge(tag_queue, tbb::flow::input_port<0>(*my_input_join));
+            tbb::flow::remove_edge(snode, tbb::flow::input_port<1>(*my_input_join));
+            makeJoin<2,input_join_type,tbb::flow::reserving>::destroy(my_input_join);
+        }
+    }
 };
 
 template<typename JType, tbb::flow::graph_buffer_policy JP>
@@ -444,7 +606,7 @@ public:
     static const tbb::flow::graph_buffer_policy jp = JP;
     static void test() {
         TType v;
-        source_node_helper<SIZE,JType>::print_remark();
+        source_node_helper<SIZE,JType>::print_remark("Parallel test of join_node");
         REMARK(" >\n");
         for(int i=0; i < MaxPorts; ++i) {
             for(int j=0; j < MaxNSources; ++j) {
@@ -506,7 +668,7 @@ public:
     static void add_queue_nodes(tbb::flow::graph &g, JType &my_join) {
         serial_queue_helper<ELEM-1,JType>::add_queue_nodes(g, my_join);
         my_queue_node_type *new_node = new my_queue_node_type(g);
-        tbb::flow::make_edge( *new_node, std::get<ELEM-1>(my_join.inputs()) );
+        tbb::flow::make_edge( *new_node, std::get<ELEM-1>(my_join.input_ports()) );
         all_source_nodes[ELEM-1][0] = (void *)new_node;
     }
     static void fill_one_queue(int maxVal) {
@@ -529,7 +691,7 @@ public:
     }
     static void remove_queue_nodes(JType &my_join) {
         my_queue_node_type *vptr = reinterpret_cast<my_queue_node_type *>(all_source_nodes[ELEM-1][0]);
-        tbb::flow::remove_edge( *vptr, std::get<ELEM-1>(my_join.inputs()) );
+        tbb::flow::remove_edge( *vptr, std::get<ELEM-1>(my_join.input_ports()) );
         serial_queue_helper<ELEM-1, JType>::remove_queue_nodes(my_join);
         delete vptr;
     }
@@ -564,7 +726,7 @@ public:
     }
     static void remove_queue_nodes(JType &my_join) {
         my_queue_node_type *vptr = reinterpret_cast<my_queue_node_type *>(all_source_nodes[0][0]);
-        tbb::flow::remove_edge( *vptr, std::get<0>(my_join.inputs()) );
+        tbb::flow::remove_edge( *vptr, std::get<0>(my_join.input_ports()) );
         delete vptr;
     }
 };
@@ -683,6 +845,15 @@ public:
     }
 };
 
+template<typename JType>
+class generate_recirc_test {
+public:
+    typedef tbb::flow::join_node<JType, tbb::flow::tag_matching> join_node_type;
+    static void do_test() {
+        tag_recirculation_test<join_node_type>::test();
+    }
+};
+
 template<tbb::flow::graph_buffer_policy JP>
 void test_input_port_policies();
 
@@ -723,8 +894,8 @@ void test_input_port_policies<tbb::flow::reserving>() {
     tbb::flow::make_edge( jn, oq0 );
     tbb::flow::make_edge( jn, oq1 );
     // attach iq0, iq1 to jn
-    tbb::flow::make_edge( iq0, std::get<0>(jn.inputs()) );
-    tbb::flow::make_edge( iq1, std::get<1>(jn.inputs()) );
+    tbb::flow::make_edge( iq0, std::get<0>(jn.input_ports()) );
+    tbb::flow::make_edge( iq1, std::get<1>(jn.input_ports()) );
     for(int loop = 0; loop < 3; ++loop) {
         // place one item in iq0
         ASSERT(iq0.try_put(1), "Error putting to iq1");
@@ -806,8 +977,8 @@ void test_input_port_policies<tbb::flow::queueing>() {
     tbb::flow::make_edge( jn, oq0 );
     tbb::flow::make_edge( jn, oq1 );
     // attach iq0, iq1 to jn
-    tbb::flow::make_edge( iq0, std::get<0>(jn.inputs()) );
-    tbb::flow::make_edge( iq1, std::get<1>(jn.inputs()) );
+    tbb::flow::make_edge( iq0, std::get<0>(jn.input_ports()) );
+    tbb::flow::make_edge( iq1, std::get<1>(jn.input_ports()) );
     for(int loop = 0; loop < 3; ++loop) {
         // place one item in iq0
         ASSERT(iq0.try_put(1), "Error putting to iq1");
@@ -1020,6 +1191,9 @@ int TestMain() {
        generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::tag_matching >::do_test();
        generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
+
+       generate_recirc_test<std::tuple<float,double> >::do_test();
+       generate_recirc_test<std::tuple<double, double, int, int, short> >::do_test();
    }
    return Harness::Done;
 }

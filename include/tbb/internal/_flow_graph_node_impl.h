@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -299,44 +299,43 @@ namespace internal {
 
     };
 
-#if TBB_PREVIEW_GRAPH_NODES
     //! Implements methods for a function node that takes a type Input as input
     //  and has a tuple of output ports specified.  
     template< typename Input, typename OutputPortSet, typename A>
-    class multioutput_function_input : public function_input_base<Input, A, multioutput_function_input<Input,OutputPortSet,A> > {
+    class multifunction_input : public function_input_base<Input, A, multifunction_input<Input,OutputPortSet,A> > {
     public:
         typedef Input input_type;
         typedef OutputPortSet output_ports_type;
-        typedef multioutput_function_input<Input,OutputPortSet,A> my_class;
+        typedef multifunction_input<Input,OutputPortSet,A> my_class;
         typedef function_input_base<Input, A, my_class> base_type;
         typedef function_input_queue<input_type, A> input_queue_type;
 
 
         // constructor
         template<typename Body>
-        multioutput_function_input( 
+        multifunction_input( 
                 graph &g, 
                 size_t max_concurrency, 
                 Body& body,
                 function_input_queue<input_type,A> *q = NULL ) :
             base_type(g, max_concurrency, q),
-            my_body( new internal::multioutput_function_body_leaf<input_type, output_ports_type, Body>(body) ) {
+            my_body( new internal::multifunction_body_leaf<input_type, output_ports_type, Body>(body) ) {
         }
 
         //! Copy constructor
-        multioutput_function_input( const multioutput_function_input& src, input_queue_type *q = NULL ) : 
+        multifunction_input( const multifunction_input& src, input_queue_type *q = NULL ) : 
                 base_type(src, q),
                 my_body( src.my_body->clone() ) {
         }
 
-        ~multioutput_function_input() {
+        ~multifunction_input() {
             delete my_body;
         }
 
         template< typename Body >
         Body copy_function_object() {
-            internal::multioutput_function_body<input_type, output_ports_type> &body_ref = *this->my_body;
-            return dynamic_cast< internal::multioutput_function_body_leaf<input_type, output_ports_type, Body> & >(body_ref).get_body(); 
+            internal::multifunction_body<input_type, output_ports_type> &body_ref = *this->my_body;
+            return dynamic_cast< internal::multifunction_body_leaf<input_type, output_ports_type, Body> & >(body_ref).get_body(); 
         } 
 
         void apply_body_impl( const input_type &i) {
@@ -346,12 +345,12 @@ namespace internal {
         output_ports_type &output_ports(){ return my_output_ports; }
 
     protected:
-        multioutput_function_body<input_type, output_ports_type> *my_body;
+        multifunction_body<input_type, output_ports_type> *my_body;
         output_ports_type my_output_ports;
 
     };
 
-    // template to refer to an output port of a multioutput_function_node
+    // template to refer to an output port of a multifunction_node
     template<size_t N, typename MOP>
     typename std::tuple_element<N, typename MOP::output_ports_type>::type &output_port(MOP &op) {
         return std::get<N>(op.output_ports()); 
@@ -362,7 +361,7 @@ namespace internal {
     struct emit_element {
         template<typename T, typename P>
         static void emit_this(const T &t, P &p) {
-            std::get<N-1>(p).put(std::get<N-1>(t));
+            (void)std::get<N-1>(p).try_put(std::get<N-1>(t));
             emit_element<N-1>::emit_this(t,p);
         }
     };
@@ -371,10 +370,9 @@ namespace internal {
     struct emit_element<1> {
         template<typename T, typename P>
         static void emit_this(const T &t, P &p) {
-            std::get<0>(p).put(std::get<0>(t));
+            (void)std::get<0>(p).try_put(std::get<0>(t));
         }
     };
-#endif  // TBB_PREVIEW_GRAPH_NODES
 
     //! Implements methods for an executable node that takes continue_msg as input
     template< typename Output >
@@ -452,15 +450,14 @@ namespace internal {
             return true;
         }
 
-        // for multioutput_function_node.  The function_body that implements
+        // for multifunction_node.  The function_body that implements
         // the node will have an input and an output tuple of ports.  To put
         // an item to a successor, the body should
         //
-        //    get<I>(output_ports).put(output_value);
+        //    get<I>(output_ports).try_put(output_value);
         //
-        // successors must always accept (for instance, a queue_node) or items
-        // may be dropped.
-        void put(const output_type &i) { my_successors.try_put(i); }
+        // return value will be bool returned from successors.try_put.
+        bool try_put(const output_type &i) { return my_successors.try_put(i); }
           
     protected:
         broadcast_cache<output_type> my_successors;

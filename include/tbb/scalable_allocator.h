@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -97,22 +97,59 @@ size_t __TBB_EXPORTED_FUNC scalable_msize (void* ptr);
 namespace rml {
 class MemoryPool;
 
-#define MEM_POLICY_DEFINED 1
 typedef void *(*rawAllocType)(intptr_t pool_id, size_t &bytes);
 typedef int   (*rawFreeType)(intptr_t pool_id, void* raw_ptr, size_t raw_bytes);
+
+/*
+MemPoolPolicy extension must be compatible with such structure fields layout
 
 struct MemPoolPolicy {
     rawAllocType pAlloc;
     rawFreeType  pFree;
     size_t       granularity;   // granularity of pAlloc allocations
-    void        *pReserved;     // reserved for future extensions
-    size_t       szReserved;    // size of pReserved data
+};
+*/
+
+struct MemPoolPolicy {
+    enum {
+        VERSION = 1
+    };
+
+    rawAllocType pAlloc;
+    rawFreeType  pFree;
+                 // granularity of pAlloc allocations. 0 means default used.
+    size_t       granularity;
+    int          version;
+                 // all memory consumed at 1st pAlloc call and never returned,
+                 // no more pAlloc calls after 1st
+    unsigned     fixedPool : 1,
+                 // memory consumed but returned only at pool termination
+                 keepAllMemory : 1,
+                 reserved : 30;
+
+    MemPoolPolicy(rawAllocType pAlloc_, rawFreeType pFree_,
+                  size_t granularity_ = 0, bool fixedPool_ = false,
+                  bool keepAllMemory_ = false) :
+        pAlloc(pAlloc_), pFree(pFree_), granularity(granularity_), version(VERSION),
+        fixedPool(fixedPool_), keepAllMemory(keepAllMemory_),
+        reserved(0) {}
 };
 
-MemoryPool *pool_create(intptr_t pool_id, const MemPoolPolicy* memPoolPolicy);
+enum MemPoolError {
+    POOL_OK,            // pool created successfully
+    INVALID_POLICY,     // invalid policy parameters found
+    UNSUPPORTED_POLICY, // requested pool policy is not supported by allocator library
+    NO_MEMORY           // lack of memory during pool creation
+};
+
+MemPoolError pool_create_v1(intptr_t pool_id, const MemPoolPolicy *policy,
+                            rml::MemoryPool **pool);
+
 bool  pool_destroy(MemoryPool* memPool);
 void *pool_malloc(MemoryPool* memPool, size_t size);
 void *pool_realloc(MemoryPool* memPool, void *object, size_t size);
+void *pool_aligned_malloc(MemoryPool* mPool, size_t size, size_t alignment);
+void *pool_aligned_realloc(MemoryPool* mPool, void *ptr, size_t size, size_t alignment);
 bool  pool_reset(MemoryPool* memPool);
 bool  pool_free(MemoryPool *memPool, void *object);
 }

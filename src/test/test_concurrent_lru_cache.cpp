@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -71,10 +71,12 @@ namespace helpers{
     }
 }
 namespace helpers{
-    //TODO: add test cases for eliminate_optimizating_out function
+    template<class T> void ignore( const T& ) { }
+    //TODO: add test cases for prevent_optimizng_out function
     template<typename type>
-    void eliminate_optimizating_out(type const& s){
-        volatile type dummy((s)); //double braces needed to force compiler to interpret this as a call to constructor
+    void prevent_optimizng_out(type volatile const& s){
+        volatile const type* dummy = &s;
+        ignore(dummy);
     }
 
     struct empty_fixture{};
@@ -151,7 +153,7 @@ namespace helpers{
             TEST_CASE_WITH_FIXTURE(test_object_instanses_counting_type_copy,native_for_single_op_repeated_fixture){
                 struct _{ static void copy(object_instanses_counting_concurent_type& source){
                     object_instanses_counting_concurent_type copy(source);
-                    helpers::eliminate_optimizating_out(copy);
+                    helpers::prevent_optimizng_out(copy);
                 }};
                 run_native_for_and_assert_source_is_unique(&_::copy,"reference counting during copy construction/destruction is not thread safe ?");
             }
@@ -159,7 +161,7 @@ namespace helpers{
                 struct _{ static void assign(object_instanses_counting_concurent_type& source){
                     object_instanses_counting_concurent_type assigned;
                     assigned = source;
-                    helpers::eliminate_optimizating_out(assigned);
+                    helpers::prevent_optimizng_out(assigned);
                 }};
                 run_native_for_and_assert_source_is_unique(&_::assign,"reference counting during assigning/destruction is not thread safe ?");
             }
@@ -250,7 +252,7 @@ namespace serial_tests{
             static const size_t number_of_lru_history_items = 8;
 
             typedef helpers::clonning_function<helpers::object_instanses_counting_serial_type> cloner_type;
-            typedef get_lru_cache_type::apply<int,helpers::object_instanses_counting_serial_type,cloner_type>::type cache_type;
+            typedef get_lru_cache_type::apply<size_t,helpers::object_instanses_counting_serial_type,cloner_type>::type cache_type;
             helpers::object_instanses_counting_serial_type source;
             cloner_type cloner;
             cache_type cache;
@@ -291,13 +293,13 @@ namespace serial_tests{
         struct filled_instance_counting_fixture_with_external_map{
             static const size_t number_of_lru_history_items = 8;
 
-            typedef helpers::map_searcher<int,helpers::object_instanses_counting_serial_type> map_searcher_type;
+            typedef helpers::map_searcher<size_t,helpers::object_instanses_counting_serial_type> map_searcher_type;
             typedef map_searcher_type::map_type objects_map_type;
-            typedef get_lru_cache_type::apply<int,helpers::object_instanses_counting_serial_type,map_searcher_type>::type cache_type;
+            typedef get_lru_cache_type::apply<size_t,helpers::object_instanses_counting_serial_type,map_searcher_type>::type cache_type;
             map_searcher_type::map_type objects_map;
             cache_type cache;
             filled_instance_counting_fixture_with_external_map():cache(map_searcher_type(objects_map),number_of_lru_history_items){}
-            bool is_evicted(int k){
+            bool is_evicted(size_t k){
                 objects_map_type::iterator it =objects_map.find(k);
                 ASSERT(it!=objects_map.end(),"no value for key - error in test logic ?");
                 return it->second.instances_count()==1;
@@ -363,7 +365,7 @@ namespace concurency_tests{
 
         typedef helpers::array_searcher<size_t,helpers::object_instanses_counting_concurent_type,array_size> array_searcher_type;
         typedef array_searcher_type::array_type objects_array_type;
-        typedef get_lru_cache_type::apply<int,helpers::object_instanses_counting_concurent_type,array_searcher_type>::type cache_type;
+        typedef get_lru_cache_type::apply<size_t,helpers::object_instanses_counting_concurent_type,array_searcher_type>::type cache_type;
         array_searcher_type::array_type objects_array;
         cache_type cache;
         filled_instance_counting_fixture_with_external_array():cache(array_searcher_type(objects_array),number_of_lru_history_items){}
@@ -394,7 +396,7 @@ namespace concurency_tests{
         struct _{static void use_cache(self_type& tc){
             for (size_t i=0;i<array_size;++i){
                 cache_type::handle h=tc.cache[i];
-                helpers::eliminate_optimizating_out(h.value());
+                helpers::prevent_optimizng_out(h.value());
             }
 
         }};

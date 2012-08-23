@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -93,12 +93,10 @@ static int putMallocMem(intptr_t /*pool_id*/, void *ptr, size_t bytes)
 
 void TestPoolReset()
 {
-    rml::MemPoolPolicy pol;
-    pol.pAlloc = getMallocMem;
-    pol.pFree = putMallocMem;
-    pol.granularity = 8;
+    rml::MemPoolPolicy pol(getMallocMem, putMallocMem);
+    rml::MemoryPool *pool;
 
-    rml::MemoryPool *pool = pool_create(0, &pol);
+    pool_create_v1(0, &pol, &pool);
     for (int i=0; i<100; i++) {
         ASSERT(pool_malloc(pool, 8), NULL);
         ASSERT(pool_malloc(pool, 50*1024), NULL);
@@ -171,13 +169,10 @@ void               **SharedPoolRun::crossThread,
 // single pool shared by different threads
 void TestSharedPool()
 {
-    rml::MemPoolPolicy pol;
-    pol.pAlloc = getMallocMem;
-    pol.pFree = putMallocMem;
-    pol.granularity = 8;
+    rml::MemPoolPolicy pol(getMallocMem, putMallocMem);
+    rml::MemoryPool *pool;
 
-    rml::MemoryPool *pool = pool_create(0, &pol);
-
+    pool_create_v1(0, &pol, &pool);
     void **crossThread = new void*[MaxThread * SharedPoolRun::OBJ_CNT];
     void **afterTerm = new void*[MaxThread * SharedPoolRun::OBJ_CNT];
 
@@ -241,14 +236,10 @@ public:
     }
     CrossThreadRun() {}
     void operator()( int id ) const {
-        rml::MemPoolPolicy pol;
-
-        pol.pAlloc = CrossThreadGetMem;
-        pol.pFree = CrossThreadPutMem;
-        pol.granularity = 8;
-        pool[id] = pool_create(id, &pol);
+        rml::MemPoolPolicy pol(CrossThreadGetMem, CrossThreadPutMem);
         const int objLen = 10*id;
 
+        pool_create_v1(id, &pol, &pool[id]);
         obj[id] = (char*)pool_malloc(pool[id], objLen);
         ASSERT(obj[id], NULL);
         memset(obj[id], id, objLen);
@@ -300,11 +291,10 @@ void TestTooSmallBuffer()
 {
     poolSpace = new PoolSpace(8*1024);
 
-    rml::MemPoolPolicy pol;
-    pol.pAlloc = CrossThreadGetMem;
-    pol.pFree = CrossThreadPutMem;
-    pol.granularity = 8;
-    pool_destroy( pool_create(0, &pol) );
+    rml::MemPoolPolicy pol(CrossThreadGetMem, CrossThreadPutMem);
+    rml::MemoryPool *pool;
+    pool_create_v1(0, &pol, &pool);
+    pool_destroy(pool);
     ASSERT(!poolSpace[0].regions, "No leaks.");
 
     delete poolSpace;
@@ -326,13 +316,11 @@ static void *fixedBufGetMem(intptr_t /*pool_id*/, size_t &bytes)
 void TestFixedBufferPool()
 {
     void *ptrs[7];
-    rml::MemPoolPolicy pol;
+    rml::MemPoolPolicy pol(fixedBufGetMem, NULL, 0, /*fixedSizePool=*/true,
+                           /*keepMemTillDestroy=*/false);
+    rml::MemoryPool *pool;
 
-    pol.pAlloc = fixedBufGetMem;
-    pol.pFree = NULL;
-    pol.granularity = 8;
-    rml::MemoryPool *pool = pool_create(0, &pol);
-
+    pool_create_v1(0, &pol, &pool);
     void *largeObj = pool_malloc(pool, 7*1024*1024);
     ASSERT(largeObj, NULL);
     pool_free(pool, largeObj);
@@ -368,14 +356,14 @@ static int putGranMem(intptr_t /*pool_id*/, void *ptr, size_t bytes)
 
 static void TestPoolGranularity()
 {
-    rml::MemPoolPolicy pol;
+    rml::MemPoolPolicy pol(getGranMem, putGranMem);
     const size_t grans[] = {4*1024, 2*1024*1024, 6*1024*1024, 10*1024*1024};
 
-    pol.pAlloc = getGranMem;
-    pol.pFree = putGranMem;
     for (unsigned i=0; i<sizeof(grans)/sizeof(grans[0]); i++) {
         pol.granularity = currGranularity = grans[i];
-        rml::MemoryPool *pool = pool_create(0, &pol);
+        rml::MemoryPool *pool;
+
+        pool_create_v1(0, &pol, &pool);
         for (int sz=500*1024; sz<16*1024*1024; sz+=101*1024) {
             void *p = pool_malloc(pool, sz);
             ASSERT(p, "Can't allocate memory in pool.");
@@ -385,6 +373,110 @@ static void TestPoolGranularity()
     }
 }
 
+static size_t putMemCalls, getMemCalls;
+
+static void *getMemPolicy(intptr_t /*pool_id*/, size_t &bytes)
+{
+    getMemCalls++;
+    return malloc(bytes);
+}
+
+static int putMemPolicy(intptr_t /*pool_id*/, void *ptr, size_t /*bytes*/)
+{
+    putMemCalls++;
+    free(ptr);
+    return 0;
+}
+
+static void TestPoolKeepTillDestroy()
+{
+    const int ITERS = 50*1024;
+    void *ptrs[2*ITERS+1];
+    rml::MemPoolPolicy pol(getMemPolicy, putMemPolicy);
+    rml::MemoryPool *pool;
+
+    // 1st create default pool that returns memory back to callback,
+    // then use keepMemTillDestroy policy
+    for (int keep=0; keep<2; keep++) {
+        getMemCalls = putMemCalls = 0;
+        if (keep)
+            pol.keepAllMemory = 1;
+        pool_create_v1(0, &pol, &pool);
+        for (int i=0; i<2*ITERS; i+=2) {
+            ptrs[i] = pool_malloc(pool, 7*1024);
+            ptrs[i+1] = pool_malloc(pool, 10*1024);
+        }
+        ptrs[2*ITERS] = pool_malloc(pool, 8*1024*1024);
+        ASSERT(!putMemCalls, NULL);
+        for (int i=0; i<2*ITERS; i++)
+            pool_free(pool, ptrs[i]);
+        pool_free(pool, ptrs[2*ITERS]);
+        size_t totalPutMemCalls = putMemCalls;
+        if (keep)
+            ASSERT(!putMemCalls, NULL);
+        else {
+            ASSERT(putMemCalls, NULL);
+            putMemCalls = 0;
+        }
+        size_t currGetCalls = getMemCalls;
+        pool_malloc(pool, 8*1024*1024);
+        if (keep)
+            ASSERT(currGetCalls == getMemCalls, "Must not lead to new getMem call");
+        pool_reset(pool);
+        ASSERT(!putMemCalls, "Pool is not releasing memory during reset.");
+        pool_destroy(pool);
+        ASSERT(putMemCalls, NULL);
+        totalPutMemCalls += putMemCalls;
+        ASSERT(getMemCalls == totalPutMemCalls, "Memory leak detected.");
+    }
+
+}
+
+static bool memEqual(char *buf, size_t size, int val)
+{
+    bool memEq = true;
+    for (size_t k=0; k<size; k++)
+        if (buf[k] != val)
+             memEq = false;
+    return memEq;
+}
+
+static void TestEntries()
+{
+    const int SZ = 4;
+    const int ALGN = 4;
+    size_t size[SZ] = {8, 8000, 9000, 100*1024};
+    size_t algn[ALGN] = {8, 64, 4*1024, 8*1024*1024};
+
+    rml::MemPoolPolicy pol(getGranMem, putGranMem);
+    currGranularity = 1; // not check granularity in the test
+    rml::MemoryPool *pool;
+
+    pool_create_v1(0, &pol, &pool);
+    for (int i=0; i<SZ; i++)
+        for (int j=0; j<ALGN; j++) {
+            char *p = (char*)pool_aligned_malloc(pool, size[i], algn[j]);
+            ASSERT(p && 0==((uintptr_t)p & (algn[j]-1)), NULL);
+            memset(p, j, size[i]);
+
+            size_t curr_algn = algn[rand() % ALGN];
+            size_t curr_sz = size[rand() % SZ];
+            char *p1 = (char*)pool_aligned_realloc(pool, p, curr_sz, curr_algn);
+            ASSERT(p1 && 0==((uintptr_t)p1 & (curr_algn-1)), NULL);
+            ASSERT(memEqual(p1, min(size[i], curr_sz), j), NULL);
+
+            memset(p1, j+1, curr_sz);
+            size_t curr_sz1 = size[rand() % SZ];
+            char *p2 = (char*)pool_realloc(pool, p1, curr_sz1);
+            ASSERT(p2, NULL);
+            ASSERT(memEqual(p2, min(curr_sz1, curr_sz), j+1), NULL);
+
+            pool_free(pool, p2);
+        }
+
+    pool_destroy(pool);
+}
+
 int TestMain () {
     TestTooSmallBuffer();
     TestPoolReset();
@@ -392,6 +484,8 @@ int TestMain () {
     TestCrossThreadPools();
     TestFixedBufferPool();
     TestPoolGranularity();
+    TestPoolKeepTillDestroy();
+    TestEntries();
 
     return Harness::Done;
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -396,7 +396,7 @@ void test_function_node_with_continue_msg_as_input() {
     // If this function terminates, then this test is successful
     tbb::flow::graph g;
 
-    tbb::flow::broadcast_node<tbb::flow::continue_msg> Start;
+    tbb::flow::broadcast_node<tbb::flow::continue_msg> Start(g);
 
     tbb::flow::function_node<tbb::flow::continue_msg, int, tbb::flow::rejecting> FN1( g, tbb::flow::serial, continue_msg_to_int(42));
     tbb::flow::function_node<tbb::flow::continue_msg, int, tbb::flow::rejecting> FN2( g, tbb::flow::serial, continue_msg_to_int(43));

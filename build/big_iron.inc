@@ -1,4 +1,4 @@
-# Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -58,7 +58,7 @@
         endif
         LINK_FLAGS =
     endif
-    CXXFLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0
+    override CXXFLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0
     ITT_NOTIFY =
     LIBEXT = a
     LIBPREF = lib

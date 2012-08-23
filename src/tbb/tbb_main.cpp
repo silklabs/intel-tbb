@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -176,6 +176,7 @@ void DoOneTimeInitializations() {
         itt_present = ITT_Present;
 #endif /* DO_ITT_NOTIFY */
         initialize_cache_aligned_allocator();
+        governor::initialize_rml_factory();
         Scheduler_OneTimeInitialization( itt_present );
         // Force processor groups support detection
         governor::default_num_threads();

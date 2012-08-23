@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -82,7 +82,7 @@ void RunTests() {
     typedef tuple<int,int,int> int_tuple_type;
     typedef tuple<int,non_trivial,int> non_trivial_tuple_type;
     typedef tuple<double,std::string,char> stringy_tuple_type;
-    tuple_type1 tup1(42,3.14159,2.0f);
+    const tuple_type1 tup1(42,3.14159,2.0f);
     int_tuple_type int_tup(4, 5, 6);
     non_trivial_tuple_type nti;
     stringy_tuple_type stv;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -570,6 +570,85 @@ class ArrayElement {
     char item[N];
 };
 
+#include "harness_barrier.h"
+namespace bit_operation_test_suite{
+    struct fixture{
+    #if __TBB_WORDSIZE == 4
+        static const uintptr_t random_value = 0x9E3779B9;
+    #else
+        static const uintptr_t random_value = 0x9E3779B97F4A7C15;
+    #endif
+
+        static const uintptr_t inverted_random_value = ~random_value;
+        static const uintptr_t zero = 0;
+    };
+
+    struct TestAtomicORSerially : fixture {
+        void operator()(){
+            //these additional variable are needed to get more meaningful expression in the assert
+            uintptr_t initial_value = zero;
+            uintptr_t atomic_or_result = initial_value;
+            uintptr_t atomic_or_operand = random_value;
+
+            __TBB_AtomicOR(&atomic_or_result,atomic_or_operand);
+
+            ASSERT(atomic_or_result == (initial_value | atomic_or_operand),"AtomicOR should do the OR operation");
+        }
+    };
+    struct TestAtomicANDSerially : fixture {
+        void operator()(){
+            //these additional variable are needed to get more meaningful expression in the assert
+            uintptr_t initial_value = inverted_random_value;
+            uintptr_t atomic_and_result = initial_value;
+            uintptr_t atomic_and_operand = random_value;
+
+            __TBB_AtomicAND(&atomic_and_result,atomic_and_operand);
+
+            ASSERT(atomic_and_result == (initial_value & atomic_and_operand),"AtomicAND should do the AND operation");
+        }
+    };
+
+    struct TestAtomicORandANDConcurrently : fixture {
+        static const uintptr_t bit_per_word = sizeof(uintptr_t) * 8;
+        static const uintptr_t threads_number = bit_per_word;
+        Harness::SpinBarrier m_barrier;
+        uintptr_t bitmap;
+        TestAtomicORandANDConcurrently():bitmap(zero) {}
+
+        struct thread_body{
+            TestAtomicORandANDConcurrently* test;
+            thread_body(TestAtomicORandANDConcurrently* the_test) : test(the_test) {}
+            void operator()(int thread_index)const{
+                const uintptr_t single_bit_mask = ((uintptr_t)1u) << (thread_index % bit_per_word);
+                test->m_barrier.wait();
+                static const char* error_msg = "AtomicOR and AtomicAND should be atomic";
+                for (uintptr_t attempts=0; attempts<1000; attempts++ ){
+                    //Set and clear designated bits in a word.
+                    __TBB_AtomicOR(&test->bitmap,single_bit_mask);
+                     __TBB_Yield();
+                    bool the_bit_is_set_after_set_via_atomic_or = ((__TBB_load_with_acquire(test->bitmap) & single_bit_mask )== single_bit_mask);
+                    ASSERT(the_bit_is_set_after_set_via_atomic_or,error_msg);
+
+                    __TBB_AtomicAND(&test->bitmap,~single_bit_mask);
+                    __TBB_Yield();
+                    bool the_bit_is_clear_after_clear_via_atomic_and = ((__TBB_load_with_acquire(test->bitmap) & single_bit_mask )== zero);
+                    ASSERT(the_bit_is_clear_after_clear_via_atomic_and,error_msg);
+                }
+            }
+        };
+        void operator()(){
+            m_barrier.initialize(threads_number);
+            NativeParallelFor(threads_number,thread_body(this));
+        }
+    };
+}
+void TestBitOperations(){
+    using namespace bit_operation_test_suite;
+    TestAtomicORSerially()();
+    TestAtomicANDSerially()();
+    TestAtomicORandANDConcurrently()();
+}
+
 int TestMain () {
     #if __TBB_64BIT_ATOMICS
     TestAtomicInteger<unsigned long long>("unsigned long long");
@@ -617,6 +696,8 @@ int TestMain () {
     TestRegisterPromotionSuppression<tbb::internal::int32_t>();
     TestRegisterPromotionSuppression<tbb::internal::int16_t>();
     TestRegisterPromotionSuppression<tbb::internal::int8_t>();
+    TestBitOperations();
+
     return Harness::Done;
 }
 

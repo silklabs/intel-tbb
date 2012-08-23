@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -86,9 +86,6 @@ void governor::acquire_resources () {
 #endif
     if( status )
         handle_perror(status, "TBB failed to initialize task scheduler TLS\n");
-
-    ::rml::factory::status_type res = theRMLServerFactory.open(); 
-    UsePrivateRML = res != ::rml::factory::st_success;
 }
 
 void governor::release_resources () {
@@ -201,6 +198,11 @@ void governor::print_version_info () {
     if( watch_stack_handler )
         PrintExtraVersionInfo( "CILK", CILKLIB_NAME );
 #endif /* __TBB_SURVIVE_THREAD_SWITCH */
+}
+
+void governor::initialize_rml_factory () {
+    ::rml::factory::status_type res = theRMLServerFactory.open(); 
+    UsePrivateRML = res != ::rml::factory::st_success;
 }
 
 #if __TBB_SURVIVE_THREAD_SWITCH

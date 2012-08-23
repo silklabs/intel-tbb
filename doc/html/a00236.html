@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::aligned_space&lt; T, N &gt; Class Template Reference</title>
+<title>tbb::affinity_partitioner Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,40 +21,41 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00236.html">aligned_space</a></div>
-<h1>tbb::aligned_space&lt; T, N &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00408.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::aligned_space" -->Block of space aligned sufficiently to construct an array T with N elements.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00236.html">affinity_partitioner</a></div>
+<h1>tbb::affinity_partitioner Class Reference</h1><!-- doxytag: class="tbb::affinity_partitioner" --><!-- doxytag: inherits="tbb::internal::affinity_partitioner_base_v3" -->An affinity partitioner.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00412.html">aligned_space.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00553.html">partitioner.h</a>&gt;</code>
 <p>
-<a href="a00001.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::affinity_partitioner:
+<p><center><img src="a00236.png" usemap="#tbb::affinity_partitioner_map" border="0" alt=""></center>
+<map name="tbb::affinity_partitioner_map">
+<area href="a00237.html" alt="tbb::internal::affinity_partitioner_base_v3" shape="rect" coords="0,0,240,24">
+</map>
+<a href="a00098.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0d702fc6b9e9d061ace3501b3c861cdf"></a><!-- doxytag: member="tbb::aligned_space::begin" ref="0d702fc6b9e9d061ace3501b3c861cdf" args="()" -->
-T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00236.html#0d702fc6b9e9d061ace3501b3c861cdf">begin</a> ()</td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5f730f70d21df405adaebfc2018f59cd"></a><!-- doxytag: member="tbb::affinity_partitioner::serial::interface6::start_for" ref="5f730f70d21df405adaebfc2018f59cd" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>serial::interface6::start_for</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pointer to beginning of array. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="024be075c23c0394c9a2518d993bcd9e"></a><!-- doxytag: member="tbb::aligned_space::end" ref="024be075c23c0394c9a2518d993bcd9e" args="()" -->
-T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00236.html#024be075c23c0394c9a2518d993bcd9e">end</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a4cd0ffed4fad0d9af2c5efdaf586a8"></a><!-- doxytag: member="tbb::affinity_partitioner::interface6::internal::start_for" ref="8a4cd0ffed4fad0d9af2c5efdaf586a8" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_for</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pointer to one past last element in array. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="86f0750233dd6c83b65fb684338fd09f"></a><!-- doxytag: member="tbb::affinity_partitioner::interface6::internal::start_reduce" ref="86f0750233dd6c83b65fb684338fd09f" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_reduce</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="76d97ae6ad98db0acfc8ed8cb7c76705"></a><!-- doxytag: member="tbb::affinity_partitioner::internal::start_scan" ref="76d97ae6ad98db0acfc8ed8cb7c76705" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::start_scan</b></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, size_t N&gt;<br>
- class tbb::aligned_space&lt; T, N &gt;</h3>
-
-Block of space aligned sufficiently to construct an array T with N elements. 
-<p>
-The elements are not constructed or destroyed by this class. 
+An affinity partitioner. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00412.html">aligned_space.h</a></ul>
+<li><a class="el" href="a00553.html">partitioner.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

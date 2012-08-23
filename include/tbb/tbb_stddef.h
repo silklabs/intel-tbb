@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 0
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6002
+#define TBB_INTERFACE_VERSION 6003
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -140,14 +140,15 @@
     #define __TBB_tbb_windef_H
     #include "internal/_tbb_windef.h"
     #undef __TBB_tbb_windef_H
-#else
+#endif
+#if !defined(_MSC_VER) || _MSC_VER>=1600
     #include <stdint.h>
 #endif
 
 //! The namespace tbb contains all components of the library.
 namespace tbb {
 
-#if _MSC_VER
+#if _MSC_VER && _MSC_VER<1600
     namespace internal {
         typedef __int8 int8_t;
         typedef __int16 int16_t;

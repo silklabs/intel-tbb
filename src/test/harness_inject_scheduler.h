@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -37,6 +37,8 @@
 
 // Enable preview features if any 
 #define __TBB_BUILD 1
+
+#undef DO_ITT_NOTIFY
 
 #define __TBB_TASK_CPP_DIRECTLY_INCLUDED 1
 #include "../tbb/tbb_main.cpp"

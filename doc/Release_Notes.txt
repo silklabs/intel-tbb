@@ -118,7 +118,7 @@ Library Issues
 	on debug vs. release libraries.
     
 ------------------------------------------------------------------------
-Copyright (C) 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright (C) 2005-2012 Intel Corporation.  All Rights Reserved.
 
 Intel, Xeon and Pentium are registered trademarks or trademarks of
 Intel Corporation or its subsidiaries in the United States and other countries.

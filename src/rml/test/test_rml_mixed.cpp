@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -64,6 +64,45 @@ private:
     /*override*/void cleanup( job& j ) {delete &j;}
 };
 
+#if _WIN32
+#include <direct.h>
+#define PATH_LEN MAX_PATH+1
+#define SLASH '\\'
+#else
+#include <unistd.h>
+#define PATH_LEN PATH_MAX+1
+#define SLASH '/'
+#define _getcwd getcwd
+#define _chdir  chdir
+#endif
+
+char dir[PATH_LEN+1];
+int dir_len;
+
+void change_current_dir() {
+    if ( !_getcwd( dir, PATH_LEN-3 ) ) {
+        REPORT_FATAL_ERROR("ERROR1: Couldn't get current working directory\n");
+    }
+
+    dir_len = strlen( dir );
+    while ( dir[--dir_len] != SLASH ) ;
+    dir[dir_len] = 0;
+
+    if ( _chdir(dir) ) {
+        REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory (%s)\n" );
+    }
+}
+
+void restore_current_dir() {
+    dir[dir_len] = SLASH;
+    if ( _chdir(dir) ) {
+        REPORT_FATAL_ERROR("ERROR: Couldn't change current working directory\n");
+    }
+}
+
+static bool dir_changed = false;
+static bool dir_restored = false;
+
 //! Represents a TBB or OpenMP run-time that uses RML.
 template<typename Factory, typename Client>
 class RunTime {
@@ -76,9 +115,18 @@ public:
     ::rml::server::execution_resource_t me;
 #endif
     RunTime() {
+        if ( !dir_changed ) {
+            // Change current dir to check the dynamic_link behavior
+            change_current_dir();
+            dir_changed=true;
+        }
         factory.open();
     }
     ~RunTime() {
+        if ( !dir_restored ) {
+            restore_current_dir();
+            dir_restored=true;
+        }
         factory.close();
     }
     //! Create server for this run-time
@@ -237,7 +285,7 @@ void TBBOutSideOpenMPInside() {
         TBBWork();
     }
     TotalThreadLevel.change_level(-1);
-}  
+}
 
 int TestMain () {
     for( int TBB_MaxThread=MinThread; TBB_MaxThread<=MaxThread; ++TBB_MaxThread ) {

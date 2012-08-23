@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -211,12 +211,10 @@ public:
 
 template <typename Alloc>
 memory_pool<Alloc>::memory_pool(const Alloc &src) : my_alloc(src) {
-    rml::MemPoolPolicy args = {
-        allocate_request, deallocate_request, sizeof(typename Alloc::value_type)
-    };
-    my_pool = rml::pool_create(intptr_t(this), &args);
-    __TBBMALLOC_ASSERT(my_pool, "Pool is not created");
-    if( !my_pool ) __TBB_THROW(std::bad_alloc());
+    rml::MemPoolPolicy args(allocate_request, deallocate_request,
+                            sizeof(typename Alloc::value_type));
+    rml::MemPoolError res = rml::pool_create_v1(intptr_t(this), &args, &my_pool);
+    if( res!=rml::POOL_OK ) __TBB_THROW(std::bad_alloc());
 }
 template <typename Alloc>
 void *memory_pool<Alloc>::allocate_request(intptr_t pool_id, size_t & bytes) {
@@ -237,10 +235,9 @@ int memory_pool<Alloc>::deallocate_request(intptr_t pool_id, void* raw_ptr, size
     return 0;
 }
 inline fixed_pool::fixed_pool(void *buf, size_t size) : my_buffer(buf), my_size(size) {
-    rml::MemPoolPolicy args = { allocate_request, 0, size };
-    my_pool = rml::pool_create(intptr_t(this), &args);
-    __TBBMALLOC_ASSERT(my_pool, "Pool is not created");
-    if( !my_pool ) __TBB_THROW(std::bad_alloc());
+    rml::MemPoolPolicy args(allocate_request, 0, size, /*fixedPool=*/true);
+    rml::MemPoolError res = rml::pool_create_v1(intptr_t(this), &args, &my_pool);
+    if( res!=rml::POOL_OK ) __TBB_THROW(std::bad_alloc());
 }
 inline void *fixed_pool::allocate_request(intptr_t pool_id, size_t & bytes) {
     fixed_pool &self = *reinterpret_cast<fixed_pool*>(pool_id);

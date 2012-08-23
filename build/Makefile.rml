@@ -1,4 +1,4 @@
-# Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -79,6 +79,10 @@ R_CPLUS_FLAGS =  $(subst DO_ITT_NOTIFY,DO_ITT_NOTIFY=0,$(CPLUS_FLAGS)) $(WARNING
 %.$(OBJ): %.cpp
 	$(CPLUS) $(COMPILE_ONLY) $(R_CPLUS_FLAGS) $(PIC_KEY) $(INCLUDES) $<
 
+ifeq (linux,$(tbb_os))
+omp_dynamic_link.$(OBJ): CPLUS_FLAGS+=-fno-exceptions
+endif
+
 tbb_misc_rml.$(OBJ): version_string.tmp
 
 RML_TEST.OBJ = test_job_automaton.$(OBJ) test_thread_monitor.$(OBJ) test_rml_tbb.$(OBJ) test_rml_omp.$(OBJ) test_rml_mixed.$(OBJ)
@@ -133,8 +137,8 @@ test_rml_mixed.$(TEST_EXT): test_rml_mixed.$(OBJ) $(RML_TBB_CLIENT.OBJ) $(RML_OM
 rml_omp_stub.$(OBJ): rml_omp_stub.cpp
 	$(CPLUS) $(COMPILE_ONLY) $(M_CPLUS_FLAGS) $(WARNING_SUPPRESS) $(T_INCLUDES) $(PIC_KEY) $<
 
-test_rml_omp_c_linkage.$(TEST_EXT): test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ)
-	$(CONLY) $(C_FLAGS) $(OUTPUT_KEY)$@ test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ) $(LIBS) $(LINK_FLAGS)
+test_rml_omp_c_linkage.$(TEST_EXT): test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ) omp_dynamic_link.$(OBJ)
+	$(CONLY) $(C_FLAGS) $(OUTPUT_KEY)$@ test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ) omp_dynamic_link.$(OBJ) $(LIBS) $(LINK_FLAGS)
 
 test_%.$(TEST_EXT): test_%.$(OBJ) $(TBB_DEP_NON_RML_TEST)
 	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $< $(TBB_DEP_NON_RML_TEST) $(LIBS) $(LINK_FLAGS)

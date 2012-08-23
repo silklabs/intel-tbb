@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -87,7 +87,5 @@ void __TBB_machine_pause(__int32 /*delay*/ ) { __TBB_Yield(); }
 #endif
 
 #endif /* _WIN64 */
-
-extern "C" void ITT_DoOneTimeInitialization() { }
 
 #endif // harness_tbb_independence_H

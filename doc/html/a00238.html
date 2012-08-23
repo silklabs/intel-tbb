@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::atomic&lt; void * &gt; Struct Template Reference</title>
+<title>tbb::aligned_space&lt; T, N &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,33 +21,40 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00394.html">tbb</a>::<a class="el" href="a00238.html">atomic&lt; void * &gt;</a></div>
-<h1>tbb::atomic&lt; void * &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::atomic&lt; void * &gt;" -->Specialization for <a class="el" href="a00238.html">atomic&lt;void*&gt;</a>, for sake of not allowing arithmetic or operator-&gt;.  
+<a class="el" href="a00396.html">tbb</a>::<a class="el" href="a00238.html">aligned_space</a></div>
+<h1>tbb::aligned_space&lt; T, N &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00410.html">Memory Allocation</a>]</small>
+</h1><!-- doxytag: class="tbb::aligned_space" -->Block of space aligned sufficiently to construct an array T with N elements.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00414.html">atomic.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00414.html">aligned_space.h</a>&gt;</code>
 <p>
-<a href="a00003.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00001.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ba6e74163e255b88c497c40db64c5dad"></a><!-- doxytag: member="tbb::atomic&lt; void * &gt;::operator=" ref="ba6e74163e255b88c497c40db64c5dad" args="(void *rhs)" -->
-void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (void *rhs)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0d702fc6b9e9d061ace3501b3c861cdf"></a><!-- doxytag: member="tbb::aligned_space::begin" ref="0d702fc6b9e9d061ace3501b3c861cdf" args="()" -->
+T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00238.html#0d702fc6b9e9d061ace3501b3c861cdf">begin</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="37979e62d1f88eb45bd3ad7df5a140f8"></a><!-- doxytag: member="tbb::atomic&lt; void * &gt;::operator=" ref="37979e62d1f88eb45bd3ad7df5a140f8" args="(const atomic&lt; void * &gt; &amp;rhs)" -->
-<a class="el" href="a00237.html">atomic</a>&lt; void * &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00237.html">atomic</a>&lt; void * &gt; &amp;rhs)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pointer to beginning of array. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="024be075c23c0394c9a2518d993bcd9e"></a><!-- doxytag: member="tbb::aligned_space::end" ref="024be075c23c0394c9a2518d993bcd9e" args="()" -->
+T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00238.html#024be075c23c0394c9a2518d993bcd9e">end</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pointer to one past last element in array. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;&gt;<br>
- struct tbb::atomic&lt; void * &gt;</h3>
+<h3>template&lt;typename T, size_t N&gt;<br>
+ class tbb::aligned_space&lt; T, N &gt;</h3>
 
-Specialization for <a class="el" href="a00238.html">atomic&lt;void*&gt;</a>, for sake of not allowing arithmetic or operator-&gt;. 
+Block of space aligned sufficiently to construct an array T with N elements. 
 <p>
-<hr>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="a00414.html">atomic.h</a></ul>
+The elements are not constructed or destroyed by this class. 
+<p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="a00414.html">aligned_space.h</a></ul>
 <hr>
 <p></p>
-Copyright &copy; 2005-2011 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
 <p></p>
 Intel, Pentium, Intel Xeon, Itanium, Intel XScale and VTune are
 registered trademarks or trademarks of Intel Corporation or its

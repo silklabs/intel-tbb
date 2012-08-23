@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2011 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -27,6 +27,7 @@
 */
 
 #include "harness_graph.h"
+#include "harness_barrier.h"
 #include "tbb/task_scheduler_init.h"
 
 const int T = 4;
@@ -125,6 +126,94 @@ static void test_run() {
     }
 }
 
+// Encapsulate object we want to store in vector (because contained type must have
+// copy constructor and assignment operator
+class my_int_buffer {
+    tbb::flow::buffer_node<int> *b;
+    tbb::flow::graph& my_graph;
+public:
+    my_int_buffer(tbb::flow::graph &g) : my_graph(g) { b = new tbb::flow::buffer_node<int>(my_graph); }
+    my_int_buffer(const my_int_buffer& other) : my_graph(other.my_graph) {
+        b = new tbb::flow::buffer_node<int>(my_graph);
+    }
+    ~my_int_buffer() { delete b; }
+    my_int_buffer& operator=(const my_int_buffer& /*other*/) {
+        return *this;
+    }
+};
+
+// test the graph iterator, delete nodes from graph, test again
+void test_iterator() {
+   tbb::flow::graph g;
+   my_int_buffer a_buffer(g);
+   my_int_buffer b_buffer(g);
+   my_int_buffer c_buffer(g);
+   my_int_buffer *d_buffer = new my_int_buffer(g);
+   my_int_buffer e_buffer(g);
+   std::vector< my_int_buffer > my_buffer_vector(10, c_buffer);
+
+   int count = 0;
+   for (tbb::flow::graph::iterator it = g.begin(); it != g.end(); ++it) {
+       count++;
+   }
+   ASSERT(count==15, "error in iterator count");
+
+   delete d_buffer;
+
+   count = 0;
+   for (tbb::flow::graph::iterator it = g.begin(); it != g.end(); ++it) {
+       count++;
+   }
+   ASSERT(count==14, "error in iterator count");
+
+   my_buffer_vector.clear();
+
+   count = 0;
+   for (tbb::flow::graph::iterator it = g.begin(); it != g.end(); ++it) {
+       count++;
+   }
+   ASSERT(count==4, "error in iterator count");
+}
+
+class AddRemoveBody : NoAssign {
+    tbb::flow::graph& g;
+    int nThreads;
+    Harness::SpinBarrier &barrier;
+public:
+    AddRemoveBody(int nthr, Harness::SpinBarrier &barrier_, tbb::flow::graph& _g) : 
+        g(_g), nThreads(nthr), barrier(barrier_) 
+    {}
+    void operator()(const int /*threadID*/) const {
+        my_int_buffer b(g);
+        {
+            std::vector<my_int_buffer> my_buffer_vector(100, b);
+            barrier.wait();  // wait until all nodes are created
+            // now test that the proper number of nodes were created
+            int count = 0;
+            for (tbb::flow::graph::iterator it = g.begin(); it != g.end(); ++it) {
+                count++;
+            }
+            ASSERT(count==101*nThreads, "error in iterator count");
+            barrier.wait();  // wait until all threads are done counting
+        } // all nodes but for the initial node on this thread are deleted
+        barrier.wait(); // wait until all threads have deleted all nodes in their vectors
+        // now test that all the nodes were deleted except for the initial node
+        int count = 0;
+        for (tbb::flow::graph::iterator it = g.begin(); it != g.end(); ++it) {
+            count++;
+        }
+        ASSERT(count==nThreads, "error in iterator count"); 
+        barrier.wait();  // wait until all threads are done counting
+    } // initial node gets deleted
+};
+
+void test_parallel(int nThreads) {
+    tbb::flow::graph g;
+    Harness::SpinBarrier barrier(nThreads);
+    AddRemoveBody body(nThreads, barrier, g);
+    NativeParallelFor(nThreads, body);
+}
+
 int TestMain() { 
     current_executors = 0;
     if( MinThread<1 ) {
@@ -135,6 +224,8 @@ int TestMain() {
        tbb::task_scheduler_init init(p);
        test_wait_count();
        test_run();
+       test_iterator();
+       test_parallel(p);
    }
    return Harness::Done;
 }
