@@ -93,8 +93,12 @@ int TestMain ();
 
 #include <new>
 
+#if __TBB_MIC_NATIVE
+    #include "harness_mic.h"
+#else
     #define HARNESS_EXPORT
     #define REPORT_FATAL_ERROR REPORT
+#endif /* !__MIC__ */
 
 #if _WIN32||_WIN64
     #include "tbb/machine/windows_api.h"
@@ -276,7 +280,15 @@ int main(int argc, char* argv[]) {
         MPI_Send (&size, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
     }
 #endif
+#if __TBB_MIC
+    int res = Harness::Unknown;
+    #pragma offload target(mic:-1) out(res)
+    {
+        res = TestMain ();
+    }
+#else
     int res = TestMain ();
+#endif
     ASSERT( res==Harness::Done || res==Harness::Skipped, "Wrong return code by TestMain");
 #if __TBB_MPI_INTEROP
     if (myrank == 0) {

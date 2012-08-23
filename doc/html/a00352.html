@@ -21,11 +21,11 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00412.html">tbb</a>::<b>internal</b>::<a class="el" href="a00352.html">work_around_alignment_bug</a></div>
+<a class="el" href="a00414.html">tbb</a>::<b>internal</b>::<a class="el" href="a00352.html">work_around_alignment_bug</a></div>
 <h1>tbb::internal::work_around_alignment_bug&lt; Size, T &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::work_around_alignment_bug" -->Work around for bug in GNU 3.2 and MSVC compilers.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00636.html">tbb_machine.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00640.html">tbb_machine.h</a>&gt;</code>
 <p>
 <a href="a00179.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
@@ -43,7 +43,7 @@ Work around for bug in GNU 3.2 and MSVC compilers.
 Bug is that compiler sometimes returns 0 for __alignof(T) when T has not yet been instantiated. The work-around forces instantiation by forcing computation of sizeof(T) before __alignof(T). 
 <p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="a00636.html">tbb_machine.h</a></ul>
+<li><a class="el" href="a00640.html">tbb_machine.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

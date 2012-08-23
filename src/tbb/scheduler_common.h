@@ -138,6 +138,8 @@ enum task_extra_state {
     es_version_1_task = 0,
     //! Tag for v3 tasks (i.e. tasks in TBB 2.1-2.2)
     es_version_3_task = 1,
+    //! Tag for enqueued tasks
+    es_task_enqueued = 0x10,
     //! Tag for v3 task_proxy.
     es_task_proxy = 0x20,
     //! Set if ref_count might be changed by another thread.  Used for debugging.
@@ -145,6 +147,10 @@ enum task_extra_state {
     //! Set if the task has been stolen
     es_task_is_stolen = 0x80
 };
+
+inline void reset_extra_state ( task *t ) {
+    t->prefix().extra_state &= ~(es_task_is_stolen | es_task_enqueued);
+}
 
 //! Optimization hint to free_task that enables it omit unnecessary tests and code.
 enum free_task_hint {

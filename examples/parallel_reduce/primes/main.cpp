@@ -55,10 +55,17 @@ struct RunOptions{
     {}
 };
 
+int do_get_default_num_threads() {
+    int threads;
+    #if __TBB_MIC
+    #pragma offload target(mic) out(threads)
+    #endif // __TBB_MIC
+    threads = tbb::task_scheduler_init::default_num_threads();
+    return threads;
+}
+
 int get_default_num_threads() {
-    static int threads = 0;
-    if ( threads == 0 )
-        threads = tbb::task_scheduler_init::default_num_threads();
+    static int threads = do_get_default_num_threads();
     return threads;
 }
 
@@ -95,9 +102,15 @@ int main( int argc, const char* argv[] ) {
             NumberType count = 0;
             NumberType n = options.n;
             if( p==0 ) {
+                #if __TBB_MIC
+                #pragma offload target(mic) in(n) out(count)
+                #endif // __TBB_MIC
                 count = SerialCountPrimes(n);
             } else {
                 NumberType grainSize = options.grainSize;
+                #if __TBB_MIC
+                #pragma offload target(mic) in(n, p, grainSize) out(count)
+                #endif // __TBB_MIC
                 count = ParallelCountPrimes(n, p, grainSize);
             }
             tbb::tick_count iterationEndMark = tbb::tick_count::now();

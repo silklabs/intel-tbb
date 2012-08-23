@@ -58,7 +58,7 @@
 /*
  * global.h - any/all global data items etc should be in this file
  *
- *  $Id: global.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: global.h,v 1.2 2007-02-22 17:54:15 Exp $
  *
  */
 

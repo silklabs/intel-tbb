@@ -58,7 +58,7 @@
 /* 
  * box.c - This file contains the functions for dealing with boxes.
  *
- *  $Id: box.cpp,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: box.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  */
  
 #include "machine.h"

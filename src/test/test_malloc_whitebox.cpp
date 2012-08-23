@@ -30,6 +30,10 @@
    for the whitebox test */
 #define __TBB_SOURCE_DIRECTLY_INCLUDED 1
 
+// According to C99 standard INTPTR_MIN defined for C++
+// iff __STDC_LIMIT_MACROS pre-defined
+#define __STDC_LIMIT_MACROS 1
+
 #include "harness.h"
 #include "harness_barrier.h"
 

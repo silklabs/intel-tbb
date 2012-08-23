@@ -653,6 +653,7 @@ void generic_scheduler::local_enqueue( task& t
     __TBB_ASSERT( governor::is_set(this), NULL );
     __TBB_ASSERT( t.state()==task::allocated, "attempt to enqueue task that is not in 'allocated' state" );
     t.prefix().state = task::ready;
+    t.prefix().extra_state |= es_task_enqueued; // enqueued task marker
 
 #if TBB_USE_ASSERT
     if( task* parent = t.parent() ) {

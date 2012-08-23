@@ -58,7 +58,7 @@
 /* 
  * parse.c - an UltraLame (tm) parser for simple data files...
  *
- *  $Id: parse.cpp,v 1.3 2007-02-22 17:54:15  Exp $
+ *  $Id: parse.cpp,v 1.3 2007-02-22 17:54:15 Exp $
  */
 
 // Try preventing lots of GCC warnings about ignored results of fscanf etc.

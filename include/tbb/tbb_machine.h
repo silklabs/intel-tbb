@@ -201,6 +201,11 @@ template<> struct atomic_selector<8> {
 #pragma managed(pop)
 #endif
 
+#elif __TBB_DEFINE_MIC
+
+    #include "machine/mic_common.h"
+    #include "machine/linux_intel64.h"
+
 #elif __linux__ || __FreeBSD__ || __NetBSD__
 
     #if (TBB_USE_GCC_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT)

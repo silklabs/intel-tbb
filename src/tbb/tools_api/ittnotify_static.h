@@ -28,18 +28,6 @@
 
 #include "ittnotify_config.h"
 
-#ifndef ITT_STUB
-#  define ITT_STUB ITT_STUBV
-#endif /* ITT_STUB */
-
-#ifndef ITTAPI
-#  define ITTAPI CDECL
-#endif /* ITTAPI */
-
-#ifndef LIBITTAPI
-#  define LIBITTAPI /* nothing */
-#endif /* LIBITTAPI */
-
 #ifndef ITT_FORMAT_DEFINED
 #  ifndef ITT_FORMAT
 #    define ITT_FORMAT
@@ -53,7 +41,23 @@
  * parameters for macro expected:
  * ITT_STUB(api, type, func_name, arguments, params, func_name_in_dll, group, printf_fmt)
  */
-/* public */
+#ifdef __ITT_INTERNAL_INIT
+
+#ifndef __ITT_INTERNAL_BODY
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUB(ITTAPI, __itt_domain*, domain_createA, (const char    *name), (ITT_FORMAT name), domain_createA, __itt_group_structure, "\"%s\"")
+ITT_STUB(ITTAPI, __itt_domain*, domain_createW, (const wchar_t *name), (ITT_FORMAT name), domain_createW, __itt_group_structure, "\"%S\"")
+#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
+ITT_STUB(ITTAPI, __itt_domain*, domain_create,  (const char    *name), (ITT_FORMAT name), domain_create,  __itt_group_structure, "\"%s\"")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUB(ITTAPI, __itt_string_handle*, string_handle_createA, (const char    *name), (ITT_FORMAT name), string_handle_createA, __itt_group_structure, "\"%s\"")
+ITT_STUB(ITTAPI, __itt_string_handle*, string_handle_createW, (const wchar_t *name), (ITT_FORMAT name), string_handle_createW, __itt_group_structure, "\"%S\"")
+#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
+ITT_STUB(ITTAPI, __itt_string_handle*, string_handle_create,  (const char    *name), (ITT_FORMAT name), string_handle_create,  __itt_group_structure, "\"%s\"")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+
 ITT_STUBV(ITTAPI, void, pause,  (void), (ITT_NO_PARAMS), pause,  __itt_group_control | __itt_group_legacy, "no args")
 ITT_STUBV(ITTAPI, void, resume, (void), (ITT_NO_PARAMS), resume, __itt_group_control | __itt_group_legacy, "no args")
 
@@ -64,6 +68,17 @@ ITT_STUBV(ITTAPI, void, thread_set_nameW, (const wchar_t *name), (ITT_FORMAT nam
 ITT_STUBV(ITTAPI, void, thread_set_name,  (const char    *name), (ITT_FORMAT name), thread_set_name,  __itt_group_thread, "\"%s\"")
 #endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
 ITT_STUBV(ITTAPI, void, thread_ignore, (void), (ITT_NO_PARAMS), thread_ignore, __itt_group_thread, "no args")
+
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUB(LIBITTAPI, int,  thr_name_setA, (const char    *name, int namelen), (ITT_FORMAT name, namelen), thr_name_setA, __itt_group_thread | __itt_group_legacy, "\"%s\", %d")
+ITT_STUB(LIBITTAPI, int,  thr_name_setW, (const wchar_t *name, int namelen), (ITT_FORMAT name, namelen), thr_name_setW, __itt_group_thread | __itt_group_legacy, "\"%S\", %d")
+#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
+ITT_STUB(LIBITTAPI, int,  thr_name_set,  (const char    *name, int namelen), (ITT_FORMAT name, namelen), thr_name_set,  __itt_group_thread | __itt_group_legacy, "\"%s\", %d")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+ITT_STUBV(LIBITTAPI, void, thr_ignore,   (void),                             (ITT_NO_PARAMS),            thr_ignore,    __itt_group_thread | __itt_group_legacy, "no args")
+#endif /* __ITT_INTERNAL_BODY */
+
+#else  /* __ITT_INTERNAL_INIT */
 
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
 ITT_STUBV(ITTAPI, void, sync_createA, (void *addr, const char    *objtype, const char    *objname, int attribute), (ITT_FORMAT addr, objtype, objname, attribute), sync_createA, __itt_group_sync | __itt_group_fsync, "%p, \"%s\", \"%s\", %x")
@@ -103,33 +118,62 @@ ITT_STUBV(ITTAPI, void, model_disable_pop,         (void),                    (I
 
 #ifndef __ITT_INTERNAL_BODY
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
-ITT_STUB(ITTAPI, __itt_counter, counter_createA, (const char    *name, const char    *domain), (ITT_FORMAT name, domain), counter_createA, __itt_group_counter, "\"%s\", \"%s\"")
-ITT_STUB(ITTAPI, __itt_counter, counter_createW, (const wchar_t *name, const wchar_t *domain), (ITT_FORMAT name, domain), counter_createW, __itt_group_counter, "\"%s\", \"%s\"")
-#else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
-ITT_STUB(ITTAPI, __itt_counter, counter_create,  (const char    *name, const char    *domain), (ITT_FORMAT name, domain), counter_create,  __itt_group_counter, "\"%s\", \"%s\"")
+ITT_STUBV(ITTAPI, void, model_site_beginW,         (const wchar_t *name), (ITT_FORMAT name), model_site_beginW, __itt_group_model, "\"%s\"")
+ITT_STUBV(ITTAPI, void, model_task_beginW,         (const wchar_t *name), (ITT_FORMAT name), model_task_beginW, __itt_group_model, "\"%s\"")
 #endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+ITT_STUBV(ITTAPI, void, model_site_beginAL,        (const char *name, size_t len), (ITT_FORMAT name, len), model_site_beginAL, __itt_group_model, "\"%s\", %d")
+ITT_STUBV(ITTAPI, void, model_task_beginAL,        (const char *name, size_t len), (ITT_FORMAT name, len), model_task_beginAL, __itt_group_model, "\"%s\", %d")
 #endif /* __ITT_INTERNAL_BODY */
-ITT_STUBV(ITTAPI, void, counter_destroy,   (__itt_counter id),                           (ITT_FORMAT id),        counter_destroy,   __itt_group_counter, "%p")
-ITT_STUBV(ITTAPI, void, counter_inc,       (__itt_counter id),                           (ITT_FORMAT id),        counter_inc,       __itt_group_counter, "%p")
-ITT_STUBV(ITTAPI, void, counter_inc_delta, (__itt_counter id, unsigned long long value), (ITT_FORMAT id, value), counter_inc_delta, __itt_group_counter, "%p, %lu")
-
-#ifndef __ITT_INTERNAL_BODY
-ITT_STUB(ITTAPI, __itt_caller, stack_caller_create,  (void),         (ITT_NO_PARAMS), stack_caller_create,  __itt_group_stitch, "no args")
-#endif /* __ITT_INTERNAL_BODY */
-ITT_STUBV(ITTAPI, void, stack_caller_destroy,     (__itt_caller id), (ITT_FORMAT id), stack_caller_destroy, __itt_group_stitch, "%p")
-ITT_STUBV(ITTAPI, void, stack_callee_enter,       (__itt_caller id), (ITT_FORMAT id), stack_callee_enter,   __itt_group_stitch, "%p")
-ITT_STUBV(ITTAPI, void, stack_callee_leave,       (__itt_caller id), (ITT_FORMAT id), stack_callee_leave,   __itt_group_stitch, "%p")
 
 #ifndef __ITT_INTERNAL_BODY
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
-ITT_STUB(ITTAPI, __itt_frame, frame_createA, (const char    *domain), (ITT_FORMAT domain), frame_createA, __itt_group_frame, "\"%s\"")
-ITT_STUB(ITTAPI, __itt_frame, frame_createW, (const wchar_t *domain), (ITT_FORMAT domain), frame_createW, __itt_group_frame, "\"%s\"")
+ITT_STUB(ITTAPI, __itt_heap_function, heap_function_createA, (const char    *name, const char    *domain), (ITT_FORMAT name, domain), heap_function_createA, __itt_group_heap, "\"%s\", \"%s\"")
+ITT_STUB(ITTAPI, __itt_heap_function, heap_function_createW, (const wchar_t *name, const wchar_t *domain), (ITT_FORMAT name, domain), heap_function_createW, __itt_group_heap, "\"%s\", \"%s\"")
 #else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
-ITT_STUB(ITTAPI, __itt_frame, frame_create,  (const char    *domain), (ITT_FORMAT domain), frame_create,  __itt_group_frame, "\"%s\"")
+ITT_STUB(ITTAPI, __itt_heap_function, heap_function_create,  (const char    *name, const char    *domain), (ITT_FORMAT name, domain), heap_function_create,  __itt_group_heap, "\"%s\", \"%s\"")
 #endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
 #endif /* __ITT_INTERNAL_BODY */
-ITT_STUBV(ITTAPI, void, frame_begin,         (__itt_frame frame),     (ITT_FORMAT frame),  frame_begin,   __itt_group_frame, "%p")
-ITT_STUBV(ITTAPI, void, frame_end,           (__itt_frame frame),     (ITT_FORMAT frame),  frame_end,     __itt_group_frame, "%p")
+ITT_STUBV(ITTAPI, void, heap_allocate_begin,   (__itt_heap_function h, size_t size, int initialized),             (ITT_FORMAT h, size, initialized),       heap_allocate_begin, __itt_group_heap, "%p, %lu, %d")
+ITT_STUBV(ITTAPI, void, heap_allocate_end,     (__itt_heap_function h, void** addr, size_t size, int initialized), (ITT_FORMAT h, addr, size, initialized), heap_allocate_end,   __itt_group_heap, "%p, %p, %lu, %d")
+ITT_STUBV(ITTAPI, void, heap_free_begin,       (__itt_heap_function h, void*  addr), (ITT_FORMAT h, addr), heap_free_begin, __itt_group_heap, "%p, %p")
+ITT_STUBV(ITTAPI, void, heap_free_end,         (__itt_heap_function h, void*  addr), (ITT_FORMAT h, addr), heap_free_end,   __itt_group_heap, "%p, %p")
+ITT_STUBV(ITTAPI, void, heap_reallocate_begin, (__itt_heap_function h, void*  addr, size_t new_size, int initialized),                  (ITT_FORMAT h, addr, new_size, initialized),           heap_reallocate_begin, __itt_group_heap, "%p, %p, %lu, %d")
+ITT_STUBV(ITTAPI, void, heap_reallocate_end,   (__itt_heap_function h, void*  addr, void** new_addr, size_t new_size, int initialized), (ITT_FORMAT h, addr, new_addr, new_size, initialized), heap_reallocate_end,   __itt_group_heap, "%p, %p, %p, %lu, %d")
+ITT_STUBV(ITTAPI, void, heap_internal_access_begin, (void), (ITT_NO_PARAMS), heap_internal_access_begin, __itt_group_heap, "no args")
+ITT_STUBV(ITTAPI, void, heap_internal_access_end,   (void), (ITT_NO_PARAMS), heap_internal_access_end,   __itt_group_heap, "no args")
+
+ITT_STUBV(ITTAPI, void, id_create,  (const __itt_domain *domain, __itt_id id), (ITT_FORMAT domain, id), id_create,  __itt_group_structure, "%p, %lu")
+ITT_STUBV(ITTAPI, void, id_destroy, (const __itt_domain *domain, __itt_id id), (ITT_FORMAT domain, id), id_destroy, __itt_group_structure, "%p, %lu")
+
+ITT_STUBV(ITTAPI, void, region_begin, (const __itt_domain *domain, __itt_id id, __itt_id parent, __itt_string_handle *name), (ITT_FORMAT domain, id, parent, name), region_begin, __itt_group_structure, "%p, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, region_end,   (const __itt_domain *domain, __itt_id id),                                             (ITT_FORMAT domain, id),               region_end,   __itt_group_structure, "%p, %lu")
+
+#ifndef __ITT_INTERNAL_BODY
+ITT_STUBV(ITTAPI, void, frame_begin_v3, (const __itt_domain *domain, __itt_id *id), (ITT_FORMAT domain, id), frame_begin_v3, __itt_group_structure, "%p, %p")
+ITT_STUBV(ITTAPI, void, frame_end_v3,   (const __itt_domain *domain, __itt_id *id), (ITT_FORMAT domain, id), frame_end_v3,   __itt_group_structure, "%p, %p")
+#endif /* __ITT_INTERNAL_BODY */
+
+ITT_STUBV(ITTAPI, void, task_group,   (const __itt_domain *domain, __itt_id id, __itt_id parent, __itt_string_handle *name), (ITT_FORMAT domain, id, parent, name), task_group,  __itt_group_structure, "%p, %lu, %lu, %p")
+
+ITT_STUBV(ITTAPI, void, task_begin,    (const __itt_domain *domain, __itt_id id, __itt_id parent, __itt_string_handle *name), (ITT_FORMAT domain, id, parent, name), task_begin,    __itt_group_structure, "%p, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_begin_fn, (const __itt_domain *domain, __itt_id id, __itt_id parent, void* fn),                  (ITT_FORMAT domain, id, parent, fn),   task_begin_fn, __itt_group_structure, "%p, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_end,      (const __itt_domain *domain),                                                          (ITT_FORMAT domain),                   task_end,      __itt_group_structure, "%p")
+
+ITT_STUBV(ITTAPI, void, counter_inc_v3,       (const __itt_domain *domain, __itt_string_handle *name),                           (ITT_FORMAT domain, name),        counter_inc_v3,       __itt_group_structure, "%p, %p")
+ITT_STUBV(ITTAPI, void, counter_inc_delta_v3, (const __itt_domain *domain, __itt_string_handle *name, unsigned long long value), (ITT_FORMAT domain, name, value), counter_inc_delta_v3, __itt_group_structure, "%p, %p, %lu")
+
+ITT_STUBV(ITTAPI, void, marker, (const __itt_domain *domain, __itt_id id, __itt_string_handle *name, __itt_scope scope), (ITT_FORMAT domain, id, name, scope), marker, __itt_group_structure, "%p, %lu, %p, %d")
+
+ITT_STUBV(ITTAPI, void, metadata_add,      (const __itt_domain *domain, __itt_id id, __itt_string_handle *key, __itt_metadata_type type, size_t count, void *data), (ITT_FORMAT domain, id, key, type, count, data), metadata_add, __itt_group_structure, "%p, %lu, %p, %d, %lu, %p")
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUBV(ITTAPI, void, metadata_str_addA, (const __itt_domain *domain, __itt_id id, __itt_string_handle *key, const char* data, size_t length),    (ITT_FORMAT domain, id, key, data, length), metadata_str_addA, __itt_group_structure, "%p, %lu, %p, %p, %lu")
+ITT_STUBV(ITTAPI, void, metadata_str_addW, (const __itt_domain *domain, __itt_id id, __itt_string_handle *key, const wchar_t* data, size_t length), (ITT_FORMAT domain, id, key, data, length), metadata_str_addW, __itt_group_structure, "%p, %lu, %p, %p, %lu")
+#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
+ITT_STUBV(ITTAPI, void, metadata_str_add,  (const __itt_domain *domain, __itt_id id, __itt_string_handle *key, const char* data, size_t length),    (ITT_FORMAT domain, id, key, data, length), metadata_str_add,  __itt_group_structure, "%p, %lu, %p, %p, %lu")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+
+ITT_STUBV(ITTAPI, void, relation_add_to_current, (const __itt_domain *domain, __itt_relation relation, __itt_id tail),                (ITT_FORMAT domain, relation, tail),       relation_add_to_current, __itt_group_structure, "%p, %lu, %p")
+ITT_STUBV(ITTAPI, void, relation_add,            (const __itt_domain *domain, __itt_id head, __itt_relation relation, __itt_id tail), (ITT_FORMAT domain, head, relation, tail), relation_add,            __itt_group_structure, "%p, %p, %lu, %p")
 
 #ifndef __ITT_INTERNAL_BODY
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
@@ -143,32 +187,6 @@ ITT_STUB(LIBITTAPI, int,  event_end,            (__itt_event event),            
 #endif /* __ITT_INTERNAL_BODY */
 
 #ifndef __ITT_INTERNAL_BODY
-#if ITT_PLATFORM==ITT_PLATFORM_WIN
-ITT_STUB(ITTAPI, __itt_heap_function, heap_function_createA, (const char    *name, const char    *domain), (ITT_FORMAT name, domain), heap_function_createA, __itt_group_heap, "\"%s\", \"%s\"")
-ITT_STUB(ITTAPI, __itt_heap_function, heap_function_createW, (const wchar_t *name, const wchar_t *domain), (ITT_FORMAT name, domain), heap_function_createW, __itt_group_heap, "\"%s\", \"%s\"")
-#else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
-ITT_STUB(ITTAPI, __itt_heap_function, heap_function_create,  (const char    *name, const char    *domain), (ITT_FORMAT name, domain), heap_function_create,  __itt_group_heap, "\"%s\", \"%s\"")
-#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
-#endif /* __ITT_INTERNAL_BODY */
-ITT_STUBV(ITTAPI, void, heap_allocate_begin,   (__itt_heap_function h, size_t size, int initialized),             (ITT_FORMAT h, size, initialized),       heap_allocate_begin, __itt_group_heap, "%p, %lu, %d")
-ITT_STUBV(ITTAPI, void, heap_allocate_end,     (__itt_heap_function h, void* addr, size_t size, int initialized), (ITT_FORMAT h, addr, size, initialized), heap_allocate_end,   __itt_group_heap, "%p, %p, %lu, %d")
-ITT_STUBV(ITTAPI, void, heap_free_begin,       (__itt_heap_function h, void* addr), (ITT_FORMAT h, addr), heap_free_begin, __itt_group_heap, "%p, %p")
-ITT_STUBV(ITTAPI, void, heap_free_end,         (__itt_heap_function h, void* addr), (ITT_FORMAT h, addr), heap_free_end,   __itt_group_heap, "%p, %p")
-ITT_STUBV(ITTAPI, void, heap_reallocate_begin, (__itt_heap_function h, void* addr, size_t new_size, int initialized),                 (ITT_FORMAT h, addr, new_size, initialized),           heap_reallocate_begin, __itt_group_heap, "%p, %p, %lu, %d")
-ITT_STUBV(ITTAPI, void, heap_reallocate_end,   (__itt_heap_function h, void* addr, void* new_addr, size_t new_size, int initialized), (ITT_FORMAT h, addr, new_addr, new_size, initialized), heap_reallocate_end,   __itt_group_heap, "%p, %p, %p, %lu, %d")
-ITT_STUBV(ITTAPI, void, heap_internal_access_begin, (void), (ITT_NO_PARAMS), heap_internal_access_begin, __itt_group_heap, "no args")
-ITT_STUBV(ITTAPI, void, heap_internal_access_end,   (void), (ITT_NO_PARAMS), heap_internal_access_end,   __itt_group_heap, "no args")
-
-/* legacy */
-#ifndef __ITT_INTERNAL_BODY
-#if ITT_PLATFORM==ITT_PLATFORM_WIN
-ITT_STUB(LIBITTAPI, int,  thr_name_setA, (const char    *name, int namelen), (ITT_FORMAT name, namelen), thr_name_setA, __itt_group_thread | __itt_group_legacy, "\"%s\", %d")
-ITT_STUB(LIBITTAPI, int,  thr_name_setW, (const wchar_t *name, int namelen), (ITT_FORMAT name, namelen), thr_name_setW, __itt_group_thread | __itt_group_legacy, "\"%S\", %d")
-#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
-ITT_STUB(LIBITTAPI, int,  thr_name_set,  (const char    *name, int namelen), (ITT_FORMAT name, namelen), thr_name_set,  __itt_group_thread | __itt_group_legacy, "\"%s\", %d")
-#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
-ITT_STUBV(LIBITTAPI, void, thr_ignore,   (void),                             (ITT_NO_PARAMS),            thr_ignore,    __itt_group_thread | __itt_group_legacy, "no args")
-
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
 ITT_STUBV(ITTAPI, void, sync_set_nameA, (void *addr, const char    *objtype, const char    *objname, int attribute), (ITT_FORMAT addr, objtype, objname, attribute), sync_set_nameA, __itt_group_sync | __itt_group_fsync | __itt_group_legacy, "%p, \"%s\", \"%s\", %x")
 ITT_STUBV(ITTAPI, void, sync_set_nameW, (void *addr, const wchar_t *objtype, const wchar_t *objname, int attribute), (ITT_FORMAT addr, objtype, objname, attribute), sync_set_nameW, __itt_group_sync | __itt_group_fsync | __itt_group_legacy, "%p, \"%S\", \"%S\", %x")
@@ -198,7 +216,29 @@ ITT_STUB(LIBITTAPI, __itt_state_t,     state_set,    (__itt_state_t s),         
 ITT_STUB(LIBITTAPI, __itt_obj_state_t, obj_mode_set, (__itt_obj_prop_t p, __itt_obj_state_t s), (ITT_FORMAT p, s), obj_mode_set, __itt_group_legacy, "%d, %d")
 ITT_STUB(LIBITTAPI, __itt_thr_state_t, thr_mode_set, (__itt_thr_prop_t p, __itt_thr_state_t s), (ITT_FORMAT p, s), thr_mode_set, __itt_group_legacy, "%d, %d")
 
-/* internal */
+#ifndef __ITT_INTERNAL_BODY
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUB(ITTAPI, __itt_frame, frame_createA, (const char    *domain), (ITT_FORMAT domain), frame_createA, __itt_group_frame, "\"%s\"")
+ITT_STUB(ITTAPI, __itt_frame, frame_createW, (const wchar_t *domain), (ITT_FORMAT domain), frame_createW, __itt_group_frame, "\"%s\"")
+#else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+ITT_STUB(ITTAPI, __itt_frame, frame_create,  (const char    *domain), (ITT_FORMAT domain), frame_create,  __itt_group_frame, "\"%s\"")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+#endif /* __ITT_INTERNAL_BODY */
+ITT_STUBV(ITTAPI, void, frame_begin,         (__itt_frame frame),     (ITT_FORMAT frame),  frame_begin,   __itt_group_frame, "%p")
+ITT_STUBV(ITTAPI, void, frame_end,           (__itt_frame frame),     (ITT_FORMAT frame),  frame_end,     __itt_group_frame, "%p")
+
+#ifndef __ITT_INTERNAL_BODY
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUB(ITTAPI, __itt_counter, counter_createA, (const char    *name, const char    *domain), (ITT_FORMAT name, domain), counter_createA, __itt_group_counter, "\"%s\", \"%s\"")
+ITT_STUB(ITTAPI, __itt_counter, counter_createW, (const wchar_t *name, const wchar_t *domain), (ITT_FORMAT name, domain), counter_createW, __itt_group_counter, "\"%s\", \"%s\"")
+#else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+ITT_STUB(ITTAPI, __itt_counter, counter_create,  (const char    *name, const char    *domain), (ITT_FORMAT name, domain), counter_create,  __itt_group_counter, "\"%s\", \"%s\"")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+#endif /* __ITT_INTERNAL_BODY */
+ITT_STUBV(ITTAPI, void, counter_destroy,   (__itt_counter id),                           (ITT_FORMAT id),        counter_destroy,   __itt_group_counter, "%p")
+ITT_STUBV(ITTAPI, void, counter_inc,       (__itt_counter id),                           (ITT_FORMAT id),        counter_inc,       __itt_group_counter, "%p")
+ITT_STUBV(ITTAPI, void, counter_inc_delta, (__itt_counter id, unsigned long long value), (ITT_FORMAT id, value), counter_inc_delta, __itt_group_counter, "%p, %lu")
+
 #ifndef __ITT_INTERNAL_BODY
 #if ITT_PLATFORM==ITT_PLATFORM_WIN
 ITT_STUB(ITTAPI, __itt_mark_type, mark_createA, (const char    *name), (ITT_FORMAT name), mark_createA, __itt_group_mark, "\"%s\"")
@@ -222,10 +262,40 @@ ITT_STUB(ITTAPI, int,  mark_global,  (__itt_mark_type mt, const char    *paramet
 #endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
 ITT_STUB(ITTAPI, int,  mark_global_off, (__itt_mark_type mt),                        (ITT_FORMAT mt),            mark_global_off, __itt_group_mark, "%d")
 
-/* prototype */
-/* empty so far */
+#ifndef __ITT_INTERNAL_BODY
+ITT_STUB(ITTAPI, __itt_caller, stack_caller_create, (void), (ITT_NO_PARAMS), stack_caller_create,  __itt_group_stitch, "no args")
+#endif /* __ITT_INTERNAL_BODY */
+ITT_STUBV(ITTAPI, void, stack_caller_destroy, (__itt_caller id), (ITT_FORMAT id), stack_caller_destroy, __itt_group_stitch, "%p")
+ITT_STUBV(ITTAPI, void, stack_callee_enter,   (__itt_caller id), (ITT_FORMAT id), stack_callee_enter,   __itt_group_stitch, "%p")
+ITT_STUBV(ITTAPI, void, stack_callee_leave,   (__itt_caller id), (ITT_FORMAT id), stack_callee_leave,   __itt_group_stitch, "%p")
 
-/* hidden */
+ITT_STUB(ITTAPI,  __itt_clock_domain*, clock_domain_create, (__itt_get_clock_info_fn fn, void* fn_data), (ITT_FORMAT fn, fn_data), clock_domain_create, __itt_group_structure, "%p, %p")
+ITT_STUBV(ITTAPI, void,                clock_domain_reset,  (void),                                      (ITT_NO_PARAMS),          clock_domain_reset,  __itt_group_structure, "no args")
+ITT_STUBV(ITTAPI, void, id_create_ex,  (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id), (ITT_FORMAT domain, clock_domain, timestamp, id), id_create_ex,  __itt_group_structure, "%p, %p, %lu, %lu")
+ITT_STUBV(ITTAPI, void, id_destroy_ex, (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id), (ITT_FORMAT domain, clock_domain, timestamp, id), id_destroy_ex, __itt_group_structure, "%p, %p, %lu, %lu")
+ITT_STUBV(ITTAPI, void, task_begin_ex,    (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id, __itt_id parentid, __itt_string_handle *name), (ITT_FORMAT domain, clock_domain, timestamp, id, parentid, name), task_begin_ex, __itt_group_structure, "%p, %p, %lu, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_begin_fn_ex, (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id, __itt_id parentid, void* fn),                  (ITT_FORMAT domain, clock_domain, timestamp, id, parentid, fn), task_begin_fn_ex, __itt_group_structure, "%p, %p, %lu, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_end_ex,      (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp),                                                            (ITT_FORMAT domain, clock_domain, timestamp), task_end_ex, __itt_group_structure, "%p, %p, %lu")
+ITT_STUBV(ITTAPI, void, task_begin_overlapped,       (const __itt_domain *domain, __itt_id id, __itt_id parent, __itt_string_handle *name),                                                                   (ITT_FORMAT domain, id, parent, name), task_begin_overlapped, __itt_group_structure, "%p, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_begin_overlapped_ex,    (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id, __itt_id parentid, __itt_string_handle *name), (ITT_FORMAT domain, clock_domain, timestamp, id, parentid, name), task_begin_overlapped_ex, __itt_group_structure, "%p, %p, %lu, %lu, %lu, %p")
+ITT_STUBV(ITTAPI, void, task_end_overlapped, (const __itt_domain *domain, __itt_id id),                                                                                                                       (ITT_FORMAT domain, id), task_end_overlapped, __itt_group_structure, "%p, %lu")
+ITT_STUBV(ITTAPI, void, task_end_overlapped_ex, (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id),                                                    (ITT_FORMAT domain, clock_domain, timestamp, id), task_end_overlapped_ex, __itt_group_structure, "%p, %p, %lu, %lu")
+ITT_STUBV(ITTAPI, void, marker_ex, (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id id, __itt_string_handle *name, __itt_scope scope), (ITT_FORMAT domain, clock_domain, timestamp, id, name, scope), marker_ex, __itt_group_structure, "%p, %p, %lu, %lu, %p, %d")
+ITT_STUBV(ITTAPI, void, metadata_add_with_scope, (const __itt_domain *domain, __itt_scope scope, __itt_string_handle *key, __itt_metadata_type type, size_t count, void *data), (ITT_FORMAT domain, scope, key, type, count, data), metadata_add_with_scope, __itt_group_structure, "%p, %d, %p, %d, %lu, %p")
+#if ITT_PLATFORM==ITT_PLATFORM_WIN
+ITT_STUBV(ITTAPI, void, metadata_str_add_with_scopeA, (const __itt_domain *domain, __itt_scope scope, __itt_string_handle *key, const char *data, size_t length),    (ITT_FORMAT domain, scope, key, data, length), metadata_str_add_with_scopeA, __itt_group_structure, "%p, %d, %p, %p, %lu")
+ITT_STUBV(ITTAPI, void, metadata_str_add_with_scopeW, (const __itt_domain *domain, __itt_scope scope, __itt_string_handle *key, const wchar_t *data, size_t length), (ITT_FORMAT domain, scope, key, data, length), metadata_str_add_with_scopeW, __itt_group_structure, "%p, %d, %p, %p, %lu")
+#else  /* ITT_PLATFORM!=ITT_PLATFORM_WIN */
+ITT_STUBV(ITTAPI, void, metadata_str_add_with_scope,  (const __itt_domain *domain, __itt_scope scope, __itt_string_handle *key, const char *data, size_t length),    (ITT_FORMAT domain, scope, key, data, length), metadata_str_add_with_scope,  __itt_group_structure, "%p, %d, %p, %p, %lu")
+#endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+ITT_STUBV(ITTAPI, void, relation_add_to_current_ex, (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_relation relation, __itt_id tail),                (ITT_FORMAT domain, clock_domain, timestamp, relation, tail),       relation_add_to_current_ex, __itt_group_structure, "%p, %p, %lu, %d, %lu")
+ITT_STUBV(ITTAPI, void, relation_add_ex,            (const __itt_domain *domain, __itt_clock_domain* clock_domain, unsigned long long timestamp, __itt_id head, __itt_relation relation, __itt_id tail), (ITT_FORMAT domain, clock_domain, timestamp, head, relation, tail), relation_add_ex,            __itt_group_structure, "%p, %p, %lu, %lu, %d, %lu")
+ITT_STUB(ITTAPI,  __itt_track_group*, track_group_create, (__itt_string_handle* name, __itt_track_group_type track_group_type),                    (ITT_FORMAT name, track_group_type),        track_group_create, __itt_group_structure, "%p, %d")
+ITT_STUB(ITTAPI,  __itt_track*,       track_create,       (__itt_track_group* track_group,__itt_string_handle* name, __itt_track_type track_type), (ITT_FORMAT track_group, name, track_type), track_create,       __itt_group_structure, "%p, %p, %d")
+ITT_STUBV(ITTAPI, void,               set_track,          (__itt_track *track),                                                                    (ITT_FORMAT track),                         set_track,          __itt_group_structure, "%p")
+
 #ifndef __ITT_INTERNAL_BODY
 ITT_STUB(ITTAPI, const char*, api_version, (void), (ITT_NO_PARAMS), api_version, __itt_group_all & ~__itt_group_legacy, "no args")
 #endif /* __ITT_INTERNAL_BODY */
+
+#endif /* __ITT_INTERNAL_INIT */

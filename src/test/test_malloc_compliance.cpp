@@ -1000,7 +1000,9 @@ void CMemTest::RunAllTests(int total_threads)
 #else
     UniquePointer();
     AddrArifm();
+#if !__TBB_MIC_NATIVE
     NULLReturn(1*MByte,100*MByte,total_threads);
+#endif
 #endif
     if (FullLog) REPORT("Tests for %d threads ended\n", total_threads);
 }

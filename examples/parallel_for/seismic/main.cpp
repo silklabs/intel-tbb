@@ -32,11 +32,17 @@
 #include "tbb/tick_count.h"
 #include "../../common/utility/utility.h"
 
+#if __TBB_MIC
+#pragma offload_attribute (push,target(mic))
+#endif // __TBB_MIC
 #include "seismic_video.h"
 #include "universe.h"
 #include "tbb/task_scheduler_init.h"
 
 Universe u;
+#if __TBB_MIC
+#pragma offload_attribute (pop)
+#endif // __TBB_MIC
 
 struct RunOptions {
     //! It is used for console mode for test with different number of threads and also has
@@ -52,10 +58,17 @@ struct RunOptions {
     }
 };
 
+int do_get_default_num_threads() {
+    int threads;
+    #if __TBB_MIC
+    #pragma offload target(mic) out(threads)
+    #endif // __TBB_MIC
+    threads = tbb::task_scheduler_init::default_num_threads();
+    return threads;
+}
+
 int get_default_num_threads() {
-    static int threads = 0;
-    if ( threads == 0 )
-        threads = tbb::task_scheduler_init::default_num_threads();
+    static int threads = do_get_default_num_threads();
     return threads;
 }
 
@@ -100,6 +113,18 @@ int main(int argc, char *argv[])
                 tbb::tick_count xwayParallelismStartTime = tbb::tick_count::now();
                 u.InitializeUniverse(video);
                 int numberOfFrames = options.numberOfFrames;
+                #if __TBB_MIC
+                drawing_memory dmem = video.get_drawing_memory();
+                char *pMem = dmem.get_address();
+                size_t memSize = dmem.get_size();
+
+                #pragma offload target(mic) in(u, numberOfFrames, p, dmem), out(pMem:length(memSize))
+                {
+                    // It is necessary to update the pointer on mic 
+                    // since the address spaces on host and on target are different
+                    dmem.set_address(pMem);
+                    u.SetDrawingMemory(dmem);
+                #endif // __TBB_MIC
                 if (p==0){
                     //run a serial version
                     for( int i=0; i<numberOfFrames; ++i ){
@@ -111,6 +136,9 @@ int main(int argc, char *argv[])
                         u.ParallelUpdateUniverse();
                     }
                 }
+                #if __TBB_MIC
+                }
+                #endif // __TBB_MIC
 
                 if (!options.silent){
                     double fps =  options.numberOfFrames/((tbb::tick_count::now()-xwayParallelismStartTime).seconds());

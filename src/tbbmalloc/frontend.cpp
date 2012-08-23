@@ -261,10 +261,10 @@ class MemoryPool {
     // and set reasonable low granularity
     static const size_t defaultGranularity = estimatedCacheLineSize;
 
-    static MallocMutex  memPoolListLock;
-
     MemoryPool();                  // deny
 public:
+    static MallocMutex  memPoolListLock;
+
     // list of all active pools is used to release
     // all TLS data on thread termination or library unload
     MemoryPool    *next,
@@ -1682,11 +1682,6 @@ void MemoryPool::initDefaultPool()
             ExtMemoryPool::hugePageSize = hugePageSize*1024;
     }
 #endif
-    if( GetBoolEnvironmentVariable("TBB_VERSION") ) {
-        fputs(VersionString+1,stderr);
-        fprintf(stderr, "TBBmalloc: scalable allocator\t%s\n",
-                ExtMemoryPool::useHugePages? "use huge pages" : "no huge pages" );
-    }
 }
 
 inline bool isMallocInitialized() {
@@ -1747,6 +1742,11 @@ static void doInitialization()
         // might become remotely visible before side effects of
         // initMemoryManager() become remotely visible.
         FencedStore( mallocInitialized, 2 );
+        if( GetBoolEnvironmentVariable("TBB_VERSION") ) {
+            fputs(VersionString+1,stderr);
+            fprintf(stderr, "TBBmalloc: scalable allocator\t%s\n",
+                    ExtMemoryPool::useHugePages? "use huge pages" : "no huge pages" );
+        }
     }
     /* It can't be 0 or I would have initialized it */
     MALLOC_ASSERT( mallocInitialized==2, ASSERT_TEXT );
@@ -1829,6 +1829,50 @@ void Bin::processLessUsedBlock(MemoryPool *memPool, Block *block)
         block->restoreBumpPtr();
     }
 }
+
+#if USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
+
+/* Decrease race interval between dynamic library unloading and pthread key
+   destructor. Protect only Pthreads with supported unloading. */
+class ShutdownSync {
+/* flag is the number of threads in pthread key dtor body
+   (i.e., between threadDtorStart() and threadDtorDone())
+   or the signal to skip dtor, if flag < 0 */
+    intptr_t flag;
+    static const intptr_t skipDtor = INTPTR_MIN/2;
+public:
+/* Suppose that 2*abs(skipDtor) or more threads never call threadExitStart()
+   simultaneously, so flag is never becomes negative because of that. */
+    bool threadDtorStart() {
+        if (flag < 0)
+            return false;
+        if (AtomicIncrement(flag) <= 0) { // note that new value returned
+            AtomicAdd(flag, -1);  // flag is spoiled by us, restore it
+            return false;
+        }
+        return true;
+    }
+    void threadDtorDone() {
+        AtomicAdd(flag, -1);
+    }
+    void processExit() {
+        if (AtomicAdd(flag, skipDtor) != 0)
+            SpinWaitUntilEq(flag, skipDtor);
+    }
+};
+
+#else
+
+class ShutdownSync {
+public:
+    bool threadDtorStart() { return true; }
+    void threadDtorDone() { }
+    void processExit() { }
+};
+
+#endif // USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
+
+static ShutdownSync shutdownSync;
 
 /*
  * All aligned allocations fall into one of the following categories:
@@ -2278,10 +2322,12 @@ void mallocThreadShutdownNotification(void* arg)
     TRACEF(( "[ScalableMalloc trace] Thread id %d blocks return start %d\n",
              getThreadId(),  threadGoingDownCount++ ));
 #if USE_WINTHREAD
+    MallocMutex::scoped_lock lock(MemoryPool::memPoolListLock);
     // The routine is called once per thread, need to walk through all pools on Windows
     for (MemoryPool *memPool = defaultMemPool; memPool; memPool = memPool->next) {
         TLSData *tls = memPool->extMemPool.getTLS();
 #else
+        if (!shutdownSync.threadDtorStart()) return;
         // The routine is called for each memPool, just need to get memPool from TLSData.
         TLSData *tls = (TLSData*)arg;
         MemoryPool *memPool = tls->getMemPool();
@@ -2293,6 +2339,8 @@ void mallocThreadShutdownNotification(void* arg)
         }
 #if USE_WINTHREAD
     } // for memPool (Windows only)
+#else
+    shutdownSync.threadDtorDone();
 #endif
 
     TRACEF(( "[ScalableMalloc trace] Thread id %d blocks return end\n", getThreadId() ));
@@ -2309,25 +2357,25 @@ extern "C" void __TBB_mallocProcessShutdownNotification()
 {
     if (!isMallocInitialized()) return;
 
-#if !__TBB_SOURCE_DIRECTLY_INCLUDED
-/* This cleanup is useful during DLL unload. TBBmalloc can't be unloaded,
-   but we want reduce memory consumption at the moment.
-   TODO: better support systems where we can't prevent unloading by
-   removing pthread destructors and releasing caches.
-*/
-    defaultMemPool->extMemPool.hardCachesCleanup();
-#else //  !__TBB_SOURCE_DIRECTLY_INCLUDED
-    for (MemoryPool *memPool = defaultMemPool->next; memPool;
-         memPool = memPool->next)
-        memPool->destroy();
-
-/* Keys must be deleted to not call key dtor on thread termination
-   when the library unloaded before thread termination.
+    shutdownSync.processExit();
+#if __TBB_SOURCE_DIRECTLY_INCLUDED
+/* Pthread keys must be deleted as soon as possible to not call key dtor
+   on thread termination when then the tbbmalloc code can be already unloaded.
 */
     defaultMemPool->destroy();
     destroyBackRefMaster(&defaultMemPool->extMemPool.backend);
     ThreadId::destroy();      // Delete key for thread id
-#endif //  !__TBB_SOURCE_DIRECTLY_INCLUDED
+#elif __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND
+/* In most cases we prevent unloading tbbmalloc, and don't clean up memory
+   on process shutdown. When impossible to prevent, library unload results
+   in shutdown notification, and it makes sense to release unused memory
+   at that point (we can't release all memory because it's possible that
+   it will be accessed after this point).
+   TODO: better support systems where we can't prevent unloading by removing
+   pthread destructors and releasing caches.
+ */
+    defaultMemPool->extMemPool.hardCachesCleanup();
+#endif // __TBB_SOURCE_DIRECTLY_INCLUDED
 
 #if COLLECT_STATISTICS
     ThreadId nThreads = ThreadIdCount;

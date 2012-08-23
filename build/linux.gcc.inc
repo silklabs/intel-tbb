@@ -53,6 +53,11 @@ ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[4-9]|[5-9])"))
     CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
 endif
 
+# gcc 4.2 and higher support OpenMP
+ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[2-9]|[5-9])"))
+    OPENMP_FLAG = -fopenmp
+endif
+
 ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq ($(cfg), release)
         CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
@@ -69,6 +74,7 @@ TBB_ASM.OBJ=
 MALLOC_ASM.OBJ=
 
 ifeq (ia64,$(arch))
+    ITT_NOTIFY =
 # Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
     CPLUS_FLAGS += $(PIC_KEY)
 endif

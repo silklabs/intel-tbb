@@ -58,7 +58,7 @@
 /*
  * coordsys.h - defines for coordinate system routines.
  *  
- *  $Id: coordsys.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: coordsys.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 #define TWOPI 6.2831853

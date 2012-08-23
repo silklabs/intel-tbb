@@ -26,6 +26,9 @@
     the GNU General Public License.
 */
 
+#if __TBB_MIC
+#pragma offload_attribute (push,target(mic))
+#endif // __TBB_MIC
 
 #include <iostream>
 #include <string>
@@ -35,6 +38,11 @@
 #include "tbb/blocked_range.h"
 #include "tbb/tick_count.h"
 
+#if __TBB_MIC
+#pragma offload_attribute (pop)
+
+class __declspec(target(mic)) SubStringFinder;
+#endif // __TBB_MIC
 
 using namespace tbb;
 using namespace std;
@@ -123,6 +131,36 @@ int main(int argc, char *argv[]) {
            << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << endl
            << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_t1 - parallel_t0).seconds() << endl;
 
+#if __TBB_MIC
+ // Do offloadable version. Do the timing on host.
+ size_t *max3 = new size_t[num_elem];
+ size_t *pos3 = new size_t[num_elem];
+ tick_count parallel_tt0 = tick_count::now();
+ const char* to_scan_str = to_scan.c_str();  // Offload the string as a char array.
+ #pragma offload target(mic) in(num_elem) in(to_scan_str:length(num_elem)) out(max3,pos3:length(num_elem))
+ {
+ string to_scan(to_scan_str, num_elem);      // Reconstruct the string in offloadable region.
+                                             // Suboptimal performance because of making a copy from to_scan_str at creating to_scan.
+ parallel_for(blocked_range<size_t>(0, num_elem, 100),
+       SubStringFinder( to_scan, max3, pos3 ) );
+ }
+ tick_count parallel_tt1 = tick_count::now();
+ cout << " Done with offloadable version." << endl;
+
+ // Do validation of offloadable results on host.
+ for (size_t i = 0; i < num_elem; ++i) {
+   if (max3[i] != max2[i] || pos3[i] != pos2[i]) {
+     cout << "ERROR: Serial and Offloadable Results are Different!" << endl;
+   }
+ }
+ cout << " Done validating offloadable results." << endl;
+
+ cout << "Offloadable version ran in " <<  (parallel_tt1 - parallel_tt0).seconds() << " seconds" << endl
+           << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_tt1 - parallel_tt0).seconds() << " of offloadable version" << endl;
+
+ delete[] max3;
+ delete[] pos3;
+#endif // __TBB_MIC
 
  delete[] max;
  delete[] pos;

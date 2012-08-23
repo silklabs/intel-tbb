@@ -43,6 +43,7 @@ SOURCES = $(UI)video.o universe.cpp seismic_video.cpp main.cpp
 OFFLOAD_SOURCES = ../../common/gui/$(UI)video.cpp
 else
 SOURCES = ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cpp
+PERFFLAGS=-msse2
 endif
 
 ifeq ($(CXX), icc)
@@ -64,22 +65,29 @@ all:	release test
 
 resources:
 ifeq ($(UI),mac)
-	mkdir -p $(APPRES)/English.lproj $(NAME).app/Contents/MacOS
-	$(PBXCP) xcode/English.lproj/main.nib $(APPRES)/English.lproj
-	$(PBXCP) xcode/Info.plist $(APPRES)
-endif
+	mkdir -p $(APPRES)/en.lproj $(NAME).app/Contents/MacOS
+	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
+endif # Mac
 
-release: resources
+release: $(SOURCES) resources
 ifeq ($(offload), mic)
 	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
 endif
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(TBBLIB) $(LIBS)
-	
+ifeq ($(UI),mac)
+	$(CXX_UI) -O2 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) $(TBBLIB) $(LIBS)
+
 debug: resources
 ifeq ($(offload), mic)
 	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
 endif
-	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(TBBLIB_DEBUG) $(LIBS)
+ifeq ($(UI),mac)
+	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) $(TBBLIB_DEBUG) $(LIBS)
 
 clean:
 	$(RM) $(EXE) *.o *.d
@@ -94,8 +102,8 @@ else
 	./$(EXE) $(ARGS)
 endif
 
-perf_build: resources
-	$(CXX) -O2 -msse2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) -ltbb $(LIBS)
+perf_build: override CXXFLAGS+=$(PERFFLAGS)
+perf_build: release
 
 perf_run:
 	./$(EXE) $(PERF_RUN_ARGS)

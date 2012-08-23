@@ -49,16 +49,23 @@ all:	release test
 
 resources:
 ifeq ($(UI),mac)
-	mkdir -p $(APPRES)/English.lproj $(NAME).app/Contents/MacOS
-	$(PBXCP) xcode/English.lproj/main.nib $(APPRES)/English.lproj
-	$(PBXCP) xcode/Info.plist $(APPRES)
-endif
+	mkdir -p $(APPRES)/en.lproj $(NAME).app/Contents/MacOS
+	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
+endif # Mac
 
 release: $(SOURCES) resources
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) -ltbb $(LIBS)
+ifeq ($(UI),mac)
+	$(CXX_UI) -O2 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) -ltbb $(LIBS)
 
 debug: resources
-	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) -ltbb_debug $(LIBS)
+ifeq ($(UI),mac)
+	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) -ltbb_debug $(LIBS)
 
 clean:
 	$(RM) $(EXE) *.o *.d

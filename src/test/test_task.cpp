@@ -126,10 +126,14 @@ static int Expected( int child_count, int depth ) {
 }
 
 void TestStealLimit( int nthread ) {
+#if __TBB_DEFINE_MIC
+    REMARK( "skipping steal limiting heuristics for %d threads\n", nthread );
+#else// !_TBB_DEFINE_MIC
     REMARK( "testing steal limiting heuristics for %d threads\n", nthread );
     tbb::task_scheduler_init init(nthread);
     tbb::task &t = *new( tbb::task::allocate_root() ) UnboundedlyRecursiveOnUnboundedStealingTask();
     tbb::task::spawn_root_and_wait(t);
+#endif// _TBB_DEFINE_MIC
 }
 
 //! Test task::spawn( task_list& )

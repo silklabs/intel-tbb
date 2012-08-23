@@ -58,7 +58,7 @@
 /*
  * grid.c - spatial subdivision efficiency structures
  *
- * $Id: grid.cpp,v 1.2 2007-02-22 17:54:15  Exp $
+ * $Id: grid.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  * 
  */
 

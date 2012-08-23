@@ -24,7 +24,7 @@ The following versions of the example are provided:
 <DT>serial
 <DD>Original sequential version.
 <DT>tbb1d
-<DD>Parallel version that uses Threading Building Blocks and blocked_range to parallelize
+<DD>Parallel version that uses Intel&reg; Threading Building Blocks (Intel TBB) and blocked_range to parallelize
 	over tasks that are groups of scan-lines.
     <UL>
     <LI>By default, this version uses one thread per available processor.  To change this
@@ -34,7 +34,7 @@ The following versions of the example are provided:
         controls the amount of range splitting dynamically at runtime, resulting in sub-ranges of varying sizes.  
     </UL>
 <DT>tbb
-<DD>Parallel version that uses Threading Building Blocks and blocked_range2d to parallelize
+<DD>Parallel version that uses Intel TBB and blocked_range2d to parallelize
 	over tasks that are rectangular sub-areas.
     <UL>
     <LI>By default, this version uses one thread per available processor.  To change this
@@ -56,9 +56,9 @@ The following versions of the example are provided:
 <DT><A HREF="src/trace.serial.cpp">src/trace.serial.cpp</A>
 <DD>Source code for original sequential version of example.
 <DT><A HREF="src/trace.tbb1d.cpp">src/trace.tbb1d.cpp</A>
-<DD>Source code for Threading Building Blocks blocked_range (scan-line) version of example.
+<DD>Source code for Intel TBB blocked_range (scan-line) version of example.
 <DT><A HREF="src/trace.tbb.cpp">src/trace.tbb.cpp</A>
-<DD>Source code for Threading Building Blocks blocked_range2d (rectangular sub-area) version of example.
+<DD>Source code for Intel TBB blocked_range2d (rectangular sub-area) version of example.
 <DT>(src/*.cpp)
 <DD>Remainder of source code for example.
 <DT>(src/*.h)

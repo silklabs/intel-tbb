@@ -27,6 +27,8 @@
 */
 
 #include "harness.h"
+
+#if TBB_USE_EXCEPTIONS
 #include "tbb/flow_graph.h"
 #include "tbb/task_scheduler_init.h"
 #include <iostream>
@@ -93,7 +95,9 @@ test_flow_graph_exception0() {
     ASSERT(!g.exception_thrown(), "exception_thrown flag not reset");
     ASSERT(!g.is_cancelled(), "canceled flag not reset");
 }
+#endif // TBB_USE_EXCEPTIONS
 
+#if TBB_USE_EXCEPTIONS
 int TestMain() {
     for(int nThread=MinThread; nThread<= MaxThread; ++nThread) {
         tbb::task_scheduler_init init(nThread); 
@@ -101,4 +105,9 @@ int TestMain() {
     }
     return Harness::Done;
 }
+#else  // !TBB_USE_EXCEPTION
+int TestMain() {
+    return Harness::Skipped;
+}
+#endif
 

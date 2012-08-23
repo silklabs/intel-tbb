@@ -59,7 +59,7 @@
  * texture.h This file contains all of the includes and defines for the texture 
  * mapping part of the shader.
  *
- *  $Id: texture.h,v 1.2 2007-02-22 17:54:16  Exp $
+ *  $Id: texture.h,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
 void InitTextures(void);

@@ -58,7 +58,7 @@
 /* 
  * tgafile.c - This file contains the code to write 24 bit targa files...
  *
- *  $Id: tgafile.cpp,v 1.2 2007-02-22 17:54:16  Exp $
+ *  $Id: tgafile.cpp,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
 #include "machine.h"

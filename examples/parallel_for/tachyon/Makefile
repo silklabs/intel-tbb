@@ -173,11 +173,13 @@ light_test_one:
 
 $(EXE): $(SOURCE)
 ifeq ($(UI),mac)
-	mkdir -p $(APPRES)/English.lproj $(NAME).$(VERSION).app/Contents/MacOS
-	$(PBXCP) xcode/English.lproj/main.nib $(APPRES)/English.lproj
-	$(PBXCP) xcode/Info.plist $(APPRES)
-endif
-	$(CXX) $(MYCXXFLAGS) -o $@ $(SOURCE) $(LIBS)
+	mkdir -p $(APPRES)/en.lproj $(NAME)$(SUFFIX).app/Contents/MacOS
+	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME)$(SUFFIX).app/Contents
+	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME)$(SUFFIX).app/Contents
+	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
+	$(CXX_UI) $(MYCXXFLAGS) $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) $(MYCXXFLAGS) -o $@ $(SOURCE) $(MACUIOBJS) $(LIBS)
 	$(RM) *.o
 
 clean: VERSION = *

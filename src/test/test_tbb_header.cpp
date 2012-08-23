@@ -34,12 +34,19 @@
 **/
 
 #include "tbb/tbb.h"
+#if _MSC_VER
+#pragma warning (disable : 4503)      // decorated name length exceeded, name was truncated
+#endif
+#include "tbb/flow_graph.h"
 
 static volatile size_t g_sink;
 
 #define TestTypeDefinitionPresence( Type ) g_sink = sizeof(tbb::Type);
 #define TestTypeDefinitionPresence2(TypeStart, TypeEnd) g_sink = sizeof(tbb::TypeStart,TypeEnd);
 #define TestFuncDefinitionPresence(Fn, Args, ReturnType) { ReturnType (*pfn)Args = &tbb::Fn; (void)pfn; }
+
+//! Utility template function to prevent "unused" warnings by various compilers.
+template<typename T> void squelch_unused_warning( const T& ) {}
 
 struct Body {
     void operator() () const {}
@@ -116,7 +123,6 @@ void TestExceptionClassesExports () {
 }
 #endif /* !__TBB_TEST_SECONDARY */
 
-
 #if __TBB_TEST_SECONDARY
 /* This mode is used to produce a secondary object file that is linked with 
    the main one in order to detect "multiple definition" linker error.
@@ -138,6 +144,25 @@ int TestMain ()
     TestTypeDefinitionPresence( combinable<int> );
     TestTypeDefinitionPresence( concurrent_vector<int> );
     TestTypeDefinitionPresence( enumerable_thread_specific<int> );
+    TestTypeDefinitionPresence( flow::graph );
+    TestTypeDefinitionPresence( flow::source_node<int> );
+    TestTypeDefinitionPresence2( flow::function_node<int, int> );
+    typedef std::tuple<int, int> intpair;
+    TestTypeDefinitionPresence2( flow::multifunction_node<int, intpair> );
+    TestTypeDefinitionPresence( flow::split_node<intpair> );
+    TestTypeDefinitionPresence( flow::continue_node<int> );
+    TestTypeDefinitionPresence( flow::overwrite_node<int> );
+    TestTypeDefinitionPresence( flow::write_once_node<int> );
+    TestTypeDefinitionPresence( flow::broadcast_node<int> );
+    TestTypeDefinitionPresence( flow::buffer_node<int> );
+    TestTypeDefinitionPresence( flow::queue_node<int> );
+    TestTypeDefinitionPresence( flow::sequencer_node<int> );
+    TestTypeDefinitionPresence( flow::priority_queue_node<int> );
+    TestTypeDefinitionPresence( flow::limiter_node<int> );
+    typedef tbb::flow::interface6::internal::graph_policy_namespace::graph_buffer_policy join_policy;
+    const join_policy a = tbb::flow::interface6::internal::graph_policy_namespace::queueing;
+    TestTypeDefinitionPresence2( flow::join_node< intpair, a > );
+    squelch_unused_warning(a);
     TestTypeDefinitionPresence( mutex );
     TestTypeDefinitionPresence( null_mutex );
     TestTypeDefinitionPresence( null_rw_mutex );

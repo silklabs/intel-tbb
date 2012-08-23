@@ -51,6 +51,11 @@ CPLUS_FLAGS += $(PIC_KEY) $(DEFINE_KEY)__TBB_BUILD=1
 # KNOWN_NOSTRICT = <object-file-name>
 # endif
 
+# suppress warnings for build of itt_notify by GCC3
+ifneq (,$(findstring gcc_cc3., $(compiler)_$(runtime)))
+KNOWN_WARNINGS += itt_notify.$(OBJ)
+endif
+
 # Object files (that were compiled from C++ code) that gmake up TBB
 TBB_CPLUS.OBJ = concurrent_hash_map.$(OBJ) \
 		concurrent_queue.$(OBJ) \

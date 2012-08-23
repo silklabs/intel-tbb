@@ -58,7 +58,7 @@
 /*
  * camera.h - This file contains the defines for camera routines etc.
  *
- *  $Id: camera.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: camera.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 ray  camray(scenedef *, int, int);

@@ -356,9 +356,11 @@ void private_server::wake_some( int additional_slack ) {
         tbb::spin_mutex::scoped_lock lock(my_asleep_list_mutex);
         while( my_asleep_list_root && w<wakee+2 ) {
             if( additional_slack>0 ) {
+                if (additional_slack+my_slack<=0) // additional demand does not exceed surplus supply
+                    break;
                 --additional_slack;
             } else {
-                // Try to claim unit of slack
+                // Chain reaction; Try to claim unit of slack
                 int old;
                 do {
                     old = my_slack;

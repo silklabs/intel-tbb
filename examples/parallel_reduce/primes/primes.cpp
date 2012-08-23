@@ -34,6 +34,9 @@
 
 #include "primes.h"
 
+#if __TBB_MIC
+#pragma offload_attribute (target(mic))
+#endif // __TBB_MIC
 #include <algorithm>
 #include <cassert>
 #include <cstdio>

@@ -403,8 +403,8 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
                 assert_task_pool_valid();
 #if __TBB_TASK_PRIORITY
                 intptr_t p = priority(*t);
-                assert_priority_valid(p);
-                if ( p != *my_ref_top_priority ) {
+                if ( p != *my_ref_top_priority && (t->prefix().extra_state & es_task_enqueued) == 0) {
+                    assert_priority_valid(p);
                     if ( p != my_arena->my_top_priority ) {
                         my_market->update_arena_priority( *my_arena, p );
                     }
@@ -450,7 +450,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
                     if (t_next) {
                         __TBB_ASSERT( t_next->state()==task::allocated,
                                 "if task::execute() returns task, it must be marked as allocated" );
-                        t_next->prefix().extra_state &= ~es_task_is_stolen;
+                        reset_extra_state(t_next);
 #if TBB_USE_ASSERT
                         affinity_id next_affinity=t_next->prefix().affinity;
                         if (next_affinity != 0 && next_affinity != my_affinity_id)
@@ -475,7 +475,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
                     case task::recycle: // set by recycle_as_safe_continuation()
                         t->prefix().state = task::allocated;
                         __TBB_ASSERT( t_next != t, "a task returned from method execute() can not be recycled in another way" );
-                        t->prefix().extra_state &= ~es_task_is_stolen;
+                        reset_extra_state(t);
                         // for safe continuation, need atomically decrement ref_count;
                         tally_completion_of_predecessor(*t, t_next);
                         assert_task_pool_valid();
@@ -485,12 +485,12 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
                         __TBB_ASSERT( t_next, "reexecution requires that method execute() return another task" );
                         __TBB_ASSERT( t_next != t, "a task returned from method execute() can not be recycled in another way" );
                         t->prefix().state = task::allocated;
-                        t->prefix().extra_state &= ~es_task_is_stolen;
+                        reset_extra_state(t);
                         local_spawn( *t, t->prefix().next );
                         assert_task_pool_valid();
                         break;
                     case task::allocated:
-                        t->prefix().extra_state &= ~es_task_is_stolen;
+                        reset_extra_state(t);
                         break;
 #if TBB_USE_ASSERT
                     case task::ready:

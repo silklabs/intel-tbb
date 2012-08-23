@@ -84,6 +84,7 @@ namespace internal {
             type;
     };
 
+#if __TBB_VARIADIC_MAX >= 6
     template<template<class> class PT, typename TypeTuple>
     struct wrap_tuple_elements<6, PT, TypeTuple> {
         typedef typename std::tuple<
@@ -95,7 +96,9 @@ namespace internal {
                 PT<typename std::tuple_element<5,TypeTuple>::type> >
             type;
     };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 7
     template<template<class> class PT, typename TypeTuple>
     struct wrap_tuple_elements<7, PT, TypeTuple> {
         typedef typename std::tuple<
@@ -108,7 +111,9 @@ namespace internal {
                 PT<typename std::tuple_element<6,TypeTuple>::type> >
             type;
     };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 8
     template<template<class> class PT, typename TypeTuple>
     struct wrap_tuple_elements<8, PT, TypeTuple> {
         typedef typename std::tuple<
@@ -122,7 +127,9 @@ namespace internal {
                 PT<typename std::tuple_element<7,TypeTuple>::type> >
             type;
     };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 9
     template<template<class> class PT, typename TypeTuple>
     struct wrap_tuple_elements<9, PT, TypeTuple> {
         typedef typename std::tuple<
@@ -137,7 +144,9 @@ namespace internal {
                 PT<typename std::tuple_element<8,TypeTuple>::type> >
             type;
     };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 10
     template<template<class> class PT, typename TypeTuple>
     struct wrap_tuple_elements<10, PT, TypeTuple> {
         typedef typename std::tuple<
@@ -153,6 +162,7 @@ namespace internal {
                 PT<typename std::tuple_element<9,TypeTuple>::type> >
             type;
     };
+#endif
 
 }  // namespace internal
 #endif  /* __TBB__flow_graph_types_impl_H */

@@ -342,7 +342,7 @@
 			UniqueIdentifier="{64630469-f82d-4c18-a957-20e5b93130f8}"
 			>
 			<File
-				RelativePath="..\src\dining_philosophers.cpp"
+				RelativePath="..\dining_philosophers.cpp"
 				>
 			</File>
 		</Filter>

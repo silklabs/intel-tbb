@@ -79,19 +79,12 @@ static void* (*original_realloc_ptr)(void*,size_t) = 0;
 
 #endif /* MALLOC_CHECK_RECURSION */
 
-#if DO_ITT_NOTIFY
 /** Caller is responsible for ensuring this routine is called exactly once. */
-void MallocInitializeITT() {
+extern "C" void MallocInitializeITT() {
+#if DO_ITT_NOTIFY
     tbb::internal::__TBB_load_ittnotify();
+#endif
 }
-#else
-void MallocInitializeITT() {}
-#endif /* DO_ITT_NOTIFY */
-
-extern "C" 
-void ITT_DoOneTimeInitialization() {
-    MallocInitializeITT();
-} // required for itt_notify.cpp to work
 
 #if TBB_USE_DEBUG
 #define DEBUG_SUFFIX "_debug"

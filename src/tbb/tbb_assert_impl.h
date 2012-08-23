@@ -49,7 +49,11 @@
 
 using namespace std;
 
+#if __TBBMALLOC_BUILD
+namespace rml { namespace internal {
+#else
 namespace tbb {
+#endif
     //! Type for an assertion handler
     typedef void(*assertion_handler_type)( const char* filename, int line, const char* expression, const char * comment );
 
@@ -87,6 +91,7 @@ namespace tbb {
 #   define vsnprintf _vsnprintf
 #endif
 
+#if !__TBBMALLOC_BUILD
     namespace internal {
         //! Report a runtime warning.
         void __TBB_EXPORTED_FUNC runtime_warning( const char* format, ... )
@@ -98,5 +103,10 @@ namespace tbb {
             fprintf( stderr, "TBB Warning: %s\n", str);
         }
     } // namespace internal
+#endif
 
-} /* namespace tbb */
+#if __TBBMALLOC_BUILD
+}} // namespaces rml::internal
+#else
+}  // namespace tbb
+#endif

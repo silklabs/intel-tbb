@@ -59,7 +59,7 @@
  * intersect.h - This file contains the declarations and defines for the
  *               functions that manage intersection, bounding and CSG..
  *
- *  $Id: intersect.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: intersect.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 unsigned int  new_objectid(void);

@@ -39,9 +39,12 @@
     #endif
 #endif /* WIN */
 
+#ifndef INTEL_ITTNOTIFY_API_PRIVATE
+#define INTEL_ITTNOTIFY_API_PRIVATE
+#endif
+
 #include "tools_api/ittnotify.h"
 #include "tools_api/legacy/ittnotify.h"
-#include "tools_api/internal/ittnotify.h"
 
 #if _WIN32||_WIN64
     #undef _T

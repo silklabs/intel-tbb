@@ -28,6 +28,17 @@
 
 #include "tbb/tbb_config.h"
 
+#if __TBB_DEFINE_MIC
+
+#ifndef _USRDLL
+#define HARNESS_NO_PARSE_COMMAND_LINE 1
+#include "harness.h"
+int TestMain() {
+    return Harness::Skipped;
+}
+#endif
+
+#else /* !__MIC__ */
 
 #if _WIN32 || _WIN64
 #include "tbb/machine/windows_api.h"
@@ -240,3 +251,4 @@ int TestMain () {
 }
 
 #endif//_USRDLL
+#endif//__MIC__

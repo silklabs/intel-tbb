@@ -478,7 +478,7 @@ public:
     }
 };
 
-void graph::register_node(graph_node *n) {
+inline void graph::register_node(graph_node *n) {
     n->next = NULL;
     {
         spin_mutex::scoped_lock lock(nodelist_mutex);
@@ -489,7 +489,7 @@ void graph::register_node(graph_node *n) {
     }
 }
 
-void graph::remove_node(graph_node *n) {
+inline void graph::remove_node(graph_node *n) {
     {
         spin_mutex::scoped_lock lock(nodelist_mutex);
         __TBB_ASSERT(my_nodes && my_nodes_last, "graph::remove_node: Error: no registered nodes");
@@ -1683,16 +1683,26 @@ public:
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3) : unfolded_type(g, b0, b1, b2, b3) { }
     template<typename B0, typename B1, typename B2, typename B3, typename B4>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4) : unfolded_type(g, b0, b1, b2, b3, b4) { }
+#if __TBB_VARIADIC_MAX >= 6
     template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5) : unfolded_type(g, b0, b1, b2, b3, b4, b5) { }
+#endif
+#if __TBB_VARIADIC_MAX >= 7
     template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6) { }
+#endif
+#if __TBB_VARIADIC_MAX >= 8
     template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7) { }
+#endif
+#if __TBB_VARIADIC_MAX >= 9
     template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7, typename B8>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7, B8 b8) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8) { }
+#endif
+#if __TBB_VARIADIC_MAX >= 10
     template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7, typename B8, typename B9>
     join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7, B8 b8, B9 b9) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9) { }
+#endif
     join_node(const join_node &other) : unfolded_type(other) {}
 };
 

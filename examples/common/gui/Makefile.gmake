@@ -61,20 +61,12 @@ endif # libXext
 
 else # ! X
 ifeq ($(UI),mac)
-# TODO: Replace Carbon by Cocoa, SDK10.7 does no support Carbon headers.
-UI_CXXFLAGS += -arch i386 -mmacosx-version-min=10.6 -isysroot /Developer/SDKs/MacOSX10.6.sdk
-# TODO: figure out and comment why these flags are set here (supposedly for Seismic)
-CXXFLAGS += -msse3 -ftree-vectorize
-LIBS += -framework OpenGL -framework AGL -framework Carbon
+CXX_UI?=g++
+LIBS += -framework OpenGL -framework Foundation -framework Cocoa
+MACUISOURCES = ../../common/gui/xcode/tbbExample/OpenGLView.m ../../common/gui/xcode/tbbExample/main.m ../../common/gui/xcode/tbbExample/tbbAppDelegate.m 
+MACUIOBJS = OpenGLView.o main.o tbbAppDelegate.o
 APPRES = $(NAME)$(SUFFIX).app/Contents/Resources
 EXE = $(NAME)$(SUFFIX).app/Contents/MacOS/$(NAME)$(SUFFIX)
-ifneq (,$(shell xcode-select -print-path 2>/dev/null))
-PBXCP = $(shell xcode-select -print-path)/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp
-else
-# look in /System and /Developer
-PBXCP = $(wildcard /[SD]*/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp)
-endif
-PBXCP +=  -resolve-src-symlinks -exclude .DS_Store -exclude CVS -exclude .svn
 
 else # ! Mac
 UI = con

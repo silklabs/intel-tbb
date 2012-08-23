@@ -418,7 +418,7 @@ bool arena::is_out_of_work() {
                                         }
                                     }
                                     if ( switch_back )
-                                        advertise_new_work<true>();
+                                        advertise_new_work</*Spawned*/false>();
 #endif /* __TBB_TASK_PRIORITY */
                                     return true;
                                 }

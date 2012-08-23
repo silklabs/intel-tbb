@@ -58,7 +58,7 @@
 /*
  * vector.h - This file contains declarations of vector functions
  *
- *  $Id: vector.h,v 1.2 2007-02-22 17:54:17  Exp $
+ *  $Id: vector.h,v 1.2 2007-02-22 17:54:17 Exp $
  */
 
 flt VDot(vector *, vector *);

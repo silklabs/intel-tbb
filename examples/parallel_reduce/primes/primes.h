@@ -29,6 +29,9 @@
 #ifndef PRIMES_H_
 #define PRIMES_H_
 
+#if __TBB_MIC
+#pragma offload_attribute (push,target(mic))
+#endif // __TBB_MIC
 
 #include "tbb/task_scheduler_init.h"
 #include <cstddef>
@@ -42,5 +45,8 @@ NumberType SerialCountPrimes( NumberType n);
 /** This is the parallel version. */
 NumberType ParallelCountPrimes( NumberType n, int numberOfThreads= tbb::task_scheduler_init::automatic, NumberType grainSize = 1000);
 
+#if __TBB_MIC
+#pragma offload_attribute (pop)
+#endif // __TBB_MIC
 
 #endif /* PRIMES_H_ */

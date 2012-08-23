@@ -39,10 +39,10 @@ endif
 
 all:	release test
 
-release: src/dining_philosophers.cpp
+release: dining_philosophers.cpp
 	$(CXX) -O2 -DNDEBUG -D_CONSOLE $(CXXFLAGS) -o $(PROG) $^ -ltbb $(LIBS)
 
-debug:  src/dining_philosophers.cpp
+debug:  dining_philosophers.cpp
 	$(CXX) -O0 -D_CONSOLE -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb_debug $(LIBS)
 
 clean:

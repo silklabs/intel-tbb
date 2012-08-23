@@ -139,6 +139,9 @@
 #endif /* TBB_PEFORMANCE_WARNINGS */
 #endif /* TBB_USE_PERFORMANCE_WARNINGS */
 
+#if __MIC__ || __MIC2__
+#define __TBB_DEFINE_MIC 1
+#endif
 
 #if !defined(__EXCEPTIONS) && !defined(_CPPUNWIND) && !defined(__SUNPRO_CC) || defined(_XBOX)
     #if TBB_USE_EXCEPTIONS
@@ -147,7 +150,13 @@
         #define TBB_USE_EXCEPTIONS 0
     #endif
 #elif !defined(TBB_USE_EXCEPTIONS)
+    #if __TBB_DEFINE_MIC
+    #define TBB_USE_EXCEPTIONS 0
+    #else
     #define TBB_USE_EXCEPTIONS 1
+    #endif
+#elif TBB_USE_EXCEPTIONS && __TBB_DEFINE_MIC
+    #error Please do not set TBB_USE_EXCEPTIONS macro or set it to 0.
 #endif
 
 #ifndef TBB_IMPLEMENT_CPP0X
@@ -232,6 +241,16 @@
 #endif /* TBB_DEPRECATED */
 #endif /* !defined(__TBB_DEFAULT_PARTITIONER */
 
+#ifdef _VARIADIC_MAX
+#define __TBB_VARIADIC_MAX _VARIADIC_MAX
+#else
+#if _MSC_VER >= 1700
+#define __TBB_VARIADIC_MAX 5  // current VS11 setting, may change.
+#else
+#define __TBB_VARIADIC_MAX 10
+#endif
+#endif
+
 /** Macros of the form __TBB_XXX_BROKEN denote known issues that are caused by
     the bugs in compilers, standard or OS specific libraries. They should be 
     removed as soon as the corresponding bugs are fixed or the buggy OS/compiler
@@ -308,6 +327,11 @@
     #define __TBB_CPP11_STD_FORWARD_BROKEN 1
 #else
     #define __TBB_CPP11_STD_FORWARD_BROKEN 0
+#endif
+
+#if __TBB_DEFINE_MIC
+    /** Main thread and user's thread have different default thread affinity masks. **/
+    #define __TBB_MAIN_THREAD_AFFINITY_BROKEN 1
 #endif
 
 #endif /* __TBB_tbb_config_H */

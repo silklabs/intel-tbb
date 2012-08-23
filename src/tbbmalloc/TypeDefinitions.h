@@ -54,6 +54,12 @@
 #   define USE_PTHREAD 1
 #endif
 
+// According to C99 standard INTPTR_MIN defined for C++
+// iff __STDC_LIMIT_MACROS pre-defined
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS 1
+#endif
+
 // Include files containing declarations of intptr_t and uintptr_t
 #include <stddef.h>  // size_t
 #if _MSC_VER

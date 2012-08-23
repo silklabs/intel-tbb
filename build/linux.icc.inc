@@ -43,16 +43,11 @@ TBB_NOSTRICT = 1
 CPLUS = icpc
 CONLY = icc
 
+ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq (release,$(cfg))
-CPLUS_FLAGS = -O2 -g -DUSE_PTHREAD
+CPLUS_FLAGS = $(ITT_NOTIFY) -O2 -g -DUSE_PTHREAD
 else
-CPLUS_FLAGS = -O0 -g -DUSE_PTHREAD -DTBB_USE_DEBUG
-endif
-
-ifneq (,$(codecov))
-    CPLUS_FLAGS += -prof-genx
-else
-    CPLUS_FLAGS += -DDO_ITT_NOTIFY
+CPLUS_FLAGS = $(ITT_NOTIFY) -O0 -g -DUSE_PTHREAD -DTBB_USE_DEBUG
 endif
 
 OPENMP_FLAG = -openmp
@@ -78,11 +73,17 @@ ifeq (ia32,$(arch))
 endif
 
 ifeq (ia64,$(arch))
+    ITT_NOTIFY =
 # Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
 # strict-ansi does not work with <signal.h> on RHEL 4 AS
     CPLUS_FLAGS += $(PIC_KEY) $(if $(findstring cc3.,$(runtime)),-ansi,-strict-ansi)
 else
     CPLUS_FLAGS += -strict-ansi
+endif
+
+ifneq (,$(codecov))
+# no tool support for code coverage, need profile data generation
+    ITT_NOTIFY = -prof-genx
 endif
 
 ifneq (00,$(lambdas)$(cpp0x))

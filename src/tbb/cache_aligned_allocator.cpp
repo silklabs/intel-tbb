@@ -123,7 +123,7 @@ static const dynamic_link_descriptor MallocLinkTable[] = {
 /** Caller is responsible for ensuring this routine is called exactly once.
     The routine attempts to dynamically link with the TBB memory allocator.
     If that allocator is not found, it links to malloc and free. */
-void initialize_cache_aligned_allocator() {
+void initialize_handler_pointers() {
     __TBB_ASSERT( MallocHandler==&DummyMalloc, NULL );
     bool success = dynamic_link( MALLOCLIB_NAME, MallocLinkTable, 4 );
     if( !success ) {
@@ -141,33 +141,35 @@ void initialize_cache_aligned_allocator() {
 #endif
 }
 
-//! Defined in tbb_main.cpp
-extern void DoOneTimeInitializations();
+static tbb::atomic<do_once_state> initialization_state;
+void initialize_cache_aligned_allocator() {
+    atomic_do_once( &initialize_handler_pointers, initialization_state );
+}
 
 //! Executed on very first call through MallocHandler
 static void* DummyMalloc( size_t size ) {
-    DoOneTimeInitializations();
+    initialize_cache_aligned_allocator();
     __TBB_ASSERT( MallocHandler!=&DummyMalloc, NULL );
     return (*MallocHandler)( size );
 }
 
 //! Executed on very first call throught FreeHandler
 static void DummyFree( void * ptr ) {
-    DoOneTimeInitializations();
+    initialize_cache_aligned_allocator();
     __TBB_ASSERT( FreeHandler!=&DummyFree, NULL );
     (*FreeHandler)( ptr );
 }
 
 //! Executed on very first call through padded_allocate_handler
 static void* dummy_padded_allocate( size_t bytes, size_t alignment ) {
-    DoOneTimeInitializations();
+    initialize_cache_aligned_allocator();
     __TBB_ASSERT( padded_allocate_handler!=&dummy_padded_allocate, NULL );
     return (*padded_allocate_handler)(bytes, alignment);
 }
 
 //! Executed on very first call throught padded_free_handler
 static void dummy_padded_free( void * ptr ) {
-    DoOneTimeInitializations();
+    initialize_cache_aligned_allocator();
     __TBB_ASSERT( padded_free_handler!=&dummy_padded_free, NULL );
     (*padded_free_handler)( ptr );
 }    
@@ -259,13 +261,3 @@ bool __TBB_EXPORTED_FUNC is_malloc_used_v3() {
 } // namespace internal
 
 } // namespace tbb
-
-#if __TBB_RML_STATIC
-namespace tbb {
-namespace internal {
-static tbb::atomic<do_once_state> module_state;
-void DoOneTimeInitializations() {
-    atomic_do_once( &initialize_cache_aligned_allocator, module_state );
-}
-}} //namespace tbb::internal
-#endif

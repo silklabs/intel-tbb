@@ -59,6 +59,9 @@
 
 /********* Various compile-time options        **************/
 
+#if !__TBB_DEFINE_MIC && __TBB_MIC_NATIVE
+ #error Intel(R) Many Integrated Core Compiler does not define __MIC__ anymore.
+#endif
 
 #define MALLOC_TRACE 0
 
@@ -144,7 +147,11 @@ public:
 
 class LargeObjectCache {
     // The number of bins to cache large objects.
+#if __TBB_DEFINE_MIC
+    static const uint32_t numLargeBlockBins = 11; // for 100KB max cached size
+#else
     static const uint32_t numLargeBlockBins = 1024; // for ~8MB max cached size
+#endif
     // 2-linked list of same-size cached blocks
     class CacheBin {
         LargeMemoryBlock *first,

@@ -39,6 +39,9 @@ int filter_node_count = 0;
 #include "tbb/tbb_allocator.h"
 
 const unsigned n_tokens = 8;
+// we can conceivably have two buffers used in the middle filter for every token in flight, so
+// we must allocate two buffers for every token.  Unlikely, but possible.
+const unsigned n_buffers = 2*n_tokens;
 const unsigned max_counter = 16;
 static tbb::atomic<int> output_counter;
 static tbb::atomic<int> input_counter;
@@ -51,21 +54,23 @@ static tbb::atomic<int> second_pointer_specialized_calls;
 static int intbuffer[max_counter];  // store results for <int,int> parallel pipeline test
 static bool check_intbuffer;
 
-static void* buffers[n_tokens]; 
-static bool buf_available[n_tokens];
+static void* buffers[n_buffers]; 
+static bool buf_available[n_buffers];
 static tbb::atomic<size_t> nextBuffer;
 
 void *fetchNextBuffer() {
-    for(;;) {
+    for(size_t icnt = 0; icnt < n_buffers; ++icnt) {
         size_t indx = ++nextBuffer;
-        if(buf_available[indx%n_tokens]) {
-            buf_available[indx%n_tokens] = false;
-            return buffers[indx%n_tokens];
+        if(buf_available[indx%n_buffers]) {
+            buf_available[indx%n_buffers] = false;
+            return buffers[indx%n_buffers];
         }
     }
+    ASSERT(0, "Ran out of buffers");
+    return 0;
 }
 void freeBuffer(void *buf) {
-    for(size_t i=0; i < n_tokens;++i) {
+    for(size_t i=0; i < n_buffers;++i) {
         if(buffers[i] == buf) {
             buf_available[i] = true;
             return;
@@ -83,8 +88,9 @@ private:
     T *my_p;
 };
 
+template<class Counter>
 class check_type : Harness::NoAfterlife {
-    unsigned int id;
+    Counter id;
     bool am_ready;
 public:
     check_type( ) : id(0), am_ready(false) {
@@ -115,6 +121,37 @@ public:
         }
     }
 };
+
+// methods for testing check_type< >, that return okay values for other types.
+template<typename T>
+bool middle_is_ready(T &/*p*/) { return false; }
+
+template<typename U>
+bool middle_is_ready(check_type<U> &p) { return p.is_ready(); }
+
+template<typename T>
+bool output_is_ready(T &/*p*/) { return true; }
+
+template<typename U>
+bool output_is_ready(check_type<U> &p) { return p.is_ready(); }
+
+template<typename T>
+int middle_my_id( T &/*p*/) { return 0; }
+
+template<typename U>
+int middle_my_id(check_type<U> &p) { return p.my_id(); }
+
+template<typename T>
+int output_my_id( T &/*p*/) { return 1; }
+
+template<typename U>
+int output_my_id(check_type<U> &p) { return p.my_id(); }
+
+template<typename T>
+void my_function(T &p) { p = 0; }
+
+template<typename U>
+void my_function(check_type<U> &p) { p.function(); }
 
 // Filters must be copy-constructible, and be const-qualifiable.
 template<typename U>
@@ -183,48 +220,17 @@ public:
     }
 };
 
-
-template<>
-class input_filter<check_type> : Harness::NoAfterlife {
-public:
-    check_type operator()( tbb::flow_control& control ) const {
-        AssertLive();
-        if( --input_counter < 0 ) {
-            control.stop();
-        }
-        else 
-            ++non_pointer_specialized_calls;
-        return check_type( );  // default constructed
-    }
-};
-
-template<>
-class input_filter<check_type*> : Harness::NoAfterlife {
-public:
-    check_type* operator()( tbb::flow_control& control ) const {
-        AssertLive();
-        int ival = --input_counter;
-        if( ival < 0 ) {
-            control.stop();
-            return NULL;
-        }
-        else 
-            ++pointer_specialized_calls;
-        if(ival == max_counter/2) {
-            return NULL;
-        }
-        check_type* myReturn = new(fetchNextBuffer()) check_type();
-        return myReturn;
-    }
-};
-
 template<typename T, typename U>
 class middle_filter : Harness::NoAfterlife {
 public:
-    U operator()(T /*my_storage*/) const {
+    U operator()(T t) const {
         AssertLive();
+        ASSERT(!middle_my_id(t), "bad id value");
+        ASSERT(!middle_is_ready(t), "Already ready" );
+        U out;
+        my_function(out);
         ++non_pointer_specialized_calls;
-        return U();
+        return out;
     }
 };
 
@@ -234,18 +240,27 @@ public:
     U operator()(T* my_storage) const {
         free_on_scope_exit<T> my_ptr(my_storage);  // free_on_scope_exit marks the buffer available
         AssertLive();
+        if(my_storage) {  // may have been passed in a NULL
+            ASSERT(!middle_my_id(*my_storage), "bad id value");
+            ASSERT(!middle_is_ready(*my_storage), "Already ready" );
+        }
         ++first_pointer_specialized_calls;
-        return U();
+        U out;
+        my_function(out);
+        return out;
     }
 };
 
 template<typename T, typename U>
 class middle_filter<T,U*> : Harness::NoAfterlife {
 public:
-    U* operator()(T /*my_storage*/) const {
+    U* operator()(T my_storage) const {
         AssertLive();
+        ASSERT(!middle_my_id(my_storage), "bad id value");
+        ASSERT(!middle_is_ready(my_storage), "Already ready" );
         // allocate new space from buffers
         U* my_return = new(fetchNextBuffer()) U();
+        my_function(*my_return);
         ++second_pointer_specialized_calls;
         return my_return;
     }
@@ -255,13 +270,19 @@ template<typename T, typename U>
 class middle_filter<T*,U*> : Harness::NoAfterlife {
 public:
     U* operator()(T* my_storage) const {
+        free_on_scope_exit<T> my_ptr(my_storage);  // free_on_scope_exit marks the buffer available
         AssertLive();
-        // just construct a U over the T
-        // we are using the same buffer
+        if(my_storage) {
+            ASSERT(!middle_my_id(*my_storage), "bad id value");
+            ASSERT(!middle_is_ready(*my_storage), "Already ready" );
+        }
+        // may have been passed a NULL
         ++pointer_specialized_calls;
         if(!my_storage) return NULL;
-        my_storage->~T();
-        U* my_return = new(my_storage) U();
+        ASSERT(!middle_my_id(*my_storage), "bad id value");
+        ASSERT(!middle_is_ready(*my_storage), "Already ready" );
+        U* my_return = new(fetchNextBuffer()) U();
+        my_function(*my_return);
         return my_return;
     }
 };
@@ -277,71 +298,14 @@ public:
     }
 };
 
-template<>
-class middle_filter<check_type, check_type> : Harness::NoAfterlife {
-public:
-    check_type& operator()( check_type &c) const {
-        AssertLive();
-        ASSERT(!c.my_id(), "bad id value");
-        ASSERT(!c.is_ready(), "Already ready" );
-        c.function();
-        ++non_pointer_specialized_calls;
-        return c;
-    }
-};
-
-template<>
-class middle_filter<check_type*, check_type> : Harness::NoAfterlife {
-public:
-    check_type operator()( check_type *c) const {
-        AssertLive();
-        ++first_pointer_specialized_calls;
-        if(!c) {
-            // create a check_type to use
-            c = new(fetchNextBuffer()) check_type();
-        }
-        free_on_scope_exit<check_type> ptr(c);
-        ASSERT(!c->my_id(), "bad id value");
-        ASSERT(!c->is_ready(), "Already ready" );
-        c->function();
-        return check_type(*c);
-    }
-};
-
-template<>
-class middle_filter<check_type, check_type*> : Harness::NoAfterlife {
-public:
-    check_type* operator()( check_type &c) const {
-        AssertLive();
-        ASSERT(!c.my_id(), "bad id value");
-        ASSERT(!c.is_ready(), "Already ready" );
-        c.function();
-        check_type* myReturn = new(fetchNextBuffer()) check_type(c);
-        ++second_pointer_specialized_calls;
-        return myReturn;
-    }
-};
-
-template<>
-class middle_filter<check_type*, check_type*> : Harness::NoAfterlife {
-public:
-    check_type* operator()( check_type *c) const {
-        AssertLive();
-        ++pointer_specialized_calls;
-        if(!c) return NULL;
-        ASSERT(!c->my_id(), "bad id value");
-        ASSERT(!c->is_ready(), "Already ready" );
-        c->function();
-        // return the same object, don't reallocate
-        return c;
-    }
-};
-
+// ---------------------------------
 template<typename T>
 class output_filter : Harness::NoAfterlife {
 public:
-    void operator()(T) const {
+    void operator()(T c) const {
         AssertLive();
+        ASSERT(output_my_id(c), "unset id value");
+        ASSERT(output_is_ready(c), "not yet ready");
         ++non_pointer_specialized_calls;
         output_counter++;
     }
@@ -366,32 +330,9 @@ public:
     void operator()(T* c) const {
         free_on_scope_exit<T> my_ptr(c);
         AssertLive();
-        output_counter++;
-        ++pointer_specialized_calls;
-    }
-};
-
-template<>
-class output_filter<check_type> : Harness::NoAfterlife {
-public:
-    void operator()(check_type &c) const {
-        AssertLive();
-        ASSERT(c.my_id(), "unset id value");
-        ASSERT(c.is_ready(), "not yet ready");
-        ++non_pointer_specialized_calls;
-        output_counter++;
-    }
-};
-
-template<>
-class output_filter<check_type*> : Harness::NoAfterlife {
-public:
-    void operator()(check_type *c) const {
-        free_on_scope_exit<check_type> my_ptr(c);
-        AssertLive();
         if(c) {
-            ASSERT(c->my_id(), "unset id value");
-            ASSERT(c->is_ready(), "not yet ready");
+            ASSERT(output_my_id(*c), "unset id value");
+            ASSERT(output_is_ready(*c), "not yet ready");
         }
         output_counter++;
         ++pointer_specialized_calls;
@@ -416,7 +357,7 @@ void resetCounters() {
     second_pointer_specialized_calls = 0;
     // we have to reset the buffer flags because our input filters return allocated space on end-of-input,
     // (on eof a default-constructed object is returned) and they do not pass through the filter further.
-    for(size_t i = 0; i < n_tokens; ++i)
+    for(size_t i = 0; i < n_buffers; ++i)
         buf_available[i] = true;
 }
 
@@ -700,7 +641,7 @@ void run_function(const char *l1, const char *l2) {
 
     // allocate the buffers for the filters
     unsigned max_size = (sizeof(type1) > sizeof(type2) ) ? sizeof(type1) : sizeof(type2);
-    for(unsigned i = 0; i < (unsigned)n_tokens; ++i) {
+    for(unsigned i = 0; i < (unsigned)n_buffers; ++i) {
         buffers[i] = malloc(max_size);
         buf_available[i] = true;
     }
@@ -727,7 +668,7 @@ void run_function(const char *l1, const char *l2) {
     }
     ASSERT(!filter_node_count, "filter_node objects leaked");
 
-    for(unsigned i = 0; i < (unsigned)n_tokens; ++i) {
+    for(unsigned i = 0; i < (unsigned)n_buffers; ++i) {
         free(buffers[i]);
     }
 }
@@ -735,12 +676,21 @@ void run_function(const char *l1, const char *l2) {
 #include "tbb/task_scheduler_init.h"
 
 int TestMain() {
+#if TBB_USE_DEBUG
+    // size and copyability.
+    REMARK("is_large_object<int>::value=%d\n", tbb::interface6::internal::is_large_object<int>::value);
+    REMARK("is_large_object<double>::value=%d\n", tbb::interface6::internal::is_large_object<double>::value);
+    REMARK("is_large_object<int *>::value=%d\n", tbb::interface6::internal::is_large_object<int *>::value);
+    REMARK("is_large_object<check_type<int> >::value=%d\n", tbb::interface6::internal::is_large_object<check_type<int> >::value);
+    REMARK("is_large_object<check_type<int>* >::value=%d\n", tbb::interface6::internal::is_large_object<check_type<int>* >::value);
+    REMARK("is_large_object<check_type<short> >::value=%d\n\n", tbb::interface6::internal::is_large_object<check_type<short> >::value);
+#endif
     // Test with varying number of threads.
     for( int nthread=MinThread; nthread<=MaxThread; ++nthread ) {
         // Initialize TBB task scheduler
         REMARK("\nTesting with nthread=%d\n", nthread);
         tbb::task_scheduler_init init(nthread);
-        
+
         // Run test several times with different types
         run_function_spec();
         run_function<size_t,int>("size_t", "int");
@@ -749,14 +699,17 @@ int TestMain() {
         run_function<size_t,bool>("size_t", "bool");
         run_function<int,int>("int","int");
         check_type_counter = 0;
-        run_function<check_type,size_t>("check_type", "size_t");
-        ASSERT(!check_type_counter, "Error in check_type creation/destruction");
-        // check_type as the second type in the pipeline only works if check_type
-        // is also the first type.  The middle_filter specialization for <check_type, check_type>
-        // changes the state of the check_type items, and this is checked in the output_filter
-        // specialization.
-        run_function<check_type, check_type>("check_type", "check_type");
-        ASSERT(!check_type_counter, "Error in check_type creation/destruction");
+        run_function<check_type<unsigned int>,size_t>("check_type<unsigned int>", "size_t");
+        ASSERT(!check_type_counter, "Error in check_type<unsigned int> creation/destruction");
+        run_function<check_type<unsigned short>,size_t>("check_type<unsigned short>", "size_t");
+        ASSERT(!check_type_counter, "Error in check_type<unsigned short> creation/destruction");
+        run_function<check_type<unsigned int>, check_type<unsigned int> >("check_type<unsigned int>", "check_type<unsigned int>");
+        run_function<check_type<unsigned int>, check_type<unsigned short> >("check_type<unsigned int>", "check_type<unsigned short>");
+        ASSERT(!check_type_counter, "Error in check_type<unsigned int> creation/destruction");
+        run_function<check_type<unsigned short>, check_type<unsigned short> >("check_type<unsigned short>", "check_type<unsigned short>");
+        ASSERT(!check_type_counter, "Error in check_type<unsigned short> creation/destruction");
+        run_function<double, check_type<unsigned short> >("double", "check_type<unsigned short>");
+        ASSERT(!check_type_counter, "Error in check_type<unsigned short> creation/destruction");
     }
     return Harness::Done;
 }

@@ -38,17 +38,30 @@
     #pragma weak dlerror
 #endif /* WIN */
 
-extern "C" void ITT_DoOneTimeInitialization();
+#if __TBB_BUILD
 
-#define ITT_SIMPLE_INIT 1
+extern "C" void ITT_DoOneTimeInitialization();
 #define __itt_init_ittlib_name(x,y) (ITT_DoOneTimeInitialization(), true)
+
+#elif __TBBMALLOC_BUILD
+
+extern "C" void MallocInitializeITT();
+#define __itt_init_ittlib_name(x,y) (MallocInitializeITT(), true)
+
+#else
+#error This file is expected to be used for either TBB or TBB allocator build.
+#endif // __TBB_BUILD
 
 #include "tools_api/ittnotify_static.c"
 
 namespace tbb {
 namespace internal {
 int __TBB_load_ittnotify() {
-    return __itt_init_ittlib(NULL, __itt_group_none);
+    return __itt_init_ittlib(NULL,          // groups for:
+      (__itt_group_id)(__itt_group_sync     // prepare/cancel/acquired/releasing
+                       | __itt_group_thread // name threads
+                       | __itt_group_stitch // stack stitching
+                           ));
 }
 
 }} // namespaces

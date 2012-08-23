@@ -73,6 +73,13 @@ enum Options {
     FlogEncloser = Flog | 4
 };
 
+const char *PriorityName(tbb::priority_t p) {
+    if( p == tbb::priority_high ) return "high";
+    if( p == tbb::priority_normal ) return "normal";
+    if( p == tbb::priority_low ) return "low";
+    return "bad";
+}
+
 void PrepareGlobals ( int numMasters ) {
     ASSERT( !g_NumMasters && !g_LeavesExecuted, NULL );
     g_NumMasters = numMasters;
@@ -392,9 +399,57 @@ void TestPriorityAssertions () {
 #endif /* TRY_BAD_EXPR_ENABLED && __TBB_TASK_PRIORITY */
 }
 
+#if __TBB_TASK_PRIORITY
+tbb::atomic<tbb::priority_t> g_order;
+tbb::atomic<bool> g_order_established;
+class OrderedTask : public tbb::task {
+    tbb::priority_t my_priority;
+public:
+    OrderedTask(tbb::priority_t p) : my_priority(p) {}
+    tbb::task* execute() {
+        tbb::priority_t prev = g_order.fetch_and_store(my_priority);
+        if( my_priority != prev) {
+            REMARK("prev:%s --> new:%s\n", PriorityName(prev), PriorityName(my_priority));
+            // TODO: improve the test for concurrent workers
+            if(!g_order_established) {
+                // initial transition path allowed low->[normal]->high
+                if(my_priority == tbb::priority_high)
+                    g_order_established = true;
+                else ASSERT(my_priority == tbb::priority_normal && prev == tbb::priority_low, NULL);
+            } else { //transition path allowed high->normal->low
+                if(prev == tbb::priority_high) ASSERT( my_priority == tbb::priority_normal, "previous priority is high - bad order");
+                else if(prev == tbb::priority_normal) ASSERT( my_priority == tbb::priority_low, "previous priority is normal - bad order");
+                else ASSERT(!g_order_established, "transition from low priority but not during initialization");
+            }
+        }
+        EmulateWork(0);
+        return NULL;
+    }
+    static void start(int i) {
+        tbb::priority_t p = i%3==0? tbb::priority_low : (i%3==1? tbb::priority_normal : tbb::priority_high );
+        OrderedTask &t = *new(tbb::task::allocate_root()) OrderedTask(p);
+        tbb::task::enqueue(t, p);
+    }
+};
+
+//Look for discussion of the issue at http://software.intel.com/en-us/forums/showthread.php?t=102159
+void TestEnqueueOrder () {
+    REMARK("Testing order of enqueued tasks\n");
+    tbb::task_scheduler_init init(1); // to simplify transition checks only one extra worker for enqueue
+    g_order = tbb::priority_low;
+    g_order_established = false;
+    for( int i = 0; i < 1000; i++)
+        OrderedTask::start(i);
+    while( g_order == tbb::priority_low ) __TBB_Yield();
+    while( g_order != tbb::priority_low ) __TBB_Yield();
+}
+#endif /* __TBB_TASK_PRIORITY */
+
 int TestMain () {
 #if !__TBB_TASK_PRIORITY
     REMARK( "Priorities disabled: Running as just yet another task scheduler test\n" );
+#else
+    TestEnqueueOrder();
 #endif /* __TBB_TASK_PRIORITY */
     TestPriorityAssertions();
     TestSimplePriorityOps(tbb::priority_low);

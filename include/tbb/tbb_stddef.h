@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 0
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6004
+#define TBB_INTERFACE_VERSION 6005
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -153,6 +153,49 @@
     #include <stdint.h>
 #endif
 
+//! Type for an assertion handler
+typedef void(*assertion_handler_type)( const char* filename, int line, const char* expression, const char * comment );
+
+#if TBB_USE_ASSERT
+
+     #define __TBB_ASSERT_NS(predicate,message,ns) ((predicate)?((void)0) : ns::assertion_failure(__FILE__,__LINE__,#predicate,message))
+    //! Assert that x is true.
+    /** If x is false, print assertion failure message.  
+        If the comment argument is not NULL, it is printed as part of the failure message.  
+        The comment argument has no other effect. */
+#if __TBBMALLOC_BUILD
+namespace rml { namespace internal {
+    #define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,rml::internal)
+#else
+namespace tbb {
+    #define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,tbb)
+#endif
+
+    #define __TBB_ASSERT_EX __TBB_ASSERT
+
+    //! Set assertion handler and return previous value of it.
+    assertion_handler_type __TBB_EXPORTED_FUNC set_assertion_handler( assertion_handler_type new_handler );
+
+    //! Process an assertion failure.
+    /** Normally called from __TBB_ASSERT macro.
+        If assertion handler is null, print message for assertion failure and abort.
+        Otherwise call the assertion handler. */
+    void __TBB_EXPORTED_FUNC assertion_failure( const char* filename, int line, const char* expression, const char* comment );
+
+#if __TBBMALLOC_BUILD
+}}  // namespace rml::internal
+#else
+} // namespace tbb
+#endif
+#else /* !TBB_USE_ASSERT */
+
+    //! No-op version of __TBB_ASSERT.
+    #define __TBB_ASSERT(predicate,comment) ((void)0)
+    //! "Extended" version is useful to suppress warnings if a variable is only used with an assert
+    #define __TBB_ASSERT_EX(predicate,comment) ((void)(1 && (predicate)))
+
+#endif /* !TBB_USE_ASSERT */
+
 //! The namespace tbb contains all components of the library.
 namespace tbb {
 
@@ -182,36 +225,6 @@ namespace tbb {
 
     using std::size_t;
     using std::ptrdiff_t;
-
-    //! Type for an assertion handler
-    typedef void(*assertion_handler_type)( const char* filename, int line, const char* expression, const char * comment );
-
-#if TBB_USE_ASSERT
-
-    //! Assert that x is true.
-    /** If x is false, print assertion failure message.  
-        If the comment argument is not NULL, it is printed as part of the failure message.  
-        The comment argument has no other effect. */
-    #define __TBB_ASSERT(predicate,message) ((predicate)?((void)0):tbb::assertion_failure(__FILE__,__LINE__,#predicate,message))
-    #define __TBB_ASSERT_EX __TBB_ASSERT
-
-    //! Set assertion handler and return previous value of it.
-    assertion_handler_type __TBB_EXPORTED_FUNC set_assertion_handler( assertion_handler_type new_handler );
-
-    //! Process an assertion failure.
-    /** Normally called from __TBB_ASSERT macro.
-        If assertion handler is null, print message for assertion failure and abort.
-        Otherwise call the assertion handler. */
-    void __TBB_EXPORTED_FUNC assertion_failure( const char* filename, int line, const char* expression, const char* comment );
-
-#else /* !TBB_USE_ASSERT */
-
-    //! No-op version of __TBB_ASSERT.
-    #define __TBB_ASSERT(predicate,comment) ((void)0)
-    //! "Extended" version is useful to suppress warnings if a variable is only used with an assert
-    #define __TBB_ASSERT_EX(predicate,comment) ((void)(1 && (predicate)))
-
-#endif /* !TBB_USE_ASSERT */
 
 //! The function returns the interface version of the TBB shared library being used.
 /**

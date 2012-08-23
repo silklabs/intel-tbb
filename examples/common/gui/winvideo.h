@@ -220,11 +220,9 @@ static bool loop_once(video *v)
     }
     // event processing, including painting
     MSG msg;
-    if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-    {
+    if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
         if( msg.message == WM_QUIT ) { v->running = false; return false; }
-        if( !hAccelTable || !TranslateAccelerator(msg.hwnd, hAccelTable, &msg) )
-        {
+        if( !hAccelTable || !TranslateAccelerator(msg.hwnd, hAccelTable, &msg) ){
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -259,8 +257,10 @@ void video::main_loop()
             if(r == WAIT_OBJECT_0) break; // thread terminated
         }
         running = false;
-        if(WaitForSingleObject(g_handles[0], 300) == WAIT_TIMEOUT)
-            TerminateThread(g_handles[0], 0);
+        if(WaitForSingleObject(g_handles[0], 3000) == WAIT_TIMEOUT){
+            // there was not enough time for graceful shutdown, killing the example with code 1.
+            exit(1);
+        }
         if(g_handles[0]) CloseHandle(g_handles[0]);
         if(g_handles[1]) CloseHandle(g_handles[1]);
         g_handles[0] = g_handles[1] = 0;

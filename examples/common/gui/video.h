@@ -48,8 +48,10 @@ typedef signed char depth_t;
 //! Class for getting access to drawing memory
 class drawing_memory
 {
+#ifdef __TBB_MIC
     // The address is kept as uintptr_t since
     // the compiler could not offload a pointer
+#endif
     uintptr_t   my_address;
 public:
     depth_t     pixel_depth;
@@ -215,7 +217,9 @@ inline void drawing_area::put_pixel(color_t color)
 
 inline drawing_area::~drawing_area()
 {
+#if ! __TBB_DEFINE_MIC
     update();
+#endif
 }
 
 #if defined(_WINDOWS) && (defined(VIDEO_WINMAIN) || defined(VIDEO_WINMAIN_ARGS) )

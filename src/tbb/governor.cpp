@@ -213,9 +213,9 @@ __cilk_tbb_retcode governor::stack_op_handler( __cilk_tbb_stack_op op, void* dat
 #if TBB_USE_ASSERT
     void* current = theTLS.get();
 #if _WIN32||_WIN64
-    unsigned thread_id = GetCurrentThreadId();
+    uintptr_t thread_id = GetCurrentThreadId();
 #else
-    unsigned thread_id = unsigned(pthread_self());
+    uintptr_t thread_id = uintptr_t(pthread_self());
 #endif
 
 #endif /* TBB_USE_ASSERT */
@@ -227,7 +227,7 @@ __cilk_tbb_retcode governor::stack_op_handler( __cilk_tbb_stack_op op, void* dat
                           current==s && s->my_cilk_state==generic_scheduler::cs_running, "invalid adoption" );
 #if TBB_USE_ASSERT
             if( current==s ) 
-                runtime_warning( "redundant adoption of %p by thread %x\n", s, thread_id );
+                runtime_warning( "redundant adoption of %p by thread %p\n", s, (void*)thread_id );
             s->my_cilk_state = generic_scheduler::cs_running;
 #endif /* TBB_USE_ASSERT */
             theTLS.set(s);

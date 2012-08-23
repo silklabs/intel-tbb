@@ -27,7 +27,7 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* dining_philosophers */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dining_philosophers; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1F593A50B8F042A00073279 /* dining_philosophers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = dining_philosophers.cpp; path = ../src/dining_philosophers.cpp; sourceTree = SOURCE_ROOT; };
+		A1F593A50B8F042A00073279 /* dining_philosophers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = dining_philosophers.cpp; path = ../dining_philosophers.cpp; sourceTree = SOURCE_ROOT; };
 		A1F593B30B8F06F900073279 /* libtbb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.dylib; path = ../../../../lib/libtbb.dylib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 

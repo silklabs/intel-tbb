@@ -26,6 +26,9 @@
     the GNU General Public License.
 */
 
+#if __TBB_MIC
+#pragma offload_attribute (target(mic))
+#endif // __TBB_MIC
 
 #include "../../common/gui/video.h"
 #include <cmath>

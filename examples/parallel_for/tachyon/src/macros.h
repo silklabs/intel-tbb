@@ -59,7 +59,7 @@
  * macros.h - This file contains macro versions of functions that would be best 
  * used as inlined code rather than function calls.
  *
- *  $Id: macros.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: macros.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 #define MYMAX(a , b) ((a) > (b) ? (a) : (b))

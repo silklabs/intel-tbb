@@ -10,7 +10,7 @@ is to teach how to use the raw task interface, so the computation is
 deliberately trivial.
 <P>
 The performance of this example is better when objects are allocated
-by the Threading Building Blocks scalable_allocator instead of
+by the scalable_allocator instead of
 the default "operator new".  The reason is that the scalable_allocator typically
 packs small objects more tightly than the default "operator new", resulting in
 a smaller memory footprint, and thus more efficient use of cache and virtual memory.
@@ -51,10 +51,10 @@ General build directions can be found <A HREF=../../index.html#build>here</A>.
 <DD>Prints the help for command line options
 <DT><TT>tree_sum [<I>n-of-threads</I>=value] [<I>number-of-nodes</I>=value] [<I>silent</I>] [<I>stdmalloc</I>]</TT>
 <DT><TT>tree_sum [<I>n-of-threads</I> [<I>number-of-nodes</I>]] [<I>silent</I>] [<I>stdmalloc</I>]</TT> 
-<DD><I>n-of-threads</I> is the number of threads to use; a range of the form <I>low</I>[:<I>high</I>], where low and optional high are non-negative integers or 'auto' for the TBB default.<BR>
+<DD><I>n-of-threads</I> is the number of threads to use; a range of the form <I>low</I>[:<I>high</I>], where low and optional high are non-negative integers or 'auto' for the default.<BR>
     <I>number-of-nodes</I> is the number of nodes in the tree.<BR>
     <I>silent</I> - no output except elapsed time.<BR>
-    <I>stdmalloc</I> - causes the default "operator new" to be used for memory allocations instead of the TBB scalable_allocator.<BR>
+    <I>stdmalloc</I> - causes the default "operator new" to be used for memory allocations instead of the scalable_allocator.<BR>
 
 <DT>To run a short version of this example, e.g., for use with Intel&reg; Parallel Inspector:
 <DD>Build a <I>debug</I> version of the example

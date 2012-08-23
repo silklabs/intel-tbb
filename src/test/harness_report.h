@@ -56,6 +56,9 @@
 
 #include "tbb/tbb_config.h"
 
+#if __TBB_DEFINE_MIC
+#include "harness_mic.h"
+#endif
 
 #ifdef HARNESS_INCOMPLETE_SOURCES
 #error Source files are not complete. Check the build environment

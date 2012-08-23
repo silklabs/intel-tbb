@@ -114,6 +114,10 @@ inline void SpinWaitWhileEq(const volatile intptr_t &location, const intptr_t va
     tbb::internal::spin_wait_while_eq(location, value);
 }
 
+inline void SpinWaitUntilEq(const volatile intptr_t &location, const intptr_t value) {
+    tbb::internal::spin_wait_until_eq(location, value);
+}
+
 inline intptr_t BitScanRev(uintptr_t x) {
     return !x? -1 : __TBB_Log2(x);
 }

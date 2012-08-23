@@ -1,7 +1,32 @@
+TBB 4.0 Update 5
+
+Changes (w.r.t. TBB 4.0 Update 4):
+
+- Parallel pipeline optimization (directly storing small objects in the
+    interstage data buffers) limited to trivially-copyable types for
+    C++11 and a short list of types for earlier compilers.
+- _VARIADIC_MAX switch is honored for TBB tuple implementation
+    and flow::graph nodes based on tuple.
+- Support of Cocoa framework was added to the GUI examples on Mac OS* X
+    systems
+
+Bugs fixed:
+
+- Fixed a tv_nsec overflow bug in condition_variable::wait_for. 
+- Fixed execution order of enqueued tasks with different priorities.
+- Fixed a bug with task priority changes causing lack of progress
+    for fire-and-forget tasks when TBB was initialized to use 1 thread.
+- Fixed duplicate symbol problem when linking multiple compilation
+    units that include flow_graph.h on VC 10.
+
+------------------------------------------------------------------------
+TBB 4.0 Update 4
+
 Changes (w.r.t. TBB 4.0 Update 3):
 
 - The TBB memory allocator transparently supports large pages on Linux.
-- A new flow_graph example, logic_sim, was added. 
+- A new flow_graph example, logic_sim, was added.
+- Support for DirectX* 9 was added to GUI examples.
 
 Community Preview Features:
 

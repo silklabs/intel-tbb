@@ -58,7 +58,7 @@
 /* 
  * tgafile.h - this file contains defines and structures for tgafile.c
  *
- *  $Id: tgafile.h,v 1.2 2007-02-22 17:54:16  Exp $
+ *  $Id: tgafile.h,v 1.2 2007-02-22 17:54:16 Exp $
  */
 
 /* declare other functions */

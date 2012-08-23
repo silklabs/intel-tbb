@@ -52,21 +52,28 @@ all:	release test
 
 resources:
 ifeq ($(UI),mac)
-	mkdir -p $(APPRES)/English.lproj $(NAME).app/Contents/MacOS
-	$(PBXCP) xcode/English.lproj/main.nib $(APPRES)/English.lproj
-	$(PBXCP) xcode/Info.plist $(APPRES)
-endif
+	mkdir -p $(APPRES)/en.lproj $(NAME).app/Contents/MacOS
+	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME).app/Contents
+	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
+endif # Mac
 
 release: $(SRCFILES) resources
 ifeq ($(compiler),xl)
 	# Avoiding "1586-346 (U) An error occurred during code generation.  The code generation return code was 40." with -O3.
 	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) -ltbb -ltbbmalloc $(LIBS)
 else
-	$(CXX) -O3 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) -ltbb -ltbbmalloc $(LIBS)
+ifeq ($(UI),mac)
+	$(CXX_UI) -O3 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -O3 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) $(MACUIOBJS) -ltbb -ltbbmalloc $(LIBS)
 endif
 
 debug:  $(SRCFILES) resources
-	$(CXX) -g -O0 -DTBB_USE_DEBUG -D_DEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) -ltbb_debug -ltbbmalloc_debug $(LIBS)
+ifeq ($(UI),mac)
+	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG -D_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
+endif # Mac
+	$(CXX) -g -O0 -DTBB_USE_DEBUG -D_DEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) $(MACUIOBJS) -ltbb_debug -ltbbmalloc_debug $(LIBS)
 
 clean:
 	$(RM) $(EXE) *.o *.d

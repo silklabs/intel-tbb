@@ -58,7 +58,7 @@
 /* 
  * util.h - This file contains defines for the timer functions...
  *
- *  $Id: util.h,v 1.3 2007-02-22 17:54:17  Exp $
+ *  $Id: util.h,v 1.3 2007-02-22 17:54:17 Exp $
  */
 
 #include "machine.h"

@@ -59,7 +59,7 @@
  * vol.h - Volume rendering definitions etc.
  *
  *
- *  $Id: extvol.h,v 1.2 2007-02-22 17:54:15  Exp $
+ *  $Id: extvol.h,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 typedef struct {

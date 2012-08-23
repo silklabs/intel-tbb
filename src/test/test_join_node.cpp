@@ -26,14 +26,23 @@
     the GNU General Public License.
 */
 
+#if _MSC_VER
+// Name length is limited to avoid "decorated name length exceeded, name was truncated" warning.
+#define _VARIADIC_MAX 8
+#endif
+
 #include "harness.h"
-#include "tbb/flow_graph.h"
-#include "tbb/task_scheduler_init.h"
 
 #if !__SUNPRO_CC
 
-#if _MSC_VER
-#pragma warning (disable: 4503)  // decorated name length exceeded, name was truncated
+#include "tbb/flow_graph.h"
+#include "tbb/task_scheduler_init.h"
+
+// the tuple-based tests with more inputs take a long time to compile.  If changes
+// are made to the tuple implementation or any switch that controls it, the test
+// should be compiled with COMPREHENSIVE_TEST == 1 to ensure all tuple sizes are tested.
+#ifndef COMPREHENSIVE_TEST
+#define COMPREHENSIVE_TEST 0
 #endif
 
 //
@@ -249,7 +258,7 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
-
+#if __TBB_VARIADIC_MAX >= 6
 template<typename JType>
 class makeJoin<6,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -273,7 +282,9 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 7
 template<typename JType>
 class makeJoin<7,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -299,7 +310,9 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 8
 template<typename JType>
 class makeJoin<8,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -327,7 +340,9 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 9
 template<typename JType>
 class makeJoin<9,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -357,7 +372,9 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
+#endif
 
+#if __TBB_VARIADIC_MAX >= 10
 template<typename JType>
 class makeJoin<10,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -389,6 +406,7 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
+#endif
 
 // holder for source_node pointers for eventual deletion
 
@@ -1149,47 +1167,77 @@ int TestMain() {
        REMARK("reserving\n");
        generate_test<serial_test, std::tuple<float, double>, tbb::flow::reserving >::do_test();
        generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::reserving >::do_test();
+#if __TBB_VARIADIC_MAX >= 6
        generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::reserving >::do_test();
+#endif
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 8
        generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::reserving >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 10
        generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::reserving >::do_test();
+#endif
 #endif
        generate_test<parallel_test, std::tuple<float, double>, tbb::flow::reserving >::do_test();
        generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::reserving >::do_test();
        generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::reserving >::do_test();
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 7
        generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::reserving >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 9
        generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::reserving >::do_test();
+#endif
 #endif
        REMARK("queueing\n");
        generate_test<serial_test, std::tuple<float, double>, tbb::flow::queueing >::do_test();
        generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::queueing >::do_test();
+#if __TBB_VARIADIC_MAX >= 6
        generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::queueing >::do_test();
+#endif
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 8
        generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::queueing >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 10
        generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::queueing >::do_test();
+#endif
 #endif
        generate_test<parallel_test, std::tuple<float, double>, tbb::flow::queueing >::do_test();
        generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::queueing >::do_test();
        generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::queueing >::do_test();
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 7
        generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::queueing >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 9
        generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::queueing >::do_test();
+#endif
 #endif
        REMARK("tag_matching\n");
        generate_test<serial_test, std::tuple<float, double>, tbb::flow::tag_matching >::do_test();
        generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::tag_matching >::do_test();
+#if __TBB_VARIADIC_MAX >= 6
        generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::tag_matching >::do_test();
+#endif
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 8
        generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::tag_matching >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 10
        generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::tag_matching >::do_test();
+#endif
 #endif
        generate_test<parallel_test, std::tuple<float, double>, tbb::flow::tag_matching >::do_test();
        generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::tag_matching >::do_test();
        generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::tag_matching >::do_test();
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 7
        generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::tag_matching >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 9
        generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::tag_matching >::do_test();
+#endif
 #endif
 
        generate_recirc_test<std::tuple<float,double> >::do_test();

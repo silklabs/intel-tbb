@@ -14,7 +14,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="1" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="1" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -33,7 +33,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="3" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="3" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -52,7 +52,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -71,7 +71,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /Wp64 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -90,7 +90,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="1" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="1" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -109,7 +109,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="1" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="1" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -128,7 +128,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -147,7 +147,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /W4 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc" AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>

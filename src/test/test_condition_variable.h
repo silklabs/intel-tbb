@@ -319,7 +319,7 @@ struct WorkForCondVarTimedWait: NoAssign {
 
         // test if a thread times out with wait_for()
         for( int i=1; i<10; ++i ) {
-            tbb::tick_count::interval_t intv((double)i*0.0001 /*seconds*/);
+            tbb::tick_count::interval_t intv((double)i*0.0999 /*seconds*/);
             ul.lock();
             cv_status st = no_timeout;
             __TBB_TRY {

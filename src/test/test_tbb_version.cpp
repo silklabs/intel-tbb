@@ -74,22 +74,38 @@ const char stdout_stream[] = "version_test.out";
 
 HARNESS_EXPORT
 int main(int argc, char *argv[] ) {
+    char psBuffer[512];
 /* We first introduced runtime version identification in 3014 */
-#if TBB_INTERFACE_VERSION>=3014 
+#if TBB_INTERFACE_VERSION>=3014
     // For now, just test that run-time TBB version matches the compile-time version,
     // since otherwise the subsequent test of "TBB: INTERFACE VERSION" string will fail anyway.
     // We need something more clever in future.
-    ASSERT(tbb::TBB_runtime_interface_version()==TBB_INTERFACE_VERSION,
-           "Running with the library of different version than the test was compiled against");
+    if ( tbb::TBB_runtime_interface_version()!=TBB_INTERFACE_VERSION ){
+        snprintf( psBuffer,
+                  512,
+                  "%s %s %d %s %d.",
+                  "Running with the library of different version than the test was compiled against.",
+                  "Expected",
+                  TBB_INTERFACE_VERSION,
+                  "- got",
+                  tbb::TBB_runtime_interface_version()
+                  );
+        ASSERT( tbb::TBB_runtime_interface_version()==TBB_INTERFACE_VERSION, psBuffer );
+    }
 #endif
+#if __TBB_MIC
+    // Skip the test in offload mode.
+    // Run the test in 'true' native mode (because 'system()' works in 'true' native mode).
+    (argc, argv);
+    REPORT("skip\n");
+#else //__TBB_MIC
 #if __TBB_MPI_INTEROP
     REPORT("skip\n");
 #else
     __TBB_TRY {
         FILE *stream_out;
-        FILE *stream_err;   
-        char psBuffer[512];
-        
+        FILE *stream_err;
+
         if(argc>1 && argv[1][0] == '@' ) {
             stream_err = freopen( stderr_stream, "w", stderr );
             if( stream_err == NULL ){
@@ -212,6 +228,7 @@ int main(int argc, char *argv[] ) {
     }
     REPORT("done\n");
 #endif //__TBB_MPI_INTEROP
+#endif //__TBB_MIC
     return 0;
 }
 
@@ -220,7 +237,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.0", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6004", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6005", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));

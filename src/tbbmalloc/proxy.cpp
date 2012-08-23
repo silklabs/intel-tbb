@@ -292,6 +292,8 @@ __TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr90d);
 __TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr90);
 __TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr100d);
 __TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr100);
+__TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr110d);
+__TBB_ORIG_ALLOCATOR_REPLACEMENT_WRAPPER(msvcr110);
 
 
 /*** replacements for global operators new and delete ***/
@@ -343,6 +345,8 @@ const char* modules_to_replace[] = {
     "msvcr90.dll",
     "msvcr100d.dll",
     "msvcr100.dll",
+    "msvcr110d.dll",
+    "msvcr110.dll",
     "msvcr70d.dll",
     "msvcr70.dll",
     "msvcr71d.dll",
@@ -421,12 +425,25 @@ void doMallocReplacement()
 {
     int i,j;
 
+    // Replace functions and keep backup of original code (separate for each runtime)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr70)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr71)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr80)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr90)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr100)
+    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr110)
+
     // Replace functions without storing original code
     int modules_to_replace_count = sizeof(modules_to_replace) / sizeof(modules_to_replace[0]);
     int routines_to_replace_count = sizeof(routines_to_replace) / sizeof(routines_to_replace[0]);
     for ( j=0; j<modules_to_replace_count; j++ )
         for (i = 0; i < routines_to_replace_count; i++)
         {
+#if !_WIN64
+            // in Microsoft* Visual Studio* 11 Beta 32-bit operator delete consists of 2 bytes only: short jump to free(ptr);
+            // replacement should be skipped for this particular case.
+            if ( (strcmp(modules_to_replace[j],"msvcr110.dll")==0) && (strcmp(routines_to_replace[i]._func,"??3@YAXPAX@Z")==0) ) continue;
+#endif
             FRR_TYPE type = ReplaceFunction( modules_to_replace[j], routines_to_replace[i]._func, routines_to_replace[i]._fptr, NULL, NULL );
             if (type == FRR_NODLL) break;
             if (type != FRR_OK && routines_to_replace[i]._on_error==FRR_FAIL)
@@ -436,13 +453,6 @@ void doMallocReplacement()
                 exit(1);
             }
         }
-
-    // Replace functions and keep backup of original code (separate for each runtime)
-    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr70)
-    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr71)
-    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr80)
-    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr90)
-    __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr100)
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID reserved )

@@ -47,6 +47,13 @@
 
 #include "tbb/task_scheduler_init.h"
 #include "tbb/tbb_thread.h"
+#include "tbb/enumerable_thread_specific.h"
+
+// The declaration of a global ETS object is needed to check that
+// it does not initialize the task scheduler, and in particular
+// does not set the default thread number. TODO: add other objects
+// that should not initialize the scheduler.
+tbb::enumerable_thread_specific<std::size_t> ets;
 
 int TestMain () {
 #if _WIN32||_WIN64 || __linux__ || __FreeBSD_version >= 701000
@@ -64,7 +71,11 @@ int TestMain () {
 #if __linux__
     int maxProcs = get_nprocs();
     typedef cpu_set_t mask_t;
+#if __TBB_MAIN_THREAD_AFFINITY_BROKEN
+    #define setaffinity(mask) sched_setaffinity(0 /*get the mask of the calling thread*/, sizeof(mask_t), &mask)
+#else
     #define setaffinity(mask) sched_setaffinity(getpid(), sizeof(mask_t), &mask)
+#endif
 #else /* __FreeBSD__ */
     int maxProcs = sysconf(_SC_NPROCESSORS_ONLN);
     typedef cpuset_t mask_t;

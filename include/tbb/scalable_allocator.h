@@ -257,7 +257,7 @@ inline bool operator!=( const scalable_allocator<T>&, const scalable_allocator<U
 } // namespace tbb
 
 #if _MSC_VER
-    #if __TBB_BUILD && !defined(__TBBMALLOC_NO_IMPLICIT_LINKAGE)
+    #if (__TBB_BUILD || __TBBMALLOC_BUILD) && !defined(__TBBMALLOC_NO_IMPLICIT_LINKAGE)
         #define __TBBMALLOC_NO_IMPLICIT_LINKAGE 1
     #endif
 

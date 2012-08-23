@@ -58,7 +58,7 @@
 /* 
  * vector.c - This file contains all of the vector arithmetic functions.
  *
- *  $Id: vector.cpp,v 1.2 2007-02-22 17:54:17  Exp $
+ *  $Id: vector.cpp,v 1.2 2007-02-22 17:54:17 Exp $
  */
 
 #include "machine.h"
