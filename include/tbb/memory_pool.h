@@ -137,12 +137,12 @@ public:
     }
     //! Copy-construct value at location pointed to by p.
 #if __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
-    template<typename... Args>
-    void construct(pointer p, Args&&... args)
+    template<typename U, typename... Args>
+    void construct(U *p, Args&&... args)
  #if __TBB_CPP11_STD_FORWARD_BROKEN
-        { ::new((void *)p) T((args)...); }
+        { ::new((void *)p) U((args)...); }
  #else
-        { ::new((void *)p) T(std::forward<Args>(args)...); }
+        { ::new((void *)p) U(std::forward<Args>(args)...); }
  #endif
 #else // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
     void construct( pointer p, const value_type& value ) { ::new((void*)(p)) value_type(value); }
@@ -239,6 +239,12 @@ void *memory_pool<Alloc>::allocate_request(intptr_t pool_id, size_t & bytes) {
     __TBB_CATCH(...) { return 0; }
     return ptr;
 }
+#if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
+    // Workaround for erroneous "unreachable code" warning in the template below.
+    // Specific for VC++ 17 compiler
+    #pragma warning (push)
+    #pragma warning (disable: 4702)
+#endif
 template <typename Alloc>
 int memory_pool<Alloc>::deallocate_request(intptr_t pool_id, void* raw_ptr, size_t raw_bytes) {
     memory_pool<Alloc> &self = *reinterpret_cast<memory_pool<Alloc>*>(pool_id);
@@ -247,6 +253,9 @@ int memory_pool<Alloc>::deallocate_request(intptr_t pool_id, void* raw_ptr, size
     self.my_alloc.deallocate( static_cast<typename Alloc::value_type*>(raw_ptr), raw_bytes/unit_size );
     return 0;
 }
+#if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
+    #pragma warning (pop)
+#endif
 inline fixed_pool::fixed_pool(void *buf, size_t size) : my_buffer(buf), my_size(size) {
     rml::MemPoolPolicy args(allocate_request, 0, size, /*fixedPool=*/true);
     rml::MemPoolError res = rml::pool_create_v1(intptr_t(this), &args, &my_pool);

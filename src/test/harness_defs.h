@@ -41,18 +41,18 @@
 #endif
 
 // no need to test gcc builtins mode on ICC
-#define __TBB_TEST_SKIP_GCC_BUILTINS_MODE __TBB_TEST_BUILTINS && (!__TBB_GCC_BUILTIN_ATOMICS_PRESENT || defined(__INTEL_COMPILER))
+#define __TBB_TEST_SKIP_GCC_BUILTINS_MODE ( __TBB_TEST_BUILTINS && (!__TBB_GCC_BUILTIN_ATOMICS_PRESENT || __INTEL_COMPILER) )
 
-#define __TBB_TEST_SKIP_ICC_BUILTINS_MODE __TBB_TEST_BUILTINS && !__TBB_ICC_BUILTIN_ATOMICS_PRESENT
+#define __TBB_TEST_SKIP_ICC_BUILTINS_MODE ( __TBB_TEST_BUILTINS && !__TBB_ICC_BUILTIN_ATOMICS_PRESENT )
 
 #ifndef TBB_USE_GCC_BUILTINS
   //Force TBB to use GCC intrinsics port, but not on ICC, as no need
-  #define TBB_USE_GCC_BUILTINS         __TBB_TEST_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT && !defined(__INTEL_COMPILER)
+  #define TBB_USE_GCC_BUILTINS         ( __TBB_TEST_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT && !__INTEL_COMPILER )
 #endif
 
 #ifndef TBB_USE_ICC_BUILTINS
   //Force TBB to use ICC c++11 style intrinsics port
-  #define TBB_USE_ICC_BUILTINS         __TBB_TEST_BUILTINS && __TBB_ICC_BUILTIN_ATOMICS_PRESENT
+  #define TBB_USE_ICC_BUILTINS         ( __TBB_TEST_BUILTINS && __TBB_ICC_BUILTIN_ATOMICS_PRESENT )
 #endif
 
 #if (_WIN32 && !__TBB_WIN8UI_SUPPORT) || (__linux__ && !__ANDROID__) || __FreeBSD_version >= 701000
@@ -60,8 +60,11 @@
 #else
 #define __TBB_TEST_SKIP_AFFINITY 1
 #endif
+
 #if __INTEL_COMPILER
   #define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
+#elif __clang__
+  #define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __has_feature(cxx_lambdas))
 #elif __GNUC__
   #define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
 #elif _MSC_VER
@@ -89,12 +92,14 @@
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( __TBB_GCC_VERSION < 40600 )
 #elif _MSC_VER
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( _MSC_VER < 1400 )
+#elif  __clang__ //TODO: recheck on different clang versions
+  #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 1
 #else
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 0
 #endif
 
 //! a function ptr cannot be converted to const T& template argument without explicit cast
-#define __TBB_FUNC_PTR_AS_TEMPL_PARAM_BROKEN ((__linux__ || __APPLE__) && __INTEL_COMPILER && __INTEL_COMPILER < 1100) || __SUNPRO_CC
+#define __TBB_FUNC_PTR_AS_TEMPL_PARAM_BROKEN ( ((__linux__ || __APPLE__) && __INTEL_COMPILER && __INTEL_COMPILER < 1100) || __SUNPRO_CC )
 #define __TBB_UNQUALIFIED_CALL_OF_DTOR_BROKEN (__GNUC__==3 && __GNUC_MINOR__<=3)
 
 #if __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN

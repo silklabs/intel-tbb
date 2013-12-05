@@ -28,6 +28,11 @@
 
 #if _MSC_VER
     #pragma warning (disable: 4503) // Suppress "decorated name length exceeded, name was truncated" warning
+    #if !TBB_USE_EXCEPTIONS
+        // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers
+        #pragma warning (push)
+        #pragma warning (disable: 4530)
+    #endif
 #endif
 
 #include "harness.h"
@@ -52,6 +57,7 @@
 inline intptr_t Existed() { return INT_MAX; }  // resolve Existed in harness_eh.h
 
 #include "harness_eh.h"
+#include <stdexcept>
 
 #define NUM_ITEMS 15
 int g_NumItems;
@@ -417,10 +423,10 @@ void run_source_node_test() {
 
 void test_source_node() {
     REMARK("Testing source_node\n");
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     g_Wakeup_Msg = "source_node(1): Missed wakeup or machine is overloaded?";
     run_source_node_test<check_type<int>, isThrowing, nonThrowing>();
-    ASSERT(!check_type_counter, "Some items leaked in test");
+    ASSERT(!check_type<int>::check_type_counter, "Some items leaked in test");
     g_Wakeup_Msg = "source_node(2): Missed wakeup or machine is overloaded?";
     run_source_node_test<int, isThrowing, nonThrowing>();
     g_Wakeup_Msg = "source_node(3): Missed wakeup or machine is overloaded?";
@@ -430,7 +436,7 @@ void test_source_node() {
     g_Wakeup_Msg = "source_node(5): Missed wakeup or machine is overloaded?";
     run_source_node_test<check_type<int>, isThrowing, isThrowing>();
     g_Wakeup_Msg = g_Orig_Wakeup_Msg;
-    ASSERT(!check_type_counter, "Some items leaked in test");
+    ASSERT(!check_type<int>::check_type_counter, "Some items leaked in test");
 }
 
 // -------- utilities & types to test function_node and multifunction_node.
@@ -630,9 +636,9 @@ void test_function_node() {
     run_function_node_test<isThrowing, nonThrowing, int, nonThrowing, int, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     run_function_node_test<nonThrowing, nonThrowing, int, isThrowing, int, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     run_function_node_test<nonThrowing, nonThrowing, int, nonThrowing, int, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     run_function_node_test<nonThrowing, nonThrowing, check_type<int>, nonThrowing, check_type<int>, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    ASSERT(!check_type_counter, "Some items leaked in test");
+    ASSERT(!check_type<int>::check_type_counter, "Some items leaked in test");
 
     // unlimited parallel rejecting
     g_Wakeup_Msg = "function_node(3): Missed wakeup or machine is overloaded?";
@@ -737,9 +743,9 @@ void test_multifunction_node() {
     run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     run_multifunction_node_test<nonThrowing, nonThrowing, check_type<int>, nonThrowing, tbb::flow::tuple<check_type<int>, check_type<int> >, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    ASSERT(!check_type_counter, "Some items leaked in test");
+    ASSERT(!check_type<int>::check_type_counter, "Some items leaked in test");
 
     g_Wakeup_Msg = "multifunction_node(3): Missed wakeup or machine is overloaded?";
     // unlimited parallel rejecting
@@ -892,9 +898,9 @@ void test_continue_node() {
     run_continue_node_test<int,isThrowing,nonThrowing,nonThrowing>();
     g_Wakeup_Msg = "buffer_node(is,is,is): Missed wakeup or machine is overloaded?";
     run_continue_node_test<int,isThrowing,isThrowing,isThrowing>();
-    check_type_counter = 0;
+    check_type<double>::check_type_counter = 0;
     run_continue_node_test<check_type<double>,isThrowing,isThrowing,isThrowing>();
-    ASSERT(!check_type_counter, "Dropped objects in continue_node test");
+    ASSERT(!check_type<double>::check_type_counter, "Dropped objects in continue_node test");
     g_Wakeup_Msg = g_Orig_Wakeup_Msg;
 }
 
@@ -1144,10 +1150,10 @@ void test_sequencer_node() {
     REMARK("Testing sequencer_node\n");
     g_Wakeup_Msg = "sequencer_node(is,non): Missed wakeup or machine is overloaded?";
     run_sequencer_node_test<int, isThrowing,nonThrowing>();
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     g_Wakeup_Msg = "sequencer_node(non,is): Missed wakeup or machine is overloaded?";
     run_sequencer_node_test<check_type<int>, nonThrowing,isThrowing>();
-    ASSERT(!check_type_counter, "Dropped objects in sequencer_node test");
+    ASSERT(!check_type<int>::check_type_counter, "Dropped objects in sequencer_node test");
     g_Wakeup_Msg = "sequencer_node(is,is): Missed wakeup or machine is overloaded?";
     run_sequencer_node_test<int, isThrowing,isThrowing>();
     g_Wakeup_Msg = g_Orig_Wakeup_Msg;
@@ -1265,10 +1271,10 @@ void test_priority_queue_node() {
     REMARK("Testing priority_queue_node\n");
     g_Wakeup_Msg = "priority_queue_node(is,non): Missed wakeup or machine is overloaded?";
     run_priority_queue_node_test<int, isThrowing,nonThrowing>();
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     g_Wakeup_Msg = "priority_queue_node(non,is): Missed wakeup or machine is overloaded?";
     run_priority_queue_node_test<check_type<int>, nonThrowing,isThrowing>();
-    ASSERT(!check_type_counter, "Dropped objects in priority_queue_node test");
+    ASSERT(!check_type<int>::check_type_counter, "Dropped objects in priority_queue_node test");
     g_Wakeup_Msg = "priority_queue_node(is,is): Missed wakeup or machine is overloaded?";
     run_priority_queue_node_test<int, isThrowing,isThrowing>();
     g_Wakeup_Msg = g_Orig_Wakeup_Msg;
@@ -1525,10 +1531,10 @@ void test_join_node() {
     // only doing two-input joins
     g_Wakeup_Msg = "join(is,non): Missed wakeup or machine is overloaded?";
     run_join_node_test<JP, tbb::flow::tuple<int,int>,  isThrowing, nonThrowing>();
-    check_type_counter = 0;
+    check_type<int>::check_type_counter = 0;
     g_Wakeup_Msg = "join(non,is): Missed wakeup or machine is overloaded?";
     run_join_node_test<JP, tbb::flow::tuple<check_type<int>,int>, nonThrowing, isThrowing>();
-    ASSERT(!check_type_counter, "Dropped items in test");
+    ASSERT(!check_type<int>::check_type_counter, "Dropped items in test");
     g_Wakeup_Msg = "join(is,is): Missed wakeup or machine is overloaded?";
     run_join_node_test<JP, tbb::flow::tuple<int,int>,  isThrowing, isThrowing>();
     g_Wakeup_Msg = g_Orig_Wakeup_Msg;
@@ -2025,3 +2031,7 @@ int TestMain() {
     return Harness::Skipped;
 }
 #endif // TBB_USE_EXCEPTIONS
+
+#if !TBB_USE_EXCEPTIONS && _MSC_VER
+    #pragma warning (pop)
+#endif

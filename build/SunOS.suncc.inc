@@ -48,6 +48,7 @@ LINK_FLAGS += -M$(tbb_root)/build/suncc.map.pause
 LIBS = -lpthread -lrt -R .
 C_FLAGS = $(CPLUS_FLAGS)
 
+#TODO: the $(stdlib) instead of hard-wiring STLPort 
 ifeq ($(cfg), release)
         CPLUS_FLAGS = -mt -xO2 -library=stlport4 -DUSE_PTHREAD $(WARNING_SUPPRESS)
 endif

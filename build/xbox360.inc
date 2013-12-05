@@ -72,6 +72,8 @@ LINK_TBB.LIB =
 MALLOC.DEF = $(MALLOC_ROOT)/$(def_prefix)-tbbmalloc-export.def
 MALLOC.DLL = tbbmalloc$(DEBUG_SUFFIX).$(DLL)
 MALLOC.LIB = tbbmalloc$(DEBUG_SUFFIX).$(LIBEXT)
+#On Windows we specify appropriate tbbmalloc library using #pragma comment
+LINK_MALLOC.LIB =
 MALLOC.RES =
 
 MAKE_VERSIONS = cmd /C cscript /nologo /E:jscript $(subst \,/,$(tbb_root))/build/version_info_windows.js $(compiler) $(arch) $(subst \,/,"$(CPLUS) $(CPLUS_FLAGS) $(INCLUDES)") > version_string.ver

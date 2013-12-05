@@ -48,7 +48,7 @@ typedef signed char depth_t;
 //! Class for getting access to drawing memory
 class drawing_memory
 {
-#ifdef __TBB_MIC
+#ifdef __TBB_MIC_OFFLOAD
     // The address is kept as uintptr_t since
     // the compiler could not offload a pointer
 #endif

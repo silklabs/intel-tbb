@@ -239,6 +239,8 @@ template<> struct atomic_selector<8> {
         #include "machine/linux_ia64.h"
     #elif __powerpc__
         #include "machine/mac_ppc.h"
+    #elif __arm__
+        #include "machine/gcc_armv7.h"
     #elif __TBB_GCC_BUILTIN_ATOMICS_PRESENT
         #include "machine/gcc_generic.h"
     #endif
@@ -396,9 +398,11 @@ void spin_wait_until_eq( const volatile T& location, const U value ) {
     while( location!=value ) backoff.pause();
 }
 
-//TODO: add static_assert for the requirements stated below
-//TODO: check if it works with signed types
+#if (__TBB_USE_GENERIC_PART_WORD_CAS && ( __TBB_BIG_ENDIAN==-1))
+    #error generic implementation of part-word CAS was explicitly disabled for this configuration
+#endif
 
+#if (__TBB_BIG_ENDIAN!=-1)
 // there are following restrictions/limitations for this operation:
 //  - T should be unsigned, otherwise sign propagation will break correctness of bit manipulations.
 //  - T should be integer type of at most 4 bytes, for the casts and calculations to work.
@@ -407,10 +411,9 @@ void spin_wait_until_eq( const volatile T& location, const U value ) {
 //  - The operation assumes that the architecture consistently uses either little-endian or big-endian:
 //      it does not support mixed-endian or page-specific bi-endian architectures.
 // This function is the only use of __TBB_BIG_ENDIAN.
-#if (__TBB_BIG_ENDIAN!=-1)
-    #if ( __TBB_USE_GENERIC_PART_WORD_CAS)
-        #error generic implementation of part-word CAS was explicitly disabled for this configuration
-    #endif
+//
+//TODO: add static_assert for the requirements stated above
+//TODO: check if it works with signed types
 template<typename T>
 inline T __TBB_MaskedCompareAndSwap (volatile T * const ptr, const T value, const T comparand ) {
     struct endianness{ static bool is_big_endian(){
@@ -448,7 +451,7 @@ inline T __TBB_MaskedCompareAndSwap (volatile T * const ptr, const T value, cons
         else continue;                                     // CAS failed but the bits of interest left unchanged
     }
 }
-#endif
+#endif //__TBB_BIG_ENDIAN!=-1
 template<size_t S, typename T>
 inline T __TBB_CompareAndSwapGeneric (volatile void *ptr, T value, T comparand );
 
@@ -856,6 +859,16 @@ inline void __TBB_AtomicAND( volatile void *operand, uintptr_t addend ) {
         b.pause();
     }
 }
+#endif
+
+#if __TBB_PREFETCHING
+#ifndef __TBB_cl_prefetch
+#error This platform does not define cache management primitives required for __TBB_PREFETCHING
+#endif
+
+#ifndef __TBB_cl_evict
+#define __TBB_cl_evict(p)
+#endif
 #endif
 
 #ifndef __TBB_Flag

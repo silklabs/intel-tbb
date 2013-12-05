@@ -91,8 +91,11 @@ scheduler::~scheduler( ) {}
 generic_scheduler::generic_scheduler( arena* a, size_t index )
     : my_stealing_threshold(0)
     , my_market(NULL)
-    , my_random( unsigned(this-(generic_scheduler*)NULL) )
+    , my_random( this )
     , my_free_list(NULL)
+#if __TBB_HOARD_NONLOCAL_TASKS
+    , my_nonlocal_free_list(NULL)
+#endif
     , my_dummy_task(NULL)
     , my_ref_count(1)
     , my_auto_initialized(false)
@@ -130,7 +133,7 @@ generic_scheduler::generic_scheduler( arena* a, size_t index )
     my_last_local_observer = NULL;
 #endif /* __TBB_SCHEDULER_OBSERVER */
 
-    hint_for_push = index ^ unsigned(this-(generic_scheduler*)NULL)>>16; // randomizer seed
+    hint_for_push = index ^ my_random.get(); // randomizer seed
     my_dummy_task = &allocate_task( sizeof(task), __TBB_CONTEXT_ARG(NULL, NULL) );
 #if __TBB_TASK_GROUP_CONTEXT
     my_context_list_head.my_prev = &my_context_list_head;
@@ -296,6 +299,14 @@ void generic_scheduler::free_scheduler() {
 #endif /* __TBB_TASK_GROUP_CONTEXT */
     free_task<small_local_task>( *my_dummy_task );
 
+#if __TBB_HOARD_NONLOCAL_TASKS
+    while( task* t = my_nonlocal_free_list ) {
+        task_prefix& p = t->prefix();
+        my_nonlocal_free_list = p.next;
+        __TBB_ASSERT( p.origin && p.origin!=this, NULL );
+        free_nonlocal_small_task(*t);
+    }
+#endif
     // k accounts for a guard reference and each task that we deallocate.
     intptr_t k = 1;
     for(;;) {
@@ -321,9 +332,16 @@ void generic_scheduler::free_scheduler() {
 task& generic_scheduler::allocate_task( size_t number_of_bytes,
                                             __TBB_CONTEXT_ARG(task* parent, task_group_context* context) ) {
     GATHER_STATISTIC(++my_counters.active_tasks);
-    task* t = my_free_list;
+    task *t;
     if( number_of_bytes<=quick_task_size ) {
-        if( t ) {
+#if __TBB_HOARD_NONLOCAL_TASKS
+        if( (t = my_nonlocal_free_list) ) {
+            GATHER_STATISTIC(--my_counters.free_list_length);
+            __TBB_ASSERT( t->state()==task::freed, "free list of tasks is corrupted" );
+            my_nonlocal_free_list = t->prefix().next;
+        } else
+#endif
+        if( (t = my_free_list) ) {
             GATHER_STATISTIC(--my_counters.free_list_length);
             __TBB_ASSERT( t->state()==task::freed, "free list of tasks is corrupted" );
             my_free_list = t->prefix().next;
@@ -340,8 +358,25 @@ task& generic_scheduler::allocate_task( size_t number_of_bytes,
             ++my_task_node_count;
 #endif /* __TBB_COUNT_TASK_NODES */
             t->prefix().origin = this;
+            t->prefix().next = 0;
             ++my_small_task_count;
         }
+#if __TBB_PREFETCHING
+        task *t_next = t->prefix().next;
+        if( !t_next ) { // the task was last in the list
+#if __TBB_HOARD_NONLOCAL_TASKS
+            if( my_free_list )
+                t_next = my_free_list;
+            else
+#endif
+            if( my_return_list ) // enable prefetching, gives speedup
+                t_next = my_free_list = (task*)__TBB_FetchAndStoreW( &my_return_list, 0 );
+        }
+        if( t_next ) { // gives speedup for both cache lines
+            __TBB_cl_prefetch(t_next);
+            __TBB_cl_prefetch(&t_next->prefix());
+        }
+#endif /* __TBB_PREFETCHING */
     } else {
         GATHER_STATISTIC(++my_counters.big_tasks);
         t = (task*)((char*)NFS_Allocate( task_prefix_reservation_size+number_of_bytes, 1, NULL ) + task_prefix_reservation_size );
@@ -380,7 +415,10 @@ void generic_scheduler::free_nonlocal_small_task( task& t ) {
         t.prefix().next = old;
         ITT_NOTIFY( sync_releasing, &s.my_return_list );
         if( __TBB_CompareAndSwapW( &s.my_return_list, (intptr_t)&t, (intptr_t)old )==(intptr_t)old ) {
-            GATHER_STATISTIC(++my_counters.free_list_length);
+#if __TBB_PREFETCHING
+            __TBB_cl_evict(&t.prefix());
+            __TBB_cl_evict(&t);
+#endif
             return;
         }
     }
@@ -954,6 +992,10 @@ retry:
 
     unlock_task_pool( &victim_slot, victim_pool );
     __TBB_ASSERT( skip_and_bump <= 2, NULL );
+#if __TBB_PREFETCHING
+    __TBB_cl_evict(&victim_slot.head);
+    __TBB_cl_evict(&victim_slot.tail);
+#endif
     if( --skip_and_bump > 0 ) { // if both: task skipped and head&tail bumped
         // Synchronize with snapshot as we bumped head and tail which can falsely trigger EMPTY state
         atomic_fence();

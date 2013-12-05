@@ -39,6 +39,7 @@ scalable_aligned_free;
 safer_scalable_free;
 safer_scalable_realloc;
 scalable_msize;
+scalable_allocation_mode;
 safer_scalable_msize;
 safer_scalable_aligned_realloc;
 /* memory pool stuff */

@@ -110,13 +110,6 @@ else
         endif
     endif
     ifeq ($(tbb_os),macos)
-        # GUI for examples does not support 64-bit platforms
-        ifeq ($(arch),intel64)
-            export UI=con
-        endif
-        ifeq ($(arch),ppc64)
-            export UI=con
-        endif
         export DYLD_LIBRARY_PATH := $(DYLD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
     else
         export LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug

@@ -34,7 +34,8 @@
 #define LIBRARY_ASSERT(x,y) KMP_ASSERT2((x),(y))
 #else
 #include <assert.h>
-#define LIBRARY_ASSERT(x,y) assert(x)
+#define LIBRARY_ASSERT(x,y)         assert(x)
+#define __TBB_DYNAMIC_LOAD_ENABLED  1
 #endif
 #endif /* LIBRARY_ASSERT */
 

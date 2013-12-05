@@ -135,6 +135,7 @@ ifeq ($(VCCOMPAT_FLAG),)
         $(error VC version not detected correctly: $(VCVERSION) )
 endif
 export VCCOMPAT_FLAG
+
 #------------------------------------------------------------------------------
 # End of setting compiler flags.
 #------------------------------------------------------------------------------

@@ -26,9 +26,9 @@
     the GNU General Public License.
 */
 
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
 #pragma offload_attribute (push,target(mic))
-#endif // __TBB_MIC
+#endif // __TBB_MIC_OFFLOAD
 
 #include <cstdio>
 #include <cstdlib>
@@ -279,15 +279,15 @@ unsigned solve(int p) {
     return nSols;
 }
 
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
 #pragma offload_attribute (pop)
-#endif // __TBB_MIC
+#endif // __TBB_MIC_OFFLOAD
 
 int do_get_default_num_threads() {
     int threads;
-    #if __TBB_MIC
+    #if __TBB_MIC_OFFLOAD
     #pragma offload target(mic) out(threads)
-    #endif // __TBB_MIC
+    #endif // __TBB_MIC_OFFLOAD
     threads = tbb::task_scheduler_init::default_num_threads();
     return threads;
 }
@@ -323,14 +323,14 @@ int main(int argc, char *argv[]) {
         // otherwise (if file name not specified), the default statically initialized board will be used.
         for(int p = threads.first; p <= threads.last; p = threads.step(p) ) {
             unsigned number;
-            #if __TBB_MIC
+            #if __TBB_MIC_OFFLOAD
             #pragma offload target(mic) in(init_values, p, verbose, find_one) out(number, solve_time)
             {
-            #endif // __TBB_MIC
+            #endif // __TBB_MIC_OFFLOAD
             number = solve(p);
-            #if __TBB_MIC
+            #if __TBB_MIC_OFFLOAD
             }
-            #endif // __TBB_MIC
+            #endif // __TBB_MIC_OFFLOAD
 
             if ( !silent ) {
                 if ( find_one ) {

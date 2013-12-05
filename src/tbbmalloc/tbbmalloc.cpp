@@ -51,7 +51,7 @@
 #include <errno.h>
 #endif
 
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 
 extern "C" {
 
@@ -62,7 +62,7 @@ bool __TBB_internal_find_original_malloc(int num, const char *names[], void *tab
 
 }
 
-#endif /* MALLOC_LD_PRELOAD */
+#endif /* MALLOC_UNIXLIKE_OVERLOAD_ENABLED */
 #endif /* MALLOC_CHECK_RECURSION */
 
 namespace rml {
@@ -72,7 +72,7 @@ namespace internal {
 
 void* (*original_malloc_ptr)(size_t) = 0;
 void  (*original_free_ptr)(void*) = 0;
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 static void* (*original_calloc_ptr)(size_t,size_t) = 0;
 static void* (*original_realloc_ptr)(void*,size_t) = 0;
 #endif
@@ -106,7 +106,7 @@ extern "C" void MallocInitializeITT() {
 #endif
 
 void init_tbbmalloc() {
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
     if (malloc_proxy && __TBB_internal_find_original_malloc) {
         const char *alloc_names[] = { "malloc", "free", "realloc", "calloc"};
         void *orig_alloc_ptrs[4];
@@ -125,7 +125,7 @@ void init_tbbmalloc() {
             original_malloc_found = 1;
         }
     }
-#endif /* MALLOC_LD_PRELOAD */
+#endif /* MALLOC_UNIXLIKE_OVERLOAD_ENABLED */
 
 #if DO_ITT_NOTIFY
     MallocInitializeITT();
@@ -180,7 +180,7 @@ static RegisterProcessShutdownNotification reg;
 
 bool  original_malloc_found;
 
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 
 extern "C" {
 
@@ -211,7 +211,7 @@ void __TBB_internal_free(void *object)
 
 } /* extern "C" */
 
-#endif /* MALLOC_LD_PRELOAD */
+#endif /* MALLOC_UNIXLIKE_OVERLOAD_ENABLED */
 
 #endif /* MALLOC_CHECK_RECURSION */
 

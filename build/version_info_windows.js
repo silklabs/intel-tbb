@@ -47,7 +47,7 @@ WScript.echo( "#N \": BUILD_OS\\t\\t" +
               "\" ENDL \\" );
 
 if ( WScript.Arguments(0).toLowerCase().match("gcc") ) {
-    tmpExec = WshShell.Exec("gcc --version");
+    tmpExec = WshShell.Exec(WScript.Arguments(0) + " --version");
     WScript.echo( "#N \": BUILD_COMPILER\\t" + 
                   tmpExec.StdOut.ReadLine() + 
                   "\" ENDL \\" );

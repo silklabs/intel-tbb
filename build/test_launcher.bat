@@ -27,13 +27,25 @@ REM invalidate any other reasons why the executable file might be covered by
 REM the GNU General Public License.
 REM
 
-REM no LD_PRELOAD under Windows
-if "%1"=="-l" (
-    if exist "%2" (
-        REM but run the test to check "#pragma comment" construction
-        %3
+set cmd_line=
+:while
+if NOT "%1"=="" (
+    REM no LD_PRELOAD under Windows
+    REM but run the test to check "#pragma comment" construction
+    if "%1"=="-l" (
+        REM The command line may specify -l with empty dll name,
+        REM e.g. "test_launcher.bat -l  app.exe". If the dll name is
+        REM empty then %2 contains the application name and the SHIFT
+        REM operation is not necessary.
+        if exist "%3" SHIFT
+        GOTO continue
     )
-    exit
+    REM no need to setup up stack size under Windows
+    if "%1"=="-u" GOTO continue
+    set cmd_line=%cmd_line% %1
+:continue
+    SHIFT
+    GOTO while
 )
 
-%*
+%cmd_line%

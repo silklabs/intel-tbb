@@ -102,12 +102,12 @@ int main(int argc, char *argv[] ) {
         ASSERT( tbb::TBB_runtime_interface_version()==TBB_INTERFACE_VERSION, psBuffer );
     }
 #endif
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
     // Skip the test in offload mode.
     // Run the test in 'true' native mode (because 'system()' works in 'true' native mode).
     (argc, argv);
     REPORT("skip\n");
-#else //__TBB_MIC
+#else //__TBB_MIC_OFFLOAD
 #if __TBB_MPI_INTEROP
     REPORT("skip\n");
 #else
@@ -237,7 +237,7 @@ int main(int argc, char *argv[] ) {
     }
     REPORT("done\n");
 #endif //__TBB_MPI_INTEROP
-#endif //__TBB_MIC
+#endif //__TBB_MIC_OFFLOAD
     return 0;
 }
 
@@ -246,7 +246,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.1", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6102", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6103", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));

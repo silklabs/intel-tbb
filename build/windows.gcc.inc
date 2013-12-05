@@ -48,6 +48,8 @@ MALLOC.DEF = $(MALLOC_ROOT)/$(def_prefix)-gcc-tbbmalloc-export.def
 RML.DEF = $(RML_SERVER_ROOT)/lin-rml-export.def
 
 LINK_TBB.LIB = $(TBB.LIB)
+# no TBB proxy for the configuration
+PROXY.LIB =
 
 #------------------------------------------------------------------------------
 # End of overridden settings

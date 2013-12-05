@@ -77,6 +77,9 @@ namespace tbb {
 template<typename T, class A = cache_aligned_allocator<T> >
 class concurrent_vector;
 
+template<typename Container, typename Value>
+class vector_iterator;
+
 //! @cond INTERNAL
 namespace internal {
 
@@ -139,6 +142,10 @@ namespace internal {
         }
         __TBB_EXPORTED_METHOD ~concurrent_vector_base_v3();
 
+        //these helpers methods use the fact that segments are allocated so
+        //that every segment size is a (increasing) power of 2.
+        //with one exception 0 segment has size of 2 as well segment 1;
+        //e.g. size of segment with index of 3 is 2^3=8;
         static segment_index_t segment_index_of( size_type index ) {
             return segment_index_t( __TBB_Log2( index|1 ) );
         }
@@ -155,6 +162,16 @@ namespace internal {
 
         static size_type segment_size( segment_index_t k ) {
             return segment_index_t(1)<<k; // fake value for k==0
+        }
+
+
+        static bool is_first_element_in_segment(size_type element_index){
+            //check if element_index is a power of 2 that is at least 2.
+            //The idea is to detect if the iterator crosses a segment boundary,
+            //and 2 is the minimal index for which it's true
+            __TBB_ASSERT(element_index, "there should be no need to call "
+                                        "is_first_element_in_segment for 0th element" );
+            return is_power_of_two_factor( element_index, 2 );
         }
 
         //! An operation on an n-element array starting at begin.
@@ -193,6 +210,10 @@ private:
         //! Private functionality
         class helper;
         friend class helper;
+
+        template<typename Container, typename Value>
+        friend class vector_iterator;
+
     };
 
     typedef concurrent_vector_base_v3 concurrent_vector_base;
@@ -282,11 +303,12 @@ public: // workaround for MSVC
 
         //! Pre increment
         vector_iterator& operator++() {
-            size_t k = ++my_index;
+            size_t element_index = ++my_index;
             if( my_item ) {
-                // Following test uses 2's-complement wizardry
-                if( (k& (k-2))==0 ) {
-                    // k is a power of two that is at least k-2
+                //TODO: consider using of knowledge about "first_block optimization" here as well?
+                if( concurrent_vector_base::is_first_element_in_segment(element_index)) {
+                    //if the iterator crosses a segment boundary, the pointer become invalid
+                    //as possibly next segment is in another memory location
                     my_item= NULL;
                 } else {
                     ++my_item;
@@ -298,11 +320,11 @@ public: // workaround for MSVC
         //! Pre decrement
         vector_iterator& operator--() {
             __TBB_ASSERT( my_index>0, "operator--() applied to iterator already at beginning of concurrent_vector" );
-            size_t k = my_index--;
+            size_t element_index = my_index--;
             if( my_item ) {
-                // Following test uses 2's-complement wizardry
-                if( (k& (k-2))==0 ) {
-                    // k is a power of two that is at least k-2  
+                if(concurrent_vector_base::is_first_element_in_segment(element_index)) {
+                    //if the iterator crosses a segment boundary, the pointer become invalid
+                    //as possibly next segment is in another memory location
                     my_item= NULL;
                 } else {
                     --my_item;

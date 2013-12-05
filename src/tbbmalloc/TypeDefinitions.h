@@ -106,13 +106,4 @@ static inline T alignUpGeneric(T arg, uintptr_t alignment) {
     return arg;
 }
 
-static inline bool isPowerOfTwo(uintptr_t arg) {
-    return arg && (0==(arg & (arg-1)));
-}
-static inline bool isPowerOfTwoMultiple(uintptr_t arg, uintptr_t divisor) {
-    // Divisor is assumed to be a power of two (which is valid for current uses).
-    MALLOC_ASSERT( isPowerOfTwo(divisor), "Divisor should be a power of two" );
-    return arg && (0==(arg & (arg-divisor)));
-}
-
 #endif /* _itt_shared_malloc_TypeDefinitions_H_ */

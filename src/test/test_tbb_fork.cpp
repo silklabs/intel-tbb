@@ -126,11 +126,11 @@ int TestMain()
     if (pthread_sigmask(SIG_BLOCK, &sig_set, NULL))
         ASSERT(0, "pthread_sigmask failed");
 #endif
-    {
-        tbb::task_scheduler_init sch;
-    }
     for (int threads = 16; threads<=64; threads+=16) {
         for (int i=0; i<20; i++) {
+            {
+                tbb::task_scheduler_init sch(threads, 0, /*wait_workers=*/true);
+            }
             tbb::task_scheduler_init sch(threads, 0, /*wait_workers=*/true);
 
             tbb::parallel_for(tbb::blocked_range<int>(0, 10000, 1), AllocTask(),
@@ -188,6 +188,7 @@ int TestMain()
 #endif // _WIN32||_WIN64
         }
     }
+#if TBB_USE_EXCEPTIONS
     try {
         {
             tbb::task_scheduler_init schBlock(2, 0, /*wait_workers=*/true);
@@ -195,6 +196,7 @@ int TestMain()
         }
         ASSERT(0, "Nesting of blocking schedulers is impossible.");
     } catch (...) {}
+#endif
 
     return Harness::Done;
 }

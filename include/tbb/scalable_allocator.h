@@ -88,6 +88,16 @@ void __TBB_EXPORTED_FUNC scalable_aligned_free (void* ptr);
     @ingroup memory_allocation */
 size_t __TBB_EXPORTED_FUNC scalable_msize (void* ptr);
 
+/* Setting TBB_MALLOC_USE_HUGE_PAGES environment variable to 1 enables huge pages.
+   scalable_allocation_mode call has priority over environment variable. */
+enum AllocationModeParam {
+    USE_HUGE_PAGES /* value turns using huge pages on and off */
+};
+
+/** Set TBB allocator-specific allocation modes.
+    @ingroup memory_allocation */
+int __TBB_EXPORTED_FUNC scalable_allocation_mode(int param, intptr_t value);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
@@ -112,7 +122,7 @@ struct MemPoolPolicy {
 
 struct MemPoolPolicy {
     enum {
-        VERSION = 1
+        TBBMALLOC_POOL_VERSION = 1
     };
 
     rawAllocType pAlloc;
@@ -130,7 +140,7 @@ struct MemPoolPolicy {
     MemPoolPolicy(rawAllocType pAlloc_, rawFreeType pFree_,
                   size_t granularity_ = 0, bool fixedPool_ = false,
                   bool keepAllMemory_ = false) :
-        pAlloc(pAlloc_), pFree(pFree_), granularity(granularity_), version(VERSION),
+        pAlloc(pAlloc_), pFree(pFree_), granularity(granularity_), version(TBBMALLOC_POOL_VERSION),
         fixedPool(fixedPool_), keepAllMemory(keepAllMemory_),
         reserved(0) {}
 };
@@ -218,12 +228,12 @@ public:
         return (absolutemax > 0 ? absolutemax : 1);
     }
 #if __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
-    template<typename... Args>
-    void construct(pointer p, Args&&... args)
+    template<typename U, typename... Args>
+    void construct(U *p, Args&&... args)
  #if __TBB_CPP11_STD_FORWARD_BROKEN
-        { ::new((void *)p) T((args)...); }
+        { ::new((void *)p) U((args)...); }
  #else
-        { ::new((void *)p) T(std::forward<Args>(args)...); }
+        { ::new((void *)p) U(std::forward<Args>(args)...); }
  #endif
 #else // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
     void construct( pointer p, const value_type& value ) {::new((void*)(p)) value_type(value);}

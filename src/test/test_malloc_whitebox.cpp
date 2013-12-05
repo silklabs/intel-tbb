@@ -645,9 +645,21 @@ void TestBitMask()
     ASSERT(mask.getMinTrue(201) == -1, NULL);
 }
 
+void checkNoHugePages()
+{
+    ASSERT(!hugePages.enabled, "scalable_allocation_mode "
+           "must have priority over environment variable");
+}
+
 int TestMain () {
+    scalable_allocation_mode(USE_HUGE_PAGES, 0);
+#if !_XBOX && !__TBB_WIN8UI_SUPPORT
+    putenv((char*)"TBB_MALLOC_USE_HUGE_PAGES=yes");
+#endif
+    checkNoHugePages();
     // backreference requires that initialization was done
     if(!isMallocInitialized()) doInitialization();
+    checkNoHugePages();
     // to succeed, leak detection must be the 1st memory-intensive test
     TestBackRef();
     TestPools();

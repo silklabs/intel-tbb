@@ -91,12 +91,16 @@ $(TEST_TBB_CPP11:%.$(TEST_EXT)=%.$(OBJ)): %.$(OBJ): %.cpp
 $(TEST_TBB_CPP11): %.$(TEST_EXT): %.$(OBJ) $(TBB.LIB) $(if $(use_proxy),$(LINK_TBB.LIB))
 	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $(CPP11_FLAGS) $< $(LINK_TBB.LIB) $(LIBS) $(AUX_LIBS) $(LINK_FLAGS)
 
-test_tbb_header2.$(OBJ): test_tbb_header.cpp
-	$(CPLUS) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $(DEFINE_KEY)__TBB_TEST_SECONDARY=1 $< $(OUTPUTOBJ_KEY)$@
+# test_tbb_header detects "multiple definition" linker error using the test that covers the whole library
+TWICE_LINKED_TESTS = test_tbb_header.$(TEST_EXT) \
+                     test_concurrent_unordered.$(TEST_EXT)
 
-# Detecting "multiple definition" linker error using the test that covers the whole library
-test_tbb_header.$(TEST_EXT): test_tbb_header.$(OBJ) test_tbb_header2.$(OBJ) $(TBB.LIB)
-	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) test_tbb_header.$(OBJ) test_tbb_header2.$(OBJ) $(LINK_TBB.LIB) $(LIBS) $(LINK_FLAGS)
+%_secondary.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_SECONDARY=1
+%_secondary.$(OBJ): %.cpp
+	$(CPLUS) $(OUTPUTOBJ_KEY)$@ $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $< 
+
+$(TWICE_LINKED_TESTS): %.$(TEST_EXT): %.$(OBJ) %_secondary.$(OBJ) $(TBB.LIB)
+	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $*.$(OBJ) $*_secondary.$(OBJ) $(LINK_TBB.LIB) $(LIBS) $(AUX_LIBS) $(LINK_FLAGS)
 
 # Checks that TBB atomics work correctly in position independent code
 test_atomic_pic.$(TEST_EXT): test_atomic.cpp

@@ -36,7 +36,7 @@ CXX=icc
 endif # which icc
 
 ifeq ($(offload), mic)
-override CXXFLAGS += -D__TBB_MIC=1
+override CXXFLAGS += -D__TBB_MIC_OFFLOAD=1
 endif
 
 ifeq (,$(filter icc icpc,$(CXX)))
@@ -44,8 +44,11 @@ TBBLIB = -ltbb
 TBBLIB_DEBUG = -ltbb_debug
 else
 TBBLIB = -tbb
-TBBLIB_DEBUG = -tbb
 CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
+TBBLIB_DEBUG = -ltbb_debug
+ifeq ($(offload), mic)
+TBBLIB_DEBUG += -offload-option,mic,ld,"-ltbb_debug -L${TBBROOT}/lib/mic/"
+endif
 endif
 
 ifeq ($(shell uname), Linux)

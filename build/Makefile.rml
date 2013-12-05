@@ -49,8 +49,8 @@ include $(tbb_root)/build/common_rules.inc
 RML_SERVER.OBJ = rml_server.$(OBJ)
 
 # Object files that RML clients need
-RML_TBB_CLIENT.OBJ = rml_tbb.$(OBJ) dynamic_link_rml.$(OBJ)
-RML_OMP_CLIENT.OBJ = rml_omp.$(OBJ) omp_dynamic_link.$(OBJ)
+RML_TBB_CLIENT.OBJ ?= rml_tbb.$(OBJ) dynamic_link_rml.$(OBJ)
+RML_OMP_CLIENT.OBJ ?= rml_omp.$(OBJ) omp_dynamic_link.$(OBJ)
 
 RML.OBJ = $(RML_SERVER.OBJ) $(RML_TBB_CLIENT.OBJ) $(RML_OMP_CLIENT.OBJ)
 ifeq (windows,$(tbb_os))
@@ -61,11 +61,12 @@ RML_ASM.OBJ = $(if $(findstring ia64,$(arch)),$(TBB_ASM.OBJ))
 endif
 
 RML_TBB_DEP= cache_aligned_allocator_rml.$(OBJ) dynamic_link_rml.$(OBJ) concurrent_vector_rml.$(OBJ) semaphore_rml.$(OBJ) tbb_misc_rml.$(OBJ) tbb_misc_ex_rml.$(OBJ)
-TBB_DEP_NON_RML_TEST= cache_aligned_allocator_rml.$(OBJ) dynamic_link_rml.$(OBJ) $(RML_ASM.OBJ) tbb_misc_rml.$(OBJ) tbb_misc_ex_rml.$(OBJ)
-TBB_DEP_RML_TEST= $(RML_ASM.OBJ)
+TBB_DEP_NON_RML_TEST?= cache_aligned_allocator_rml.$(OBJ) dynamic_link_rml.$(OBJ) $(RML_ASM.OBJ) tbb_misc_rml.$(OBJ) tbb_misc_ex_rml.$(OBJ)
 ifeq ($(cfg),debug)
 RML_TBB_DEP+= spin_mutex_rml.$(OBJ)
-TBB_DEP_RML_TEST+= tbb_misc_rml.$(OBJ)
+TBB_DEP_RML_TEST?= $(RML_ASM.OBJ) tbb_misc_rml.$(OBJ)
+else
+TBB_DEP_RML_TEST?= $(RML_ASM.OBJ)
 endif
 LIBS += $(LIBDL)
 

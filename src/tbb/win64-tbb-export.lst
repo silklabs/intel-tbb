@@ -76,7 +76,7 @@ __TBB_SYMBOL( ?observe@task_scheduler_observer_v3@internal@tbb@@QEAAX_N@Z )
 /* arena.cpp */
 __TBB_SYMBOL( ?internal_enqueue@task_arena@interface6@tbb@@AEBAXAEAVtask@3@_J@Z )
 __TBB_SYMBOL( ?internal_execute@task_arena@interface6@tbb@@AEBAXAEAVdelegate_base@internal@23@@Z )
-__TBB_SYMBOL( ?internal_initialize@task_arena@interface6@tbb@@AEBAPEAVarena@internal@3@H@Z )
+__TBB_SYMBOL( ?internal_initialize@task_arena@interface6@tbb@@AEAAXXZ )
 __TBB_SYMBOL( ?internal_terminate@task_arena@interface6@tbb@@AEAAXXZ )
 __TBB_SYMBOL( ?internal_wait@task_arena@interface6@tbb@@AEBAXXZ )
 __TBB_SYMBOL( ?current_slot@task_arena@interface6@tbb@@SAHXZ )

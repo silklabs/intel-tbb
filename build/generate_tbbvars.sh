@@ -74,3 +74,8 @@ else #
 endif #
 ${TBB_CUSTOM_VARS_CSH} #
 EOF
+
+# Workaround for copying Android* specific libgnustl_shared.so library to "."
+if [ ! -z "${LIB_GNU_STL_ANDROID}" ]; then
+	cp ${LIB_GNU_STL_ANDROID}/libgnustl_shared.so .
+fi

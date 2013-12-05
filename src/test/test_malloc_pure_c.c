@@ -39,9 +39,27 @@
  *  can be used from pure C programs; also some regression checks are done
  */
 
+#if __linux__
+/* huge pages supported only under Linux so far */
+void CheckReturnCode(int ret) { assert(!ret); }
+#else
+void CheckReturnCode(int ret) { assert( ret); }
+#endif
+
 int main(void) {
     size_t i, j;
+    int curr_mode;
     void *p1, *p2;
+
+    for ( curr_mode = 0; curr_mode<=1; curr_mode++) {
+        CheckReturnCode(scalable_allocation_mode(USE_HUGE_PAGES, !curr_mode));
+        p1 = scalable_malloc(10*1024*1024);
+        assert(p1);
+        CheckReturnCode(scalable_allocation_mode(USE_HUGE_PAGES, curr_mode));
+        scalable_free(p1);
+    }
+    /* note that huge pages (if supported) are still enabled at this point */
+
     for( i=0; i<=1<<16; ++i) {
         p1 = scalable_malloc(i);
         if( !p1 )

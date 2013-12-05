@@ -242,6 +242,7 @@ protected:
                 my_current_count = 0;
         }
         task * res = execute();
+        if(!res) return SUCCESSFULLY_ENQUEUED;
         return res;
     }
 
@@ -652,6 +653,9 @@ public:
             my_has_cached_item = false;
             return true;
         }
+        // we've been asked to provide an item, but we have none.  enqueue a task to
+        // provide one.
+        spawn_put();
         return false;
     }
 

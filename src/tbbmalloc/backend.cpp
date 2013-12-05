@@ -59,13 +59,45 @@ bool freeRawMemory (void *object, size_t size) {
     return UnmapMemory(object, size);
 }
 
-void ExtMemoryPool::reportHugePageStatus(bool available)
+void HugePagesStatus::registerAllocation(bool gotPage)
 {
+    if (gotPage) {
+        if (!wasObserved)
+            FencedStore(wasObserved, 1);
+    } else
+        FencedStore(enabled, 0);
     // reports huge page status only once
-    if (FencedLoad(needHugePageStatus)
-        && AtomicCompareExchange(needHugePageStatus, 0, 1))
-        fprintf(stderr, "TBBmalloc: scalable allocator\t%s\n",
-                available? "use huge pages" : "no huge pages" );
+    if (needActualStatusPrint
+        && AtomicCompareExchange(needActualStatusPrint, 0, 1))
+        doPrintStatus(gotPage, "available");
+}
+
+void HugePagesStatus::registerReleasing(size_t size)
+{
+    // We: 1) got huge page at least once,
+    // 2) something that looks like a huge page is been released,
+    // and 3) user requested huge pages,
+    // so a huge page might be available at next allocation.
+    // TODO: keep page status in regions and use exact check here
+    // Use isPowerOfTwoMultiple because it's faster then generic reminder.
+    if (FencedLoad(wasObserved) && isPowerOfTwoMultiple(size, pageSize))
+        FencedStore(enabled, requestedMode.get());
+}
+
+void HugePagesStatus::printStatus() {
+    doPrintStatus(requestedMode.get(), "requested");
+    if (requestedMode.get()) { // report actual status iff requested
+        if (pageSize)
+            FencedStore(needActualStatusPrint, 1);
+        else
+            doPrintStatus(/*state=*/false, "available");
+    }
+}
+
+void HugePagesStatus::doPrintStatus(bool state, const char *stateName)
+{
+    fprintf(stderr, "TBBmalloc: huge pages\t%s%s\n",
+            state? "" : "not ", stateName);
 }
 
 void *Backend::getRawMem(size_t &size) const
@@ -76,18 +108,15 @@ void *Backend::getRawMem(size_t &size) const
     }
     // try to get them at 1st allocation and still use, if successful
     // if 1st try is unsuccessful, no more trying
-    if (ExtMemoryPool::useHugePages) {
-        size_t hugeSize = alignUpGeneric(size, ExtMemoryPool::hugePageSize);
-        if (void *res = getRawMemory(hugeSize, /*hugePages=*/true)) {
+    if (FencedLoad(hugePages.enabled)) {
+        size_t hugeSize = alignUpGeneric(size, hugePages.getSize());
+        void *res = getRawMemory(hugeSize, /*hugePages=*/true);
+        hugePages.registerAllocation(res);
+        if (res) {
             size = hugeSize;
-            if (!ExtMemoryPool::seenHugePages)
-                ExtMemoryPool::seenHugePages = true;
-            ExtMemoryPool::reportHugePageStatus(/*available=*/true);
             return res;
         }
-        ExtMemoryPool::useHugePages = false;
     }
-    ExtMemoryPool::reportHugePageStatus(/*available=*/false);
     size_t granSize = alignUpGeneric(size, extMemPool->granularity);
     if (void *res = getRawMemory(granSize, /*hugePages=*/false)) {
         size = granSize;
@@ -101,13 +130,7 @@ void Backend::freeRawMem(void *object, size_t size) const
     if (extMemPool->userPool())
         (*extMemPool->rawFree)(extMemPool->poolId, object, size);
     else {
-        // We got huge page at least once and
-        // something that looks like a huge page is releasing,
-        // so a huge page might be available at next allocation.
-        // TODO: keep page status in regions and use exact check here
-        if (ExtMemoryPool::seenHugePages && !(size % ExtMemoryPool::hugePageSize)
-            && !ExtMemoryPool::useHugePages)
-            ExtMemoryPool::useHugePages = true;
+        hugePages.registerReleasing(size);
         freeRawMemory(object, size);
     }
 }
@@ -537,15 +560,6 @@ FreeBlock *Backend::getFromAlignedSpace(int binIdx, int num, size_t size,
 
 void Backend::correctMaxRequestSize(size_t requestSize)
 {
-    // There were huge pages, but they are all consumed;
-    // switch back to maxBinned_SmallPage then.
-    size_t maxBinned = getMaxBinnedSize();
-    for (size_t oldMaxReq = maxRequestedSize; oldMaxReq > maxBinned; ) {
-        oldMaxReq = AtomicCompareExchange((intptr_t&)maxRequestedSize,
-                                           maxBinned, oldMaxReq);
-        maxBinned = getMaxBinnedSize();
-    }
-
     // Find maximal requested size limited by getMaxBinnedSize()
     if (requestSize < getMaxBinnedSize()) {
         for (size_t oldMaxReq = maxRequestedSize;
@@ -561,7 +575,7 @@ void Backend::correctMaxRequestSize(size_t requestSize)
 
 inline size_t Backend::getMaxBinnedSize()
 {
-    return ExtMemoryPool::useHugePages && !inUserPool()?
+    return hugePages.wasObserved && !inUserPool()?
         maxBinned_HugePage : maxBinned_SmallPage;
 }
 
@@ -587,7 +601,7 @@ bool Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
     // So trying to balance between too small regions (that leads to
     // fragmentation) and too large ones (that leads to excessive address
     // space consumption). If region is "quite large", allocate only one,
-    // to prevent fragmentation. It supposely doesn't hurt perfromance,
+    // to prevent fragmentation. It supposedly doesn't hurt performance,
     // because the object requested by user is large.
     const size_t maxBinned = getMaxBinnedSize();
     const size_t regSz_sizeBased = blockSize>=maxBinned?
@@ -602,6 +616,9 @@ bool Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
                 maxBinSize = binSize;
         }
     } else {
+        // if huge pages enabled and blockSize>=maxBinned, rest of space up to
+        // huge page alignment is unusable, because single user object sits
+        // in an region.
         *largeBinsUpdated = true;
         maxBinSize = addNewRegion(regSz_sizeBased, /*exact=*/true);
     }

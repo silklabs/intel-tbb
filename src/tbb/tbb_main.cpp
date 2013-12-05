@@ -85,6 +85,7 @@ bool __TBB_InitOnce::InitializationDone;
 //! Pointer to the scheduler factory function
 generic_scheduler* (*AllocateSchedulerPtr)( arena*, size_t index );
 
+#if __TBB_OLD_PRIMES_RNG
 //! Table of primes used by fast random-number generator (FastRandom).
 /** Also serves to keep anything else from being placed in the same
     cache line as the global data items preceding it. */
@@ -118,6 +119,7 @@ static const unsigned Primes[] = {
 unsigned GetPrime ( unsigned seed ) {
     return Primes[seed%(sizeof(Primes)/sizeof(Primes[0]))];
 }
+#endif //__TBB_OLD_PRIMES_RNG
 
 //------------------------------------------------------------------------
 // __TBB_InitOnce

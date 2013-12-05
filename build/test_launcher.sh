@@ -26,17 +26,35 @@
 # invalidate any other reasons why the executable file might be covered by
 # the GNU General Public License.
 
-while getopts  "l:" flag #
-do #
-    if [ `uname` != 'Linux' ] ; then #
-        echo 'skip' #
-        exit #
+while getopts  "ul:" flag #
+do case $flag in #
+    l )  if [ `uname` != 'Linux' ] ; then #
+             echo 'skip' #
+             exit #
+         fi #
+         LD_PRELOAD=$OPTARG ;; #
+    u )  # Set stack limit
+         ulimit -s 10240 ;; # 
+esac done #
+shift `expr $OPTIND - 1` #
+if [ $OFFLOAD_EXECUTION ] ; then #
+    if [ -z $MIC_CARD ] ; then #
+        MIC_CARD=mic0 #
     fi #
-    LD_PRELOAD=$OPTARG #
-    shift `expr $OPTIND - 1` #
-done #
-# Set stack limit
-ulimit -s 10240 # 
+    TMPDIR_HOST=$(mktemp -d /tmp/libtbbmallocXXXXXX) #
+    TMPDIR_MIC=$(sudo ssh $MIC_CARD mktemp -d /tmp/libtbbmallocXXXXXX) #
+    sudo ssh $MIC_CARD "chmod +x $TMPDIR_MIC" #
+    cp "./mic/libtbbmalloc"* "$TMPDIR_HOST" >/dev/null 2>/dev/null #
+    sudo scp "$TMPDIR_HOST"/* $MIC_CARD:"$TMPDIR_MIC" >/dev/null 2>/dev/null #
+    LD_LIBRARY_PATH=$TMPDIR_MIC:$LD_LIBRARY_PATH #
+    export LD_LIBRARY_PATH #
+fi #
 # Run the command line passed via parameters
 export LD_PRELOAD #
-./$* # 
+./$* #
+exitcode=$? #
+if [ $OFFLOAD_EXECUTION ] ; then #
+    sudo ssh $MIC_CARD rm -fr "$TMPDIR_MIC" >/dev/null 2>/dev/null #
+    rm -fr "$TMPDIR_HOST" >/dev/null 2>/dev/null #
+fi #
+exit ${exitcode} #

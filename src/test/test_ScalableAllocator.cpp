@@ -85,6 +85,8 @@ public:
     }
 };
 
+#if TBB_USE_EXCEPTIONS
+
 class NullAllocator {
 public:
     typedef char value_type;
@@ -106,6 +108,24 @@ void TestZeroSpaceMemoryPool()
     }
 }
 
+#else // TBB_USE_EXCEPTIONS
+
+void TestZeroSpaceMemoryPool() { }
+
+struct FixedPool {
+    void  *buf;
+    size_t size;
+    FixedPool(void *buf, size_t size) : buf(buf), size(size) {}
+};
+
+static void *fixedBufGetMem(intptr_t pool_id, size_t &bytes)
+{
+    bytes = ((FixedPool*)pool_id)->size;
+    return ((FixedPool*)pool_id)->buf;
+}
+
+#endif // TBB_USE_EXCEPTIONS
+
 /* test that pools in small space are either usable or not created
    (i.e., exception raised) */
 void TestSmallFixedSizePool()
@@ -115,17 +135,43 @@ void TestSmallFixedSizePool()
 
     for (size_t sz = 0; sz < 64*1024; sz = sz? 3*sz : 3) {
         buf = (char*)malloc(sz);
+#if TBB_USE_EXCEPTIONS
         try {
             tbb::fixed_pool pool(buf, sz);
+/* Check that pool is usable, i.e. such an allocation exists,
+   that can be fulfilled from the pool. 16B allocation fits in 16KB slabs,
+   so it requires at least 16KB. Requirement of 9KB allocation is more modest.
+*/
             allocated = pool.malloc( 16 ) || pool.malloc( 9*1024 );
-            ASSERT(allocated, NULL);
+            ASSERT(allocated, "If pool created, it must be useful.");
         } catch (std::bad_alloc) {
         } catch (...) {
             ASSERT(0, "wrong exception type; expected bad_alloc");
         }
+#else
+/* Do not test high-level pool interface because pool ctor emit exception
+   on creation failure. Instead test same functionality via low-level interface.
+   TODO: add support for configuration with disabled exceptions to pools.
+*/
+        rml::MemPoolPolicy pol(fixedBufGetMem, NULL, 0, /*fixedSizePool=*/true,
+                               /*keepMemTillDestroy=*/false);
+        rml::MemoryPool *pool;
+        FixedPool fixedPool(buf, sz);
+
+        rml::MemPoolError ret = pool_create_v1((intptr_t)&fixedPool, &pol, &pool);
+
+        if (ret == rml::POOL_OK) {
+            allocated = pool_malloc(pool, 16) || pool_malloc(pool, 9*1024);
+            ASSERT(allocated, "If pool created, it must be useful.");
+            pool_destroy(pool);
+        } else
+            ASSERT(ret == rml::NO_MEMORY, "Expected that pool either valid "
+                                     "or have no memory to be created");
+#endif
         free(buf);
     }
     ASSERT(allocated, "Maximal buf size should be enough to create working fixed_pool");
+#if TBB_USE_EXCEPTIONS
     try {
         tbb::fixed_pool pool(NULL, 10*1024*1024);
         ASSERT(0, "Useless allocator with no memory must not be created");
@@ -133,6 +179,7 @@ void TestSmallFixedSizePool()
     } catch (...) {
         ASSERT(0, "wrong exception type; expected bad_alloc");
     }
+#endif
 }
 
 int TestMain () {

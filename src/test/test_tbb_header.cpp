@@ -33,10 +33,16 @@
     Most of the checks happen at the compilation or link phases.
 **/
 
-#include "tbb/tbb.h"
 #if _MSC_VER
 #pragma warning (disable : 4503)      // decorated name length exceeded, name was truncated
+#if !TBB_USE_EXCEPTIONS
+    // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers
+    #pragma warning (push)
+    #pragma warning (disable: 4530)
 #endif
+#endif
+
+#include "tbb/tbb.h"
 #include "tbb/flow_graph.h"
 
 static volatile size_t g_sink;
@@ -83,6 +89,12 @@ struct Body3 {
 // Test if all the necessary symbols are exported for the exceptions thrown by TBB.
 // Missing exports result either in link error or in runtime assertion failure.
 #include "tbb/tbb_exception.h"
+#include <stdexcept>
+
+#if !TBB_USE_EXCEPTIONS && _MSC_VER
+    #pragma warning (pop)
+#endif
+
 
 template <typename E>
 void TestExceptionClassExports ( const E& exc, tbb::internal::exception_id eid ) {
@@ -105,9 +117,9 @@ void TestExceptionClassExports ( const E& exc, tbb::internal::exception_id eid )
             ASSERT ( __TBB_EXCEPTION_TYPE_INFO_BROKEN, "Unrecognized exception. Likely RTTI related exports are missing" );
         }
     }
-#else /* !TBB_USE_EXCEPTIONS */
+#else /* TBB_USE_EXCEPTIONS */
     (void)exc;
-#endif /* !TBB_USE_EXCEPTIONS */
+#endif /* TBB_USE_EXCEPTIONS */
 }
 
 void TestExceptionClassesExports () {

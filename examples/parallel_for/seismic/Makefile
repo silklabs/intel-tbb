@@ -36,7 +36,7 @@ CXX=icc
 endif # icc
 
 ifeq ($(offload), mic)
-override CXXFLAGS += -D__TBB_MIC=1
+override CXXFLAGS += -D__TBB_MIC_OFFLOAD=1
 # Currently only console mode is supported in offload version
 override UI=con
 SOURCES = $(UI)video.o universe.cpp seismic_video.cpp main.cpp
@@ -51,7 +51,10 @@ TBBLIB = -ltbb
 TBBLIB_DEBUG = -ltbb_debug
 else
 TBBLIB = -tbb
-TBBLIB_DEBUG = -tbb
+TBBLIB_DEBUG = -ltbb_debug
+ifeq ($(offload), mic)
+TBBLIB_DEBUG += -offload-option,mic,ld,"-ltbb_debug -L${TBBROOT}/lib/mic/"
+endif
 endif
 
 include ../../common/gui/Makefile.gmake

@@ -43,6 +43,7 @@ __TBB_internal_malloc;
 __TBB_internal_realloc;
 __TBB_internal_posix_memalign;
 scalable_msize;
+scalable_allocation_mode;
 
 /* memory pool stuff */
 _ZN3rml10pool_resetEPNS_10MemoryPoolE;

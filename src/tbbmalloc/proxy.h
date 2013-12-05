@@ -30,11 +30,11 @@
 #define _TBB_malloc_proxy_H_
 
 #if __linux__
-#define MALLOC_LD_PRELOAD 1
+#define MALLOC_UNIXLIKE_OVERLOAD_ENABLED 1
 #endif
 
-// MALLOC_LD_PRELOAD depends on MALLOC_CHECK_RECURSION stuff
-#if __linux__ || __APPLE__ || __sun || __FreeBSD__ || MALLOC_LD_PRELOAD
+// MALLOC_UNIXLIKE_OVERLOAD_ENABLED depends on MALLOC_CHECK_RECURSION stuff
+#if __linux__ || __APPLE__ || __sun || __FreeBSD__ || MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 #define MALLOC_CHECK_RECURSION 1
 #endif
 

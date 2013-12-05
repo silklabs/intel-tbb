@@ -26,8 +26,13 @@
     the GNU General Public License.
 */
 
-#include "thread_monitor.h"
 #include "harness.h"
+#if __TBB_MIC_OFFLOAD
+int TestMain () {
+    return Harness::Skipped;
+}
+#else
+#include "thread_monitor.h"
 #include "harness_memory.h"
 #include "tbb/semaphore.cpp"
 
@@ -117,3 +122,4 @@ int TestMain () {
 
     return Harness::Done;
 }
+#endif /* __TBB_MIC_OFFLOAD */

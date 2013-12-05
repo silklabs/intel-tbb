@@ -76,19 +76,32 @@ static Foo f;
 
 #else // _USRDLL
 #include "harness.h"
+#include "../tbbmalloc/proxy.h"
 
-#if _WIN32||_WIN64
-extern __declspec(dllimport)
-#endif
-bool isMallocOverloaded();
+#if _WIN32||_WIN64 || MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 
-int TestMain () {
-#ifdef _PGO_INSTRUMENT
-    REPORT("Known issue: test_malloc_atexit hangs if compiled with -prof-genx\n");
-    return Harness::Skipped;
+    #if _WIN32||_WIN64
+    extern __declspec(dllimport)
+    #endif
+    bool isMallocOverloaded();
+
+    int TestMain () {
+    #ifdef _PGO_INSTRUMENT
+        REPORT("Known issue: test_malloc_atexit hangs if compiled with -prof-genx\n");
+        return Harness::Skipped;
+    #elif __TBB_MIC_OFFLOAD
+        REPORT("Known issue: libmalloc_proxy.so is loaded too late in the offload mode on the target when linked via -lmalloc_proxy\n");
+        return Harness::Skipped;
+    #else
+        ASSERT( isMallocOverloaded(), "malloc was not replaced" );
+        return Harness::Done;
+    #endif
+    }
+
 #else
-    return isMallocOverloaded()? Harness::Done : Harness::Skipped;
+    int TestMain () {
+        return Harness::Skipped;
+    }
 #endif
-}
 
 #endif // _USRDLL

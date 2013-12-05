@@ -36,6 +36,7 @@
 #include "tbb_misc.h"
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 
 #if _WIN32||_WIN64
 #include "tbb/machine/windows_api.h"

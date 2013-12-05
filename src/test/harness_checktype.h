@@ -26,17 +26,27 @@
     the GNU General Public License.
 */
 
+#ifndef tbb_tests_harness_checktype_H
+#define tbb_tests_harness_checktype_H
+
 // type that checks construction and destruction.
 
-static tbb::atomic<int> check_type_counter;
+#ifndef __HARNESS_CHECKTYPE_DEFAULT_CTOR
+    #define __HARNESS_CHECKTYPE_DEFAULT_CTOR 1
+#endif
 
 template<class Counter>
 class check_type : Harness::NoAfterlife {
     Counter id;
     bool am_ready;
 public:
-
-    check_type(int _n = 0) : id(_n), am_ready(false) {
+    static tbb::atomic<int> check_type_counter;
+    // if only non-default constructors are desired, set __HARNESS_CHECKTYPE_NODEFAULT_CTOR
+    check_type(Counter _n
+#if __HARNESS_CHECKTYPE_DEFAULT_CTOR
+            = 0
+#endif
+            ) : id(_n), am_ready(false) {
         ++check_type_counter;
     }
 
@@ -64,28 +74,33 @@ public:
         return *this;
     }
 
-    unsigned int my_id() const { AssertLive(); return id; }
+    Counter my_id() const { AssertLive(); return id; }
     bool is_ready() { AssertLive(); return am_ready; }
     void function() {
         AssertLive();
-        if( id == 0 ) {
-            id = 1;
+        if( id == (Counter)0 ) {
+            id = (Counter)1;
             am_ready = true;
         }
     }
 
 };
 
-// provide a default check method that just returns true.
+template<class Counter>
+tbb::atomic<int> check_type<Counter>::check_type_counter;
+
+// provide a class that for a check_type will initialize the counter on creation, and on
+// destruction will check that the constructions and destructions of check_type match.
 template<class MyClass>
 struct Check {
-    static bool check_destructions() {return true; }
+    Check() {}   // creation does nothing
+    ~Check() {}  // destruction checks nothing
 };
 
 template<class Counttype>
-class Check<check_type< Counttype > > {
-    static bool check_destructions () { 
-            return check_type_counter == 0;
-        }
+struct Check<check_type< Counttype > > {
+    Check() { check_type<Counttype>::check_type_counter = 0; }
+    ~Check() { ASSERT(check_type<Counttype>::check_type_counter == 0, "check_type constructions and destructions don't match"); }
 };
 
+#endif  // tbb_tests_harness_checktype_H

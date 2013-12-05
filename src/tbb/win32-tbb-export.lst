@@ -78,7 +78,7 @@ __TBB_SYMBOL( ?observe@task_scheduler_observer_v3@internal@tbb@@QAEX_N@Z )
 
 #if __TBB_TASK_ARENA
 /* arena.cpp */
-__TBB_SYMBOL( ?internal_initialize@task_arena@interface6@tbb@@ABEPAVarena@internal@3@H@Z )
+__TBB_SYMBOL( ?internal_initialize@task_arena@interface6@tbb@@AAEXXZ )
 __TBB_SYMBOL( ?internal_enqueue@task_arena@interface6@tbb@@ABEXAAVtask@3@H@Z )
 __TBB_SYMBOL( ?internal_execute@task_arena@interface6@tbb@@ABEXAAVdelegate_base@internal@23@@Z )
 __TBB_SYMBOL( ?internal_terminate@task_arena@interface6@tbb@@AAEXXZ )

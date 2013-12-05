@@ -75,7 +75,7 @@ __TBB_SYMBOL( _ZTVN3tbb10empty_taskE )
 __TBB_SYMBOL( _ZN3tbb10interface610task_arena18internal_terminateEv )
 __TBB_SYMBOL( _ZNK3tbb10interface610task_arena16internal_enqueueERNS_4taskEl )
 __TBB_SYMBOL( _ZNK3tbb10interface610task_arena16internal_executeERNS0_8internal13delegate_baseE )
-__TBB_SYMBOL( _ZNK3tbb10interface610task_arena19internal_initializeEi )
+__TBB_SYMBOL( _ZN3tbb10interface610task_arena19internal_initializeEv )
 __TBB_SYMBOL( _ZN3tbb10interface610task_arena12current_slotEv )
 __TBB_SYMBOL( _ZNK3tbb10interface610task_arena13internal_waitEv )
 #endif /* __TBB_TASK_ARENA */

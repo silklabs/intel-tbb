@@ -84,7 +84,7 @@ class task_stream : no_copy{
     padded<lane_t>* lanes;
 
 public:
-    task_stream() : N(), population(), random(unsigned(&N-(unsigned*)NULL)), lanes()
+    task_stream() : N(), population(), random(&N), lanes()
     {
     }
 

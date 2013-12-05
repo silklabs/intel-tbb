@@ -55,6 +55,7 @@
 #endif /* !__INTEL_COMPILER */
 
 // Most of the functions will be in a .s file
+// TODO: revise dynamic_link, memory pools and etc. if the library dependency is removed.
 
 extern "C" {
     int8_t __TBB_machine_fetchadd1__TBB_full_fence (volatile void *ptr, int8_t addend);

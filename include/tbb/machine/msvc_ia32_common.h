@@ -167,8 +167,14 @@ struct __TBB_cpu_ctl_env_t {
     }
 #endif
 
+
+#if !__TBB_WIN8UI_SUPPORT
 extern "C" __declspec(dllimport) int __stdcall SwitchToThread( void );
 #define __TBB_Yield()  SwitchToThread()
+#else
+#include<thread>
+#define __TBB_Yield()  std::this_thread::yield()
+#endif
 
 #define __TBB_Pause(V) __TBB_machine_pause(V)
 #define __TBB_Log2(V)  __TBB_machine_lg(V)

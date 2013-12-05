@@ -26,6 +26,13 @@
     the GNU General Public License.
 */
 
+#include <tbb/tbb_config.h>
+#if __TBB_WIN8UI_SUPPORT || __TBB_MIC_OFFLOAD
+#include "harness.h"
+int TestMain () {
+    return Harness::Skipped;
+}
+#else
 #include "rml_omp.h"
 
 typedef __kmp::rml::omp_server MyServer;
@@ -134,7 +141,7 @@ void FireUpJobs( MyServer& server, MyClient& client, int max_thread, int n_extra
         server.independent_thread_number_changed( n_extra );
         if( checker ) {
             // Give RML time to respond to change in number of threads.
-            MilliSleep(1);
+            Harness::Sleep(1);
         }
         int n_delivered = server.try_increase_load( n_thread, StrictTeam );
         ASSERT( !StrictTeam || n_delivered==int(n_thread), "server failed to satisfy strict request" );
@@ -194,3 +201,4 @@ int TestMain () {
 
     return Harness::Done;
 }
+#endif /* __TBB_WIN8UI_SUPPORT || __TBB_MIC_OFFLOAD */

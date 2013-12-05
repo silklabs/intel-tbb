@@ -129,6 +129,7 @@ MALLOCPROXY_NO_VERSION.DLL = libtbbmalloc_proxy$(DEBUG_SUFFIX).$(DLL)
 MALLOCPROXY.DEF = $(MALLOC_ROOT)/$(def_prefix)-proxy-export.def
 MALLOCPROXY.DLL = $(MALLOCPROXY_NO_VERSION.DLL).$(SONAME_SUFFIX)
 MALLOCPROXY.LIB = $(MALLOCPROXY_NO_VERSION.DLL)
+LINK_MALLOCPROXY.LIB = $(MALLOCPROXY.LIB)
 
 RML_NO_VERSION.DLL = libirml$(DEBUG_SUFFIX).$(DLL)
 RML.DEF = $(RML_SERVER_ROOT)/lin-rml-export.def
@@ -137,4 +138,4 @@ RML.LIB = $(RML_NO_VERSION.DLL)
 
 TBB_NOSTRICT=1
 
-TEST_LAUNCHER=sh $(tbb_root)/build/test_launcher.sh
+TEST_LAUNCHER=sh $(tbb_root)/build/test_launcher.sh $(largs)

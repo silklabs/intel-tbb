@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 1
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6102
+#define TBB_INTERFACE_VERSION 6103
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -347,18 +347,43 @@ struct allocator_type<const T> {
 };
 #endif
 
-//! A function to select either 32-bit or 64-bit value, depending on machine word size.
-inline size_t size_t_select( unsigned u, unsigned long long ull ) {
-    /* Explicit cast of the arguments to size_t is done to avoid compiler warnings
-       (e.g. by Clang and MSVC) about possible truncation. The value of the right size,
-       which is selected by ?:, is anyway not truncated or promoted.
-       MSVC still warns if this trick is applied directly to constants, hence this function. */
-    return (sizeof(size_t)==sizeof(u)) ? size_t(u) : size_t(ull);
+//! A template to select either 32-bit or 64-bit constant as compile time, depending on machine word size.
+template <unsigned u, unsigned long long ull >
+struct select_size_t_constant {
+    //Explicit cast is needed to avoid compiler warnings about possible truncation.
+    //The value of the right size,   which is selected by ?:, is anyway not truncated or promoted.
+    static const size_t value = (size_t)((sizeof(size_t)==sizeof(u)) ? u : ull);
+};
+
+//! A function to check if passed in pointer is aligned on a specific border
+template<typename T>
+inline bool is_aligned(T* pointer, uintptr_t alignment) {
+    return 0==((uintptr_t)pointer & (alignment-1));
 }
 
-template<typename T>
-static inline bool is_aligned(T* pointer, uintptr_t alignment) {
-    return 0==((uintptr_t)pointer & (alignment-1));
+//! A function to check if passed integer is a power of 2
+template<typename integer_type>
+inline bool is_power_of_two(integer_type arg) {
+    return arg && (0 == (arg & (arg - 1)));
+}
+
+//! A function to compute arg modulo divisor where divisor is a power of 2.
+template<typename argument_integer_type, typename divisor_integer_type>
+inline argument_integer_type modulo_power_of_two(argument_integer_type arg, divisor_integer_type divisor) {
+    // Divisor is assumed to be a power of two (which is valid for current uses).
+    __TBB_ASSERT( is_power_of_two(divisor), "Divisor should be a power of two" );
+    return (arg & (divisor - 1));
+}
+
+
+//! A function to determine if "arg is a multiplication of a number and a power of 2".
+// i.e. for strictly positive i and j, with j a power of 2,
+// determines whether i==j<<k for some nonnegative k (so i==j yields true).
+template<typename argument_integer_type, typename divisor_integer_type>
+inline bool is_power_of_two_factor(argument_integer_type arg, divisor_integer_type divisor) {
+    // Divisor is assumed to be a power of two (which is valid for current uses).
+    __TBB_ASSERT( is_power_of_two(divisor), "Divisor should be a power of two" );
+    return 0 == (arg & (arg - divisor));
 }
 
 // Struct to be used as a version tag for inline functions.

@@ -57,7 +57,7 @@ ifeq ($(cfg), debug)
 endif
 
 ifeq ($(target_ui), win8ui)
-        CPLUS_FLAGS += /D__TBB_DYNAMIC_LOAD_ENABLED=0 /D "_UNICODE" /D "UNICODE"  /D "WINAPI_FAMILY=WINAPI_FAMILY_APP"
+        CPLUS_FLAGS += /D "_UNICODE" /D "UNICODE"  /D "WINAPI_FAMILY=WINAPI_FAMILY_APP"
         _WIN32_WINNT=0x0602
 ifeq ($(target_ui_mode), production)
         LIB_LINK_FLAGS += /APPCONTAINER
@@ -96,6 +96,7 @@ endif
 CPLUS_FLAGS += /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
         /D_WIN32_WINNT=$(_WIN32_WINNT)
 C_FLAGS = $(CPLUS_FLAGS)
+
 #------------------------------------------------------------------------------
 # End of setting compiler flags.
 #------------------------------------------------------------------------------

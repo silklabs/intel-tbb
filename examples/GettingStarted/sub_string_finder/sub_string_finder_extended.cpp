@@ -26,9 +26,9 @@
     the GNU General Public License.
 */
 
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
 #pragma offload_attribute (push,target(mic))
-#endif // __TBB_MIC
+#endif // __TBB_MIC_OFFLOAD
 
 #include <iostream>
 #include <string>
@@ -38,11 +38,11 @@
 #include "tbb/blocked_range.h"
 #include "tbb/tick_count.h"
 
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
 #pragma offload_attribute (pop)
 
 class __declspec(target(mic)) SubStringFinder;
-#endif // __TBB_MIC
+#endif // __TBB_MIC_OFFLOAD
 
 using namespace tbb;
 using namespace std;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
            << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << endl
            << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_t1 - parallel_t0).seconds() << endl;
 
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
  // Do offloadable version. Do the timing on host.
  size_t *max3 = new size_t[num_elem];
  size_t *pos3 = new size_t[num_elem];
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
 
  delete[] max3;
  delete[] pos3;
-#endif // __TBB_MIC
+#endif // __TBB_MIC_OFFLOAD
 
  delete[] max;
  delete[] pos;

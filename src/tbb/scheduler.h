@@ -121,6 +121,7 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
 #if __TBB_TASK_ARENA
     friend class interface6::task_arena;
     friend class interface6::wait_task;
+    friend struct interface6::wait_body;
 #endif //__TBB_TASK_ARENA
     friend class allocate_root_proxy;
     friend class governor;
@@ -172,6 +173,10 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     //! Free list of small tasks that can be reused.
     task* my_free_list;
 
+#if __TBB_HOARD_NONLOCAL_TASKS
+    //! Free list of small non-local tasks that should be returned or can be reused.
+    task* my_nonlocal_free_list;
+#endif
     //! Fake root task created by slave threads.
     /** The task is used as the "parent" argument to method wait_for_all. */
     task* my_dummy_task;
@@ -312,6 +317,11 @@ protected:
 #endif /* TBB_USE_ASSERT <= 1 */
 
 public:
+#if __TBB_TASK_ARENA
+    template<typename Body>
+    void nested_arena_execute(arena*, task*, bool, Body&);
+#endif
+
     /*override*/ 
     void spawn( task& first, task*& next );
 
@@ -601,8 +611,14 @@ void generic_scheduler::commit_relocated_tasks ( size_t new_tail ) {
     release_task_pool();
 }
 
-template<free_task_hint h>
+template<free_task_hint hint>
 void generic_scheduler::free_task( task& t ) {
+#if __TBB_HOARD_NONLOCAL_TASKS
+    // TODO: remove the whole free_task_hint stuff when enabled permanently
+    static const free_task_hint h = no_hint;
+#else
+    static const free_task_hint h = hint;
+#endif
     GATHER_STATISTIC(--my_counters.active_tasks);
     task_prefix& p = t.prefix();
     // Verify that optimization hints are correct.
@@ -621,7 +637,13 @@ void generic_scheduler::free_task( task& t ) {
         // a special value reserved for future use, do nothing since
         // origin is not pointing to a scheduler instance
     } else if( !(h&local_task) && p.origin ) {
+        GATHER_STATISTIC(++my_counters.free_list_length);
+#if __TBB_HOARD_NONLOCAL_TASKS
+        p.next = my_nonlocal_free_list;
+        my_nonlocal_free_list = &t;
+#else
         free_nonlocal_small_task(t);
+#endif
     } else {
         GATHER_STATISTIC(--my_counters.big_tasks);
         deallocate_task(t);

@@ -27,6 +27,20 @@
 */
 
 
+#if _WIN32 || _WIN64
+// As the test is intentionally build with /EHs-, suppress multiple VS2005's 
+// warnings like C4530: C++ exception handler used, but unwind semantics are not enabled
+#if defined(_MSC_VER) && !__INTEL_COMPILER
+/* ICC 10.1 and 11.0 generates code that uses std::_Raise_handler,
+   but it's only defined in libcpmt(d), which the test doesn't linked with.
+ */
+#undef  _HAS_EXCEPTIONS
+#define _HAS_EXCEPTIONS 0
+#endif
+// to use strdup and putenv w/o warnings
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif // _WIN32 || _WIN64
+
 #define HARNESS_NO_PARSE_COMMAND_LINE 1
 #include "harness.h"
 
@@ -36,19 +50,6 @@
 #define MALLOC_REPLACEMENT_AVAILABLE 2
 #include "tbb/tbbmalloc_proxy.h"
 #endif
-
-#if _WIN32 || _WIN64
-// As the test is intentionally build with /EHs-, suppress multiple VS2005's 
-// warnings like C4530: C++ exception handler used, but unwind semantics are not enabled
-#if defined(_MSC_VER) && !__INTEL_COMPILER
-/* ICC 10.1 and 11.0 generates code that uses std::_Raise_handler,
-   but it's only defined in libcpmt(d), which the test doesn't linked with.
- */
-#define _HAS_EXCEPTIONS 0
-#endif
-// to use strdup and putenv w/o warnings
-#define _CRT_NONSTDC_NO_DEPRECATE 1
-#endif // _WIN32 || _WIN64
 
 #if MALLOC_REPLACEMENT_AVAILABLE
 

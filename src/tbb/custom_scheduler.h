@@ -39,7 +39,9 @@ namespace internal {
 //! Amount of time to pause between steals.
 /** The default values below were found to be best empirically for K-Means
     on the 32-way Altix and 4-way (*2 for HT) fxqlin04. */
-#if __TBB_ipf
+#ifdef __TBB_STEALING_PAUSE
+static const long PauseTime = __TBB_STEALING_PAUSE;
+#elif __TBB_ipf
 static const long PauseTime = 1500;
 #else
 static const long PauseTime = 80;
@@ -526,6 +528,13 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
 #if __TBB_TASK_PRIORITY
 stealing_ground:
 #endif /* __TBB_TASK_PRIORITY */
+#if __TBB_HOARD_NONLOCAL_TASKS
+        // before stealing, previously stolen task objects are returned
+        for (; my_nonlocal_free_list; my_nonlocal_free_list = t ) {
+            t = my_nonlocal_free_list->prefix().next;
+            free_nonlocal_small_task( *my_nonlocal_free_list );
+        }
+#endif
         if ( quit_point == all_local_work_done ) {
             __TBB_ASSERT( !in_arena() && is_quiescent_local_task_pool_reset(), NULL );
             my_innermost_running_task = my_dispatching_task;

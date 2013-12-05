@@ -45,6 +45,9 @@
 #include "../rml/include/rml_tbb.h"
 #include "mailbox.h"
 #include "observer_proxy.h"
+#if __TBB_TASK_ARENA
+#include "concurrent_monitor.h"
+#endif
 
 namespace tbb {
 
@@ -162,6 +165,11 @@ struct arena_base : intrusive_list_node {
     //! Indicates if there is an oversubscribing worker created to service enqueued tasks.
     bool my_mandatory_concurrency;
 
+#if __TBB_TASK_ARENA
+    //! exit notifications after arena slot is released
+    concurrent_monitor my_exit_monitors;
+#endif
+
 #if TBB_USE_ASSERT
     //! Used to trap accesses to the object after its destruction.
     uintptr_t my_guard;
@@ -187,6 +195,7 @@ private:
 #if __TBB_TASK_ARENA
     friend class tbb::interface6::task_arena; // included through in scheduler_common.h
     friend class interface6::wait_task;
+    friend struct interface6::wait_body;
 #endif //__TBB_TASK_ARENA
 
     typedef padded<arena_base> base_type;

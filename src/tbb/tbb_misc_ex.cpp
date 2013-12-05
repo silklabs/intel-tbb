@@ -249,22 +249,24 @@ struct TBB_GROUP_AFFINITY {
     WORD   Reserved[3];
 };
 
-static DWORD (WINAPI *TBB_GetMaximumProcessorCount)( WORD groupIndex ) = NULL;
-static WORD (WINAPI *TBB_GetMaximumProcessorGroupCount)() = NULL;
+static DWORD (WINAPI *TBB_GetActiveProcessorCount)( WORD groupIndex ) = NULL;
+static WORD (WINAPI *TBB_GetActiveProcessorGroupCount)() = NULL;
 static BOOL (WINAPI *TBB_SetThreadGroupAffinity)( HANDLE hThread, 
                         const TBB_GROUP_AFFINITY* newAff, TBB_GROUP_AFFINITY *prevAff );
 static BOOL (WINAPI *TBB_GetThreadGroupAffinity)( HANDLE hThread, TBB_GROUP_AFFINITY* );
 
 static const dynamic_link_descriptor ProcessorGroupsApiLinkTable[] = {
-      DLD(GetMaximumProcessorCount, TBB_GetMaximumProcessorCount)
-    , DLD(GetMaximumProcessorGroupCount, TBB_GetMaximumProcessorGroupCount)
+      DLD(GetActiveProcessorCount, TBB_GetActiveProcessorCount)
+    , DLD(GetActiveProcessorGroupCount, TBB_GetActiveProcessorGroupCount)
     , DLD(SetThreadGroupAffinity, TBB_SetThreadGroupAffinity)
     , DLD(GetThreadGroupAffinity, TBB_GetThreadGroupAffinity)
 };
 
 static void initialize_hardware_concurrency_info () {
 #if __TBB_WIN8UI_SUPPORT
-    unsigned int nproc = std::thread::hardware_concurrency();
+    // For these applications processor groups info is unavailable
+    // Setting up a number of processors for one processor group
+    theProcessorGroups[0].numProcs = theProcessorGroups[0].numProcsRunningTotal = std::thread::hardware_concurrency();
 #else /* __TBB_WIN8UI_SUPPORT */
     dynamic_link( "Kernel32.dll", ProcessorGroupsApiLinkTable,
                   sizeof(ProcessorGroupsApiLinkTable)/sizeof(dynamic_link_descriptor) );
@@ -278,9 +280,12 @@ static void initialize_hardware_concurrency_info () {
             ++nproc;
     }
     __TBB_ASSERT( nproc <= (int)si.dwNumberOfProcessors, NULL );
-    if ( nproc == (int)si.dwNumberOfProcessors && TBB_GetMaximumProcessorCount ) {
+    // By default setting up a number of processors for one processor group
+    theProcessorGroups[0].numProcs = theProcessorGroups[0].numProcsRunningTotal = nproc;
+    // Setting up processor groups in case the process does not restrict affinity mask and more than one processor group is present
+    if ( nproc == (int)si.dwNumberOfProcessors && TBB_GetActiveProcessorCount ) {
         // The process does not have restricting affinity mask and multiple processor groups are possible
-        ProcessorGroupInfo::NumGroups = (int)TBB_GetMaximumProcessorGroupCount();
+        ProcessorGroupInfo::NumGroups = (int)TBB_GetActiveProcessorGroupCount();
         __TBB_ASSERT( ProcessorGroupInfo::NumGroups <= MaxProcessorGroups, NULL );
         // Fail safety bootstrap. Release versions will limit available concurrency
         // level, while debug ones would assert.
@@ -293,18 +298,15 @@ static void initialize_hardware_concurrency_info () {
             int nprocs = 0;
             for ( WORD i = 0; i < ProcessorGroupInfo::NumGroups; ++i ) {
                 ProcessorGroupInfo  &pgi = theProcessorGroups[i];
-                pgi.numProcs = (int)TBB_GetMaximumProcessorCount(i);
+                pgi.numProcs = (int)TBB_GetActiveProcessorCount(i);
                 __TBB_ASSERT( pgi.numProcs <= (int)sizeof(DWORD_PTR) * CHAR_BIT, NULL );
                 pgi.mask = pgi.numProcs == sizeof(DWORD_PTR) * CHAR_BIT ? ~(DWORD_PTR)0 : (DWORD_PTR(1) << pgi.numProcs) - 1;
                 pgi.numProcsRunningTotal = nprocs += pgi.numProcs;
             }
-            __TBB_ASSERT( nprocs == (int)TBB_GetMaximumProcessorCount( TBB_ALL_PROCESSOR_GROUPS ), NULL );
-            return;
+            __TBB_ASSERT( nprocs == (int)TBB_GetActiveProcessorCount( TBB_ALL_PROCESSOR_GROUPS ), NULL );
         }
     }
 #endif /* __TBB_WIN8UI_SUPPORT */
-    // Either the process has restricting affinity mask or only a single processor groups is present
-    theProcessorGroups[0].numProcs = theProcessorGroups[0].numProcsRunningTotal = nproc;
 
     PrintExtraVersionInfo("Processor groups", "%d", ProcessorGroupInfo::NumGroups);
     if (ProcessorGroupInfo::NumGroups>1)

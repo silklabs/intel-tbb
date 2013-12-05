@@ -121,6 +121,8 @@ T1 max ( const T1& val1, const T2& val2 ) {
 template<typename T>
 void suppress_unused_warning( const T& ) {}
 
+//! Utility helper structure to ease overload resolution
+template<int > struct int_to_type {};
 //------------------------------------------------------------------------
 // FastRandom
 //------------------------------------------------------------------------
@@ -131,7 +133,14 @@ unsigned GetPrime ( unsigned seed );
 //! A fast random number generator.
 /** Uses linear congruential method. */
 class FastRandom {
+private:
+#if __TBB_OLD_PRIMES_RNG
     unsigned x, a;
+    static const unsigned c = 1;
+#else
+    unsigned x, c;
+    static const unsigned a = 0x9e3779b1; // a big prime number
+#endif //__TBB_OLD_PRIMES_RNG
 public:
     //! Get a random number.
     unsigned short get() {
@@ -140,13 +149,30 @@ public:
     //! Get a random number for the given seed; update the seed for next use.
     unsigned short get( unsigned& seed ) {
         unsigned short r = (unsigned short)(seed>>16);
-        seed = seed*a+1;
+        __TBB_ASSERT(c&1, "c must be odd for big rng period");
+        seed = seed*a+c;
         return r;
     }
     //! Construct a random number generator.
-    FastRandom( unsigned seed ) {
+    FastRandom( void* unique_ptr ) { init(uintptr_t(unique_ptr)); }
+    FastRandom( uint32_t seed) { init(seed); }
+    FastRandom( uint64_t seed) { init(seed); }
+    template <typename T>
+    void init( T seed ) {
+        return init(seed,int_to_type<sizeof(seed)>());
+    }
+    void init( uint64_t seed , int_to_type<8> ) {
+        init(uint32_t((seed>>32)+seed), int_to_type<4>());
+    }
+    void init( uint32_t seed, int_to_type<4> ) {
+#if __TBB_OLD_PRIMES_RNG
         x = seed;
         a = GetPrime( seed );
+#else
+        // threads use different seeds for unique sequences
+        c = (seed|1)*0xba5703f5; // c must be odd, shuffle by a prime number
+        x = c^(seed>>1); // also shuffle x for the first get() invocation
+#endif
     }
 };
 

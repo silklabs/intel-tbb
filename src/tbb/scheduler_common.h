@@ -91,6 +91,7 @@ namespace tbb {
 #if __TBB_TASK_ARENA
 namespace interface6 {
 class wait_task;
+struct wait_body;
 }
 #endif //__TBB_TASK_ARENA
 namespace internal {
@@ -187,7 +188,7 @@ enum free_task_hint {
 
 #if TBB_USE_ASSERT
 
-static const uintptr_t venom = tbb::internal::size_t_select(0xDEADBEEFU,0xDDEEAADDDEADBEEFULL);
+static const uintptr_t venom = tbb::internal::select_size_t_constant<0xDEADBEEFU,0xDDEEAADDDEADBEEFULL>::value;
 
 template <typename T>
 void poison_value ( T& val ) { val = * punned_cast<T*>(&venom); }

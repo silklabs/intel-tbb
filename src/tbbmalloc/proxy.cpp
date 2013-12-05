@@ -39,7 +39,7 @@
     #define TBB_USE_EXCEPTIONS 1
 #endif
 
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 
 /*** service functions and variables ***/
 
@@ -193,7 +193,7 @@ void operator delete[](void* ptr, const std::nothrow_t&) throw() {
     scalable_free(ptr);
 }
 
-#endif /* MALLOC_LD_PRELOAD */
+#endif /* MALLOC_UNIXLIKE_OVERLOAD_ENABLED */
 
 
 #ifdef _WIN32
@@ -253,6 +253,7 @@ const char* known_bytecodes[] = {
     "558BEC6A018B",           //debug free() & _msize() 8.0.50727.4053 win32
     "6A1868********E8",       //release free() 8.0.50727.4053 win32
     "6A1C68********E8",       //release _msize() 8.0.50727.4053 win32
+    "558BEC837D08000F",       //release _msize() 11.0.51106.1 win32
     "8BFF558BEC6A",           //debug free() & _msize() 9.0.21022.8 win32
     "8BFF558BEC83",           //debug free() & _msize() 10.0.21003.1 win32
 #endif

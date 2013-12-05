@@ -39,7 +39,7 @@
 //2)   Cilk, and it should be dynamically loaded with dlopen/LoadLibrary (possibly via a 3rd party module);
 //3)     TBB again;
 //4)       Cilk again.
-#define HEAVY_NESTED_INTEROP_SUPPORT __INTEL_COMPILER_BUILD_DATE < 20110427
+#define HEAVY_NESTED_INTEROP_SUPPORT ( __INTEL_COMPILER_BUILD_DATE < 20110427 )
 
 #if __TBB_CILK_INTEROP && CILK_SYMBOLS_VISIBLE && !CILK_LINKAGE_BROKEN && HEAVY_NESTED_INTEROP_SUPPORT
 

@@ -189,6 +189,7 @@ bool operator!=( const solist_iterator<Solist,T>& i, const solist_iterator<Solis
 // Forward type and class definitions
 typedef size_t sokey_t;
 
+
 // Forward list in which elements are sorted in a split-order
 template <typename T, typename Allocator>
 class split_ordered_list
@@ -274,15 +275,7 @@ public:
     // Allocate a new node with the given order key; used to allocate dummy nodes
     nodeptr_t create_node(sokey_t order_key) {
         nodeptr_t pnode = my_node_allocator.allocate(1);
-
-        __TBB_TRY {
-            new(static_cast<void*>(&pnode->my_element)) T();
-            pnode->init(order_key);
-        } __TBB_CATCH(...) {
-            my_node_allocator.deallocate(pnode, 1);
-            __TBB_RETHROW();
-        }
-
+        pnode->init(order_key);
         return (pnode);
     }
 
@@ -383,8 +376,8 @@ public:
             return;
         }
 
-        std::swap(my_element_count, other.my_element_count);
-        std::swap(my_head, other.my_head);
+            std::swap(my_element_count, other.my_element_count);
+            std::swap(my_head, other.my_head);
     }
 
     // Split-order list functions
@@ -412,7 +405,7 @@ public:
     }
 
     static sokey_t get_safe_order_key(const raw_const_iterator& it) {
-        if( !it.get_node_ptr() ) return sokey_t(~0U);
+        if( !it.get_node_ptr() )  return ~sokey_t(0);
         return it.get_node_ptr()->get_order_key();
     }
 
@@ -464,7 +457,7 @@ public:
 
     // Erase an element using the allocator
     void destroy_node(nodeptr_t pnode) {
-        my_node_allocator.destroy(pnode);
+        if (!pnode->is_dummy()) my_node_allocator.destroy(pnode);
         my_node_allocator.deallocate(pnode, 1);
     }
 
@@ -821,11 +814,16 @@ public:
                 sokey_t end_key = solist_t::get_safe_order_key(my_end_node);
                 size_t mid_bucket = __TBB_ReverseBits( begin_key + (end_key-begin_key)/2 ) % my_table.my_number_of_buckets;
                 while ( !my_table.is_initialized(mid_bucket) ) mid_bucket = my_table.get_parent(mid_bucket);
-                my_midpoint_node = my_table.my_solist.first_real_iterator(my_table.get_bucket( mid_bucket ));
-                if( my_midpoint_node == my_begin_node )
-                    my_midpoint_node = my_end_node;
-#if TBB_USE_ASSERT
+                if(__TBB_ReverseBits(mid_bucket) > begin_key) {
+                    // found a dummy_node between begin and end
+                    my_midpoint_node = my_table.my_solist.first_real_iterator(my_table.get_bucket( mid_bucket ));
+                }
                 else {
+                    // didn't find a dummy node between begin and end.
+                    my_midpoint_node = my_end_node;
+                }
+#if TBB_USE_ASSERT
+                {
                     sokey_t mid_key = solist_t::get_safe_order_key(my_midpoint_node);
                     __TBB_ASSERT( begin_key < mid_key, "my_begin_node is after my_midpoint_node" );
                     __TBB_ASSERT( mid_key <= end_key, "my_midpoint_node is after my_end_node" );
@@ -1122,7 +1120,7 @@ private:
         if (!is_initialized(bucket))
             init_bucket(bucket);
 
-        size_type new_count;
+        size_type new_count = 0;
         order_key = split_order_key_regular(order_key);
         raw_iterator it = get_bucket(bucket);
         raw_iterator last = my_solist.raw_end();
@@ -1369,7 +1367,7 @@ private:
 
     // A dummy order key has its original hash value reversed and the last bit unset
     sokey_t split_order_key_dummy(sokey_t order_key) const {
-        return __TBB_ReverseBits(order_key) & ~(0x1);
+        return __TBB_ReverseBits(order_key) & ~sokey_t(0x1);
     }
 
     // Shared variables
@@ -1384,7 +1382,7 @@ private:
 #endif
 
 //! Hash multiplier
-static const size_t hash_multiplier = tbb::internal::size_t_select(2654435769U, 11400714819323198485ULL);
+static const size_t hash_multiplier = tbb::internal::select_size_t_constant<2654435769U, 11400714819323198485ULL>::value;
 } // namespace internal
 //! @endcond
 //! Hasher functions

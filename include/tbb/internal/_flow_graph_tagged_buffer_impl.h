@@ -74,7 +74,7 @@ private:
     size_t mask() { return my_size - 1; }
 
     static size_t hash(TagType t) {
-        return uintptr_t(t)*tbb::internal::size_t_select(0x9E3779B9,0x9E3779B97F4A7C15ULL);
+        return uintptr_t(t)*tbb::internal::select_size_t_constant<0x9E3779B9,0x9E3779B97F4A7C15ULL>::value;
     }
 
     void set_up_free_list( element_type **p_free_list, list_array_type *la, size_t sz) {

@@ -79,7 +79,7 @@
 
 #define ASSERT_TEXT NULL
 
-#define COLLECT_STATISTICS MALLOC_DEBUG && defined(MALLOCENV_COLLECT_STATISTICS)
+#define COLLECT_STATISTICS ( MALLOC_DEBUG && MALLOCENV_COLLECT_STATISTICS )
 #include "Statistics.h"
 
 /********* End compile-time options        **************/
@@ -522,6 +522,7 @@ private:
              If not, maxBinned_SmallPage is the thresold.
              TODO: use pool's granularity for upper bound setting.*/
         maxBinned_SmallPage = 1024*1024UL,
+        // TODO: support other page sizes
         maxBinned_HugePage = 4*1024*1024UL
     };
 public:
@@ -692,13 +693,76 @@ public:
     void removeAll(Backend *backend);
 };
 
-struct ExtMemoryPool {
-    static size_t     hugePageSize;
-    static intptr_t   needHugePageStatus; // Should status be reported to stderr?
-    static bool       useHugePages,
+// An TBB allocator mode that can be controlled by user
+// via API/environment variable. Must be placed in zero-initialized memory.
+// External synchronization assumed.
+// TODO: TBB_VERSION support
+class AllocControlledMode {
+    intptr_t val;
+    bool     setDone;
+public:
+    intptr_t get() const {
+        MALLOC_ASSERT(setDone, ASSERT_TEXT);
+        return val;
+    }
+    void set(intptr_t newVal) { // note set() can be called before init()
+        val = newVal;
+        setDone = true;
+    }
+    // envName - environment variable to get controlled mode
+    void initReadEnv(const char *envName, intptr_t defaultVal);
+};
+
+// init() and printStatus() is called only under global initialization lock.
+// Race is possible between registerAllocation() and registerReleasing(),
+// harm is that up to single huge page releasing is missed (because failure
+// to get huge page is registred only 1st time), that is negligible.
+// setMode is also can be called concurrently.
+// Object must reside in zero-initialized memory
+class HugePagesStatus {
+private:
+    AllocControlledMode requestedMode; // changed only by user
+               // to keep enabled and requestedMode consistent
+    MallocMutex setModeLock;
+    size_t      pageSize;
+    intptr_t    needActualStatusPrint;
+
+    static void doPrintStatus(bool state, const char *stateName);
+public:
+    // both variables are changed only inside HugePagesStatus
+    intptr_t    enabled;
     // Have we got huge pages at all? It's used when large hugepage-aligned
     // region is releasing, to find can it release some huge pages or not.
-                      seenHugePages;
+    intptr_t    wasObserved;
+
+    size_t getSize() const {
+        MALLOC_ASSERT(pageSize, ASSERT_TEXT);
+        return pageSize;
+    }
+    void printStatus();
+    void registerAllocation(bool available);
+    void registerReleasing(size_t size);
+
+    void init(size_t hugePageSize) {
+        MALLOC_ASSERT(!hugePageSize || isPowerOfTwo(hugePageSize),
+                      "Only memory pages of a power-of-two size are supported.");
+        MALLOC_ASSERT(!pageSize, "Huge page size can't be set twice.");
+        pageSize = hugePageSize;
+
+        MallocMutex::scoped_lock lock(setModeLock);
+        requestedMode.initReadEnv("TBB_MALLOC_USE_HUGE_PAGES", 0);
+        enabled = pageSize && requestedMode.get();
+    }
+    void setMode(intptr_t newVal) {
+        MallocMutex::scoped_lock lock(setModeLock);
+        requestedMode.set(newVal);
+        enabled = pageSize && newVal;
+    }
+};
+
+extern HugePagesStatus hugePages;
+
+struct ExtMemoryPool {
     Backend           backend;
 
     intptr_t          poolId;
@@ -747,8 +811,6 @@ struct ExtMemoryPool {
     LargeMemoryBlock *mallocLargeObject(size_t allocationSize);
     void freeLargeObject(LargeMemoryBlock *lmb);
     void freeLargeObjectList(LargeMemoryBlock *head);
-
-    static void reportHugePageStatus(bool available);
 };
 
 inline bool Backend::inUserPool() const { return extMemPool->userPool(); }

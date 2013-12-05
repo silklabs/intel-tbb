@@ -898,7 +898,7 @@ namespace bit_operation_test_suite{
         const uintptr_t random_value ;
         const uintptr_t inverted_random_value ;
         fixture():
-            random_value (tbb::internal::size_t_select(0x9E3779B9,0x9E3779B97F4A7C15ULL)),
+            random_value (tbb::internal::select_size_t_constant<0x9E3779B9,0x9E3779B97F4A7C15ULL>::value),
             inverted_random_value ( ~random_value)
         {}
     };

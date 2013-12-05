@@ -63,14 +63,14 @@ public:
 
 class delegate_base : no_assign {
 public:
-    virtual void run() = 0;
+    virtual void operator()() const = 0;
     virtual ~delegate_base() {}
 };
 
 template<typename F>
 class delegated_function : public delegate_base {
     F &my_func;
-    /*override*/ void run() {
+    /*override*/ void operator()() const {
         my_func();
     }
 public:
@@ -90,48 +90,87 @@ class task_arena {
     //! Concurrency level for deferred initialization
     int my_max_concurrency;
 
+    //! Reserved master slots
+    unsigned my_master_slots;
+
     //! NULL if not currently initialized.
     internal::arena* my_arena;
 
+    // Initialization flag enabling compiler to throw excessive lazy initialization checks
+    bool my_initialized;
+
     // const methods help to optimize the !my_arena check TODO: check, IDEA: move to base-class?
-    internal::arena* __TBB_EXPORTED_METHOD internal_initialize( int ) const;
+    void __TBB_EXPORTED_METHOD internal_initialize( );
     void __TBB_EXPORTED_METHOD internal_terminate( );
     void __TBB_EXPORTED_METHOD internal_enqueue( task&, intptr_t ) const;
     void __TBB_EXPORTED_METHOD internal_execute( internal::delegate_base& ) const;
     void __TBB_EXPORTED_METHOD internal_wait() const;
 
-    inline void check_init() {
-        if( !my_arena )
-            my_arena = internal_initialize( my_max_concurrency );
-    }
-
 public:
     //! Typedef for number of threads that is automatic.
     static const int automatic = -1; // any value < 1 means 'automatic'
 
-    //! Creates task_arena with certain concurrency limit
-    task_arena(int max_concurrency = automatic)
+    //! Creates task_arena with certain concurrency limits
+    /** @arg max_concurrency specifies total number of slots in arena where threads work
+     *  @arg reserved_for_masters specifies number of slots to be used by master threads only.
+     *       Value of 1 is default and reflects behavior of implicit arenas.
+     **/
+    task_arena(int max_concurrency = automatic, unsigned reserved_for_masters = 1)
         : my_max_concurrency(max_concurrency)
+        , my_master_slots(reserved_for_masters)
         , my_arena(0)
+        , my_initialized(false)
     {}
 
     //! Copies settings from another task_arena
     task_arena(const task_arena &s)
         : my_max_concurrency(s.my_max_concurrency) // copy settings
+        , my_master_slots(s.my_master_slots)
         , my_arena(0) // but not the reference or instance
+        , my_initialized(false)
     {}
 
-    //! Removes the reference to the internal arena representation, and destroys the external object
-    //! Not thread safe wrt concurrent invocations of other methods
-    ~task_arena() {
-        internal_terminate();
+    inline void initialize() {
+        if( !my_initialized ) {
+            internal_initialize();
+            my_initialized = true;
+        }
     }
+
+    //! Overrides concurrency level and forces initialization of internal representation
+    inline void initialize(int max_concurrency, unsigned reserved_for_masters = 1) {
+        __TBB_ASSERT( !my_arena, "task_arena was initialized already");
+        if( !my_initialized ) {
+            my_max_concurrency = max_concurrency;
+            my_master_slots = reserved_for_masters;
+            initialize();
+        } // TODO: else throw?
+    }
+
+    //! Removes the reference to the internal arena representation.
+    //! Not thread safe wrt concurrent invocations of other methods.
+    inline void terminate() {
+        if( my_initialized ) {
+            internal_terminate();
+            my_initialized = false;
+        }
+    }
+
+    //! Removes the reference to the internal arena representation, and destroys the external object.
+    //! Not thread safe wrt concurrent invocations of other methods.
+    ~task_arena() {
+        terminate();
+    }
+
+    //! Returns true if the arena is active (initialized); false otherwise.
+    //! The name was chosen to match a task_scheduler_init method with the same semantics.
+    bool is_active() const { return my_initialized; }
 
     //! Enqueues a task into the arena to process a functor, and immediately returns.
     //! Does not require the calling thread to join the arena
     template<typename F>
     void enqueue( const F& f ) {
-        check_init();
+        initialize();
         internal_enqueue( *new( task::allocate_root() ) internal::enqueued_function_task<F>(f), 0 );
     }
 
@@ -141,7 +180,7 @@ public:
     template<typename F>
     void enqueue( const F& f, priority_t p ) {
         __TBB_ASSERT( p == priority_low || p == priority_normal || p == priority_high, "Invalid priority level value" );
-        check_init();
+        initialize();
         internal_enqueue( *new( task::allocate_root() ) internal::enqueued_function_task<F>(f), (intptr_t)p );
     }
 #endif// __TBB_TASK_PRIORITY
@@ -151,7 +190,7 @@ public:
     //! Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread
     template<typename F>
     void execute(F& f) {
-        check_init();
+        initialize();
         internal::delegated_function<F> d(f);
         internal_execute( d );
     }
@@ -161,7 +200,7 @@ public:
     //! Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread
     template<typename F>
     void execute(const F& f) {
-        check_init();
+        initialize();
         internal::delegated_function<const F> d(f);
         internal_execute( d );
     }
@@ -170,15 +209,8 @@ public:
     //! Even submitted by other application threads
     //! Joins arena if/when possible (in the same way as execute())
     void wait_until_empty() {
-        check_init();
+        initialize();
         internal_wait();
-    }
-
-    //! Sets concurrency level and initializes internal representation
-    inline void initialize(int max_concurrency) {
-        my_max_concurrency = max_concurrency;
-        __TBB_ASSERT( !my_arena, "task_arena was initialized already"); // TODO: throw?
-        check_init();
     }
 
     //! Returns the index, aka slot number, of the calling thread in its current arena

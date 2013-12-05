@@ -33,7 +33,11 @@
 
 tbb::spin_mutex global_mutex;
 
+#if TBB_USE_DEBUG
+#define N 16
+#else
 #define N 100
+#endif
 #define MAX_NODES 4
 
 //! Performs test on function nodes with limited concurrency and buffering

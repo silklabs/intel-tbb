@@ -40,6 +40,7 @@
 #define __TBB_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
 #if __clang__
+    /**according to clang documentation version can be vendor specific **/
     #define __TBB_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 #endif
 
@@ -71,37 +72,49 @@
     /** On Windows environment when using Intel C++ compiler with Visual Studio 2010*,
         the C++0x features supported by Visual C++ 2010 are enabled by default
         TODO: find a way to get know if c++0x mode is specified in command line on windows **/
-    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    __GXX_EXPERIMENTAL_CXX0X__ && __VARIADIC_TEMPLATES
-    #define __TBB_CPP11_RVALUE_REF_PRESENT            (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && (__INTEL_COMPILER >= 1200)
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    ( __GXX_EXPERIMENTAL_CXX0X__ && __VARIADIC_TEMPLATES )
+    #define __TBB_CPP11_RVALUE_REF_PRESENT            ( (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && (__INTEL_COMPILER >= 1200) )
     #if  _MSC_VER >= 1600
-        #define __TBB_EXCEPTION_PTR_PRESENT           __INTEL_COMPILER > 1300                                                  \
+        #define __TBB_EXCEPTION_PTR_PRESENT           ( __INTEL_COMPILER > 1300                                                \
                                                       /*ICC 12.1 Upd 10 and 13 beta Upd 2 fixed exception_ptr linking  issue*/ \
                                                       || (__INTEL_COMPILER == 1300 && __INTEL_COMPILER_BUILD_DATE >= 20120530) \
-                                                      || (__INTEL_COMPILER == 1210 && __INTEL_COMPILER_BUILD_DATE >= 20120410)
-    /** libstc++ that comes with GCC 4.6 use C++ features not yet supported by current ICC (12.1)**/
+                                                      || (__INTEL_COMPILER == 1210 && __INTEL_COMPILER_BUILD_DATE >= 20120410) )
+    /** libstc++ that comes with GCC 4.6 use C++11 features not supported by ICC 12.1.
+     * Because of that ICC 12.1 does not support C++11 mode with with gcc 4.6. (or higher)
+     * , and therefore does not  define __GXX_EXPERIMENTAL_CXX0X__ macro**/
     #elif (__TBB_GCC_VERSION >= 40404) && (__TBB_GCC_VERSION < 40600)
-        #define __TBB_EXCEPTION_PTR_PRESENT        __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200
+        #define __TBB_EXCEPTION_PTR_PRESENT        ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200 )
+    #elif (__TBB_GCC_VERSION >= 40600)
+        #define __TBB_EXCEPTION_PTR_PRESENT        ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300 )
     #else
         #define __TBB_EXCEPTION_PTR_PRESENT           0
     #endif
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (_MSC_VER >= 1700 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600))
-    #define __TBB_STATIC_ASSERT_PRESENT               __GXX_EXPERIMENTAL_CXX0X__ || (_MSC_VER >= 1600)
-    #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600) || ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
+    #define __TBB_STATIC_ASSERT_PRESENT               ( __GXX_EXPERIMENTAL_CXX0X__ || (_MSC_VER >= 1600) )
+    #define __TBB_CPP11_TUPLE_PRESENT                 ( (_MSC_VER >= 1600) || ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300)) )
     /** TODO: re-check for compiler version greater than 12.1 if it supports initializer lists**/
     #define __TBB_INITIALIZER_LISTS_PRESENT           0
     #define __TBB_CONSTEXPR_PRESENT                   0
     #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  0
 #elif __clang__
 //TODO: these options need to be rechecked
-    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
-    #define __TBB_CPP11_RVALUE_REF_PRESENT            (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
-    #define __TBB_EXCEPTION_PTR_PRESENT               __GXX_EXPERIMENTAL_CXX0X__
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION > 30100)// TODO: check version
-    #define __TBB_STATIC_ASSERT_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
-    #define __TBB_CPP11_TUPLE_PRESENT                 ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
-    #define __TBB_INITIALIZER_LISTS_PRESENT           0
-    #define __TBB_CONSTEXPR_PRESENT                   (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION > 30100)
-    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  0
+/** on OS X* the only way to get C++11 is to use clang. For library features (e.g. exception_ptr) libc++ is also
+ *  required. So there is no need to check GCC version for clang**/
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT     __has_feature(__cxx_variadic_templates__)
+    #define __TBB_CPP11_RVALUE_REF_PRESENT             __has_feature(__cxx_rvalue_references__)
+    #define __TBB_EXCEPTION_PTR_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && (__cplusplus >= 201103L))
+    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && (__cplusplus >= 201103L))
+    #define __TBB_STATIC_ASSERT_PRESENT               __has_feature(__cxx_static_assert__)
+    /**Clang (preprocessor) has problems with dealing with expression having __has_include in #if's
+     * used inside C++ code. (At least version that comes with OS X 10.8) **/
+    #if (__GXX_EXPERIMENTAL_CXX0X__ && __has_include(<tuple>))
+        #define __TBB_CPP11_TUPLE_PRESENT             1
+    #endif
+    #if (__has_feature(__cxx_generalized_initializers__) && __has_include(<initializer_list>))
+        #define __TBB_INITIALIZER_LISTS_PRESENT       1
+    #endif
+    #define __TBB_CONSTEXPR_PRESENT                   __has_feature(__cxx_constexpr__)
+    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  (__has_feature(__cxx_defaulted_functions__) && __has_feature(__cxx_deleted_functions__))
 #elif __GNUC__
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    __GXX_EXPERIMENTAL_CXX0X__
     #define __TBB_CPP11_RVALUE_REF_PRESENT            __GXX_EXPERIMENTAL_CXX0X__
@@ -231,6 +244,14 @@
     /** By default, use C++0x classes if available **/
     #if __GNUC__==4 && __GNUC_MINOR__>=4 && __GXX_EXPERIMENTAL_CXX0X__
         #define TBB_IMPLEMENT_CPP0X 0
+    #elif __clang__ && __cplusplus >= 201103L
+        //TODO: consider introducing separate macroses for each file?
+        //prevent injection of according tbb names into std:: namespace if native headers are present
+        #if __has_include(<thread>) || __has_include(<condition_variable>)
+            #define TBB_IMPLEMENT_CPP0X 0
+        #else
+            #define TBB_IMPLEMENT_CPP0X 1
+        #endif
     #else
         #define TBB_IMPLEMENT_CPP0X 1
     #endif
@@ -238,8 +259,9 @@
 
 /* TBB_USE_CAPTURED_EXCEPTION should be explicitly set to either 0 or 1, as it is used as C++ const */
 #ifndef TBB_USE_CAPTURED_EXCEPTION
-    /** linux pre-built TBB binary does not support exception_ptr. **/
-    #if __TBB_EXCEPTION_PTR_PRESENT && !defined(__GNUC__)
+    /**TODO: enable it by default on OS X*, once it is enabled in pre-built binary **/
+    /** OS X* and IA64 pre-built TBB binaries do not support exception_ptr. **/
+    #if __TBB_EXCEPTION_PTR_PRESENT && !defined(__APPLE__) && !defined(__ia64__)
         #define TBB_USE_CAPTURED_EXCEPTION 0
     #else
         #define TBB_USE_CAPTURED_EXCEPTION 1
@@ -258,7 +280,7 @@
 /** Internal TBB features & modes **/
 
 /** __TBB_WEAK_SYMBOLS_PRESENT denotes that the system supports the weak symbol mechanism **/
-#define __TBB_WEAK_SYMBOLS_PRESENT !_WIN32 && !__APPLE__ && !__sun && ((__TBB_GCC_VERSION >= 40000) || defined(__INTEL_COMPILER))
+#define __TBB_WEAK_SYMBOLS_PRESENT ( !_WIN32 && !__APPLE__ && !__sun && ((__TBB_GCC_VERSION >= 40000) || __INTEL_COMPILER ) )
 
 /** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to load shared libraries at run time **/
 #ifndef __TBB_DYNAMIC_LOAD_ENABLED
@@ -396,7 +418,8 @@
     #define __TBB_TEMPLATE_FRIENDS_BROKEN 1
 #endif
 
-#if __GLIBC__==2 && __GLIBC_MINOR__==3 || __MINGW32__ || (__APPLE__ && __INTEL_COMPILER==1200 && !TBB_USE_DEBUG)
+//TODO: recheck for different clang versions 
+#if __GLIBC__==2 && __GLIBC_MINOR__==3 || __MINGW32__ || (__APPLE__ && (__clang__ || __INTEL_COMPILER==1200 && !TBB_USE_DEBUG))
     /** Macro controlling EH usages in TBB tests.
         Some older versions of glibc crash when exception handling happens concurrently. **/
     #define __TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN 1
@@ -438,7 +461,7 @@
 #endif /* __FreeBSD__ */
 
 #if (__linux__ || __APPLE__) && __i386__ && defined(__INTEL_COMPILER)
-    /** The Intel compiler for IA-32 (Linux|Mac OS X) crashes or generates
+    /** The Intel compiler for IA-32 (Linux|OS X) crashes or generates
         incorrect code when __asm__ arguments have a cast to volatile. **/
     #define __TBB_ICC_ASM_VOLATILE_BROKEN 1
 #endif
@@ -449,7 +472,12 @@
     #define __TBB_ALIGNOF_NOT_INSTANTIATED_TYPES_BROKEN 1
 #endif
 
-#if __INTEL_COMPILER
+/* Actually for Clang it should be name __TBB_CPP11_STD_FORWARD_PRESENT.
+ * But in order to check for presence of std:: library feature we need to recognize
+ * is standard library actually used stdlibc++ (GNU one) or libc++ (clang one).
+ * Unfortunately it is not possible at the moment. So postponing it to later moment.*/
+/*TODO: for clang rename it to __TBB_CPP11_STD_FORWARD_PRESENT and re-implement it.*/
+#if (__INTEL_COMPILER) || (__clang__ &&  __TBB_GCC_VERSION <= 40300)
     #define __TBB_CPP11_STD_FORWARD_BROKEN 1
 #else
     #define __TBB_CPP11_STD_FORWARD_BROKEN 0

@@ -127,6 +127,13 @@ static inline bool isAligned(T* arg, uintptr_t alignment) {
     return tbb::internal::is_aligned(arg,alignment);
 }
 
+static inline bool isPowerOfTwo(uintptr_t arg) {
+    return tbb::internal::is_power_of_two(arg);
+}
+static inline bool isPowerOfTwoMultiple(uintptr_t arg, uintptr_t divisor) {
+    return arg && tbb::internal::is_power_of_two_factor(arg,divisor);
+}
+
 inline void AtomicOr(volatile void *operand, uintptr_t addend) {
     __TBB_AtomicOR(operand, addend);
 }
@@ -140,7 +147,7 @@ inline void AtomicAnd(volatile void *operand, uintptr_t addend) {
 // To support malloc replacement with LD_PRELOAD
 #include "proxy.h"
 
-#if MALLOC_LD_PRELOAD
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 #define malloc_proxy __TBB_malloc_proxy
 extern "C" void * __TBB_malloc_proxy(size_t)  __attribute__ ((weak));
 #else

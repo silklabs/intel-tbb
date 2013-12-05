@@ -290,11 +290,16 @@ int main(int argc, char* argv[]) {
         MPI_Send (&size, 1, MPI_INT, 0, 1, MPI_COMM_WORLD);
     }
 #endif
-#if __TBB_MIC
+#if __TBB_MIC_OFFLOAD
     int res = Harness::Unknown;
     #pragma offload target(mic:-1) out(res)
     {
+    #if __MIC__
         res = TestMain ();
+    #else
+        ASSERT( 0, "Host execution in offload mode!" );
+        exit(1);
+    #endif
     }
 #else
     int res = TestMain ();
@@ -364,7 +369,7 @@ public:
         // Therefore we set the stack size explicitly (as for TBB worker threads).
 // TODO: make a single definition of MByte used by all tests.
         const size_t MByte = 1024*1024;
-#if __i386__||__i386
+#if __i386__||__i386||__arm__
         const size_t stack_size = 1*MByte;
 #elif __x86_64__
         const size_t stack_size = 2*MByte;

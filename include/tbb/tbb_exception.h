@@ -37,7 +37,8 @@
     #pragma warning (disable: 4530)
 #endif
 
-#include <stdexcept>
+#include <exception>
+#include <new>    //required for bad_alloc definition, operators new
 #include <string> // required to construct std exception classes
 
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
@@ -127,9 +128,7 @@ inline void throw_exception ( exception_id eid ) { throw_exception_v4(eid); }
 
 #if __TBB_TASK_GROUP_CONTEXT
 #include "tbb_allocator.h"
-#include <exception>
-#include <typeinfo>
-#include <new>
+#include <typeinfo> //for typeid
 
 namespace tbb {
 
