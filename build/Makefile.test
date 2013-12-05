@@ -124,11 +124,15 @@ test_atomic_pic.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_PIC=1
 test_atomic_pic.$(OBJ): test_atomic.cpp
 	$(call make-cxx-obj,$@,$<,)
 
-#Test of generic gcc port and icc intrinsics port
+# Test of generic gcc port and icc intrinsics port
 %_compiler_builtins.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_BUILTINS=1
 %_compiler_builtins.$(OBJ): %.cpp
 	$(call make-cxx-obj,$@,$<,)
 
+# The test_dynamic_link test doesn't depend on the TBB library
+test_dynamic_link.$(TEST_EXT): LINK_TBB.LIB =
+test_dynamic_link.$(TEST_EXT): TEST_USES_TBB=0
+test_dynamic_link.$(TEST_EXT): LIBS += $(LIBDL)
 
 # The main list of TBB tests
 TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
@@ -214,6 +218,7 @@ TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
 	test_aggregator.$(TEST_EXT)                  \
 	test_concurrent_lru_cache.$(TEST_EXT)        \
 	test_examples_common_utility.$(TEST_EXT)     \
+	test_dynamic_link.$(TEST_EXT)                \
 	test_tbb_version.$(TEST_EXT)                 # insert new files right above
 
 TEST_TBB_PLAIN.EXE += $(TEST_TBB_CPP11)
@@ -258,6 +263,7 @@ test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_P
         # Yes, 4:8 is intended on the next line.
 	$(run_cmd) ./test_yield.$(TEST_EXT) $(args) 4:8
 	$(run_cmd) ./test_handle_perror.$(TEST_EXT) $(args)
+	$(run_cmd) ./test_dynamic_link.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_task_auto_init.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_task_arena.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_task_scheduler_init.$(TEST_EXT) $(args) 1:4
@@ -378,21 +384,6 @@ endif
 
 ifneq (,$(codecov))
 codecov_gen:
-	profmerge
-	codecov $(if $(findstring -,$(codecov)),$(codecov),) -demang -comp $(tbb_root)/build/codecov.txt
-endif
-
-test_% debug_%: test_%.$(TEST_EXT) $(TEST_PREREQUISITE)
-ifeq (,$(repeat))
-	$(run_cmd) ./$< $(args)
-else
-ifeq (windows,$(tbb_os))
-	for /L %%i in (1,1,$(repeat)) do echo %%i of $(repeat): && $(run_cmd) $< $(args)
-else
-	for ((i=1;i<=$(repeat);++i)); do echo $$i of $(repeat): && $(run_cmd) ./$< $(args); done
-endif
-endif # repeat
-ifneq (,$(codecov))
 	profmerge
 	codecov $(if $(findstring -,$(codecov)),$(codecov),) -demang -comp $(tbb_root)/build/codecov.txt
 endif

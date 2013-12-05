@@ -393,7 +393,7 @@ int test_serial() {
 
 int TestMain() { 
     tbb::tick_count start = tbb::tick_count::now(), stop;
-    for (int p = 1; p < 4; ++p) {
+    for (int p = 2; p <= 4; ++p) {
         tbb::task_scheduler_init init(p);
         test_serial<int>();
         test_parallel<int>(p);

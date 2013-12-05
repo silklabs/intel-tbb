@@ -109,7 +109,7 @@ ifneq ($(BUILDING_PHASE),1)
  # definitions for top-level Makefiles
  origin_build_dir:=$(origin tbb_build_dir)
  tbb_build_dir?=$(tbb_root)$(SLASH)build
- tbb_build_prefix?=$(tbb_os)_$(arch)_$(compiler)_$(runtime)$(CPF_SUFFIX)
+ export tbb_build_prefix?=$(tbb_os)_$(arch)_$(compiler)_$(runtime)$(CPF_SUFFIX)
  work_dir=$(tbb_build_dir)$(SLASH)$(tbb_build_prefix)
 endif  # BUILDING_PHASE != 1
 
@@ -129,13 +129,26 @@ ifndef BUILDING_PHASE
   # assign new value for tbb_root if path is not absolute (the filter keeps only /* paths)
   ifeq ($(filter /% $(SLASH)%, $(subst :, ,$(tbb_root)) ),)
    ifeq ($(origin_build_dir),undefined)
+   #relative path are needed here as a workaround to support whitespaces in path
     override tbb_root:=../..
    else
-    override tbb_root:=$(CWD)/$(tbb_root)
-   endif
+    override tbb_root:=$(CURDIR)/$(tbb_root)
   endif
   export tbb_root
+  endif
  endif # !BUILDING_PHASE
 
 .DELETE_ON_ERROR:    # Make will delete target if error occurred when building it.
 
+# MAKEOVERRIDES contains the command line variable definitions. Reseting it to
+# empty allows propogating all exported overridden variables to nested makes.
+# NOTEs:
+#   1. All variable set in command line are propagated to nested makes.
+#   2. All variables declared with the "export" keyword are propagated to
+#   nested makes.
+#   3. "override" allows changing variables set in command line. But it doesn't
+#   propagate new values to nested makes. For propagation, the "export" keyword
+#   should be used.
+#   4. gmake v3.80 doesn't support exporting of target-specific variables using
+#   the "export" keyword
+MAKEOVERRIDES =

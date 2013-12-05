@@ -88,15 +88,40 @@ void __TBB_EXPORTED_FUNC scalable_aligned_free (void* ptr);
     @ingroup memory_allocation */
 size_t __TBB_EXPORTED_FUNC scalable_msize (void* ptr);
 
+/* Results for scalable_allocation_* functions */
+typedef enum {
+    TBBMALLOC_OK,
+    TBBMALLOC_INVALID_PARAM,
+    TBBMALLOC_UNSUPPORTED,
+    TBBMALLOC_NO_MEMORY,
+    TBBMALLOC_NO_EFFECT
+} ScalableAllocationResult;
+
 /* Setting TBB_MALLOC_USE_HUGE_PAGES environment variable to 1 enables huge pages.
    scalable_allocation_mode call has priority over environment variable. */
-enum AllocationModeParam {
-    USE_HUGE_PAGES /* value turns using huge pages on and off */
-};
+typedef enum {
+    TBBMALLOC_USE_HUGE_PAGES,  /* value turns using huge pages on and off */
+    /* deprecated, kept for backward compatibility only */
+    USE_HUGE_PAGES = TBBMALLOC_USE_HUGE_PAGES
+} AllocationModeParam;
 
 /** Set TBB allocator-specific allocation modes.
     @ingroup memory_allocation */
 int __TBB_EXPORTED_FUNC scalable_allocation_mode(int param, intptr_t value);
+
+typedef enum {
+    /* Clean internal allocator buffers for all threads.
+       Returns TBBMALLOC_NO_EFFECT if no buffers cleaned,
+       TBBMALLOC_OK if some memory released from buffers. */
+    TBBMALLOC_CLEAN_ALL_BUFFERS,
+    /* Clean internal allocator buffer for current thread only.
+       Return values same as for TBBMALLOC_CLEAN_ALL_BUFFERS. */
+    TBBMALLOC_CLEAN_THREAD_BUFFERS
+} ScalableAllocationCmd;
+
+/** Call TBB allocator-specific commands.
+    @ingroup memory_allocation */
+int __TBB_EXPORTED_FUNC scalable_allocation_command(int cmd, void *param);
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -145,11 +170,19 @@ struct MemPoolPolicy {
         reserved(0) {}
 };
 
+// enums have same values as appropriate enums from ScalableAllocationResult
+// TODO: use ScalableAllocationResult in pool_create directly
 enum MemPoolError {
-    POOL_OK,            // pool created successfully
-    INVALID_POLICY,     // invalid policy parameters found
-    UNSUPPORTED_POLICY, // requested pool policy is not supported by allocator library
-    NO_MEMORY           // lack of memory during pool creation
+    // pool created successfully
+    POOL_OK = TBBMALLOC_OK,
+    // invalid policy parameters found
+    INVALID_POLICY = TBBMALLOC_INVALID_PARAM,
+     // requested pool policy is not supported by allocator library
+    UNSUPPORTED_POLICY = TBBMALLOC_UNSUPPORTED,
+    // lack of memory during pool creation
+    NO_MEMORY = TBBMALLOC_NO_MEMORY,
+    // action takes no effect
+    NO_EFFECT = TBBMALLOC_NO_EFFECT
 };
 
 MemPoolError pool_create_v1(intptr_t pool_id, const MemPoolPolicy *policy,

@@ -30,6 +30,7 @@
 PROG=Parallel_Preorder
 ARGS=
 PERF_RUN_ARGS=auto silent 500000  100
+LIGHT_ARGS=1:auto:+4 n-of-traversals=50
 
 # Trying to find if icl.exe is set
 CXX1 = $(TBB_CXX)-
@@ -49,6 +50,8 @@ clean:
 	@cmd.exe /C del $(PROG).exe *.obj *.?db *.manifest
 test:
 	$(PROG) $(ARGS)
+light_test:
+	$(PROG) $(LIGHT_ARGS)
 compiler_check:
 	@echo compiler_test>compiler_test && @$(CXX) /E compiler_test >nul 2>&1  || echo "$(CXX) command not found. Check if CXX=$(CXX) is set properly"
 	@cmd.exe /C del compiler_test

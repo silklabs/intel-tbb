@@ -689,7 +689,7 @@ namespace internal {
                     forward_task_bypass
                     <my_node_type>(*my_node);
                 if(!handle_task) return rtask;
-                task::enqueue(*rtask);
+                FLOW_SPAWN(*rtask);
             }
             return NULL;
         }
@@ -760,7 +760,7 @@ namespace internal {
                     forward_task_bypass
                     <my_node_type>(*my_node);
                 if(!handle_task) return rtask;
-                task::enqueue( *rtask);
+                FLOW_SPAWN( *rtask);
             }
             return NULL;
         }
@@ -859,7 +859,7 @@ namespace internal {
                         rtask = new ( task::allocate_additional_child_of( *(this->my_root_task) ) )
                             forward_task_bypass<my_node_type>(*my_node);
                         if(handle_task) {
-                            task::enqueue(*rtask);
+                            FLOW_SPAWN(*rtask);
                             rtask = NULL;
                         }
                         do_fwd = false;
@@ -1058,7 +1058,7 @@ namespace internal {
                         task *rtask = new ( task::allocate_additional_child_of(*(this->my_root_task)) )
                                 forward_task_bypass
                                 <join_node_base<JP,InputTuple,OutputTuple> >(*this);
-                        task::enqueue(*rtask);
+                        FLOW_SPAWN(*rtask);
                         forwarder_busy = true;
                     }
                     __TBB_store_with_release(current->status, SUCCEEDED);

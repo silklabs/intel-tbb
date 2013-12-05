@@ -66,12 +66,16 @@ namespace internal {
             my_body(NULL)
         {
         }
+        ~finish_reduce() {
+            if( has_right_zombie )
+                zombie_space.begin()->~Body();
+        }
         task* execute() {
             if( has_right_zombie ) {
                 // Right child was stolen.
                 Body* s = zombie_space.begin();
                 my_body->join( *s );
-                s->~Body();
+                // Body::join() won't be called if canceled. Defer destruction to destructor
             }
             if( my_context==left_child )
                 itt_store_word_with_release( static_cast<finish_reduce*>(parent())->my_body, my_body );

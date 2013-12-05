@@ -32,7 +32,9 @@
 
 #include "harness.h"
 #include "harness_barrier.h"
+#if !__TBB_SOURCE_DIRECTLY_INCLUDED
 #include "harness_tbb_independence.h"
+#endif
 
 tbb::atomic<int> FinishedTasks;
 const int MaxTasks = 16;

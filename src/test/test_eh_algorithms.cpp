@@ -499,6 +499,61 @@ void TestCancelation3 () {
     ASSERT ( result == expected, "Wrong calculation result");
 }
 
+struct StatsCounters {
+    tbb::atomic<size_t> my_total_created;
+    tbb::atomic<size_t> my_total_deleted;
+    StatsCounters() {
+        my_total_created = 0;
+        my_total_deleted = 0;
+    }
+};
+
+class ParReduceBody {
+    StatsCounters* my_stats;
+    size_t my_id;
+    bool my_exception;
+
+public:
+    ParReduceBody( StatsCounters& s_, bool e_ ) : my_stats(&s_), my_exception(e_) {
+        my_id = my_stats->my_total_created++;
+    }
+
+    ParReduceBody( const ParReduceBody& lhs ) {
+        my_stats = lhs.my_stats;
+        my_id = my_stats->my_total_created++;
+    }
+
+    ParReduceBody( ParReduceBody& lhs, tbb::split ) {
+        my_stats = lhs.my_stats;
+        my_id = my_stats->my_total_created++;
+    }
+
+    ~ParReduceBody(){ ++my_stats->my_total_deleted; }
+
+    void operator()( const tbb::blocked_range<std::size_t>& /*range*/ ) const {
+        //Do nothing, except for one task (chosen arbitrarily)
+        if( my_id >= 12 ) {
+            if( my_exception )
+                ThrowTestException(1);
+            else
+                tbb::task::self().cancel_group_execution();
+        }
+    }
+
+    void join( ParReduceBody& /*rhs*/ ) {}
+};
+
+void TestCancelation4() {
+    StatsCounters statsObj;
+    __TBB_TRY {
+        tbb::task_group_context tgc1, tgc2;
+        ParReduceBody body_for_cancellation(statsObj, false), body_for_exception(statsObj, true);
+        tbb::parallel_reduce( tbb::blocked_range<std::size_t>(0,100000000,100), body_for_cancellation, tbb::simple_partitioner(), tgc1 );
+        tbb::parallel_reduce( tbb::blocked_range<std::size_t>(0,100000000,100), body_for_exception, tbb::simple_partitioner(), tgc2 );
+    } __TBB_CATCH(...) {}
+    ASSERT ( statsObj.my_total_created==statsObj.my_total_deleted, "Not all parallel_reduce body objects created were reclaimed");
+}
+
 void RunParForAndReduceTests () {
     REMARK( "parallel for and reduce tests\n" );
     tbb::task_scheduler_init init (g_NumThreads);
@@ -514,6 +569,7 @@ void RunParForAndReduceTests () {
     TestCancelation1();
     TestCancelation2();
     TestCancelation3();
+    TestCancelation4();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

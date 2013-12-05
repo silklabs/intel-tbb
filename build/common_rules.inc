@@ -32,6 +32,20 @@ ifeq ($(tbb_strict),1)
   WARNING_KEY += $(WARNING_AS_ERROR_KEY)
 endif
 
+ifneq (,$(findstring s,$(MAKEFLAGS)))
+  override largs+=-q
+endif
+ifneq (,$(repeat))
+  override largs+=-r $(repeat)
+endif
+ifneq (,$(largs))
+  override run_cmd:=$(run_cmd)$(TEST_LAUNCHER)
+  TEST_LAUNCHER=
+  ifeq (,$(run_cmd))
+    $(warning Test launcher is not defined for the platform, ignoring launcher arguments)
+  endif
+endif
+
 ifndef TEST_EXT
     TEST_EXT = exe
 endif
@@ -132,5 +146,12 @@ version_string.ver: $(TBB.MANIFEST)
 else
 version_string.ver:
 	$(MAKE_VERSIONS)
+endif
+
+test_% debug_%: test_%.$(TEST_EXT) $(TEST_PREREQUISITE)
+	$(run_cmd) ./$< $(args)
+ifneq (,$(codecov))
+	profmerge
+	codecov $(if $(findstring -,$(codecov)),$(codecov),) -demang -comp $(tbb_root)/build/codecov.txt
 endif
 

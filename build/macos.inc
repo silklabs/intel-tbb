@@ -59,12 +59,13 @@ ifeq (ios,$(target))
   ifneq (armv7, $(arch))
     $(error $(arch) not supported for target 'ios')
   endif
-  SDKROOT?=$(shell xcodebuild -sdk -version | grep -o -E '/.*SDKs/iPhoneOS.*' 2>/dev/null)
+  export SDKROOT?=$(shell xcodebuild -sdk -version | grep -o -E '/.*SDKs/iPhoneOS.*' 2>/dev/null)
   ifeq (,$(SDKROOT))
     $(error iOS SDK not found)
   endif
   # next, use a single compiler include file for both iOS* and OS X* builds.
   override target:=macos
+  export target
 endif
 
 ifndef runtime
@@ -97,6 +98,7 @@ endif
 
 OBJ=o
 DLL=dylib
+MALLOC_DLL?=$(DLL)
 LIBEXT=dylib
 
 def_prefix = $(if $(findstring 64,$(arch)),mac64,mac32)
@@ -108,7 +110,7 @@ TBB.LIB = $(TBB.DLL)
 LINK_TBB.LIB = $(TBB.LIB)
 
 MALLOC.DEF = $(MALLOC_ROOT)/$(def_prefix)-tbbmalloc-export.def
-MALLOC.DLL = libtbbmalloc$(DEBUG_SUFFIX).$(DLL)
+MALLOC.DLL = libtbbmalloc$(DEBUG_SUFFIX).$(MALLOC_DLL)
 MALLOC.LIB = $(MALLOC.DLL)
 LINK_MALLOC.LIB = $(MALLOC.LIB)
 

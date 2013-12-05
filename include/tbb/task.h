@@ -386,7 +386,7 @@ private:
     //! Scheduler instance that registered this context in its thread specific list.
     internal::generic_scheduler *my_owner;
 
-    //! Internal state (combination of state flags).
+    //! Internal state (combination of state flags, currently only may_have_children).
     uintptr_t my_state;
 
 #if __TBB_TASK_PRIORITY
@@ -440,6 +440,7 @@ public:
         init();
     }
 
+    // Do not introduce standalone unbind method since it will break state propagation assumptions
     __TBB_EXPORTED_METHOD ~task_group_context ();
 
     //! Forcefully reinitializes the context after the task tree it was associated with is completed.
@@ -496,11 +497,9 @@ private:
     static const kind_type detached = kind_type(binding_completed+1);
     static const kind_type dying = kind_type(detached+1);
 
-    //! Propagates state change (if any) from an ancestor
-    /** Checks if one of this object's ancestors is in a new state, and propagates
-        the new state to all its descendants in this object's heritage line. **/
+    //! Propagates any state change detected to *this, and as an optimisation possibly also upward along the heritage line.
     template <typename T>
-    void propagate_state_from_ancestors ( T task_group_context::*mptr_state, T new_state );
+    void propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state );
 
     //! Makes sure that the context is registered with a scheduler instance.
     inline void finish_initialization ( internal::generic_scheduler *local_sched );

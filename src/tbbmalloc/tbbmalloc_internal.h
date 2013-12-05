@@ -80,6 +80,10 @@
 #define ASSERT_TEXT NULL
 
 #define COLLECT_STATISTICS ( MALLOC_DEBUG && MALLOCENV_COLLECT_STATISTICS )
+#ifndef USE_INTERNAL_TID
+#define USE_INTERNAL_TID COLLECT_STATISTICS
+#endif
+
 #include "Statistics.h"
 
 // call yield for whitebox testing, skip in real library
@@ -217,6 +221,24 @@ public:
     }
 };
 
+
+// The part of thread-specific data that can be modified by other threads.
+// Such modifications must be protected by AllLocalCaches::listLock.
+struct TLSRemote {
+    TLSRemote *next,
+              *prev;
+};
+
+// The list of all thread-local data; supporting cleanup of thread caches
+class AllLocalCaches {
+    TLSRemote  *head;
+    MallocMutex listLock; // protects operations in the list
+public:
+    void registerThread(TLSRemote *tls);
+    void unregisterThread(TLSRemote *tls);
+    bool cleanup(ExtMemoryPool *extPool);
+};
+
 /* cache blocks in range [MinSize; MaxSize) in bins with CacheStep
  TooLargeFactor -- when cache size treated "too large" in comparison to user data size
  OnMissFactor -- If cache miss occurred and cache was cleaned,
@@ -278,8 +300,8 @@ class LargeObjectCacheImpl {
         size_t            usedSize,
   /* total size of all objects cached in the bin */
                           cachedSize;
-  /* time of last hit for the bin */
-        intptr_t          lastHit;
+  /* mean time of presence of block in the bin before successful reuse */
+        intptr_t          meanHitRange;
   /* time of last get called for the bin */
         uintptr_t         lastGet;
 
@@ -293,7 +315,7 @@ class LargeObjectCacheImpl {
         inline LargeMemoryBlock *get(size_t size, uintptr_t currTime, bool *setNonEmpty);
         void decreaseThreshold() {
             if (ageThreshold)
-                ageThreshold = (ageThreshold + lastHit)/2;
+                ageThreshold = (ageThreshold + meanHitRange)/2;
         }
         void updateBinsSummary(BinsSummary *binsSummary) const {
             binsSummary->update(usedSize, cachedSize);
@@ -350,7 +372,8 @@ public:
 class LargeObjectCache {
     static const size_t minLargeSize =  8*1024,
                         maxLargeSize =  8*1024*1024,
-                        maxHugeSize = 128*1024*1024;
+    // There are benchmarks of interest that should work well with objects of this size
+                        maxHugeSize = 129*1024*1024;
 public:
     // Difference between object sizes in large block bins
     static const uint32_t largeBlockCacheStep =  8*1024,
@@ -695,7 +718,6 @@ class AllLargeBlocksList {
     MallocMutex       largeObjLock;
     LargeMemoryBlock *loHead;
 public:
-    LargeMemoryBlock *getHead() { return loHead; }
     void add(LargeMemoryBlock *lmb);
     void remove(LargeMemoryBlock *lmb);
     template<bool poolDestroy> void releaseAll(Backend *backend);
@@ -713,10 +735,12 @@ struct ExtMemoryPool {
     size_t            granularity;
     bool              keepAllMemory,
                       delayRegsReleasing,
+    // TODO: implements fixedPool with calling rawFree on destruction
                       fixedPool;
     TLSKey            tlsPointerKey;  // per-pool TLS key
 
     LargeObjectCache  loc;
+    AllLocalCaches    allLocalCaches;
 
     bool init(intptr_t poolId, rawAllocType rawAlloc, rawFreeType rawFree,
               size_t granularity, bool keepAllMemory, bool fixedPool);
@@ -727,8 +751,7 @@ struct ExtMemoryPool {
 
      // true if something has beed released
     bool softCachesCleanup();
-    bool releaseTLCaches();
-    // TODO: to release all thread's pools, not just current thread
+    bool releaseAllLocalCaches();
     bool hardCachesCleanup();
     void reset() {
         loc.reset();

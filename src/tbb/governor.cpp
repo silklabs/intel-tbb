@@ -94,7 +94,7 @@ void governor::release_resources () {
 #endif
     int status = theTLS.destroy();
     if( status )
-        handle_perror(status, "TBB failed to destroy task scheduler TLS");
+        runtime_warning("failed to destroy task scheduler TLS: %s", strerror(status));
     dynamic_unlink_all();
 }
 

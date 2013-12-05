@@ -178,7 +178,7 @@ namespace tbb {
 /** Does not test features specific to reader-writer locks. */
 template<typename M>
 void Test( const char * name ) {
-    REMARK("%s time = ",name);
+    REMARK("%s size == %d, time = ",name, sizeof(M));
     Counter<M> counter;
     counter.value = 0;
     tbb::profiling::set_name(counter.mutex, name);
@@ -499,7 +499,7 @@ void TestNullMutex( const char * name ) {
     Counter<M> counter;
     counter.value = 0;
     const int n = 100;
-    REMARK("%s ",name);
+    REMARK("TestNullMutex<%s>",name);
     {
         tbb::parallel_for(tbb::blocked_range<size_t>(0,n,10),AddOne<Counter<M> >(counter));
     }
@@ -507,15 +507,16 @@ void TestNullMutex( const char * name ) {
     {
         tbb::parallel_for(tbb::blocked_range<size_t>(0,n,10),NullRecursive<Counter<M> >(counter));
     }
-
+    REMARK("\n");
 }
 
 template<typename M>
 void TestNullRWMutex( const char * name ) {
-    REMARK("%s ",name);
+    REMARK("TestNullRWMutex<%s>",name);
     const int n = 100;
     M m;
     tbb::parallel_for(tbb::blocked_range<size_t>(0,n,10),NullUpgradeDowngrade<M>(m, name));
+    REMARK("\n");
 }
 
 //! Test ISO C++0x compatibility portion of TBB mutex
@@ -547,7 +548,53 @@ void TestRecursiveMutexISO( const char * name ) {
     TestRecursiveMutex<tbb_from_iso>(name);
 }
 
+#include "harness_tsx.h"
 #include "tbb/task_scheduler_init.h"
+
+#if HAVE_TSX && __INTEL_COMPILER
+
+//! Function object for use with parallel_for.h to see if a transaction is actually attempted.
+tbb::atomic<size_t> n_transactions_attempted;
+template<typename C>
+struct AddOne_CheckTransaction: NoAssign {
+    C& counter;
+    /** Increments counter once for each iteration in the iteration space. */
+    void operator()( tbb::blocked_range<size_t>& range ) const {
+        for( size_t i=range.begin(); i!=range.end(); ++i ) {
+            bool transaction_attempted = false;
+            {
+              typename C::mutex_type::scoped_lock lock(counter.mutex);
+              if( IsInsideTx() ) transaction_attempted = true;
+              counter.value = counter.value+1;
+            }
+            if( transaction_attempted ) ++n_transactions_attempted;
+            __TBB_Pause(i);
+        }
+    }
+    AddOne_CheckTransaction( C& counter_ ) : counter(counter_) {}
+};
+
+template<typename M>
+void TestTransaction( const char * name )
+{
+    Counter<M> counter;
+    const int n = 100;
+    REMARK("TestTransaction with %s\n",name);
+
+    n_transactions_attempted = 0;
+    for( int i=0; i<5 && n_transactions_attempted==0; ++i ) {
+        counter.value = 0;
+        tbb::parallel_for(tbb::blocked_range<size_t>(0,n,2),AddOne_CheckTransaction<Counter<M> >(counter));
+        if( counter.value!=n ) {
+            REPORT("ERROR for %s: counter.value=%ld\n",name,counter.value);
+            break;
+        }
+    }
+
+    if( n_transactions_attempted==0 )
+        REPORT( "ERROR: HLE transactions are never attempted\n" );
+}
+#endif
 
 int TestMain () {
     for( int p=MinThread; p<=MaxThread; ++p ) {
@@ -566,6 +613,7 @@ int TestMain () {
             TestNullMutex<tbb::null_rw_mutex>( "Null RW Mutex" );
             TestNullRWMutex<tbb::null_rw_mutex>( "Null RW Mutex" );
             Test<tbb::spin_mutex>( "Spin Mutex" );
+            Test<tbb::speculative_spin_mutex>( "Spin Mutex/speculative" );
 #if _OPENMP
             Test<OpenMP_Mutex>( "OpenMP_Mutex" );
 #endif /* _OPENMP */
@@ -576,6 +624,7 @@ int TestMain () {
             Test<tbb::spin_rw_mutex>( "Spin RW Mutex" );
 
             TestTryAcquire_OneThread<tbb::spin_mutex>("Spin Mutex");
+            TestTryAcquire_OneThread<tbb::speculative_spin_mutex>("Spin Mutex/speculative");
             TestTryAcquire_OneThread<tbb::queuing_mutex>("Queuing Mutex");
 #if USE_PTHREAD
             // under ifdef because on Windows tbb::mutex is reenterable and the test will fail
@@ -611,5 +660,13 @@ int TestMain () {
         }
         REMARK( "calling destructor for task_scheduler_init\n" );
     }
+
+#if HAVE_TSX && __INTEL_COMPILER
+    // additional test for speculative_spin_mutex to see if we actually attempt lock elisions
+    if( have_TSX() ) {
+        tbb::task_scheduler_init init( MaxThread );
+        TestTransaction<tbb::speculative_spin_mutex>( "Spin Mutex/speculative" );
+    }
+#endif
     return Harness::Done;
 }

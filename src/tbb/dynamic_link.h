@@ -87,15 +87,20 @@ const int DYNAMIC_LINK_WEAK   = 0x04;
 const int DYNAMIC_LINK_ALL    = DYNAMIC_LINK_GLOBAL | DYNAMIC_LINK_LOAD | DYNAMIC_LINK_WEAK;
 
 //! Fill in dynamically linked handlers.
-/** 'required' is the number of the initial entries in the array descriptors[]
+/** 'library' is the name of the requested library. It should not contain a full
+    path since dynamic_link adds the full path (from which the runtime itself
+    was loaded) to the library name.
+    'required' is the number of the initial entries in the array descriptors[]
     that have to be found in order for the call to succeed. If the library and
-    all the required handlers are found, then the corresponding handler pointers
-    are set, and the return value is true.  Otherwise the original array of
-    descriptors is left untouched and the return value is false. 'required' is
-    limited by 20 (exceeding of this value will result in failure to load the
-    symbols and the return value will be false).
-    'dl_allowed' flag allows dynamic library loading if the global symbols
-    searching mechanism has failed.
+    all the required handlers are found, then the corresponding handler
+    pointers are set, and the return value is true.  Otherwise the original
+    array of descriptors is left untouched and the return value is false.
+    'required' is limited by 20 (exceeding of this value will result in failure
+    to load the symbols and the return value will be false).
+    'handle' is the handle of the library if it is loaded. Otherwise it is left
+    untouched.
+    'flags' is the set of DYNAMIC_LINK_* flags. Each of the DYNAMIC_LINK_* flags
+    allows its corresponding linking stage.
 **/
 bool dynamic_link( const char* library,
                    const dynamic_link_descriptor descriptors[],

@@ -58,6 +58,10 @@
 #include "../tbb_allocator.h"
 #include "tbb/atomic.h"
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    #include <initializer_list>
+#endif
+
 namespace tbb {
 namespace interface5 {
 //! @cond INTERNAL
@@ -718,6 +722,17 @@ protected:
             internal_copy(right);
         return (*this);
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assignment operator from initializer_list
+    concurrent_unordered_base& operator=(std::initializer_list<value_type> const& il)
+    {
+        this->clear();
+        this->insert(il.begin(),il.end());
+        return (*this);
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
 
     ~concurrent_unordered_base() {
         // Delete all node segments

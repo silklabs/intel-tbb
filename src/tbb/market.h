@@ -314,7 +314,7 @@ public:
 #if __TBB_TASK_PRIORITY
     //! Lowers arena's priority is not higher than newPriority 
     /** Returns true if arena priority was actually elevated. **/ 
-    bool lower_arena_priority ( arena& a, intptr_t new_priority, intptr_t old_priority );
+    bool lower_arena_priority ( arena& a, intptr_t new_priority, uintptr_t old_reload_epoch );
 
     //! Makes sure arena's priority is not lower than newPriority 
     /** Returns true if arena priority was elevated. Also updates arena's bottom

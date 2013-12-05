@@ -226,7 +226,10 @@ void interface5::internal::task_base::destroy( task& victim ) {
     task* parent = victim.parent();
     victim.~task();
     if( parent ) {
-        __TBB_ASSERT( parent->state()==task::allocated, "attempt to destroy child of running or corrupted parent?" );
+        __TBB_ASSERT( parent->state()!=task::freed && parent->state()!=task::ready,
+                      "attempt to destroy child of running or corrupted parent?" );
+        // 'reexecute' and 'executing' are also signs of a race condition, since most tasks
+        // set their ref_count upon entry but "es_ref_count_active" should detect this
         parent->internal_decrement_ref_count();
         // Even if the last reference to *parent is removed, it should not be spawned (documented behavior).
     }

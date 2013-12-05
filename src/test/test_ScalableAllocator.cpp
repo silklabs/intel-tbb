@@ -32,7 +32,7 @@
 #define TBB_PREVIEW_MEMORY_POOL 1
 
 #include "harness_assert.h"
-#if __linux__  && __ia64__
+#if !__TBB_SOURCE_DIRECTLY_INCLUDED
 // Currently pools high-level interface has dependency to TBB library
 // to get atomics. For sake of testing add rudementary implementation of them.
 #include "harness_tbb_independence.h"
@@ -115,11 +115,16 @@ void TestZeroSpaceMemoryPool() { }
 struct FixedPool {
     void  *buf;
     size_t size;
-    FixedPool(void *buf, size_t size) : buf(buf), size(size) {}
+    bool   used;
+    FixedPool(void *buf, size_t size) : buf(buf), size(size), used(false) {}
 };
 
 static void *fixedBufGetMem(intptr_t pool_id, size_t &bytes)
 {
+    if (((FixedPool*)pool_id)->used)
+        return NULL;
+
+    ((FixedPool*)pool_id)->used = true;
     bytes = ((FixedPool*)pool_id)->size;
     return ((FixedPool*)pool_id)->buf;
 }

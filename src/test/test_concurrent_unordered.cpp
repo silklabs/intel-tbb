@@ -211,6 +211,63 @@ struct SpecialTests <MyMultiMap>
     }
 };
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+//these operator== are used implicitly in  test_initializer_list.h.
+//For some unknown reason clang is not able to find the if they a declared after the
+//inclusion of test_initializer_list.h.
+template<typename container_type>
+bool equal_containers(container_type const& lhs, container_type const& rhs){
+    if (lhs.size() != rhs.size()){
+        return false;
+    }
+    return std::equal(lhs.begin(),lhs.end(),lhs.begin());
+}
+
+template<typename T>
+bool operator==(tbb::concurrent_unordered_set<T> const& lhs, tbb::concurrent_unordered_set<T> const& rhs){
+    return equal_containers(lhs,rhs);
+}
+
+template<typename T>
+bool operator==(tbb::concurrent_unordered_multiset<T> const& lhs, tbb::concurrent_unordered_multiset<T> const& rhs){
+    return equal_containers(lhs,rhs);
+}
+
+template<typename Key, typename Value>
+bool operator==(tbb::concurrent_unordered_map<Key,Value> const& lhs, tbb::concurrent_unordered_map<Key,Value> const& rhs){
+    return equal_containers(lhs,rhs);
+}
+
+template<typename Key, typename Value>
+bool operator==(tbb::concurrent_unordered_multimap<Key,Value> const& lhs, tbb::concurrent_unordered_multimap<Key,Value> const& rhs){
+    return equal_containers(lhs,rhs);
+}
+
+#include "test_initializer_list.h"
+
+void TestInitList(){
+    using namespace initializer_list_support_tests;
+    REMARK("testing initializer_list methods \n");
+
+    std::initializer_list<int> il = {1,2,3,4,5};
+
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_set<int> >(il);
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_set<int> >({});
+
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_multiset<int> >(il);
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_multiset<int> >({});
+
+    typedef tbb::concurrent_unordered_map<int,int>::value_type value_type;
+    std::initializer_list<value_type > pairs_il = {{1,1},{2,2},{3,3},{4,4},{5,5}};
+
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_map<int,int> >(pairs_il);
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_map<int,int> >({});
+
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_multimap<int,int> >(pairs_il);
+    TestInitListSupportWithoutAssign<tbb::concurrent_unordered_multimap<int,int> >({});
+}
+#endif //if __TBB_INITIALIZER_LISTS_PRESENT
+
 template<typename T>
 void test_basic(const char * str)
 {
@@ -719,6 +776,10 @@ void TEST_INITIALIZATION_TIME_OPERATIONS_NAME(){
 
 #if !__TBB_TEST_SECONDARY
 int TestMain () {
+    #if __TBB_INITIALIZER_LISTS_PRESENT
+        TestInitList();
+    #endif
+
     test_machine();
     test_basic<MyMap>("concurrent unordered Map");
     test_concurrent<MyMap>("concurrent unordered Map");

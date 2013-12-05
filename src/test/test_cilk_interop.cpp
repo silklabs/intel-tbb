@@ -43,6 +43,7 @@ static const int P_outer = 4;
 static const int P_nested = 2;
 
 #include <cilk/cilk.h>
+#include <cilk/cilk_api.h>
 #define private public
 #include "tbb/task.h"
 #undef private

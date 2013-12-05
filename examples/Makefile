@@ -127,6 +127,7 @@ else
     export CPATH := $(CPATH):$(tbb_root)/include
 endif
 
+export CXXFLAGS
 COMMON_TARGETS := all clean release debug test perf_build perf_run
 # list of directories of examples
 EXAMPLES_DIRS := $(foreach T,$(EXAMPLES),$(dir $(T)))
@@ -142,8 +143,8 @@ $(COMMON_TARGETS):: % : $(addsuffix %,$(EXAMPLES_DIRS))
 
 # proxy rule for calling appropriate example
 $(EXAMPLES_TARGETS)::
-	@echo --------------------------------------------------
-	-$(MAKE) target="$(target)" SHELL=$(SHELL) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)" CXXFLAGS="$(CXXFLAGS)"
+	@echo ------------------------ $@ ------------------------
+	-$(MAKE) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)"
 
 printenv:
 ifeq ($(tbb_os),windows)

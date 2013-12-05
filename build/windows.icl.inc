@@ -148,12 +148,12 @@ ASSEMBLY_SOURCE=$(arch)-masm
 ifeq (intel64,$(arch))
     ASM=ml64 /nologo
     ASM_FLAGS += /DEM64T=1 /c /Zi
-    TBB_ASM.OBJ = atomic_support.obj intel64_misc.obj
+    TBB_ASM.OBJ = atomic_support.obj intel64_misc.obj itsx.obj
     MALLOC_ASM.OBJ = atomic_support.obj
 else
     ASM=ml /nologo
     ASM_FLAGS += /c /coff /Zi /safeseh
-    TBB_ASM.OBJ = atomic_support.obj lock_byte.obj
+    TBB_ASM.OBJ = atomic_support.obj lock_byte.obj itsx.obj
 endif
 #------------------------------------------------------------------------------
 # End of setting assembler data.

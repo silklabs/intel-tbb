@@ -28,8 +28,32 @@ REM the GNU General Public License.
 REM
 
 set cmd_line=
+if DEFINED run_prefix set cmd_line=%run_prefix%
 :while
 if NOT "%1"=="" (
+    REM Verbose mode
+    if "%1"=="-v" (
+        set verbose=yes
+        GOTO continue
+    )
+    REM Silent mode of 'make' requires additional support for associating
+    REM of test output with the test name. Verbose mode is the simplest way
+    if "%1"=="-q" (
+        set verbose=yes
+        GOTO continue
+    )
+    REM Run in stress mode
+    if "%1"=="-s" (
+        echo Doing stress testing. Press Ctrl-C to terminate
+        set stress=yes
+        GOTO continue
+    )
+    REM Repeat execution specified number of times
+    if "%1"=="-r" (
+        set repeat=%2
+        SHIFT
+        GOTO continue
+    )
     REM no LD_PRELOAD under Windows
     REM but run the test to check "#pragma comment" construction
     if "%1"=="-l" (
@@ -47,5 +71,12 @@ if NOT "%1"=="" (
     SHIFT
     GOTO while
 )
-
-%cmd_line%
+set cmd_line=%cmd_line:./=.\%
+if DEFINED verbose echo Running %cmd_line%
+if DEFINED stress set cmd_line=%cmd_line% ^& IF NOT ERRORLEVEL 1 GOTO stress
+:stress
+if DEFINED repeat (
+    for /L %%i in (1,1,%repeat%) do echo %%i of %repeat%: & %cmd_line%
+) else (
+    %cmd_line%
+)

@@ -917,6 +917,21 @@ void TestExceptions() {
 }
 #endif /* TBB_USE_EXCEPTIONS */
 
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+#include "test_initializer_list.h"
+
+void TestInitList(){
+    using namespace initializer_list_support_tests;
+    REMARK("testing initializer_list methods \n");
+
+    typedef tbb::concurrent_hash_map<int,int>::value_type value_type;
+    std::initializer_list<value_type > pairs_il = {{1,1},{2,2},{3,3},{4,4},{5,5}};
+
+    TestInitListSupportWithoutAssign<tbb::concurrent_hash_map<int,int> >(pairs_il);
+    TestInitListSupportWithoutAssign<tbb::concurrent_hash_map<int,int> >({});
+}
+#endif //if __TBB_INITIALIZER_LISTS_PRESENT
 //------------------------------------------------------------------------
 // Test driver
 //------------------------------------------------------------------------
@@ -936,6 +951,10 @@ int TestMain () {
     TestRehash();
     TestAssignment();
     TestIteratorsAndRanges();
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    TestInitList();
+#endif //__TBB_INITIALIZER_LISTS_PRESENT
+
 #if TBB_USE_EXCEPTIONS
     TestExceptions();
 #endif /* TBB_USE_EXCEPTIONS */

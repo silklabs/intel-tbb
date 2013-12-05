@@ -30,6 +30,10 @@ TEST_RESOURCE = $(RML.RES)
 include $(tbb_root)/build/common.inc
 DEBUG_SUFFIX=$(findstring _debug,_$(cfg))
 
+ifeq (android,$(target))
+$(error "RML is not supported on Android")
+endif
+
 # default target
 default_rml: rml rml_test
 

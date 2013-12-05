@@ -41,21 +41,23 @@
 
 #if __linux__
 /* huge pages supported only under Linux so far */
-void CheckReturnCode(int ret) { assert(!ret); }
+const int ExpectedResultHugePages = TBBMALLOC_OK;
 #else
-void CheckReturnCode(int ret) { assert( ret); }
+const int ExpectedResultHugePages = TBBMALLOC_NO_EFFECT;
 #endif
 
 int main(void) {
     size_t i, j;
-    int curr_mode;
+    int curr_mode, res;
     void *p1, *p2;
 
     for ( curr_mode = 0; curr_mode<=1; curr_mode++) {
-        CheckReturnCode(scalable_allocation_mode(USE_HUGE_PAGES, !curr_mode));
+        assert(ExpectedResultHugePages ==
+               scalable_allocation_mode(TBBMALLOC_USE_HUGE_PAGES, !curr_mode));
         p1 = scalable_malloc(10*1024*1024);
         assert(p1);
-        CheckReturnCode(scalable_allocation_mode(USE_HUGE_PAGES, curr_mode));
+        assert(ExpectedResultHugePages ==
+               scalable_allocation_mode(TBBMALLOC_USE_HUGE_PAGES, curr_mode));
         scalable_free(p1);
     }
     /* note that huge pages (if supported) are still enabled at this point */
@@ -93,6 +95,14 @@ int main(void) {
     }
     scalable_free(p1);
     scalable_free(p2);
+    res = scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS, NULL);
+    assert(res == TBBMALLOC_OK);
+    res = scalable_allocation_command(TBBMALLOC_CLEAN_THREAD_BUFFERS, NULL);
+    /* expect all caches cleaned before, so got nothing from CLEAN_THREAD_BUFFERS */
+    assert(res == TBBMALLOC_NO_EFFECT);
+    /* check that invalid param argument give expected result*/
+    res = scalable_allocation_command(TBBMALLOC_CLEAN_THREAD_BUFFERS, (void*)1);
+    assert(res == TBBMALLOC_INVALID_PARAM);
     printf("done\n");
     return 0;
 }

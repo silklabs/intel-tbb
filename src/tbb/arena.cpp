@@ -427,7 +427,7 @@ bool arena::is_out_of_work() {
                         if( work_absent ) {
 #if __TBB_TASK_PRIORITY
                             if ( top_priority > my_bottom_priority ) {
-                                if ( my_market->lower_arena_priority(*this, top_priority - 1, top_priority)
+                                if ( my_market->lower_arena_priority(*this, top_priority - 1, reload_epoch)
                                      && !my_task_stream[top_priority].empty() )
                                 {
                                     atomic_update( my_skipped_fifo_priority, top_priority, std::less<intptr_t>());

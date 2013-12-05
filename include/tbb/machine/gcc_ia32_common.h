@@ -94,4 +94,6 @@ inline void __TBB_set_cpu_ctl_env ( const __TBB_cpu_ctl_env_t* ctl ) {
 }
 #endif /* !__TBB_CPU_CTL_ENV_PRESENT */
 
+#include "gcc_itsx.h"
+
 #endif /* __TBB_machine_gcc_ia32_common_H */

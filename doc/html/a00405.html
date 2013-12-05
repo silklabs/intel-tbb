@@ -47,13 +47,32 @@ typedef void *(*)&nbsp;</td><td class="memItemRight" valign="bottom"><b>rml::raw
 typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><b>rml::rawFreeType</b> (intptr_t pool_id, void *raw_ptr, size_t raw_bytes)</td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>AllocationModeParam</b> { <b>USE_HUGE_PAGES</b>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>ScalableAllocationResult</b> { <br>
+&nbsp;&nbsp;<b>TBBMALLOC_OK</b>, 
+<b>TBBMALLOC_INVALID_PARAM</b>, 
+<b>TBBMALLOC_UNSUPPORTED</b>, 
+<b>TBBMALLOC_NO_MEMORY</b>, 
+<br>
+&nbsp;&nbsp;<b>TBBMALLOC_NO_EFFECT</b>
+<br>
  }</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>MemPoolError</b> { <b>POOL_OK</b>, 
-<b>INVALID_POLICY</b>, 
-<b>UNSUPPORTED_POLICY</b>, 
-<b>NO_MEMORY</b>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>AllocationModeParam</b> { <b>TBBMALLOC_USE_HUGE_PAGES</b>, 
+<b>USE_HUGE_PAGES</b> =  TBBMALLOC_USE_HUGE_PAGES
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>ScalableAllocationCmd</b> { <b>TBBMALLOC_CLEAN_ALL_BUFFERS</b>, 
+<b>TBBMALLOC_CLEAN_THREAD_BUFFERS</b>
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>MemPoolError</b> { <br>
+&nbsp;&nbsp;<b>POOL_OK</b> =  TBBMALLOC_OK, 
+<b>INVALID_POLICY</b> =  TBBMALLOC_INVALID_PARAM, 
+<b>UNSUPPORTED_POLICY</b> =  TBBMALLOC_UNSUPPORTED, 
+<b>NO_MEMORY</b> =  TBBMALLOC_NO_MEMORY, 
+<br>
+&nbsp;&nbsp;<b>NO_EFFECT</b> =  TBBMALLOC_NO_EFFECT
+<br>
  }</td></tr>
 
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
@@ -76,6 +95,8 @@ typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><b>rml::rawFre
 <tr><td class="memItemLeft" nowrap align="right" valign="top">size_t __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00443.html#g0965ce1b4b7835f92869c7fd867265f7">scalable_msize</a> (void *ptr)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00443.html#gb9ee52ffc5400f15c3d8af8c7613c05a">scalable_allocation_mode</a> (int param, intptr_t value)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00443.html#gcdbd064aec22571ec84e906166a831a2">scalable_allocation_command</a> (int cmd, void *param)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7be7b591205c8bf497261d40c0304ab9"></a><!-- doxytag: member="scalable_allocator.h::pool_create_v1" ref="7be7b591205c8bf497261d40c0304ab9" args="(intptr_t pool_id, const MemPoolPolicy *policy, rml::MemoryPool **pool)" -->
 MemPoolError&nbsp;</td><td class="memItemRight" valign="bottom"><b>rml::pool_create_v1</b> (intptr_t pool_id, const MemPoolPolicy *policy, rml::MemoryPool **pool)</td></tr>

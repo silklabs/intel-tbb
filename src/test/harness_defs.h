@@ -141,6 +141,10 @@
 namespace Harness {
     //! Utility template function to prevent "unused" warnings by various compilers.
     template<typename T> void suppress_unused_warning( const T& ) {}
+
+    //TODO: unify with one in tbb::internal
+    //! Utility helper structure to ease overload resolution
+    template<int > struct int_to_type {};
 }
 
 #endif /* __TBB_harness_defs_H */

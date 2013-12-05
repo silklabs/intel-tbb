@@ -216,20 +216,24 @@ public:
     }
 };
 
-class FreeBlockPoolHit: NoAssign {
-    // to trigger possible leak for both cleanup on pool overflow 
-    // and on thread termination
-    static const int ITERS = 2*FreeBlockPool::POOL_HIGH_MARK;
+class LocalCachesHit: NoAssign {
+    // set ITERS to trigger possible leak of backreferences
+    // during cleanup on cache overflow and on thread termination
+    static const int ITERS = 2*(FreeBlockPool::POOL_HIGH_MARK +
+                                LocalLOC::LOC_HIGH_MARK);
 public:
-    FreeBlockPoolHit() {}
+    LocalCachesHit() {}
     void operator()(int) const {
-        void *objs[ITERS];
+        void *objsSmall[ITERS], *objsLarge[ITERS];
 
-        for (int i=0; i<ITERS; i++)
-            objs[i] = scalable_malloc(minLargeObjectSize-1);
-        for (int i=0; i<ITERS; i++)
-            scalable_free(objs[i]);
-
+        for (int i=0; i<ITERS; i++) {
+            objsSmall[i] = scalable_malloc(minLargeObjectSize-1);
+            objsLarge[i] = scalable_malloc(minLargeObjectSize);
+        }
+        for (int i=0; i<ITERS; i++) {
+            scalable_free(objsSmall[i]);
+            scalable_free(objsLarge[i]);
+        }
 #ifdef USE_WINTHREAD
         // Under Windows DllMain is used for mallocThreadShutdownNotification
         // calling. As DllMain is not used during whitebox testing,
@@ -245,11 +249,6 @@ static size_t allocatedBackRefCount()
     for (int i=0; i<=backRefMaster->lastUsed; i++)
         cnt += backRefMaster->backRefBl[i]->allocatedCount;
     return cnt;
-}
-
-static void cleanObjectCache()
-{
-    defaultMemPool->extMemPool.hardCachesCleanup();
 }
 
 class TestInvalidBackrefs: public SimpleBarrier {
@@ -313,14 +312,16 @@ void TestBackRef() {
     int sustLastUsed = backRefMaster->lastUsed;
     NativeParallelFor( 1, BackRefWork() );
     ASSERT(sustLastUsed == backRefMaster->lastUsed, "backreference leak detected");
-    
-    // check leak of back references while per-thread small object pool is in use
-    // warm up need to cover bootStrapMalloc call
-    NativeParallelFor( 1, FreeBlockPoolHit() );
+
+    // check leak of back references while per-thread caches are in use
+    // warm up needed to cover bootStrapMalloc call
+    NativeParallelFor( 1, LocalCachesHit() );
     beforeNumBackRef = allocatedBackRefCount();
-    NativeParallelFor( 1, FreeBlockPoolHit() );
+    NativeParallelFor( 2, LocalCachesHit() );
+    int res = scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS, NULL);
+    ASSERT(res == TBBMALLOC_OK, NULL);
     afterNumBackRef = allocatedBackRefCount();
-    ASSERT(beforeNumBackRef==afterNumBackRef, "backreference leak detected");
+    ASSERT(beforeNumBackRef>=afterNumBackRef, "backreference leak detected");
 
     // This is a regression test against race condition between backreference
     // extension and checking invalid BackRefIdx.
@@ -377,6 +378,21 @@ int putMallocMem(intptr_t /*pool_id*/, void *ptr, size_t bytes)
     return 0;
 }
 
+class StressLOCacheWork: NoAssign {
+    rml::MemoryPool *mallocPool;
+public:
+    StressLOCacheWork(rml::MemoryPool *mallocPool) : mallocPool(mallocPool) {}
+    void operator()(int) const {
+        for (size_t sz=minLargeObjectSize; sz<1*1024*1024;
+             sz+=LargeObjectCache::largeBlockCacheStep) {
+            void *ptr = pool_malloc(mallocPool, sz);
+            ASSERT(ptr, "Memory was not allocated");
+            memset(ptr, sz, sz);
+            pool_free(mallocPool, ptr);
+        }
+    }
+};
+
 void TestPools() {
     rml::MemPoolPolicy pol(getMem, putMem);
     size_t beforeNumBackRef, afterNumBackRef;
@@ -388,7 +404,7 @@ void TestPools() {
     pool_destroy(pool1);
     pool_destroy(pool2);
 
-    cleanObjectCache();
+    scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS, NULL);
     beforeNumBackRef = allocatedBackRefCount();
     rml::MemoryPool *fixedPool;
 
@@ -440,16 +456,12 @@ void TestPools() {
     pool_free(fixedPool, largeObj);
 
     // provoke large object cache cleanup and hope no leaks occurs
-    for (size_t sz=minLargeObjectSize; sz<1*1024*1024; sz+=LargeObjectCache::largeBlockCacheStep) {
-        ptr = pool_malloc(mallocPool, sz);
-        ASSERT(ptr, "Memory was not allocated");
-        memset(ptr, sz, sz);
-        pool_free(mallocPool, ptr);
-    }
+    for( int p=MaxThread; p>=MinThread; --p )
+        NativeParallelFor( p, StressLOCacheWork(mallocPool) );
     pool_destroy(mallocPool);
     pool_destroy(fixedPool);
 
-    cleanObjectCache();
+    scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS, NULL);
     afterNumBackRef = allocatedBackRefCount();
     ASSERT(beforeNumBackRef==afterNumBackRef, "backreference leak detected");
 
@@ -468,7 +480,7 @@ void TestPools() {
         ASSERT(loc->getUsedSize(), NULL);
         pool_free(mallocPool, p[3]);
         ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+LargeObjectCache::largeBlockCacheStep), NULL);
-        const size_t maxLocalLOCSize = LocalLOC<3,30>::getMaxSize();
+        const size_t maxLocalLOCSize = LocalLOCImpl<3,30>::getMaxSize();
         ASSERT(loc->getUsedSize() <= maxLocalLOCSize, NULL);
         for (int i=0; i<3; i++)
             p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*LargeObjectCache::largeBlockCacheStep);
@@ -485,7 +497,7 @@ void TestPools() {
     // To test LOC we need bigger lists than released by current LocalLOC
     //   in production code. Create special LocalLOC.
     {
-        LocalLOC<2, 20> lLOC;
+        LocalLOCImpl<2, 20> lLOC;
         pool_create_v1(0, &pol, &mallocPool);
         rml::internal::ExtMemoryPool *mPool = &((rml::internal::MemoryPool*)mallocPool)->extMemPool;
         const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
@@ -498,7 +510,7 @@ void TestPools() {
             ret = lLOC.put(((LargeObjectHdr*)o - 1)->memoryBlock, mPool);
             ASSERT(ret, NULL);
         }
-        lLOC.clean(mPool);
+        lLOC.externalCleanup(mPool);
         ASSERT(!loc->getUsedSize(), NULL);
 
         pool_destroy(mallocPool);

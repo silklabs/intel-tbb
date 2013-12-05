@@ -121,6 +121,16 @@ public:
             base_type::insert(*first);
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Constructor from initializer_list
+   concurrent_unordered_set(std::initializer_list<value_type> const& il, size_type n_of_buckets = 8, const hasher& a_hasher = hasher(),
+        const key_equal& a_keyeq = key_equal(), const allocator_type& a = allocator_type())
+        : base_type(n_of_buckets, key_compare(a_hasher, a_keyeq), a)
+    {
+        this->insert(il.begin(),il.end());
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
     concurrent_unordered_set(const concurrent_unordered_set& table) : base_type(table)
     {
     }
@@ -135,6 +145,15 @@ public:
         base_type::operator=(table);
         return (*this);
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assignment operator from initializer_list
+    concurrent_unordered_set& operator=(std::initializer_list<value_type> const& il)
+    {
+        base_type::operator=(il);
+        return (*this);
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
 
     iterator unsafe_erase(const_iterator where)
     {
@@ -227,6 +246,16 @@ public:
             base_type::insert(*first);
         }
     }
+    
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Constructor from initializer_list
+   concurrent_unordered_multiset(std::initializer_list<value_type> const& il, size_type n_of_buckets = 8, const hasher& a_hasher = hasher(),
+        const key_equal& a_keyeq = key_equal(), const allocator_type& a = allocator_type())
+        : base_type(n_of_buckets, key_compare(a_hasher, a_keyeq), a)
+    {
+        this->insert(il.begin(),il.end());
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT    
 
     concurrent_unordered_multiset(const concurrent_unordered_multiset& table) : base_type(table)
     {
@@ -241,6 +270,15 @@ public:
         base_type::operator=(table);
         return (*this);
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assignment operator from initializer_list
+    concurrent_unordered_multiset& operator=(std::initializer_list<value_type> const& il)
+    {
+        base_type::operator=(il);
+        return (*this);
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
 
     // Modifiers
     std::pair<iterator, bool> insert(const value_type& value)

@@ -37,6 +37,12 @@
     - known compiler/platform issues
 **/
 
+/*Check which standard library we use on OS X.*/
+/*__TBB_SYMBOL is defined only while processing exported symbols list where C++ is not allowed.*/
+#if !defined(__TBB_SYMBOL) && __APPLE__
+    #include <cstddef>
+#endif
+
 #define __TBB_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
 #if __clang__
@@ -52,7 +58,7 @@
     #define __INTEL_COMPILER 1210
 #endif
 
-#if (__TBB_GCC_VERSION >= 40400) && !defined(__INTEL_COMPILER)
+#if __TBB_GCC_VERSION >= 40400 && !defined(__INTEL_COMPILER)
     /** warning suppression pragmas available in GCC since 4.4 **/
     #define __TBB_GCC_WARNING_SUPPRESSION_PRESENT 1
 #endif
@@ -69,41 +75,48 @@
  */
 
 #if __INTEL_COMPILER
-    /** On Windows environment when using Intel C++ compiler with Visual Studio 2010*,
-        the C++0x features supported by Visual C++ 2010 are enabled by default
-        TODO: find a way to get know if c++0x mode is specified in command line on windows **/
-    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    ( __VARIADIC_TEMPLATES && (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER) )
-    #define __TBB_CPP11_RVALUE_REF_PRESENT            ( (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && (__INTEL_COMPILER >= 1200) )
+    /** C++11 mode detection macros for Intel C++ compiler (enabled by -std=c++0x option):
+          __INTEL_CXX11_MODE__ for version >=13.0
+          __STDC_HOSTED__ for version >=12.0 on Windows,
+          __GXX_EXPERIMENTAL_CXX0X__ for version >=12.0 on Linux and OS X. **/
+    //  On Windows, C++11 features supported by Visual Studio 2010 and higher are enabled by default
+    #ifndef __INTEL_CXX11_MODE__
+        #define __INTEL_CXX11_MODE__ ((_MSC_VER && __STDC_HOSTED__) || __GXX_EXPERIMENTAL_CXX0X__)
+        // TODO: check if more conditions can be simplified with the above macro
+    #endif
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    (__INTEL_CXX11_MODE__ && __VARIADIC_TEMPLATES)
+    #define __TBB_CPP11_RVALUE_REF_PRESENT            ((__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && __INTEL_COMPILER >= 1200)
     #if  _MSC_VER >= 1600
         #define __TBB_EXCEPTION_PTR_PRESENT           ( __INTEL_COMPILER > 1300                                                \
                                                       /*ICC 12.1 Upd 10 and 13 beta Upd 2 fixed exception_ptr linking  issue*/ \
                                                       || (__INTEL_COMPILER == 1300 && __INTEL_COMPILER_BUILD_DATE >= 20120530) \
                                                       || (__INTEL_COMPILER == 1210 && __INTEL_COMPILER_BUILD_DATE >= 20120410) )
-    /** libstc++ that comes with GCC 4.6 use C++11 features not supported by ICC 12.1.
-     * Because of that ICC 12.1 does not support C++11 mode with with gcc 4.6. (or higher)
-     * , and therefore does not  define __GXX_EXPERIMENTAL_CXX0X__ macro**/
-    #elif (__TBB_GCC_VERSION >= 40404) && (__TBB_GCC_VERSION < 40600)
-        #define __TBB_EXCEPTION_PTR_PRESENT           ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200 )
-    #elif (__TBB_GCC_VERSION >= 40600)
-        #define __TBB_EXCEPTION_PTR_PRESENT           ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300 )
+    /** libstdc++ that comes with GCC 4.6 use C++11 features not supported by ICC 12.1.
+     *  Because of that ICC 12.1 does not support C++11 mode with with gcc 4.6 (or higher),
+     *  and therefore does not  define __GXX_EXPERIMENTAL_CXX0X__ macro **/
+    #elif __TBB_GCC_VERSION >= 40404 && __TBB_GCC_VERSION < 40600
+        #define __TBB_EXCEPTION_PTR_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200)
+    #elif __TBB_GCC_VERSION >= 40600
+        #define __TBB_EXCEPTION_PTR_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300)
     #else
         #define __TBB_EXCEPTION_PTR_PRESENT           0
     #endif
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (_MSC_VER >= 1700 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600))
-    #define __TBB_STATIC_ASSERT_PRESENT               ( __GXX_EXPERIMENTAL_CXX0X__ || (_MSC_VER >= 1600) )
-    #define __TBB_CPP11_TUPLE_PRESENT                 ( (_MSC_VER >= 1600) || ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300)) )
+    #define __TBB_STATIC_ASSERT_PRESENT               (__INTEL_CXX11_MODE__ || _MSC_VER >= 1600)
+    #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300))
     /** TODO: re-check for compiler version greater than 12.1 if it supports initializer lists**/
     #define __TBB_INITIALIZER_LISTS_PRESENT           0
     #define __TBB_CONSTEXPR_PRESENT                   0
-    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  0
+    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  __INTEL_CXX11_MODE__ 
 #elif __clang__
 //TODO: these options need to be rechecked
 /** on OS X* the only way to get C++11 is to use clang. For library features (e.g. exception_ptr) libc++ is also
  *  required. So there is no need to check GCC version for clang**/
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT     __has_feature(__cxx_variadic_templates__)
     #define __TBB_CPP11_RVALUE_REF_PRESENT             __has_feature(__cxx_rvalue_references__)
-    #define __TBB_EXCEPTION_PTR_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && (__cplusplus >= 201103L))
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && (__cplusplus >= 201103L))
+/** TODO: extend exception_ptr related conditions to cover libstdc++ **/
+    #define __TBB_EXCEPTION_PTR_PRESENT               (__cplusplus >= 201103L && _LIBCPP_VERSION)
+    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__cplusplus >= 201103L && _LIBCPP_VERSION)
     #define __TBB_STATIC_ASSERT_PRESENT               __has_feature(__cxx_static_assert__)
     /**Clang (preprocessor) has problems with dealing with expression having __has_include in #if's
      * used inside C++ code. (At least version that comes with OS X 10.8) **/
@@ -121,17 +134,17 @@
     /** __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 here is a substitution for _GLIBCXX_ATOMIC_BUILTINS_4, which is a prerequisite 
         for exception_ptr but cannot be used in this file because it is defined in a header, not by the compiler. 
         If the compiler has no atomic intrinsics, the C++ library should not expect those as well. **/
-    #define __TBB_EXCEPTION_PTR_PRESENT               ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40404) && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40600))
-    #define __TBB_STATIC_ASSERT_PRESENT               ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
-    #define __TBB_CPP11_TUPLE_PRESENT                 ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
-    #define __TBB_INITIALIZER_LISTS_PRESENT           ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40400))
+    #define __TBB_EXCEPTION_PTR_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40404 && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600)
+    #define __TBB_STATIC_ASSERT_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300)
+    #define __TBB_CPP11_TUPLE_PRESENT                 (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300)
+    #define __TBB_INITIALIZER_LISTS_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40400)
     /** gcc seems have to support constexpr from 4.4 but tests in (test_atomic) seeming reasonable fail to compile prior 4.6**/
-    #define __TBB_CONSTEXPR_PRESENT                   ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40400))
-    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40400))
+    #define __TBB_CONSTEXPR_PRESENT                   (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40400)
+    #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40400)
 #elif _MSC_VER
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    0
-    #define __TBB_CPP11_RVALUE_REF_PRESENT            0
+    #define __TBB_CPP11_RVALUE_REF_PRESENT            (_MSC_VER >= 1600)
     #define __TBB_EXCEPTION_PTR_PRESENT               (_MSC_VER >= 1600)
     #define __TBB_STATIC_ASSERT_PRESENT               (_MSC_VER >= 1600)
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (_MSC_VER >= 1700)
@@ -172,13 +185,13 @@
 /* Actually ICC supports gcc __sync_* intrinsics starting 11.1,
  * but 64 bit support for 32 bit target comes in later ones*/
 /* TODO: change the version back to 4.1.2 once macro __TBB_WORD_SIZE become optional */
-#if (__TBB_GCC_VERSION >= 40306) || (__INTEL_COMPILER >= 1200)
+#if __TBB_GCC_VERSION >= 40306 || __INTEL_COMPILER >= 1200
     /** built-in atomics available in GCC since 4.1.2 **/
     #define __TBB_GCC_BUILTIN_ATOMICS_PRESENT 1
 #endif
 
-#if (__INTEL_COMPILER >= 1210)
-    /** built-in C++11 style atomics available in compiler since 12.1 **/
+#if __INTEL_COMPILER >= 1200
+    /** built-in C++11 style atomics available in ICC since 12.0 **/
     #define __TBB_ICC_BUILTIN_ATOMICS_PRESENT 1
 #endif
 
@@ -259,9 +272,8 @@
 
 /* TBB_USE_CAPTURED_EXCEPTION should be explicitly set to either 0 or 1, as it is used as C++ const */
 #ifndef TBB_USE_CAPTURED_EXCEPTION
-    /**TODO: enable it by default on OS X*, once it is enabled in pre-built binary **/
-    /** OS X* and IA64 pre-built TBB binaries do not support exception_ptr. **/
-    #if __TBB_EXCEPTION_PTR_PRESENT && !defined(__APPLE__) && !defined(__ia64__)
+    /** IA-64 architecture pre-built TBB binaries do not support exception_ptr. **/
+    #if __TBB_EXCEPTION_PTR_PRESENT && !defined(__ia64__)
         #define TBB_USE_CAPTURED_EXCEPTION 0
     #else
         #define TBB_USE_CAPTURED_EXCEPTION 1
@@ -273,14 +285,16 @@
 #endif /* defined TBB_USE_CAPTURED_EXCEPTION */
 
 /** Check whether the request to use GCC atomics can be satisfied **/
-#if (TBB_USE_GCC_BUILTINS && !__TBB_GCC_BUILTIN_ATOMICS_PRESENT)
+#if TBB_USE_GCC_BUILTINS && !__TBB_GCC_BUILTIN_ATOMICS_PRESENT
     #error "GCC atomic built-ins are not supported."
 #endif
 
 /** Internal TBB features & modes **/
 
 /** __TBB_WEAK_SYMBOLS_PRESENT denotes that the system supports the weak symbol mechanism **/
-#define __TBB_WEAK_SYMBOLS_PRESENT ( !_WIN32 && !__APPLE__ && !__sun && ((__TBB_GCC_VERSION >= 40000) || __INTEL_COMPILER ) )
+#ifndef __TBB_WEAK_SYMBOLS_PRESENT
+#define __TBB_WEAK_SYMBOLS_PRESENT ( !_WIN32 && !__APPLE__ && !__sun && (__TBB_GCC_VERSION >= 40000 || __INTEL_COMPILER ) )
+#endif
 
 /** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to load shared libraries at run time **/
 #ifndef __TBB_DYNAMIC_LOAD_ENABLED
@@ -315,7 +329,9 @@
     #define TBB_PREVIEW_LOCAL_OBSERVER 1
     #define __TBB_NO_IMPLICIT_LINKAGE 1
     #define __TBB_RECYCLE_TO_ENQUEUE 1
-    #define __TBB_TASK_PRIORITY 0 // TODO: it will be removed in next versions
+    #ifndef __TBB_TASK_PRIORITY
+        #define __TBB_TASK_PRIORITY 0 // TODO: it will be removed in next versions
+    #endif
     #if !__TBB_SCHEDULER_OBSERVER
         #error TBB_PREVIEW_TASK_ARENA requires __TBB_SCHEDULER_OBSERVER to be enabled
     #endif
@@ -366,6 +382,14 @@
 #endif
 #endif
 
+/** __TBB_WIN8UI_SUPPORT enables support of New Windows*8 Store Apps and limit a possibility to load
+    shared libraries at run time only from application container **/
+#if defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_APP
+    #define __TBB_WIN8UI_SUPPORT 1
+#else
+    #define __TBB_WIN8UI_SUPPORT 0
+#endif
+
 // Define preprocessor symbols used to determine architecture
 #if _WIN32||_WIN64
 #   if defined(_M_X64)||defined(__x86_64__)  // the latter for MinGW support
@@ -389,6 +413,7 @@
 #       define __TBB_generic_arch 1
 #   endif
 #endif
+
 /** Macros of the form __TBB_XXX_BROKEN denote known issues that are caused by
     the bugs in compilers, standard or OS specific libraries. They should be
     removed as soon as the corresponding bugs are fixed or the buggy OS/compiler
@@ -438,7 +463,7 @@
     #define __TBB_PROTECTED_NESTED_CLASS_BROKEN 1
 #endif
 
-#if __MINGW32__ && (__GNUC__<4 || __GNUC__==4 && __GNUC_MINOR__<2)
+#if __MINGW32__ && __TBB_GCC_VERSION < 40200
     /** MinGW has a bug with stack alignment for routines invoked from MS RTLs.
         Since GCC 4.2, the bug can be worked around via a special attribute. **/
     #define __TBB_SSE_STACK_ALIGNMENT_BROKEN 1
@@ -489,25 +514,18 @@
     #define __TBB_MAIN_THREAD_AFFINITY_BROKEN 1
 #endif
 
-/** __TBB_WIN8UI_SUPPORT enables support of New Windows*8 Store Apps and limit a possibility to load
-    shared libraries at run time only from application container **/
-#if defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_APP
-    #define __TBB_WIN8UI_SUPPORT 1
-#else
-    #define __TBB_WIN8UI_SUPPORT 0
-#endif
-
-#if !defined(__EXCEPTIONS) && __GNUC__==4 && (__GNUC_MINOR__==4 ||__GNUC_MINOR__==5 || (__INTEL_COMPILER==1300 && __TBB_GCC_VERSION>=40600 && __TBB_GCC_VERSION<=40700)) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#if __GXX_EXPERIMENTAL_CXX0X__ && !defined(__EXCEPTIONS) && \
+    __GNUC__==4 && (__GNUC_MINOR__==4 ||__GNUC_MINOR__==5 || (__INTEL_COMPILER==1300 && (__GNUC_MINOR__==6 ||__GNUC_MINOR__==7)))
 /* There is an issue for specific GCC toolchain when C++11 is enabled
    and exceptions are disabled:
-   exceprion_ptr.h/nested_exception.h are using throw unconditionally.
+   exceprion_ptr.h/nested_exception.h use throw unconditionally.
  */
     #define __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN 1
 #else
     #define __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN 0
 #endif
 
-#if __TBB_x86_32 && (__linux__ || __APPLE__ || _WIN32 || __sun) &&  ((defined(__INTEL_COMPILER) && (__INTEL_COMPILER <= 1300)) || (__GNUC__==3 && __GNUC_MINOR__==3 ) || defined(__SUNPRO_CC))
+#if __TBB_x86_32 && (__linux__ || __APPLE__ || _WIN32 || __sun) &&  ((defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 1300) || (__GNUC__==3 && __GNUC_MINOR__==3 ) || defined(__SUNPRO_CC))
     // Some compilers for IA-32 fail to provide 8-byte alignment of objects on the stack,
     // even if the object specifies 8-byte alignment.  On such platforms, the IA-32 implementation
     // of 64 bit atomics (e.g. atomic<long long>) use different tactics depending upon
@@ -517,7 +535,7 @@
     #define __TBB_FORCE_64BIT_ALIGNMENT_BROKEN 0
 #endif
 
-#if (__TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT && (__TBB_GCC_VERSION < 40700) && (!defined(__INTEL_COMPILER) && !defined (__clang__)))
+#if __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT && __TBB_GCC_VERSION < 40700 && !defined(__INTEL_COMPILER) && !defined (__clang__)
     #define __TBB_ZERO_INIT_WITH_DEFAULTED_CTOR_BROKEN 1
 #endif
 /** End of __TBB_XXX_BROKEN macro section **/

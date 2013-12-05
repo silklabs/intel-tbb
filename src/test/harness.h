@@ -130,113 +130,123 @@ int TestMain ();
 #endif // HARNESS_USE_RUNTIME_LOADER
 
 #if !HARNESS_NO_ASSERT
+    #include "harness_assert.h"
+    #if TEST_USES_TBB
+        #include <tbb/tbb_stddef.h> /*set_assertion_handler*/
 
-#include "harness_assert.h"
-#if TEST_USES_TBB
-#include <tbb/tbb_stddef.h> /*set_assertion_handler*/
-
-struct InitReporter {
-    InitReporter() {
-#if TBB_USE_ASSERT
-        tbb::set_assertion_handler(ReportError);
-#endif
-        ASSERT_WARNING(TBB_INTERFACE_VERSION <= tbb::TBB_runtime_interface_version(), "runtime version mismatch");
-    }
-};
-static InitReporter InitReportError;
-#endif
-
-typedef void (*test_error_extra_t)(void);
-static test_error_extra_t ErrorExtraCall;
-//! Set additional handler to process failed assertions
-void SetHarnessErrorProcessing( test_error_extra_t extra_call ) {
-    ErrorExtraCall = extra_call;
-}
-
-//! Reports errors issued by failed assertions
-void ReportError( const char* filename, int line, const char* expression, const char * message ) {
-#if BACKTRACE_FUNCTION_AVAILABLE
-    const int sz = 100; // max number of frames to capture
-    void *buff[sz];
-    int n = backtrace(buff, sz);
-    REPORT("Call stack info (%d):\n", n);
-    backtrace_symbols_fd(buff, n, fileno(stdout));
-#elif __SUNPRO_CC
-    REPORT("Call stack info:\n");
-    printstack(fileno(stdout));
-#elif _WIN32_WINNT > 0x0501 && _MSC_VER && !__TBB_WIN8UI_SUPPORT
-    const int sz = 62; // XP limitation for number of frames
-    void *buff[sz];
-    int n = CaptureStackBackTrace(0, sz, buff, NULL);
-    REPORT("Call stack info (%d):\n", n);
-    static LONG once = 0;
-    if( !InterlockedExchange(&once, 1) )
-        SymInitialize(GetCurrentProcess(), NULL, TRUE);
-    const int len = 255; // just some reasonable string buffer size
-    union { SYMBOL_INFO sym; char pad[sizeof(SYMBOL_INFO)+len]; };
-    sym.MaxNameLen = len;
-    sym.SizeOfStruct = sizeof( SYMBOL_INFO );
-    DWORD64 offset;
-    for(int i = 1; i < n; i++) { // skip current frame
-        if(!SymFromAddr( GetCurrentProcess(), DWORD64(buff[i]), &offset, &sym )) {
-            sym.Address = ULONG64(buff[i]); offset = 0; sym.Name[0] = 0;
+        struct InitReporter {
+            InitReporter() {
+        #if TBB_USE_ASSERT
+                tbb::set_assertion_handler(ReportError);
+        #endif
+            ASSERT_WARNING(TBB_INTERFACE_VERSION <= tbb::TBB_runtime_interface_version(), "runtime version mismatch");
         }
-        REPORT("[%d] %016I64LX+%04I64LX: %s\n", i, sym.Address, offset, sym.Name); //TODO: print module name
+        };
+        static InitReporter InitReportError;
+    #endif
+
+    typedef void (*test_error_extra_t)(void);
+    static test_error_extra_t ErrorExtraCall;
+    //! Set additional handler to process failed assertions
+    void SetHarnessErrorProcessing( test_error_extra_t extra_call ) {
+        ErrorExtraCall = extra_call;
     }
-#endif /*BACKTRACE_FUNCTION_AVAILABLE*/
 
-#if __TBB_ICL_11_1_CODE_GEN_BROKEN
-    printf("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
-#else
-    REPORT_FATAL_ERROR("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
-#endif
+    //! Reports errors issued by failed assertions
+    void ReportError( const char* filename, int line, const char* expression, const char * message ) {
+    #if BACKTRACE_FUNCTION_AVAILABLE
+        const int sz = 100; // max number of frames to capture
+        void *buff[sz];
+        int n = backtrace(buff, sz);
+        REPORT("Call stack info (%d):\n", n);
+        backtrace_symbols_fd(buff, n, fileno(stdout));
+    #elif __SUNPRO_CC
+        REPORT("Call stack info:\n");
+        printstack(fileno(stdout));
+    #elif _WIN32_WINNT > 0x0501 && _MSC_VER && !__TBB_WIN8UI_SUPPORT
+        const int sz = 62; // XP limitation for number of frames
+        void *buff[sz];
+        int n = CaptureStackBackTrace(0, sz, buff, NULL);
+        REPORT("Call stack info (%d):\n", n);
+        static LONG once = 0;
+        if( !InterlockedExchange(&once, 1) )
+            SymInitialize(GetCurrentProcess(), NULL, TRUE);
+        const int len = 255; // just some reasonable string buffer size
+        union { SYMBOL_INFO sym; char pad[sizeof(SYMBOL_INFO)+len]; };
+        sym.MaxNameLen = len;
+        sym.SizeOfStruct = sizeof( SYMBOL_INFO );
+        DWORD64 offset;
+        for(int i = 1; i < n; i++) { // skip current frame
+            if(!SymFromAddr( GetCurrentProcess(), DWORD64(buff[i]), &offset, &sym )) {
+                sym.Address = ULONG64(buff[i]); offset = 0; sym.Name[0] = 0;
+            }
+            REPORT("[%d] %016I64LX+%04I64LX: %s\n", i, sym.Address, offset, sym.Name); //TODO: print module name
+        }
+    #endif /*BACKTRACE_FUNCTION_AVAILABLE*/
 
-    if( ErrorExtraCall )
-        (*ErrorExtraCall)();
-    fflush(stdout); fflush(stderr);
-#if HARNESS_TERMINATE_ON_ASSERT
-    TerminateProcess(GetCurrentProcess(), 1);
-#elif HARNESS_EXIT_ON_ASSERT
-    exit(1);
-#elif HARNESS_CONTINUE_ON_ASSERT
-    // continue testing
-#elif _MSC_VER && _DEBUG
-    // aligned with tbb_assert_impl.h behavior
-    if(1 == _CrtDbgReport(_CRT_ASSERT, filename, line, NULL, "%s\r\n%s", expression, message?message:""))
-        _CrtDbgBreak();
-#else
-    abort();
-#endif /* HARNESS_EXIT_ON_ASSERT */
-}
-//! Reports warnings issued by failed warning assertions
-void ReportWarning( const char* filename, int line, const char* expression, const char * message ) {
-    REPORT("Warning: %s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
-}
+    #if __TBB_ICL_11_1_CODE_GEN_BROKEN
+        printf("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
+    #else
+        REPORT_FATAL_ERROR("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
+    #endif
+
+        if( ErrorExtraCall )
+            (*ErrorExtraCall)();
+        fflush(stdout); fflush(stderr);
+    #if HARNESS_TERMINATE_ON_ASSERT
+        TerminateProcess(GetCurrentProcess(), 1);
+    #elif HARNESS_EXIT_ON_ASSERT
+        exit(1);
+    #elif HARNESS_CONTINUE_ON_ASSERT
+        // continue testing
+    #elif _MSC_VER && _DEBUG
+        // aligned with tbb_assert_impl.h behavior
+        if(1 == _CrtDbgReport(_CRT_ASSERT, filename, line, NULL, "%s\r\n%s", expression, message?message:""))
+            _CrtDbgBreak();
+    #else
+        abort();
+    #endif /* HARNESS_EXIT_ON_ASSERT */
+    }
+    //! Reports warnings issued by failed warning assertions
+    void ReportWarning( const char* filename, int line, const char* expression, const char * message ) {
+        REPORT("Warning: %s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
+    }
 
 #else /* !HARNESS_NO_ASSERT */
 
-#define ASSERT(p,msg) (Harness::suppress_unused_warning(p), (void)0)
-#define ASSERT_WARNING(p,msg) (Harness::suppress_unused_warning(p), (void)0)
+    #define ASSERT(p,msg) (Harness::suppress_unused_warning(p), (void)0)
+    #define ASSERT_WARNING(p,msg) (Harness::suppress_unused_warning(p), (void)0)
 
 #endif /* !HARNESS_NO_ASSERT */
 
-//TODO: unify with utility::internal::array_length from examples common utilities
-template<typename T, size_t N>
-inline size_t array_length(const T(&)[N])
-{
-   return N;
-}
+namespace Harness {
+    //TODO: unify with utility::internal::array_length from examples common utilities
+    template<typename T, size_t N>
+    inline size_t array_length(const T(&)[N])
+    {
+       return N;
+    }
 
-//TODO: remove this #if __TBB_INITIALIZER_LISTS_PRESENT
-//it looks like all other compilers except gcc issue warnings/errors then they see
-//declaration of zero sized array
-#if __TBB_INITIALIZER_LISTS_PRESENT
-template<typename T>
-inline size_t array_length(const T[0])
-{
-   return 0;
-}
-#endif //__TBB_INITIALIZER_LISTS_PRESENT
+    //TODO: remove this #if __TBB_INITIALIZER_LISTS_PRESENT
+    //it looks like all other compilers except gcc issue warnings/errors then they see
+    //declaration of zero sized array
+    #if __TBB_INITIALIZER_LISTS_PRESENT
+        template<typename T>
+        inline size_t array_length(const T[0])
+        {
+           return 0;
+        }
+    #endif //__TBB_INITIALIZER_LISTS_PRESENT
+} //namespace Harness
+
+#if TEST_USES_TBB
+    #include "tbb/blocked_range.h"
+
+    namespace Harness {
+        template<typename T, size_t N>
+        tbb::blocked_range<T*> make_blocked_range( T(& array)[N]){ return tbb::blocked_range<T*>(array, array + N);}
+    }
+#endif
 
 #if !HARNESS_NO_PARSE_COMMAND_LINE
 

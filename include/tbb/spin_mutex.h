@@ -35,13 +35,14 @@
 #include "tbb_stddef.h"
 #include "tbb_machine.h"
 #include "tbb_profiling.h"
+#include "internal/_mutex_padding.h"
 
 namespace tbb {
 
 //! A lock that occupies a single byte.
-/** A spin_mutex is a spin mutex that fits in a single byte.  
-    It should be used only for locking short critical sections 
-    (typically less than 20 instructions) when fairness is not an issue.  
+/** A spin_mutex is a spin mutex that fits in a single byte.
+    It should be used only for locking short critical sections
+    (typically less than 20 instructions) when fairness is not an issue.
     If zero-initialized, the mutex is considered unheld.
     @ingroup synchronization */
 class spin_mutex {
@@ -61,11 +62,11 @@ public:
     class scoped_lock : internal::no_copy {
     private:
         //! Points to currently held mutex, or NULL if no lock is held.
-        spin_mutex* my_mutex; 
+        spin_mutex* my_mutex;
 
-        //! Value to store into spin_mutex::flag to unlock the mutex. 
-        /** This variable is no longer used. Instead, 0 and 1 are used to 
-            represent that the lock is free and acquired, respectively. 
+        //! Value to store into spin_mutex::flag to unlock the mutex.
+        /** This variable is no longer used. Instead, 0 and 1 are used to
+            represent that the lock is free and acquired, respectively.
             We keep the member variable here to ensure backward compatibility */
         __TBB_Flag my_unlock_value;
 
@@ -85,14 +86,14 @@ public:
         scoped_lock() : my_mutex(NULL), my_unlock_value(0) {}
 
         //! Construct and acquire lock on a mutex.
-        scoped_lock( spin_mutex& m ) : my_unlock_value(0) { 
+        scoped_lock( spin_mutex& m ) : my_unlock_value(0) {
             internal::suppress_unused_warning(my_unlock_value);
 #if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             my_mutex=NULL;
             internal_acquire(m);
 #else
-            __TBB_LockByte(m.flag);
             my_mutex=&m;
+            __TBB_LockByte(m.flag);
 #endif /* TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT*/
         }
 
@@ -101,8 +102,8 @@ public:
 #if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             internal_acquire(m);
 #else
-            __TBB_LockByte(m.flag);
             my_mutex = &m;
+            __TBB_LockByte(m.flag);
 #endif /* TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT*/
         }
 
@@ -141,6 +142,7 @@ public:
         }
     };
 
+    //! Internal constructor with ITT instrumentation.
     void __TBB_EXPORTED_METHOD internal_construct();
 
     // Mutex traits
@@ -184,9 +186,34 @@ public:
     }
 
     friend class scoped_lock;
-};
+}; // end of spin_mutex
 
 __TBB_DEFINE_PROFILING_SET_NAME(spin_mutex)
+
+} // namespace tbb
+
+#if ( __TBB_x86_32 || __TBB_x86_64 )
+#include "internal/_x86_eliding_mutex_impl.h"
+#endif
+
+namespace tbb {
+//! A cross-platform spin mutex with speculative lock acquisition.
+/** On platforms with proper HW support, this lock may speculatively execute
+    its critical sections, using HW mechanisms to detect real data races and
+    ensure atomicity of the critical sections. In particular, it uses
+    Intel(R) Transactional Synchronization Extensions (Intel(R) TSX).
+    Without such HW support, it behaves like a spin_mutex.
+    It should be used for locking short critical sections where the lock is
+    contended but the data it protects are not.  If zero-initialized, the
+    mutex is considered unheld.
+    @ingroup synchronization */
+
+#if ( __TBB_x86_32 || __TBB_x86_64 )
+typedef interface7::internal::padded_mutex<interface7::internal::x86_eliding_mutex> speculative_spin_mutex;
+#else
+typedef interface7::internal::padded_mutex<spin_mutex> speculative_spin_mutex;
+#endif
+__TBB_DEFINE_PROFILING_SET_NAME(speculative_spin_mutex)
 
 } // namespace tbb
 

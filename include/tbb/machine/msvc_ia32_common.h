@@ -45,7 +45,6 @@
     #define __TBB_X86_MSVC_INLINE_ASM_AVAILABLE 0
 #endif
 
-
 #define __TBB_NO_X86_MSVC_INLINE_ASM_MSG "The compiler being used is not supported (outdated?)"
 
 #if (_MSC_VER >= 1300) || (__INTEL_COMPILER) //Use compiler intrinsic when available
@@ -180,5 +179,17 @@ extern "C" __declspec(dllimport) int __stdcall SwitchToThread( void );
 #define __TBB_Log2(V)  __TBB_machine_lg(V)
 
 #undef __TBB_r
+
+extern "C" {
+    __int8 __TBB_EXPORTED_FUNC __TBB_machine_try_lock_elided (volatile void* ptr);
+    void   __TBB_EXPORTED_FUNC __TBB_machine_unlock_elided (volatile void* ptr);
+
+    // 'pause' instruction aborts HLE/RTM transactions
+#if __TBB_PAUSE_USE_INTRINSIC
+    inline static void __TBB_machine_try_lock_elided_cancel() { _mm_pause(); }
+#else
+    inline static void __TBB_machine_try_lock_elided_cancel() { _asm pause; }
+#endif
+}
 
 #endif /* __TBB_machine_msvc_ia32_common_H */

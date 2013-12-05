@@ -26,7 +26,7 @@
 
 # GNU Makefile that builds and runs example.
 NAME=seismic
-ARGS=0:4 300
+ARGS=0:auto 300
 PERF_RUN_ARGS=auto 10000 silent
 LIGHT_ARGS=1:2 100
 
@@ -35,27 +35,21 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # icc
 
+TBBLIB = -ltbb
+TBBLIB_DEBUG = -ltbb_debug
+
 ifeq ($(offload), mic)
-override CXXFLAGS += -D__TBB_MIC_OFFLOAD=1
+override CXXFLAGS += -D__TBB_MIC_OFFLOAD=1 -offload-attribute-target=mic
+# Replace -ltbb with -tbb in the offload mode
+TBBLIB = -tbb
+TBBLIB_DEBUG += -offload-option,mic,ld,"-ltbb_debug"
 # Currently only console mode is supported in offload version
 override UI=con
-SOURCES = $(UI)video.o universe.cpp seismic_video.cpp main.cpp
-OFFLOAD_SOURCES = ../../common/gui/$(UI)video.cpp
 else
-SOURCES = ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cpp
 PERFFLAGS=-msse2
 endif
 
-ifeq (,$(filter icc icpc,$(CXX)))
-TBBLIB = -ltbb
-TBBLIB_DEBUG = -ltbb_debug
-else
-TBBLIB = -tbb
-TBBLIB_DEBUG = -ltbb_debug
-ifeq ($(offload), mic)
-TBBLIB_DEBUG += -offload-option,mic,ld,"-ltbb_debug -L${TBBROOT}/lib/mic/"
-endif
-endif
+SOURCES = ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cpp
 
 include ../../common/gui/Makefile.gmake
 override CXXFLAGS += $(UI_CXXFLAGS)
@@ -75,18 +69,12 @@ ifeq ($(UI),mac)
 endif # OS X*
 
 release: resources
-ifeq ($(offload), mic)
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
-endif
 ifeq ($(UI),mac)
 	$(CXX_UI) -O2 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
 endif # OS X*
 	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) $(TBBLIB) $(LIBS)
 
 debug: resources
-ifeq ($(offload), mic)
-	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
-endif
 ifeq ($(UI),mac)
 	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
 endif # OS X*

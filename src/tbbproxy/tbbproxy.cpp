@@ -382,7 +382,7 @@ static tbb::runtime_loader::error_code _load( char const * dll_name, int min_ver
     // First load the library.
     _handle = dlopen( dll_name, RTLD_NOW );
     if ( _handle == NULL ) {
-        char * msg = dlerror();
+        const char * msg = dlerror();
         code = error( mode, tbb::runtime_loader::ec_no_lib, "Loading \"%s\" failed; system error: %s", dll_name, msg );
         goto error;
     } // if

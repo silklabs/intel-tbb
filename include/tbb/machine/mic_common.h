@@ -46,8 +46,8 @@
 #define __TBB_cl_evict(p) _mm_clevict(p, _MM_HINT_T1)
 #endif
 
-/** Early Intel(R) Many Integrated Core Architecture does not support mfence and pause instructions **/
-#define __TBB_full_memory_fence __TBB_release_consistency_helper
+/** Intel(R) Many Integrated Core Architecture does not support mfence and pause instructions **/
+#define __TBB_full_memory_fence() __asm__ __volatile__("lock; addl $0,(%%rsp)":::"memory")
 #define __TBB_Pause(x) _mm_delay_32(16*(x))
 #define __TBB_STEALING_PAUSE 1500/16
 #include <sched.h>

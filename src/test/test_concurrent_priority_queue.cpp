@@ -183,15 +183,10 @@ bool operator==(tbb::concurrent_priority_queue<element_type> const& lhs, range c
     return to_vector()(lhs) == std::vector<element_type>(rhs.begin(),rhs.end());
 }
 
-//TODO: move this to harness
-template<typename T, size_t N>
-tbb::blocked_range<T*> make_blocked_range( T(& array)[N]){ return tbb::blocked_range<T*>(array, array + N);}
-
-
 void TestToVector(){
     using equality_comparison_helpers::to_vector;
     int array[] = {1,5,6,8,4,7};
-    tbb::blocked_range<int *> range =  make_blocked_range(array);
+    tbb::blocked_range<int *> range =  Harness::make_blocked_range(array);
     std::vector<int> source(range.begin(),range.end());
     tbb::concurrent_priority_queue<int> q(source.begin(),source.end());
     std::vector<int> from_cpq = to_vector()(q);
@@ -526,18 +521,11 @@ void TestCpqOnNThreads(int nThreads) {
 #if __TBB_INITIALIZER_LISTS_PRESENT
 #include "test_initializer_list.h"
 
-#define __TBB_CPQ_TEST_INIT_SEQ {1,2,3,4,5}
-__TBB_TEST_INIT_LIST_SUITE(TestInitListIml,tbb::concurrent_priority_queue,char,__TBB_CPQ_TEST_INIT_SEQ)
-#undef __TBB_CPQ_TEST_INIT_SEQ
-
-#define __TBB_CPQ_TEST_EMPTY_INIT_SEQ {}
-__TBB_TEST_INIT_LIST_SUITE(TestEmptyInitListIml,tbb::concurrent_priority_queue,int,__TBB_CPQ_TEST_EMPTY_INIT_SEQ)
-#undef __TBB_CPQ_TEST_EMPTY_INIT_SEQ
-
 void TestInitList(){
     REMARK("testing initializer_list methods \n");
-    TestEmptyInitListIml();
-    TestInitListIml();
+    using namespace initializer_list_support_tests;
+    TestInitListSupport<tbb::concurrent_priority_queue<char> >({1,2,3,4,5});
+    TestInitListSupport<tbb::concurrent_priority_queue<int> >({});
 }
 #endif //if __TBB_INITIALIZER_LISTS_PRESENT
 

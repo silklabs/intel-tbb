@@ -225,6 +225,7 @@ void task_group_context::init () {
 void task_group_context::register_with ( generic_scheduler *local_sched ) {
     __TBB_ASSERT( local_sched, NULL );
     my_owner = local_sched;
+    // state propagation logic assumes new contexts are bound to head of the list
     my_node.my_prev = &local_sched->my_context_list_head;
     // Notify threads that may be concurrently destroying contexts registered
     // in this scheduler's list that local list update is underway.
@@ -260,7 +261,7 @@ void task_group_context::bind_to ( generic_scheduler *local_sched ) {
 
     // Condition below prevents unnecessary thrashing parent context's cache line
     if ( !(my_parent->my_state & may_have_children) )
-        my_parent->my_state |= may_have_children;
+        my_parent->my_state |= may_have_children; // full fence is below
     if ( my_parent->my_parent ) {
         // Even if this context were made accessible for state change propagation
         // (by placing __TBB_store_with_release(s->my_context_list_head.my_next, &my_node)
@@ -310,21 +311,36 @@ void task_group_context::bind_to ( generic_scheduler *local_sched ) {
 
 #if __TBB_TASK_GROUP_CONTEXT
 template <typename T>
-void task_group_context::propagate_state_from_ancestors ( T task_group_context::*mptr_state, T new_state ) {
-    task_group_context *ancestor = my_parent;
-    while ( ancestor && ancestor->*mptr_state != new_state )
-        ancestor = ancestor->my_parent;
-    if ( ancestor ) {
-        task_group_context *ctx = this;
-        do {
-            ctx->*mptr_state = new_state;
-            ctx = ctx->my_parent;
-        } while ( ctx != ancestor );
+void task_group_context::propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state ) {
+    if (this->*mptr_state == new_state) {
+        // Nothing to do, whether descending from "src" or not, so no need to scan.
+        // Hopefully this happens often thanks to earlier invocations,
+        // and it is more relevant for set_priority() than for cancel_group_execution()
+        // because the latter will also stop at an already cancelled ancestor.
+        // This optimisation is enabled by LIFO order in the context lists:
+        // - new contexts are bound to the beginning of lists;
+        // - descendants are newer than ancestors;
+        // - earlier invocations are therefore likely to "paint" long chains.
+    }
+    else if (this == &src) {
+        // This clause is disjunct from the traversal below, which skips src entirely.
+        // Note that src.*mptr_state is not necessarily still equal to new_state (another thread may have changed it again).
+        // Such interference is probably not frequent enough to aim for optimisation by writing new_state again (to make the other thread back down).
+        // Letting the other thread prevail may also be fairer.
+    }
+    else {
+        for ( task_group_context *ancestor = my_parent; ancestor != NULL; ancestor = ancestor->my_parent ) {
+            if ( ancestor == &src ) {
+                for ( task_group_context *ctx = this; ctx != ancestor; ctx = ctx->my_parent )
+                    ctx->*mptr_state = new_state;
+                break;
+            }
+        }
     }
 }
 
 template <typename T>
-void generic_scheduler::propagate_task_group_state ( T task_group_context::*mptr_state, T new_state ) {
+void generic_scheduler::propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state ) {
     spin_mutex::scoped_lock lock(my_context_list_mutex);
     // Acquire fence is necessary to ensure that the subsequent node->my_next load 
     // returned the correct value in case it was just inserted in another thread.
@@ -333,7 +349,7 @@ void generic_scheduler::propagate_task_group_state ( T task_group_context::*mptr
     while ( node != &my_context_list_head ) {
         task_group_context &ctx = __TBB_get_object_ref(task_group_context, my_node, node);
         if ( ctx.*mptr_state != new_state )
-            ctx.propagate_state_from_ancestors( mptr_state, new_state );
+            ctx.propagate_task_group_state( mptr_state, src, new_state );
         node = node->my_next;
         __TBB_ASSERT( is_alive(ctx.my_version_and_traits), "Local context list contains destroyed object" );
     }
@@ -348,12 +364,11 @@ bool market::propagate_task_group_state ( T task_group_context::*mptr_state, tas
         return true;
     // The whole propagation algorithm is under the lock in order to ensure correctness 
     // in case of concurrent state changes at the different levels of the context tree.
-    // See the note 3 at the bottom of scheduler.cpp
+    // See comment at the bottom of scheduler.cpp
     context_state_propagation_mutex_type::scoped_lock lock(the_context_state_propagation_mutex);
     if ( src.*mptr_state != new_state )
-        // Another thread has concurrently changed the state. Back off.
+        // Another thread has concurrently changed the state. Back down.
         return false;
-    src.*mptr_state = new_state;
     // Advance global state propagation epoch
     __TBB_FetchAndAddWrelease(&the_context_state_propagation_epoch, 1);
     // Propagate to all workers and masters and sync up their local epochs with the global one
@@ -362,7 +377,7 @@ bool market::propagate_task_group_state ( T task_group_context::*mptr_state, tas
         generic_scheduler *s = my_workers[i];
         // If the worker is only about to be registered, skip it.
         if ( s )
-            s->propagate_task_group_state( mptr_state, new_state );
+            s->propagate_task_group_state( mptr_state, src, new_state );
     }
     // Propagate to all master threads (under my_arenas_list_mutex lock)
     ForEachArena(a) {
@@ -374,7 +389,7 @@ bool market::propagate_task_group_state ( T task_group_context::*mptr_state, tas
             __TBB_ASSERT( slot.my_scheduler == LockedMaster, NULL );
             // The whole propagation sequence is locked, thus no contention is expected
             __TBB_ASSERT( s != LockedMaster, NULL );
-            s->propagate_task_group_state( mptr_state, new_state );
+            s->propagate_task_group_state( mptr_state, src, new_state );
             __TBB_store_with_release( slot.my_scheduler, s );
         }
     } EndForEach();
@@ -390,7 +405,9 @@ bool arena::propagate_task_group_state ( T task_group_context::*mptr_state, task
 bool task_group_context::cancel_group_execution () {
     __TBB_ASSERT ( my_cancellation_requested == 0 || my_cancellation_requested == 1, "Invalid cancellation state");
     if ( my_cancellation_requested || as_atomic(my_cancellation_requested).compare_and_swap(1, 0) ) {
-        // This task group has already been canceled
+        // This task group and any descendants have already been canceled.
+        // (A newly added descendant would inherit its parent's my_cancellation_requested,
+        // not missing out on any cancellation still being propagated, and a context cannot be uncanceled.)
         return false;
     }
     governor::local_scheduler()->my_arena->propagate_task_group_state( &task_group_context::my_cancellation_requested, *this, (uintptr_t)1 );
@@ -427,7 +444,7 @@ void task_group_context::register_pending_exception () {
 void task_group_context::set_priority ( priority_t prio ) {
     __TBB_ASSERT( prio == priority_low || prio == priority_normal || prio == priority_high, "Invalid priority level value" );
     intptr_t p = normalize_priority(prio);
-    if ( my_priority == p )
+    if ( my_priority == p && !(my_state & task_group_context::may_have_children))
         return;
     my_priority = p;
     internal::generic_scheduler* s = governor::local_scheduler_if_initialized();

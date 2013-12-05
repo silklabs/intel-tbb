@@ -916,6 +916,36 @@ inline __TBB_Flag __TBB_LockByte( __TBB_atomic_flag& flag ) {
 #define __TBB_UnlockByte(addr) __TBB_store_with_release((addr),0)
 #endif
 
+// lock primitives with TSX
+#if ( __TBB_x86_32 || __TBB_x86_64 )  /* only on ia32/intel64 */
+inline void __TBB_TryLockByteElidedCancel() { __TBB_machine_try_lock_elided_cancel(); }
+
+inline bool __TBB_TryLockByteElided( __TBB_atomic_flag& flag ) {
+    bool res = __TBB_machine_try_lock_elided( &flag )!=0;
+    // to avoid the "lemming" effect, we need to abort the transaction
+    // if  __TBB_machine_try_lock_elided returns false (i.e., someone else
+    // has acquired the mutex non-speculatively).
+    if( !res ) __TBB_TryLockByteElidedCancel();
+    return res;
+}
+
+inline void __TBB_LockByteElided( __TBB_atomic_flag& flag )
+{
+    for(;;) {
+        tbb::internal::spin_wait_while_eq( flag, 1 );
+        if( __TBB_machine_try_lock_elided( &flag ) )
+            return;
+        // Another thread acquired the lock "for real".
+        // To avoid the "lemming" effect, we abort the transaction.
+        __TBB_TryLockByteElidedCancel();
+    }
+}
+
+inline void __TBB_UnlockByteElided( __TBB_atomic_flag& flag ) {
+    __TBB_machine_unlock_elided( &flag );
+}
+#endif
+
 #ifndef __TBB_ReverseByte
 inline unsigned char __TBB_ReverseByte(unsigned char src) {
     return tbb::internal::reverse<unsigned char>::byte_table[src];

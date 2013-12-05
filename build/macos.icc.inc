@@ -70,6 +70,13 @@ ifneq (00,$(lambdas)$(cpp0x))
 	CPLUS_FLAGS += $(CPP11_FLAGS)
 endif
 
+# ICC 14.0 and higher support clang environment
+ifneq (,$(shell icc -dumpversion | egrep  "^1[4-9]\."))
+    ifeq (libc++,$(stdlib))
+        CPLUS_FLAGS    += -use-clang-env -stdlib=libc++
+        LIB_LINK_FLAGS += -use-clang-env -stdlib=libc++
+    endif
+endif
 #------------------------------------------------------------------------------
 # Setting assembler data.
 #------------------------------------------------------------------------------

@@ -37,6 +37,8 @@ __TBB_SYMBOL( __TBB_machine_cmpswp2 )
 __TBB_SYMBOL( __TBB_machine_fetchadd2 )
 __TBB_SYMBOL( __TBB_machine_fetchstore2 )
 __TBB_SYMBOL( __TBB_machine_pause )
+__TBB_SYMBOL( __TBB_machine_try_lock_elided )
+__TBB_SYMBOL( __TBB_machine_unlock_elided )
 
 // cache_aligned_allocator.cpp
 __TBB_SYMBOL( ?NFS_Allocate@internal@tbb@@YAPEAX_K0PEAX@Z )

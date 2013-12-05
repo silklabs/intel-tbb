@@ -30,7 +30,9 @@
 #include "tbb/atomic.h"
 #include "harness.h"
 #include "harness_barrier.h"
+#if !__TBB_SOURCE_DIRECTLY_INCLUDED
 #include "harness_tbb_independence.h"
+#endif
 
 template<typename T>
 static inline T alignUp  (T arg, uintptr_t alignment) {
@@ -478,6 +480,28 @@ static void TestEntries()
     pool_destroy(pool);
 }
 
+static void TestPoolCreation()
+{
+    using namespace rml;
+
+    putMemCalls = getMemCalls = 0;
+
+    MemPoolPolicy nullPolicy(NULL, putMemPolicy),
+        emptyFreePolicy(getMemPolicy, NULL),
+        okPolicy(getMemPolicy, putMemPolicy);
+    MemoryPool *pool;
+
+    MemPoolError res = pool_create_v1(0, &nullPolicy, &pool);
+    ASSERT(res==INVALID_POLICY, "pool with empty pAlloc can't be created");
+    res = pool_create_v1(0, &emptyFreePolicy, &pool);
+    ASSERT(res==INVALID_POLICY, "pool with empty pFree can't be created");
+    ASSERT(!putMemCalls && !getMemCalls, "no callback calls are expected");
+    res = pool_create_v1(0, &okPolicy, &pool);
+    ASSERT(res==POOL_OK, NULL);
+    pool_destroy(pool);
+    ASSERT(putMemCalls == getMemCalls, "no leaks after pool_destroy");
+}
+
 int TestMain () {
     TestTooSmallBuffer();
     TestPoolReset();
@@ -487,6 +511,7 @@ int TestMain () {
     TestPoolGranularity();
     TestPoolKeepTillDestroy();
     TestEntries();
+    TestPoolCreation();
 
     return Harness::Done;
 }

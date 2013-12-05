@@ -114,7 +114,9 @@ void limitMem( size_t limit )
 #define HARNESS_CUSTOM_MAIN 1
 #include "harness.h"
 #include "harness_barrier.h"
+#if !__TBB_SOURCE_DIRECTLY_INCLUDED
 #include "harness_tbb_independence.h"
+#endif
 #if __linux__
 #include <stdint.h> // uintptr_t
 #endif

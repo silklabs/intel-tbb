@@ -44,6 +44,7 @@ __TBB_internal_realloc;
 __TBB_internal_posix_memalign;
 scalable_msize;
 scalable_allocation_mode;
+scalable_allocation_command;
 
 /* memory pool stuff */
 _ZN3rml11pool_createElPKNS_13MemPoolPolicyE;

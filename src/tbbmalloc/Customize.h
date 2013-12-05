@@ -86,6 +86,7 @@ public:
     friend class scoped_lock;
 };
 
+// TODO: use signed/unsigned in atomics more consistently
 inline intptr_t AtomicIncrement( volatile intptr_t& counter ) {
     return __TBB_FetchAndAddW( &counter, 1 )+1;
 }
@@ -96,6 +97,18 @@ inline uintptr_t AtomicAdd( volatile intptr_t& counter, intptr_t value ) {
 
 inline intptr_t AtomicCompareExchange( volatile intptr_t& location, intptr_t new_value, intptr_t comparand) {
     return __TBB_CompareAndSwapW( &location, new_value, comparand );
+}
+
+inline uintptr_t AtomicFetchStore(volatile void* location, uintptr_t value) {
+    return __TBB_FetchAndStoreW(location, value);
+}
+
+inline void AtomicOr(volatile void *operand, uintptr_t addend) {
+    __TBB_AtomicOR(operand, addend);
+}
+
+inline void AtomicAnd(volatile void *operand, uintptr_t addend) {
+    __TBB_AtomicAND(operand, addend);
 }
 
 inline intptr_t FencedLoad( const volatile intptr_t &location ) {
@@ -130,13 +143,7 @@ static inline bool isPowerOfTwoMultiple(uintptr_t arg, uintptr_t divisor) {
     return arg && tbb::internal::is_power_of_two_factor(arg,divisor);
 }
 
-inline void AtomicOr(volatile void *operand, uintptr_t addend) {
-    __TBB_AtomicOR(operand, addend);
-}
-
-inline void AtomicAnd(volatile void *operand, uintptr_t addend) {
-    __TBB_AtomicAND(operand, addend);
-}
+#define MALLOC_STATIC_ASSERT(condition,msg) __TBB_STATIC_ASSERT(condition,msg)
 
 #define USE_DEFAULT_MEMORY_MAPPING 1
 

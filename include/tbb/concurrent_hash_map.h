@@ -53,6 +53,9 @@
 #include "tbb_exception.h"
 #include "tbb_profiling.h"
 #include "internal/_concurrent_unordered_impl.h" // Need tbb_hasher
+#if __TBB_INITIALIZER_LISTS_PRESENT
+#include <initializer_list>
+#endif
 #if TBB_USE_PERFORMANCE_WARNINGS || __TBB_STATISTICS
 #include <typeinfo>
 #endif
@@ -762,6 +765,17 @@ public:
         internal_copy(first, last);
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Construct empty table with n preallocated buckets. This number serves also as initial concurrency level.
+    concurrent_hash_map(const std::initializer_list<value_type> &il, const allocator_type &a = allocator_type())
+        : my_allocator(a)
+    {
+        reserve(il.size());
+        internal_copy(il.begin(), il.end());
+    }
+
+#endif //__TBB_INITIALIZER_LISTS_PRESENT
+
     //! Assignment
     concurrent_hash_map& operator=( const concurrent_hash_map& table ) {
         if( this!=&table ) {
@@ -770,6 +784,16 @@ public:
         }
         return *this;
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Assignment
+    concurrent_hash_map& operator=( const std::initializer_list<value_type> &il ) {
+        clear();
+        reserve(il.size());
+        internal_copy(il.begin(), il.end());
+        return *this;
+    }
+#endif //__TBB_INITIALIZER_LISTS_PRESENT
 
 
     //! Rehashes and optionally resizes the whole table.

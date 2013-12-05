@@ -175,44 +175,46 @@
 		<Filter Name="Source Files" Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx" UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File RelativePath="..\..\src\tbb\ia32-masm\atomic_support.asm">
 				<FileConfiguration Name="Debug|Win32">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
 				</FileConfiguration>
-				<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Release|x64" ExcludedFromBuild="true">
-					<Tool Name="MASM"/>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|Win32">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64" ExcludedFromBuild="true">
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64" ExcludedFromBuild="true">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|x64" ExcludedFromBuild="true">
-					<Tool Name="MASM"/>
 				</FileConfiguration>
 			</File>
 			<File RelativePath="..\..\src\tbb\intel64-masm\atomic_support.asm">
 				<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
 				<FileConfiguration Name="Debug|x64">
 					<Tool Name="VCCustomBuildTool" Description="building atomic_support.obj" CommandLine="ml64 /Fo&quot;intel64\Debug\atomic_support.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/atomic_support.asm
 " Outputs="intel64\Debug\atomic_support.obj"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
 				<FileConfiguration Name="Release|x64">
 					<Tool Name="VCCustomBuildTool" Description="building atomic_support.obj" CommandLine="ml64 /Fo&quot;intel64\Release\atomic_support.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/atomic_support.asm
 " Outputs="intel64\Release\atomic_support.obj"/>
 				</FileConfiguration>
-				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
-				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64">
 					<Tool Name="VCCustomBuildTool" Description="building atomic_support.obj" CommandLine="ml64 /Fo&quot;intel64\Debug-MT\atomic_support.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/atomic_support.asm
 " Outputs="intel64\Debug-MT\atomic_support.obj"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|x64">
 					<Tool Name="VCCustomBuildTool" Description="building atomic_support.obj" CommandLine="ml64 /Fo&quot;intel64\Release-MT\atomic_support.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/atomic_support.asm
@@ -222,41 +224,95 @@
 			<File RelativePath="..\..\src\tbb\intel64-masm\intel64_misc.asm">
 				<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
 				<FileConfiguration Name="Debug|x64">
 					<Tool Name="VCCustomBuildTool" Description="building intel64_misc.obj" CommandLine="ml64 /Fo&quot;intel64\Debug\intel64_misc.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/intel64_misc.asm
 " Outputs="intel64\Debug\intel64_misc.obj"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
 				<FileConfiguration Name="Release|x64">
 					<Tool Name="VCCustomBuildTool" Description="building intel64_misc.obj" CommandLine="ml64 /Fo&quot;intel64\Release\intel64_misc.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/intel64_misc.asm
 " Outputs="intel64\Release\intel64_misc.obj"/>
 				</FileConfiguration>
-				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
-				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64">
 					<Tool Name="VCCustomBuildTool" Description="building intel64_misc.obj" CommandLine="ml64 /Fo&quot;intel64\Debug-MT\intel64_misc.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/intel64_misc.asm
 " Outputs="intel64\Debug-MT\intel64_misc.obj"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|x64">
 					<Tool Name="VCCustomBuildTool" Description="building intel64_misc.obj" CommandLine="ml64 /Fo&quot;intel64\Release-MT\intel64_misc.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/intel64_misc.asm
 " Outputs="intel64\Release-MT\intel64_misc.obj"/>
 				</FileConfiguration>
 			</File>
+            <File RelativePath="..\..\src\tbb\ia32-masm\itsx.asm">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|x64" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|x64" ExcludedFromBuild="true">
+				</FileConfiguration>
+			</File>
+            <File RelativePath="..\..\src\tbb\intel64-masm\itsx.asm">
+				<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64">
+					<Tool Name="VCCustomBuildTool" Description="building itsx.obj" CommandLine="ml64 /Fo&quot;intel64\Debug\itsx.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/itsx.asm
+" Outputs="intel64\Debug\itsx.obj"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64">
+					<Tool Name="VCCustomBuildTool" Description="building itsx.obj" CommandLine="ml64 /Fo&quot;intel64\Release\itsx.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/itsx.asm
+" Outputs="intel64\Release\itsx.obj"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|x64">
+					<Tool Name="VCCustomBuildTool" Description="building itsx.obj" CommandLine="ml64 /Fo&quot;intel64\Debug-MT\itsx.obj&quot; /DUSE_FRAME_POINTER /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/itsx.asm
+" Outputs="intel64\Debug-MT\itsx.obj"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|x64">
+					<Tool Name="VCCustomBuildTool" Description="building itsx.obj" CommandLine="ml64 /Fo&quot;intel64\Release-MT\itsx.obj&quot;  /DEM64T=1 /c /Zi ../../src/tbb/intel64-masm/itsx.asm
+" Outputs="intel64\Release-MT\itsx.obj"/>
+				</FileConfiguration>
+			</File>
 			<File RelativePath="..\..\src\tbb\ia32-masm\lock_byte.asm">
 				<FileConfiguration Name="Debug|Win32">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Debug-MT|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff /Zi" UseSafeExceptionHandlers="true"/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release-MT|Win32">
+					<Tool Name="MASM" AdditionalOptions="/coff" UseSafeExceptionHandlers="true"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true">
 					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release|x64" ExcludedFromBuild="true">
 					<Tool Name="MASM"/>
-				</FileConfiguration>
-				<FileConfiguration Name="Debug-MT|Win32">
-					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64" ExcludedFromBuild="true">
 					<Tool Name="MASM" AdditionalOptions="/coff /Zi"/>

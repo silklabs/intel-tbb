@@ -401,11 +401,16 @@ void TestConstExprInitializationIsTranslationTime(){
     ASSERT(a == 8,ct_init_failed_msg);
 
     constexpr tbb::atomic<test_constexpr_initialization_helper::white_box_ad_hoc_type> ct_atomic(10);
+    //for some unknown reason clang does not managed to enum syntax
+#if __clang__
+    constexpr int ct_atomic_value_ten = (int)ct_atomic;
+#else
     enum {ct_atomic_value_ten = (int)ct_atomic};
+#endif
     __TBB_STATIC_ASSERT(ct_atomic_value_ten == 10, "translation time init failed?");
     ASSERT(ct_atomic_value_ten == 10,ct_init_failed_msg);
     int array[ct_atomic_value_ten];
-    ASSERT(array_length(array) == 10,ct_init_failed_msg);
+    ASSERT(Harness::array_length(array) == 10,ct_init_failed_msg);
 }
 
 #include <string>

@@ -141,6 +141,17 @@ public:
             base_type::insert(*first);
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Constructor from initializer_list
+    concurrent_unordered_map(std::initializer_list<value_type> const& il, size_type n_of_buckets = 8,
+        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
+        const allocator_type& a = allocator_type())
+        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
+    {
+        this->insert(il.begin(),il.end());
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
     concurrent_unordered_map(const concurrent_unordered_map& table) : base_type(table)
     {
     }
@@ -155,6 +166,15 @@ public:
         base_type::operator=(table);
         return (*this);
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assignment operator from initializer_list
+    concurrent_unordered_map& operator=(std::initializer_list<value_type> const& il)
+    {
+        base_type::operator=(il);
+        return (*this);
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
 
     iterator unsafe_erase(const_iterator where)
     {
@@ -288,6 +308,17 @@ public:
             base_type::insert(*first);
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Constructor from initializer_list
+    concurrent_unordered_multimap(std::initializer_list<value_type> const& il, size_type n_of_buckets = 8,
+        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
+        const allocator_type& a = allocator_type())
+        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
+    {
+        this->insert(il.begin(),il.end());
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
     concurrent_unordered_multimap(const concurrent_unordered_multimap& table) : base_type(table)
     {
     }
@@ -302,6 +333,15 @@ public:
         base_type::operator=(table);
         return (*this);
     }
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assignment operator from initializer_list
+    concurrent_unordered_multimap& operator=(std::initializer_list<value_type> const& il)
+    {
+        base_type::operator=(il);
+        return (*this);
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
 
     iterator unsafe_erase(const_iterator where)
     {

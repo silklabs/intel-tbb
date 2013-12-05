@@ -27,7 +27,7 @@
 # Per-build Makefile rules (for recursive $(MAKE) calls from Makefile)
 
 # Base compile/link options
-MYCXXFLAGS = /nologo /EHsc /Zc:forScope /D WIN32 /D _MBCS /D _CRT_SECURE_NO_DEPRECATE $(CXXFLAGS)
+MYCXXFLAGS = /nologo /EHsc /Zc:forScope /D WIN32 /D _MBCS /D _CRT_SECURE_NO_DEPRECATE /MP $(CXXFLAGS)
 MYLFLAGS = /link /incremental:no /fixed:no $(LFLAGS)
 CXXFLAGS_NDEBUG = /MD /O2 /Ot /Gy /D NDEBUG
 CXXFLAGS_DEBUG = /MDd /Od /Zi /D _DEBUG

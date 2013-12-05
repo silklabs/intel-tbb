@@ -66,17 +66,60 @@
 
 #include "tbb/tbb_misc.h"
 
-#define __USE_TBB_ATOMICS ( !(__linux__&&__ia64__) || __TBB_BUILD )
+#define __USE_TBB_ATOMICS       ( !(__linux__&&__ia64__) || __TBB_BUILD )
+#define __USE_STATIC_DL_INIT    (!__ANDROID__)
 
 #if !__USE_TBB_ATOMICS
 #include <pthread.h>
 #endif
 
+/*
+dynamic_link is a common interface for searching for required symbols in an
+executable and dynamic libraries.
+
+dynamic_link provides certain guarantees:
+  1. Either all or none of the requested symbols are resolved. Moreover, if
+  symbols are not resolved, the dynamic_link_descriptor table is not modified;
+  2. All returned symbols have secured life time: this means that none of them
+  can be invalidated until dynamic_unlink is called;
+  3. Any loaded library is loaded only via the full path. The full path is that
+  from which the runtime itself was loaded. (This is done to avoid security
+  issues caused by loading libraries from insecure paths).
+
+dynamic_link searches for the requested symbols in three stages, stopping as
+soon as all of the symbols have been resolved.
+
+  1. Search the global scope:
+    a. On Windows: dynamic_link tries to obtain the handle of the requested
+    library and if it succeeds it resolves the symbols via that handle.
+    b. On Linux: dynamic_link tries to search for the symbols in the global
+    scope via the main program handle. If the symbols are present in the global
+    scope their life time is not guaranteed (since dynamic_link does not know
+    anything about the library from which they are exported). Therefore it
+    tries to "pin" the symbols by obtaining the library name and reopening it.
+    dlopen may fail to reopen the library in two cases:
+       i. The symbols are exported from the executable. Currently dynamic _link
+      cannot handle this situation, so it will not find these symbols in this
+      step.
+      ii. The necessary library has been unloaded and cannot be reloaded. It
+      seems there is nothing that can be done in this case. No symbols are
+      returned.
+
+  2. Dynamic load: an attempt is made to load the requested library via the
+  full path.
+    The full path used is that from which the runtime itself was loaded. If the
+    library can be loaded, then an attempt is made to resolve the requested
+    symbols in the newly loaded library.
+    If the symbols are not found the library is unloaded.
+
+  3. Weak symbols: if weak symbols are available they are returned.
+*/
+
 OPEN_INTERNAL_NAMESPACE
 
 #if __TBB_WEAK_SYMBOLS_PRESENT || __TBB_DYNAMIC_LOAD_ENABLED
 
-#if !defined(DYNAMIC_LINK_WARNING)
+#if !defined(DYNAMIC_LINK_WARNING) && !__TBB_WIN8UI_SUPPORT
     // Report runtime errors and continue.
     #define DYNAMIC_LINK_WARNING dynamic_link_warning
     static void dynamic_link_warning( dynamic_link_error_t code, ... ) {
@@ -102,7 +145,6 @@ OPEN_INTERNAL_NAMESPACE
             dynamic_link_descriptor const & desc = descriptors[k];
             pointer_to_handler addr = (pointer_to_handler)dlsym( module, desc.name );
             if ( !addr ) {
-                DYNAMIC_LINK_WARNING( dl_sym_not_found, desc.name, dlerror() );
                 return false;
             }
             h[k] = addr;
@@ -309,7 +351,9 @@ OPEN_INTERNAL_NAMESPACE
     static class _static_init_dl_data {
     public:
         _static_init_dl_data() {
+    #if __USE_STATIC_DL_INIT
             atomic_once( &init_dl_data, init_dl_data_state );
+    #endif
         }
     #if !__USE_TBB_ATOMICS
         ~_static_init_dl_data() {
@@ -384,7 +428,18 @@ OPEN_INTERNAL_NAMESPACE
         handles.free_handles();
     }
 
-    #if !_WIN32
+    #if _WIN32
+    static dynamic_link_handle global_symbols_link( const char* library, const dynamic_link_descriptor descriptors[], size_t required ) {
+        dynamic_link_handle library_handle;
+        if ( GetModuleHandleEx( 0, library, &library_handle ) ) {
+            if ( resolve_symbols( library_handle, descriptors, required ) )
+                return library_handle;
+            else
+                FreeLibrary( library_handle );
+        }
+        return 0;
+    }
+    #else /* _WIN32 */
     // It is supposed that all symbols are from the only one library
     static dynamic_link_handle pin_symbols( dynamic_link_descriptor desc, const dynamic_link_descriptor descriptors[], size_t required ) {
         // The library has been loaded by another module and contains at least one requested symbol.
@@ -416,29 +471,20 @@ OPEN_INTERNAL_NAMESPACE
         }
         return library_handle;
     }
-    #endif /* _WIN32 */
 
-    static dynamic_link_handle global_symbols_link( const char* library, const dynamic_link_descriptor descriptors[], size_t required ) {
-    #if _WIN32
-        dynamic_link_handle library_handle;
-        if ( GetModuleHandleEx( 0, library, &library_handle ) ) {
-            if ( resolve_symbols( library_handle, descriptors, required ) )
-                return library_handle;
-            else
-                FreeLibrary( library_handle );
-        }
-    #else /* _WIN32 */
+    static dynamic_link_handle global_symbols_link( const char*, const dynamic_link_descriptor descriptors[], size_t required ) {
     #if __TBB_WEAK_SYMBOLS_PRESENT
         if ( !dlopen ) return 0;
     #endif /* __TBB_WEAK_SYMBOLS_PRESENT */
         dynamic_link_handle library_handle = dlopen( NULL, RTLD_LAZY );
         // Check existence of only the first symbol, then use it to find the library and load all necessary symbols
-        dynamic_link_descriptor desc = descriptors[0];
+        pointer_to_handler handler;
+        dynamic_link_descriptor desc = { descriptors[0].name, &handler };
         if ( resolve_symbols( library_handle, &desc, 1 ) )
                 return pin_symbols( desc, descriptors, required );
-    #endif /* _WIN32 */
         return 0;
     }
+    #endif /* _WIN32 */
 
     static void save_library_handle( dynamic_link_handle src, dynamic_link_handle *dst ) {
         if ( dst )

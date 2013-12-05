@@ -71,6 +71,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00443.html#gb9ee52ffc5400f15c3d8af8c7613c05a">scalable_allocation_mode</a> (int param, intptr_t value)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00443.html#gcdbd064aec22571ec84e906166a831a2">scalable_allocation_command</a> (int cmd, void *param)</td></tr>
+
 </table>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="g65a20e812012f15ec7442d5b45d0cba5"></a><!-- doxytag: member="scalable_allocator.h::scalable_aligned_free" ref="g65a20e812012f15ec7442d5b45d0cba5" args="(void *ptr)" -->
@@ -155,6 +157,35 @@ The "_aligned_malloc" analogue.
 
 <p>
 The "_aligned_realloc" analogue. 
+</div>
+</div><p>
+<a class="anchor" name="gcdbd064aec22571ec84e906166a831a2"></a><!-- doxytag: member="scalable_allocator.h::scalable_allocation_command" ref="gcdbd064aec22571ec84e906166a831a2" args="(int cmd, void *param)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __TBB_EXPORTED_FUNC scalable_allocation_command           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>cmd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>param</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Call TBB allocator-specific commands. 
 </div>
 </div><p>
 <a class="anchor" name="gb9ee52ffc5400f15c3d8af8c7613c05a"></a><!-- doxytag: member="scalable_allocator.h::scalable_allocation_mode" ref="gb9ee52ffc5400f15c3d8af8c7613c05a" args="(int param, intptr_t value)" -->

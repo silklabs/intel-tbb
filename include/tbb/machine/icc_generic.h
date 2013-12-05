@@ -31,7 +31,7 @@
 #endif
 
 #if ! __TBB_ICC_BUILTIN_ATOMICS_PRESENT
-    #error "Intel C++ Compiler of at least 12.1 version is needed to use ICC intrinsics port"
+    #error "Intel C++ Compiler of at least 12.0 version is needed to use ICC intrinsics port"
 #endif
 
 #define __TBB_machine_icc_generic_H
@@ -256,3 +256,4 @@ template <typename T>
 inline void __TBB_machine_AND( T *operand, T addend ) {
     __atomic_fetch_and_explicit(operand, addend, tbb::internal::memory_order_seq_cst);
 }
+

@@ -69,7 +69,7 @@ LargeMemoryBlock *LargeObjectCacheImpl<Props>::CacheBin::
 
         for (curr=tail, i=0; curr; curr=curr->prev, i++) {
             curr->age = currTime+i;
-            STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeBlk);
+            STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeObj);
         }
 
         if (!lastCleanedAge) {
@@ -133,8 +133,8 @@ LargeMemoryBlock *LargeObjectCacheImpl<Props>::CacheBin::
                 oldest = 0;
             }
             // use moving average with current hit interval
-            intptr_t hitR = currTime - result->age;
-            lastHit = lastHit? (lastHit + hitR)/2 : hitR;
+            intptr_t hitRange = currTime - result->age;
+            meanHitRange = meanHitRange? (meanHitRange + hitRange)/2 : hitRange;
 
             cachedSize -= size;
         } else {
@@ -268,7 +268,7 @@ size_t LargeObjectCacheImpl<Props>::CacheBin::reportStat(int num, FILE *f)
 #if __TBB_MALLOC_LOCACHE_STAT
     if (first)
         printf("%d(%lu): total %lu KB thr %ld lastCln %lu lastHit %lu oldest %lu\n",
-               num, num*CacheStep+MinSize,
+               num, num*Props::CacheStep+Props::MinSize,
                cachedSize/1024, ageThreshold, lastCleanedAge, lastHit, oldest);
 #else
     suppress_unused_warning(num);
@@ -405,7 +405,7 @@ LargeMemoryBlock *LargeObjectCacheImpl<Props>::get(uintptr_t currTime, size_t si
         bitMask.set(idx, true);
     if (lmb) {
         MALLOC_ITT_SYNC_ACQUIRED(bin+idx);
-        STAT_increment(getThreadId(), ThreadCommonCounters, allocCachedLargeBlk);
+        STAT_increment(getThreadId(), ThreadCommonCounters, allocCachedLargeObj);
     }
     return lmb;
 }
@@ -423,16 +423,15 @@ template<typename Props>
 void LargeObjectCacheImpl<Props>::reportStat(FILE *f)
 {
     size_t cachedSize = 0;
-    for (int i=0; i<numLargeBlockBins; i++)
+    for (int i=0; i<numBins; i++)
         cachedSize += bin[i].reportStat(i, f);
-    fprintf(f, "total LOC size %lu MB\nnow %lu\n", cachedSize/1024/1024,
-            loCacheStat.age);
+    fprintf(f, "total LOC size %lu MB\n", cachedSize/1024/1024);
 }
 
 void LargeObjectCache::reportStat(FILE *f)
 {
-    largeObjs.reportStat(f);
-    hugeObjs.reportStat(f);
+    largeCache.reportStat(f);
+    hugeCache.reportStat(f);
 }
 #endif
 
@@ -571,7 +570,6 @@ void ExtMemoryPool::freeLargeObjectList(LargeMemoryBlock *head)
 
 bool ExtMemoryPool::softCachesCleanup()
 {
-    // TODO: cleanup small objects as well
     return loc.regularCleanup(&backend);
 }
 
@@ -579,8 +577,9 @@ bool ExtMemoryPool::hardCachesCleanup()
 {
     // thread-local caches must be cleaned before LOC,
     // because object from thread-local cache can be released to LOC
-    bool tlCaches = releaseTLCaches(), locCaches = loc.cleanAll(&backend);
-    return tlCaches || locCaches;
+    bool ret = releaseAllLocalCaches();
+    ret |= loc.cleanAll(&backend);
+    return ret;
 }
 
 

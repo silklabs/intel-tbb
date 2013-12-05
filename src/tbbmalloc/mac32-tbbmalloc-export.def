@@ -36,6 +36,7 @@ _scalable_aligned_realloc
 _scalable_aligned_free
 _scalable_msize
 _scalable_allocation_mode
+_scalable_allocation_command
 /* memory pool stuff */
 __ZN3rml11pool_createElPKNS_13MemPoolPolicyE
 __ZN3rml14pool_create_v1ElPKNS_13MemPoolPolicyEPPNS_10MemoryPoolE

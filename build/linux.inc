@@ -98,6 +98,7 @@ endif
 
 OBJ = o
 DLL = so
+MALLOC_DLL?=$(DLL)
 LIBEXT = so
 SONAME_SUFFIX =$(shell grep TBB_COMPATIBLE_INTERFACE_VERSION $(tbb_root)/include/tbb/tbb_stddef.h | egrep -o [0-9.]+)
 
@@ -125,7 +126,7 @@ TBB.LIB = $(TBB.DLL)
 TBB_NO_VERSION.DLL=libtbb$(CPF_SUFFIX)$(DEBUG_SUFFIX).$(DLL)
 LINK_TBB.LIB = $(TBB_NO_VERSION.DLL)
 
-MALLOC_NO_VERSION.DLL = libtbbmalloc$(DEBUG_SUFFIX).$(DLL)
+MALLOC_NO_VERSION.DLL = libtbbmalloc$(DEBUG_SUFFIX).$(MALLOC_DLL)
 MALLOC.DEF = $(MALLOC_ROOT)/$(def_prefix)-tbbmalloc-export.def
 MALLOC.DLL = $(MALLOC_NO_VERSION.DLL).$(SONAME_SUFFIX)
 MALLOC.LIB = $(MALLOC_NO_VERSION.DLL)

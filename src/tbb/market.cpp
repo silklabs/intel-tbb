@@ -534,9 +534,9 @@ void market::update_arena_top_priority ( arena& a, intptr_t new_priority ) {
     __TBB_ASSERT( prev_level.workers_requested >= 0 && new_level.workers_requested >= 0, NULL );
 }
 
-bool market::lower_arena_priority ( arena& a, intptr_t new_priority, intptr_t old_priority ) {
+bool market::lower_arena_priority ( arena& a, intptr_t new_priority, uintptr_t old_reload_epoch ) {
     arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
-    if ( a.my_top_priority != old_priority ) {
+    if ( a.my_reload_epoch != old_reload_epoch ) {
         assert_market_valid();
         return false;
     }

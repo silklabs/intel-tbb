@@ -264,6 +264,8 @@ inline fixed_pool::fixed_pool(void *buf, size_t size) : my_buffer(buf), my_size(
 }
 inline void *fixed_pool::allocate_request(intptr_t pool_id, size_t & bytes) {
     fixed_pool &self = *reinterpret_cast<fixed_pool*>(pool_id);
+    // TODO: we can implement "buffer for fixed pools used only once" policy
+    // on low-level side, thus eliminate atomics here
     if( !tbb::internal::as_atomic(self.my_size).compare_and_swap(0, (bytes=self.my_size)) )
         return 0; // all the memory was given already
     return self.my_buffer;

@@ -70,9 +70,6 @@ TBB_CPLUS.OBJ = concurrent_hash_map.$(OBJ) \
 		spin_rw_mutex.$(OBJ) \
 		spin_mutex.$(OBJ) \
 		critical_section.$(OBJ) \
-		task.$(OBJ) \
-		tbb_misc.$(OBJ) \
-		tbb_misc_ex.$(OBJ) \
 		mutex.$(OBJ) \
 		recursive_mutex.$(OBJ) \
 		condition_variable.$(OBJ) \
@@ -81,6 +78,9 @@ TBB_CPLUS.OBJ = concurrent_hash_map.$(OBJ) \
 		semaphore.$(OBJ) \
 		private_server.$(OBJ) \
 		rml_tbb.$(OBJ) \
+		tbb_misc.$(OBJ) \
+		tbb_misc_ex.$(OBJ) \
+		task.$(OBJ) \
 		task_group_context.$(OBJ) \
 		governor.$(OBJ) \
 		market.$(OBJ) \

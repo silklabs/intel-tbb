@@ -133,3 +133,7 @@ inline void __TBB_machine_unlock_byte( __TBB_atomic_flag &flag ) {
 #if __TBB_WORDSIZE==4
     #define __TBB_USE_GENERIC_DWORD_LOAD_STORE              1
 #endif
+
+#if __TBB_x86_32 || __TBB_x86_64
+#include "gcc_itsx.h"
+#endif

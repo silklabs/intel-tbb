@@ -470,7 +470,7 @@ public:
     //! Finds all contexts registered by this scheduler affected by the state change
     //! and propagates the new state to them.
     template <typename T>
-    void propagate_task_group_state ( T task_group_context::*mptr_state, T new_state );
+    void propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state );
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 #if _WIN32||_WIN64

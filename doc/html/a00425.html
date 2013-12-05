@@ -35,10 +35,14 @@ typedef void *(*)&nbsp;</td><td class="memItemRight" valign="bottom"><b>rawAlloc
 typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><b>rawFreeType</b> (intptr_t pool_id, void *raw_ptr, size_t raw_bytes)</td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>MemPoolError</b> { <b>POOL_OK</b>, 
-<b>INVALID_POLICY</b>, 
-<b>UNSUPPORTED_POLICY</b>, 
-<b>NO_MEMORY</b>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>MemPoolError</b> { <br>
+&nbsp;&nbsp;<b>POOL_OK</b> =  TBBMALLOC_OK, 
+<b>INVALID_POLICY</b> =  TBBMALLOC_INVALID_PARAM, 
+<b>UNSUPPORTED_POLICY</b> =  TBBMALLOC_UNSUPPORTED, 
+<b>NO_MEMORY</b> =  TBBMALLOC_NO_MEMORY, 
+<br>
+&nbsp;&nbsp;<b>NO_EFFECT</b> =  TBBMALLOC_NO_EFFECT
+<br>
  }</td></tr>
 
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>

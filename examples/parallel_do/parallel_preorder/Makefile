@@ -29,6 +29,7 @@ run_cmd=
 PROG=parallel_preorder
 ARGS=
 PERF_RUN_ARGS=auto silent 500000  100
+LIGHT_ARGS=1:auto:+4 n-of-traversals=50
 
 # The C++ compiler
 ifneq (,$(shell which icc 2>/dev/null))
@@ -57,6 +58,9 @@ clean:
 
 test:
 	$(run_cmd) ./$(PROG) $(ARGS)
+
+light_test:
+	$(run_cmd) ./$(PROG) $(LIGHT_ARGS)
 
 perf_build:	release
 

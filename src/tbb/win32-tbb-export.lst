@@ -42,6 +42,8 @@ __TBB_SYMBOL( __TBB_machine_fetchstore8 )
 __TBB_SYMBOL( __TBB_machine_store8 )
 __TBB_SYMBOL( __TBB_machine_load8 )
 __TBB_SYMBOL( __TBB_machine_trylockbyte )
+__TBB_SYMBOL( __TBB_machine_try_lock_elided )
+__TBB_SYMBOL( __TBB_machine_unlock_elided )
 
 // cache_aligned_allocator.cpp
 __TBB_SYMBOL( ?NFS_Allocate@internal@tbb@@YAPAXIIPAX@Z )

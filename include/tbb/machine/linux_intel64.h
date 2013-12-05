@@ -101,3 +101,4 @@ static inline void __TBB_machine_and( volatile void *ptr, uint64_t value ) {
 #define __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE            1
 #define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
 #define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
+

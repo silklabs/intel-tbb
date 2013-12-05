@@ -642,24 +642,17 @@ void TestConcurrentGrowBy( int nthread ) {
 //TODO: move this to more appropriate place, smth like test_harness.cpp
 void TestArrayLength(){
     int five_elementh_array[5] = {0};
-    ASSERT(array_length(five_elementh_array)==5,"array_length failed to determine length of non empty non dynamic array");
+    ASSERT(Harness::array_length(five_elementh_array)==5,"array_length failed to determine length of non empty non dynamic array");
 }
 
 #if __TBB_INITIALIZER_LISTS_PRESENT
 #include "test_initializer_list.h"
 
-#define __TBB_CVECTOR_TEST_INIT_SEQ {1,2,3,4,5}
-__TBB_TEST_INIT_LIST_SUITE(TestInitListIml,tbb::concurrent_vector,char,__TBB_CVECTOR_TEST_INIT_SEQ )
-#undef __TBB_CVECTOR_TEST_INIT_SEQ
-
-#define __TBB_CVECTOR_TEST_EMPTY_INIT_SEQ {}
-__TBB_TEST_INIT_LIST_SUITE(TestEmptyInitListIml,tbb::concurrent_vector,int,__TBB_CVECTOR_TEST_EMPTY_INIT_SEQ )
-#undef __TBB_CVECTOR_TEST_EMPTY_INIT_SEQ
-
 void TestInitList(){
     REMARK("testing initializer_list methods \n");
-    TestEmptyInitListIml();
-    TestInitListIml();
+    using namespace initializer_list_support_tests;
+    TestInitListSupport<tbb::concurrent_vector<char> >({1,2,3,4,5});
+    TestInitListSupport<tbb::concurrent_vector<int> >({});
 }
 #endif //if __TBB_INITIALIZER_LISTS_PRESENT
 

@@ -659,12 +659,12 @@ public:
 #if TBB_DEPRECATED
     /** Returns old size. */
     size_type grow_by( size_type delta ) {
-        return delta ? internal_grow_by( delta, sizeof(T), &initialize_array, NULL ) : my_early_size;
+        return delta ? internal_grow_by( delta, sizeof(T), &initialize_array, NULL ) : my_early_size.load();
     }
 #else
     /** Returns iterator pointing to the first new element. */
     iterator grow_by( size_type delta ) {
-        return iterator(*this, delta ? internal_grow_by( delta, sizeof(T), &initialize_array, NULL ) : my_early_size);
+        return iterator(*this, delta ? internal_grow_by( delta, sizeof(T), &initialize_array, NULL ) : my_early_size.load());
     }
 #endif
 
@@ -672,12 +672,12 @@ public:
 #if TBB_DEPRECATED
     /** Returns old size. */
     size_type grow_by( size_type delta, const_reference t ) {
-        return delta ? internal_grow_by( delta, sizeof(T), &initialize_array_by, static_cast<const void*>(&t) ) : my_early_size;
+        return delta ? internal_grow_by( delta, sizeof(T), &initialize_array_by, static_cast<const void*>(&t) ) : my_early_size.load();
     }
 #else
     /** Returns iterator pointing to the first new element. */
     iterator grow_by( size_type delta, const_reference t ) {
-        return iterator(*this, delta ? internal_grow_by( delta, sizeof(T), &initialize_array_by, static_cast<const void*>(&t) ) : my_early_size);
+        return iterator(*this, delta ? internal_grow_by( delta, sizeof(T), &initialize_array_by, static_cast<const void*>(&t) ) : my_early_size.load());
     }
 #endif
 

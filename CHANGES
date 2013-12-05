@@ -1,8 +1,58 @@
 ------------------------------------------------------------------------
 The list of most significant changes made over time in
-Intel(R) Threading Bulding Blocks (Intel(R) TBB).
+Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.2
+TBB_INTERFACE_VERSION == 7000
+
+Changes (w.r.t. Intel TBB 4.1 Update 4):
+
+- Added speculative_spin_mutex, which uses Intel(R) Transactional
+    Synchronization Extensions when they are supported by hardware.
+- Binary files linked with libc++ (the C++ standard library in Clang)
+    were added on OS X*.
+- For OS X* exact exception propagation is supported with Clang;
+    it requires use of libc++ and corresponding Intel TBB binaries.
+- Support for C++11 initilizer lists in constructor and assigment
+    has been added to concurrent_hash_map, concurrent_unordered_set,
+    concurrent_unordered_multiset, concurrent_unordered_map,
+    concurrent_unordered_multimap.
+- The memory allocator may now clean its per-thread memory caches
+    when it cannot get more memory.
+- Added the scalable_allocation_command() function for on-demand
+    cleaning of internal memory caches.
+- Reduced the time overhead for freeing memory objects smaller than ~8K.
+- Simplified linking with the debug library for applications that use
+    Intel TBB in code offloaded to Intel(R) Xeon Phi(tm) coprocessors.
+    See an example in
+    examples/GettingStarted/sub_string_finder/Makefile.
+- Various improvements in source code, scripts and makefiles.
+
+Changes affecting backward compatibility:
+
+- tbb::flow::graph has been modified to spawn its tasks;
+    the old behaviour (task enqueuing) is deprecated. This change may
+    impact applications that expected a flow graph to make progress
+    without calling wait_for_all(), which is no longer guaranteed. See
+    the documentation for more details.
+- Changed the return values of the scalable_allocation_mode() function.
+
+Bugs fixed:
+
+- Fixed a leak of parallel_reduce body objects when execution is
+    cancelled or an exception is thrown, as suggested by Darcy Harrison.
+- Fixed a race in the task scheduler which can lower the effective
+    priority despite the existence of higher priority tasks.
+- On Linux an error during destruction of the internal thread local
+    storage no longer results in an exception.
+
+Open-source contributions integrated:
+
+- Fixed task_group_context state propagation to unrelated context trees
+    by Raf Schietekat.
+
+------------------------------------------------------------------------
 Intel TBB 4.1 Update 4
 TBB_INTERFACE_VERSION == 6105
 
