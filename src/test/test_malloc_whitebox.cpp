@@ -42,6 +42,8 @@
 #undef DO_ITT_NOTIFY
 #endif
 
+#define __TBB_MALLOC_WHITEBOX_TEST 1 // to get access to LOC internals
+
 #define protected public
 #define private public
 #include "../tbbmalloc/frontend.cpp"
@@ -133,6 +135,18 @@ public:
 
 int TestLargeObjCache::largeMemSizes[LARGE_MEM_SIZES_NUM];
 
+void TestLargeObjectCache()
+{
+    for (int i=0; i<LARGE_MEM_SIZES_NUM; i++)
+        TestLargeObjCache::largeMemSizes[i] = 
+            (int)(minLargeObjectSize + 2*minLargeObjectSize*(1.*rand()/RAND_MAX));
+
+    for( int p=MaxThread; p>=MinThread; --p ) {
+        TestLargeObjCache::initBarrier( p );
+        NativeParallelFor( p, TestLargeObjCache() );
+    }
+}
+
 #if MALLOC_CHECK_RECURSION
 
 class TestStartupAlloc: public SimpleBarrier {
@@ -164,13 +178,13 @@ public:
 
             for (size_t j=0; j<blocks1[i].sz; j++)
                 ASSERT(*((char*)blocks1[i].ptr+j) == i, NULL);
-            Block *block = (Block *)alignDown(blocks1[i].ptr, blockSize);
+            Block *block = (Block *)alignDown(blocks1[i].ptr, slabSize);
             ((StartupBlock *)block)->free(blocks1[i].ptr);
         }
         for (int i=ITERS-1; i>=0; i--) {
             for (size_t j=0; j<blocks2[i].sz; j++)
                 ASSERT(*((char*)blocks2[i].ptr+j) == i, NULL);
-            Block *block = (Block *)alignDown(blocks2[i].ptr, blockSize);
+            Block *block = (Block *)alignDown(blocks2[i].ptr, slabSize);
             ((StartupBlock *)block)->free(blocks2[i].ptr);
         }
     }
@@ -387,7 +401,7 @@ void TestPools() {
    from LOC during LOC cleanup, and putMallocMem checks that returned size
    is correct.
 */
-    const size_t passBackendSz = Backend::maxBinedSize+1,
+    const size_t passBackendSz = Backend::maxBinned_HugePage+1,
         anotherLOCBinSz = minLargeObjectSize+1;
     for (int i=0; i<10; i++) { // run long enough to be cached
         void *p = pool_malloc(mallocPool, passBackendSz);
@@ -431,6 +445,33 @@ void TestPools() {
     cleanObjectCache();
     afterNumBackRef = allocatedBackRefCount();
     ASSERT(beforeNumBackRef==afterNumBackRef, "backreference leak detected");
+
+    // test usedSize/cachedSize and LOC bitmask correctness
+    void *p[5];
+    pool_create_v1(0, &pol, &mallocPool);
+    const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
+    p[3] = pool_malloc(mallocPool, minLargeObjectSize+2*largeBlockCacheStep);
+    for (int i=0; i<10; i++) {
+        p[0] = pool_malloc(mallocPool, minLargeObjectSize);
+        p[1] = pool_malloc(mallocPool, minLargeObjectSize+largeBlockCacheStep);
+        pool_free(mallocPool, p[0]);
+        pool_free(mallocPool, p[1]);
+    }
+    ASSERT(loc->getUsedSize(), NULL);
+    pool_free(mallocPool, p[3]);
+    ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+largeBlockCacheStep)
+           && !loc->getUsedSize(), NULL);
+    for (int i=0; i<3; i++)
+        p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+    size_t currUser = loc->getUsedSize();
+    ASSERT(!loc->getLOCSize() && currUser >= 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
+    p[4] = pool_malloc(mallocPool, minLargeObjectSize+3*largeBlockCacheStep);
+    ASSERT(loc->getUsedSize() - currUser >= minLargeObjectSize+3*largeBlockCacheStep, NULL);
+    pool_free(mallocPool, p[4]);
+    ASSERT(loc->getUsedSize() == currUser, NULL);
+    pool_reset(mallocPool);
+    ASSERT(!loc->getLOCSize() && !loc->getUsedSize(), NULL);
+    pool_destroy(mallocPool);
 }
 
 void TestObjectRecognition() {
@@ -441,24 +482,24 @@ void TestObjectRecognition() {
     ASSERT(sizeof(BackRefIdx)==4, "Unexpected size of BackRefIdx");
     ASSERT(getObjectSize(falseObjectSize)!=falseObjectSize, "Error in test: bad choice for false object size");
 
-    void* mem = scalable_malloc(2*blockSize);
+    void* mem = scalable_malloc(2*slabSize);
     ASSERT(mem, "Memory was not allocated");
-    Block* falseBlock = (Block*)alignUp((uintptr_t)mem, blockSize);
+    Block* falseBlock = (Block*)alignUp((uintptr_t)mem, slabSize);
     falseBlock->objectSize = falseObjectSize;
     char* falseSO = (char*)falseBlock + falseObjectSize*7;
-    ASSERT(alignDown(falseSO, blockSize)==(void*)falseBlock, "Error in test: false object offset is too big");
+    ASSERT(alignDown(falseSO, slabSize)==(void*)falseBlock, "Error in test: false object offset is too big");
 
-    void* bufferLOH = scalable_malloc(2*blockSize + headersSize);
+    void* bufferLOH = scalable_malloc(2*slabSize + headersSize);
     ASSERT(bufferLOH, "Memory was not allocated");
     LargeObjectHdr* falseLO = 
-        (LargeObjectHdr*)alignUp((uintptr_t)bufferLOH + headersSize, blockSize);
+        (LargeObjectHdr*)alignUp((uintptr_t)bufferLOH + headersSize, slabSize);
     LargeObjectHdr* headerLO = (LargeObjectHdr*)falseLO-1;
     headerLO->memoryBlock = (LargeMemoryBlock*)bufferLOH;
-    headerLO->memoryBlock->unalignedSize = 2*blockSize + headersSize;
-    headerLO->memoryBlock->objectSize = blockSize + headersSize;
+    headerLO->memoryBlock->unalignedSize = 2*slabSize + headersSize;
+    headerLO->memoryBlock->objectSize = slabSize + headersSize;
     headerLO->backRefIdx = BackRefIdx::newBackRef(/*largeObj=*/true);
     setBackRef(headerLO->backRefIdx, headerLO);
-    ASSERT(scalable_msize(falseLO) == blockSize + headersSize,
+    ASSERT(scalable_msize(falseLO) == slabSize + headersSize,
            "Error in test: LOH falsification failed");
     removeBackRef(headerLO->backRefIdx);
 
@@ -500,7 +541,7 @@ void TestObjectRecognition() {
     scalable_free(smallPtr);
 
     obtainedSize = safer_scalable_msize(mem, NULL);
-    ASSERT(obtainedSize>=2*blockSize, "Correct pointer not accepted?");
+    ASSERT(obtainedSize>=2*slabSize, "Correct pointer not accepted?");
     scalable_free(mem);
     scalable_free(bufferLOH);
 }
@@ -517,12 +558,12 @@ public:
     TestBackendWork(rml::internal::Backend *bknd) : backend(bknd) {}
     void operator()(int) const {
         barrier.wait();
-        
+
         for (int i=0; i<ITERS; i++) {
-            BlockI *block16K = backend->get16KBlock(1);
-            ASSERT(block16K, "Memory was not allocated");
+            BlockI *slabBlock = backend->getSlabBlock(1);
+            ASSERT(slabBlock, "Memory was not allocated");
             LargeMemoryBlock *lmb = backend->getLargeBlock(16*1024);
-            backend->put16KBlock(block16K);
+            backend->putSlabBlock(slabBlock);
             backend->putLargeBlock(lmb);
         }
     }
@@ -542,16 +583,16 @@ void TestBackend()
         NativeParallelFor( p, TestBackendWork(backend) );
     }
 
-    BlockI *block = backend->get16KBlock(1);
+    BlockI *block = backend->getSlabBlock(1);
     ASSERT(block, "Memory was not allocated");
-    backend->put16KBlock(block);
+    backend->putSlabBlock(block);
 
     pool_destroy(mPool);
 }
 
 void TestBitMask()
 {
-    BitMask<256> mask;
+    BitMaskMin<256> mask;
 
     mask.reset();
     mask.set(10, 1);
@@ -591,15 +632,7 @@ int TestMain () {
     }
 #endif
 
-    for (int i=0; i<LARGE_MEM_SIZES_NUM; i++)
-        TestLargeObjCache::largeMemSizes[i] = 
-            (int)(minLargeObjectSize + 2*minLargeObjectSize*(1.*rand()/RAND_MAX));
-
-    for( int p=MaxThread; p>=MinThread; --p ) {
-        TestLargeObjCache::initBarrier( p );
-        NativeParallelFor( p, TestLargeObjCache() );
-    }
-
+    TestLargeObjectCache();
     TestObjectRecognition();
     TestBitMask();
     return Harness::Done;

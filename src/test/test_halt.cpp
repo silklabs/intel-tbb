@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "harness_defs.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>

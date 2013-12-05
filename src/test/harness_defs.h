@@ -44,7 +44,30 @@
 #endif
 
 #ifndef TBB_USE_GCC_BUILTINS
-    #define TBB_USE_GCC_BUILTINS             __TBB_TEST_GCC_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT
+  #define TBB_USE_GCC_BUILTINS         __TBB_TEST_GCC_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT
+#endif
+
+#if __INTEL_COMPILER
+  #define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
+#elif __GNUC__
+  #define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
+#elif _MSC_VER
+  #define __TBB_LAMBDAS_PRESENT ( _MSC_VER >= 1600 )
+#endif
+
+#if _MSC_VER
+  #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( _MSC_VER < 1400 )
+#else
+  #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 0
+#endif
+
+//! a function ptr cannot be converted to const T& template argument without explicit cast
+#define __TBB_FUNC_PTR_AS_TEMPL_PARAM_BROKEN ((__linux__ || __APPLE__) && __INTEL_COMPILER && __INTEL_COMPILER < 1100) || __SUNPRO_CC
+#define __TBB_UNQUALIFIED_CALL_OF_DTOR_BROKEN (__GNUC__==3 && __GNUC_MINOR__<=3)
+
+#if __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN
+  #define _EXCEPTION_PTR_H /* prevents exception_ptr.h inclusion */
+  #define _GLIBCXX_NESTED_EXCEPTION_H /* prevents nested_exception.h inclusion */
 #endif
 
 #endif /* __TBB_harness_defs_H */

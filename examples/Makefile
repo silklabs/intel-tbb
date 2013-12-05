@@ -119,9 +119,15 @@ else
         endif
         export DYLD_LIBRARY_PATH := $(DYLD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
     else
-        # -L necessary for non-native compilers which don't search $LIBRARY_PATH
-        override CXXFLAGS += -L$(work_dir)_release -L$(work_dir)_debug
         export LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
+        ifeq ($(offload),mic)
+            mic_path=$(tbb_build_dir)$(SLASH)$(tbb_mic_build_prefix)
+            export MIC_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LIBRARY_PATH)
+            export MIC_LD_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LD_LIBRARY_PATH)
+        else
+            # -L necessary for non-native compilers which don't search $LIBRARY_PATH
+            override CXXFLAGS += -L$(work_dir)_release -L$(work_dir)_debug
+        endif
     endif
     export LIBS
     export LIBRARY_PATH := $(LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug

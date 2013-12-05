@@ -26,8 +26,6 @@
     the GNU General Public License.
 */
 
-#include <new>
-
 // Do not include task.h directly. Use scheduler_common.h instead
 #include "scheduler_common.h"
 #include "governor.h"
@@ -36,6 +34,8 @@
 
 #include "tbb/cache_aligned_allocator.h"
 #include "tbb/partitioner.h"
+
+#include <new>
 
 namespace tbb {
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::partition_type_base Class Reference</title>
+<title>tbb::null_rw_mutex::scoped_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,36 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>internal</b>::<a class="el" href="a00309.html">partition_type_base</a></div>
-<h1>tbb::internal::partition_type_base Class Reference</h1><!-- doxytag: class="tbb::internal::partition_type_base" -->Provides backward-compatible methods for partition objects without affinity.  
+<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00308.html">null_rw_mutex</a>::<a class="el" href="a00309.html">scoped_lock</a></div>
+<h1>tbb::null_rw_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_rw_mutex::scoped_lock" -->Represents acquisition of a mutex.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00575.html">partitioner.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00540.html">null_rw_mutex.h</a>&gt;</code>
 <p>
-<a href="a00100.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00093.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d5b43011addf53239ccf8cdeaeab76e7"></a><!-- doxytag: member="tbb::internal::partition_type_base::set_affinity" ref="d5b43011addf53239ccf8cdeaeab76e7" args="(task &amp;)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_affinity</b> (<a class="el" href="a00337.html">task</a> &amp;)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e11281a13a7b6243c6c9ab243c5ad5a8"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::scoped_lock" ref="e11281a13a7b6243c6c9ab243c5ad5a8" args="(null_rw_mutex &amp;, bool=true)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00308.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2bffce16dee5796448bf12c8ccecd94c"></a><!-- doxytag: member="tbb::internal::partition_type_base::note_affinity" ref="2bffce16dee5796448bf12c8ccecd94c" args="(task::affinity_id)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>note_affinity</b> (<a class="el" href="a00337.html#d61bb32389d3857bf7511d69beaafb76">task::affinity_id</a>)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="72c4c302fdfc20187a650348e432b0a7"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::acquire" ref="72c4c302fdfc20187a650348e432b0a7" args="(null_rw_mutex &amp;, bool=true)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00308.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="87962b93599ff172cd4b64f2995ebc71"></a><!-- doxytag: member="tbb::internal::partition_type_base::continue_after_execute_range" ref="87962b93599ff172cd4b64f2995ebc71" args="()" -->
-<a class="el" href="a00337.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>continue_after_execute_range</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa1e2a5592ee2672470ea44d98f1c498"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::upgrade_to_writer" ref="fa1e2a5592ee2672470ea44d98f1c498" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>upgrade_to_writer</b> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="baca041e2b854196a411f1d0ca7ae905"></a><!-- doxytag: member="tbb::internal::partition_type_base::decide_whether_to_delay" ref="baca041e2b854196a411f1d0ca7ae905" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>decide_whether_to_delay</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="efcb7948649e1652d59aaff9c8ea40f1"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::downgrade_to_reader" ref="efcb7948649e1652d59aaff9c8ea40f1" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>downgrade_to_reader</b> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="17686f1a5119802cad38369d0580d05f"></a><!-- doxytag: member="tbb::internal::partition_type_base::spawn_or_delay" ref="17686f1a5119802cad38369d0580d05f" args="(bool, task &amp;b)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>spawn_or_delay</b> (bool, <a class="el" href="a00337.html">task</a> &amp;b)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="56686c4dfe4a32a1d9bd8e7e729130e6"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::try_acquire" ref="56686c4dfe4a32a1d9bd8e7e729130e6" args="(null_rw_mutex &amp;, bool=true)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00308.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6146c803a4ad2f14263fdc019a72b5a9"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::release" ref="6146c803a4ad2f14263fdc019a72b5a9" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Provides backward-compatible methods for partition objects without affinity. 
+Represents acquisition of a mutex. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00575.html">partitioner.h</a></ul>
+<li><a class="el" href="a00540.html">null_rw_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

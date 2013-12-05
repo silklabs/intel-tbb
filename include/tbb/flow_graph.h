@@ -40,11 +40,10 @@
 #include "internal/_aggregator_impl.h"
 
 // use the VC10 or gcc version of tuple if it is available.
-#if TBB_IMPLEMENT_CPP0X && (!defined(_MSC_VER) || _MSC_VER < 1600)
-#define TBB_PREVIEW_TUPLE 1
-#include "compat/tuple"
+#if __TBB_CPP11_TUPLE_PRESENT
+    #include <tuple>
 #else
-#include <tuple>
+    #include "compat/tuple"
 #endif
 
 #include<list>
@@ -67,6 +66,11 @@ namespace flow {
 enum concurrency { unlimited = 0, serial = 1 };
 
 namespace interface6 {
+
+namespace internal {
+    template<typename T, typename M>
+    class successor_cache;
+}
 
 //! An empty class used for messages that mean "I'm done"
 class continue_msg {};
@@ -106,6 +110,8 @@ public:
     virtual bool try_consume( ) { return false; }
 };
 
+template< typename T > class limiter_node;  // needed for resetting decrementer
+
 //! Pure virtual template class that defines a receiver of messages of type T
 template< typename T >
 class receiver {
@@ -127,6 +133,14 @@ public:
 
     //! Remove a predecessor from the node
     virtual bool remove_predecessor( predecessor_type & ) { return false; }
+
+protected:
+    //! put receiver back in initial state
+    template<typename U> friend class limiter_node;
+    virtual void reset_receiver() = 0;
+    template<typename TT, typename M>
+    friend class internal::successor_cache;
+    virtual bool is_continue_receiver() { return false; }
 };
 
 //! Base class for receivers of completion messages
@@ -192,11 +206,20 @@ protected:
     int my_predecessor_count;
     int my_current_count;
     int my_initial_predecessor_count;
+    // the friend declaration in the base class did not eliminate the "protected class"
+    // error in gcc 4.1.2
+    template<typename U> friend class limiter_node;
+    /*override*/void reset_receiver() {
+        my_current_count = 0;
+    }
 
     //! Does whatever should happen when the threshold is reached
     /** This should be very fast or else spawn a task.  This is
         called while the sender is blocked in the try_put(). */
     virtual void execute() = 0;
+    template<typename TT, typename M>
+    friend class internal::successor_cache;
+    /*override*/ bool is_continue_receiver() { return true; }
 };
 
 #include "internal/_flow_graph_impl.h"
@@ -387,6 +410,7 @@ public:
                 throw;
             }
 #endif
+            my_context->reset();  // consistent with behavior in catch()
             my_root_task->set_ref_count(1);
         }
     }
@@ -421,6 +445,9 @@ public:
     //! return status of graph execution
     bool is_cancelled() { return cancelled; }
     bool exception_thrown() { return caught_exception; }
+
+    // un-thread-safe state reset.
+    void reset();
 
 private:
     task *my_root_task;
@@ -476,6 +503,9 @@ public:
     virtual ~graph_node() {
         my_graph.remove_node(this);
     }
+
+protected:
+    virtual void reset() = 0;
 };
 
 inline void graph::register_node(graph_node *n) {
@@ -500,6 +530,19 @@ inline void graph::remove_node(graph_node *n) {
     }
     n->prev = n->next = NULL;
 }
+
+inline void graph::reset() {
+    // reset context
+    if(my_context) my_context->reset();
+    cancelled = false;
+    caught_exception = false;
+    // reset all the nodes comprising the graph
+    for(iterator ii = begin(); ii != end(); ++ii) {
+        graph_node *my_p = &(*ii);
+        my_p->reset();
+    }
+}
+
 
 #include "internal/_flow_graph_node_impl.h"
 
@@ -562,10 +605,9 @@ public:
         if ( my_has_cached_item ) {
             v = my_cached_item;
             my_has_cached_item = false;
-        } else if ( (*my_body)(v) == false ) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     //! Reserves an item.
@@ -574,9 +616,6 @@ public:
         if ( my_reserved ) {
             return false;
         }
-
-        if ( !my_has_cached_item && (*my_body)(my_cached_item) )
-            my_has_cached_item = true;
 
         if ( my_has_cached_item ) {
             v = my_cached_item;
@@ -618,6 +657,23 @@ public:
             spawn_put();
     }
 
+    template<class Body>
+    Body copy_function_object() { 
+        internal::source_body<output_type> &body_ref = *this->my_body;
+        return dynamic_cast< internal::source_body_leaf<output_type, Body> & >(body_ref).get_body(); 
+    }
+
+protected:
+
+    //! resets the node to its initial state
+    void reset() {
+        my_active = init_my_active;
+        my_reserved =false;
+        if(my_has_cached_item) {
+            my_has_cached_item = false;
+        }
+    }
+
 private:
     task *my_root_task;
     spin_mutex my_mutex;
@@ -631,10 +687,30 @@ private:
 
     friend class internal::source_task< source_node< output_type > >;
 
+    // used by apply_body, can invoke body of node.
+
+    bool try_reserve_apply_body(output_type &v) {
+        spin_mutex::scoped_lock lock(my_mutex);
+        if ( my_reserved ) {
+            return false;
+        }
+
+        if ( !my_has_cached_item && (*my_body)(my_cached_item) )
+            my_has_cached_item = true;
+
+        if ( my_has_cached_item ) {
+            v = my_cached_item;
+            my_reserved = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //! Applies the body
     /* override */ void apply_body( ) {
         output_type v;
-        if ( try_reserve(v) == false )
+        if ( !try_reserve_apply_body(v) )
             return;
 
         if ( my_successors.try_put( v ) )
@@ -648,7 +724,7 @@ private:
         task::enqueue( * new ( task::allocate_additional_child_of( *my_root_task ) )
            internal::source_task< source_node< output_type > >( *this ) );
     }
-};
+};  // source_node
 
 //! Implements a function node that supports Input -> Output
 template < typename Input, typename Output = continue_msg, graph_buffer_policy = queueing, typename Allocator=cache_aligned_allocator<Input> >
@@ -677,6 +753,10 @@ public:
     bool try_put(const input_type &i) { return fInput_type::try_put(i); }
 
 protected:
+
+    // override of graph_node's reset.
+    /*override*/void reset() {fInput_type::reset_function_input(); }
+
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }
 };
 
@@ -707,6 +787,9 @@ public:
     bool try_put(const input_type &i) { return fInput_type::try_put(i); }
 
 protected:
+
+    /*override*/void reset() { fInput_type::reset_function_input(); }
+
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }
 };
 
@@ -745,6 +828,8 @@ public:
         graph_node(other.my_graph), base_type(other)
     {}
     // all the guts are in multifunction_input...
+protected:
+    /*override*/void reset() { base_type::reset(); }
 };  // multifunction_node
 
 template < typename Input, typename Output, typename Allocator >
@@ -766,6 +851,9 @@ public:
     multifunction_node( const multifunction_node &other) :
         graph_node(other.my_graph), base_type(other, new queue_type())
     {}
+    // all the guts are in multifunction_input...
+protected:
+    /*override*/void reset() { base_type::reset(); }
 };  // multifunction_node
 
 //! split_node: accepts a tuple as input, forwards each element of the tuple to its
@@ -822,6 +910,8 @@ public:
     bool try_put(const input_type &i) { return internal::continue_input<Output>::try_put(i); }
 
 protected:
+    /*override*/void reset() { internal::continue_input<Output>::reset_receiver(); }
+
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }
 };
 
@@ -901,10 +991,14 @@ public:
     }
 
 protected:
+
+    /*override*/void reset() { my_buffer_is_valid = false; }
+
     spin_mutex my_mutex;
     internal::broadcast_cache< T, null_rw_mutex > my_successors;
     T my_buffer;
     bool my_buffer_is_valid;
+    /*override*/void reset_receiver() {}
 };
 
 template< typename T >
@@ -972,6 +1066,9 @@ public:
         my_successors.try_put(t);
         return true;
     }
+protected:
+    /*override*/void reset() {}
+    /*override*/void reset_receiver() {}
 };
 
 #include "internal/_flow_graph_item_buffer_impl.h"
@@ -1199,6 +1296,18 @@ public:
         my_aggregator.execute(&op_data);
         return true;
     }
+
+protected:
+
+    /*override*/void reset() {
+        reservable_item_buffer<T, A>::reset();
+        forwarder_busy = false;
+    }
+
+    /*override*/void reset_receiver() {
+        // nothing to do; no predecesor_cache
+    }
+
 };
 
 //! Forwards messages in FIFO order
@@ -1322,6 +1431,7 @@ class priority_queue_node : public buffer_node<T, A> {
 public:
     typedef T input_type;
     typedef T output_type;
+    typedef buffer_node<T,A> base_type;
     typedef sender< input_type > predecessor_type;
     typedef receiver< output_type > successor_type;
 
@@ -1332,6 +1442,12 @@ public:
     priority_queue_node( const priority_queue_node &src ) : buffer_node<T, A>(src), mark(0) {}
 
 protected:
+
+    /*override*/void reset() {
+        mark = 0;
+        base_type::reset();
+    }
+
     typedef typename buffer_node<T, A>::size_type size_type;
     typedef typename buffer_node<T, A>::item_type item_type;
     typedef typename buffer_node<T, A>::buffer_operation prio_operation;
@@ -1628,6 +1744,16 @@ public:
         my_predecessors.remove( src );
         return true;
     }
+
+protected:
+
+    /*override*/void reset() {
+        my_count = 0;
+        my_predecessors.reset();
+        decrement.reset_receiver();
+    }
+
+    /*override*/void reset_receiver() { my_predecessors.reset(); }
 };
 
 #include "internal/_flow_graph_join_impl.h"

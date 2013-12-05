@@ -26,16 +26,16 @@
     the GNU General Public License.
 */
 
+#include "tbbmalloc_internal.h"
 #include <string.h>
 #include <new>        /* for placement new */
-#include "tbbmalloc_internal.h"
 
 namespace rml {
 namespace internal {
 
 
 /********* backreferences ***********************/
-/* Each 16KB block and each large memory object header contains BackRefIdx 
+/* Each slab block and each large memory object header contains BackRefIdx
  * that points out in some BackRefBlock which points back to this block or header.
  */
 struct BackRefBlock : public BlockI {
@@ -50,7 +50,7 @@ struct BackRefBlock : public BlockI {
     bool          addedToForUse;  // this block is already added to the listForUse chain
 
     BackRefBlock(BackRefBlock *blockToUse, int num) :
-        nextForUse(NULL), bumpPtr((FreeObject*)((uintptr_t)blockToUse + blockSize - sizeof(void*))),
+        nextForUse(NULL), bumpPtr((FreeObject*)((uintptr_t)blockToUse + slabSize - sizeof(void*))),
         freeList(NULL), nextRawMemBlock(NULL), allocatedCount(0), myNum(num),
         addedToForUse(false) {
         memset(&blockMutex, 0, sizeof(MallocMutex));
@@ -58,17 +58,15 @@ struct BackRefBlock : public BlockI {
         MALLOC_ASSERT(!(myNum >> 16), ASSERT_TEXT);
     }
 
-    // when BackRefMaster::findFreeBlock() calls get16KBlock
-    // BackRefBlock::bytes is used implicitly
     // TODO: take into account VirtualAlloc granularity
-    static const int bytes = blockSize;
+    static const int bytes = slabSize;
 };
 
-// max number of backreference pointers in 16KB block
+// max number of backreference pointers in slab block
 static const int BR_MAX_CNT = (BackRefBlock::bytes-sizeof(BackRefBlock))/sizeof(void*);
 
 struct BackRefMaster {
-/* A 16KB block can hold up to ~2K back pointers to 16KB blocks or large objects,
+/* A slab block can hold up to ~2K back pointers to slab blocks or large objects,
  * so it can address at least 32MB. The array of 64KB holds 8K pointers
  * to such blocks, addressing ~256 GB.
  */
@@ -228,7 +226,7 @@ BackRefIdx BackRefIdx::newBackRef(bool largeObj)
                 MALLOC_ASSERT(!blockToUse->freeList ||
                               ((uintptr_t)blockToUse->freeList>=(uintptr_t)blockToUse
                                && (uintptr_t)blockToUse->freeList <
-                               (uintptr_t)blockToUse + blockSize), ASSERT_TEXT);
+                               (uintptr_t)blockToUse + slabSize), ASSERT_TEXT);
             } else if (blockToUse->allocatedCount < BR_MAX_CNT) {
                 toUse = (void**)blockToUse->bumpPtr;
                 blockToUse->bumpPtr =
@@ -264,7 +262,7 @@ void removeBackRef(BackRefIdx backRefIdx)
     FreeObject *freeObj = (FreeObject*)((uintptr_t)currBlock + sizeof(BackRefBlock)
                                         + backRefIdx.getOffset()*sizeof(void*));
     MALLOC_ASSERT(((uintptr_t)freeObj>(uintptr_t)currBlock &&
-                   (uintptr_t)freeObj<(uintptr_t)currBlock + blockSize), ASSERT_TEXT);
+                   (uintptr_t)freeObj<(uintptr_t)currBlock + slabSize), ASSERT_TEXT);
     {
         MallocMutex::scoped_lock lock(currBlock->blockMutex);
 
@@ -272,7 +270,7 @@ void removeBackRef(BackRefIdx backRefIdx)
         MALLOC_ASSERT(!freeObj->next ||
                       ((uintptr_t)freeObj->next > (uintptr_t)currBlock
                        && (uintptr_t)freeObj->next <
-                       (uintptr_t)currBlock + blockSize), ASSERT_TEXT);
+                       (uintptr_t)currBlock + slabSize), ASSERT_TEXT);
         currBlock->freeList = freeObj;
         currBlock->allocatedCount--;
     }

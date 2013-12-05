@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
 #include "tbb/compat/condition_variable"
 #include "tbb/atomic.h"
 #include "tbb_misc.h"

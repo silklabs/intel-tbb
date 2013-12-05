@@ -294,7 +294,7 @@ bool dynamic_link( dynamic_link_handle module, const dynamic_link_descriptor des
         // Lvalue casting is used; this way icc -strict-ansi does not warn about nonstandard pointer conversion
         (void *&)h[k] = addr;
 #endif /* !WIN */
-      if ( !h[k] && k < required )
+        if ( !h[k] && k < required )
             return false;
     }
     LIBRARY_ASSERT( k == n, "if required entries are initialized, all entries are expected to be walked");

@@ -83,7 +83,7 @@ RunOptions ParseCommandLine(int argc, char *argv[]){
     utility::parse_cli_arguments(argc,argv,
         utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(numberOfFrames,"n-of-frames","number of frames the example processes internally")
             .arg(silent,"silent","no output except elapsed time")
             .arg(serial,"serial","in GUI mode start with serial version of algorithm")
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         }
         else if(video.init_console()) {
             // do console mode
-            for(int p = options.threads.first;  p <= options.threads.last; ++p ) {
+            for(int p = options.threads.first;  p <= options.threads.last; p = options.threads.step(p)) {
                 tbb::tick_count xwayParallelismStartTime = tbb::tick_count::now();
                 u.InitializeUniverse(video);
                 int numberOfFrames = options.numberOfFrames;

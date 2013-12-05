@@ -122,12 +122,24 @@ namespace internal {
 
     protected:
 
+        void reset_function_input_base() {
+            my_concurrency = 0;
+            if(my_queue) {
+                my_queue->reset();
+            }
+            my_predecessors.reset();
+        }
+
         task *my_root_task;
         const size_t my_max_concurrency;
         size_t my_concurrency;
         function_input_queue<input_type, A> *my_queue;
         predecessor_cache<input_type, null_mutex > my_predecessors;
         
+        /*override*/void reset_receiver() {
+            my_predecessors.reset();
+        }
+
     private:
 
         friend class apply_body_task< my_class, input_type >;
@@ -187,7 +199,7 @@ namespace internal {
                     break;
                 case tryput: internal_try_put(tmp);  break;
                 case try_fwd: internal_forward(tmp);  break;
-                }
+                    }
             }
         }
         
@@ -294,6 +306,11 @@ namespace internal {
         }
 
     protected:
+
+        void reset_function_input() { 
+            base_type::reset_function_input_base();
+        }
+
         function_body<input_type, output_type> *my_body;
         virtual broadcast_cache<output_type > &successors() = 0;
 
@@ -345,6 +362,11 @@ namespace internal {
         output_ports_type &output_ports(){ return my_output_ports; }
 
     protected:
+
+        void reset() {
+            base_type::reset_function_input_base();
+        }
+
         multifunction_body<input_type, output_ports_type> *my_body;
         output_ports_type my_output_ports;
 

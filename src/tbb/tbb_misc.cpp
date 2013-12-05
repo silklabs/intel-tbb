@@ -186,7 +186,7 @@ void PrintRMLVersionInfo( void* arg, const char* server_info ) {
 }
 
 } // namespace internal
- 
+
 extern "C" int TBB_runtime_interface_version() {
     return TBB_INTERFACE_VERSION;
 }

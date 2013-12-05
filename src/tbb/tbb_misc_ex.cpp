@@ -39,22 +39,21 @@
 
 #if _WIN32||_WIN64
 #include "tbb/machine/windows_api.h"
-#elif __linux__
+#else
+#include <unistd.h>
+#if __linux__
 #include <sys/sysinfo.h>
 #include <string.h>
 #include <sched.h>
 #include <errno.h>
 #elif __sun
 #include <sys/sysinfo.h>
-#include <unistd.h>
 #elif __FreeBSD__
-#include <unistd.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/param.h>  // Required by <sys/cpuset.h>
 #include <sys/cpuset.h>
-#elif _AIX
-#include <unistd.h>
+#endif
 #endif
 
 namespace tbb {
@@ -188,7 +187,7 @@ int AvailableHwConcurrency() {
 
 int AvailableHwConcurrency() {
     int n = sysconf(_SC_NPROCESSORS_ONLN);
-    return n > 0 ? n : 1;
+    return (n > 0) ? n : 1;
 }
 
 #elif _WIN32||_WIN64

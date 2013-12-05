@@ -162,8 +162,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
 struct RegisterProcessShutdownNotification {
     RegisterProcessShutdownNotification() {
         // prevents unloading, POSIX case
-        void *ret = dlopen(MALLOCLIB_NAME, RTLD_NOW);
-        MALLOC_ASSERT(ret, "Allocator can't load ifself.");
+        dlopen(MALLOCLIB_NAME, RTLD_NOW);
     }
     ~RegisterProcessShutdownNotification() {
         __TBB_mallocProcessShutdownNotification();

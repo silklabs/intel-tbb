@@ -283,9 +283,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Starting TBB-buffered version of QUICK HULL algorithm" << std::endl;
     }
 
-
-    for(nthreads=cfg::threads.first; nthreads<=cfg::threads.last;
-        ++nthreads) {
+    for(nthreads=cfg::threads.first; nthreads<=cfg::threads.last; nthreads=cfg::threads.step(nthreads)) {
         tbb::task_scheduler_init init(nthreads);
 
         points.clear();

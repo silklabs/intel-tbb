@@ -72,7 +72,7 @@ int main( int argc, const char *argv[] ) {
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(number_of_nodes,"number-of-nodes","the number of nodes")
             .arg(silent,"silent","no output except elapsed time")
             .arg(use_stdmalloc,"stdmalloc","use standard allocator")
@@ -95,7 +95,7 @@ int main( int argc, const char *argv[] ) {
         SerialSumTree(root);
         if ( !silent ) printf("Calculations:\n");
         if ( threads.first ) {
-            for(int p = threads.first;  p <= threads.last; ++p ) {
+            for(int p = threads.first;  p <= threads.last; p = threads.step(p) ) {
                 if ( !silent ) printf("threads = %d\n", p );
                 tbb::task_scheduler_init init( p );
                 Run ( "SimpleParallelSumTree", SimpleParallelSumTree, root, silent );

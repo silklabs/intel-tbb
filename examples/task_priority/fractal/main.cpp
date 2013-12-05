@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(num_frames,"n-of-frames","number of frames the example processes internally")
             .positional_arg(max_iterations,"max-of-iterations","maximum number of the fractal iterations")
             .positional_arg(grain_size,"grain-size","the grain size value")
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         else if ( video.init_console() ) {
             // in console mode we always have limited number of frames
             num_frames = num_frames<0 ? 1 : num_frames;
-            for(int p = threads.first;  p <= threads.last; ++p ) {
+            for(int p = threads.first;  p <= threads.last; p = threads.step(p) ) {
                 if ( !silent ) printf("Threads = %d\n", p);
                 fractal_group fg( video.get_drawing_memory(), p, max_iterations, num_frames );
                 fg.run( !single );

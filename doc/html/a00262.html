@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::broadcast_node&lt; T &gt; Class Template Reference</title>
+<title>tbb::blocked_range&lt; Value &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,66 +21,198 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00262.html">broadcast_node</a></div>
-<h1>tbb::flow::interface6::broadcast_node&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::broadcast_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::receiver,tbb::flow::interface6::sender" -->Forwards messages of type T to all successors.  
+<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00262.html">blocked_range</a></div>
+<h1>tbb::blocked_range&lt; Value &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00432.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::blocked_range" -->A range over which to iterate.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00511.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00455.html">blocked_range.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::broadcast_node&lt; T &gt;:
-<p><center><img src="a00262.png" usemap="#tbb::flow::interface6::broadcast_node< T >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::broadcast_node< T >_map">
-<area href="a00289.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,249,24">
-<area href="a00321.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="259,0,508,24">
-<area href="a00327.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="518,0,767,24">
-</map>
-<a href="a00071.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00010.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="43c775d80e98cc601de69764983319f9"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::input_type" ref="43c775d80e98cc601de69764983319f9" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#43c775d80e98cc601de69764983319f9">input_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef Value&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#1a8d05842c2b3dfc177bc4d347e4cef7">const_iterator</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8fd8d3075823e08b879be46c1215ab0f"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::output_type" ref="8fd8d3075823e08b879be46c1215ab0f" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#8fd8d3075823e08b879be46c1215ab0f">output_type</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type of a value.  <a href="#1a8d05842c2b3dfc177bc4d347e4cef7"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f5707bffea38eee5c9680f37358afb8e"></a><!-- doxytag: member="tbb::blocked_range::size_type" ref="f5707bffea38eee5c9680f37358afb8e" args="" -->
+typedef std::size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#f5707bffea38eee5c9680f37358afb8e">size_type</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0e2ad9a121cb286aa0d0142fef33c646"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::predecessor_type" ref="0e2ad9a121cb286aa0d0142fef33c646" args="" -->
-typedef <a class="el" href="a00327.html">sender</a>&lt; <a class="el" href="a00262.html#43c775d80e98cc601de69764983319f9">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#0e2ad9a121cb286aa0d0142fef33c646">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cc6a0eb1c4ee65465770628d8366f055"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::successor_type" ref="cc6a0eb1c4ee65465770628d8366f055" args="" -->
-typedef <a class="el" href="a00321.html">receiver</a>&lt; <a class="el" href="a00262.html#8fd8d3075823e08b879be46c1215ab0f">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#cc6a0eb1c4ee65465770628d8366f055">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type for size of a range. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="89e20f24ae56d38a5ee52f8d41e1a79c"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::broadcast_node" ref="89e20f24ae56d38a5ee52f8d41e1a79c" args="(graph &amp;g)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>broadcast_node</b> (<a class="el" href="a00288.html">graph</a> &amp;g)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#94607755c5110d199202234d58d022ac">blocked_range</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bdcf84bf5b52c3af2d5332dc9d5fec07"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::broadcast_node" ref="bdcf84bf5b52c3af2d5332dc9d5fec07" args="(const broadcast_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>broadcast_node</b> (const <a class="el" href="a00262.html">broadcast_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct range with default-constructed values for begin and end.  <a href="#94607755c5110d199202234d58d022ac"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="14795a36ead1414b4371dbe1a4656359"></a><!-- doxytag: member="tbb::blocked_range::blocked_range" ref="14795a36ead1414b4371dbe1a4656359" args="(Value begin_, Value end_, size_type grainsize_=1)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#14795a36ead1414b4371dbe1a4656359">blocked_range</a> (Value begin_, Value end_, <a class="el" href="a00262.html#f5707bffea38eee5c9680f37358afb8e">size_type</a> grainsize_=1)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fd0324c9ddb51fe6f95b3d015d338941"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::register_successor" ref="fd0324c9ddb51fe6f95b3d015d338941" args="(receiver&lt; T &gt; &amp;r)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#fd0324c9ddb51fe6f95b3d015d338941">register_successor</a> (<a class="el" href="a00321.html">receiver</a>&lt; T &gt; &amp;r)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct range over half-open interval [begin,end), with the given grainsize. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="18d2258400756ac1446dac7676b18df3"></a><!-- doxytag: member="tbb::blocked_range::begin" ref="18d2258400756ac1446dac7676b18df3" args="() const " -->
+<a class="el" href="a00262.html#1a8d05842c2b3dfc177bc4d347e4cef7">const_iterator</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#18d2258400756ac1446dac7676b18df3">begin</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a successor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="366efcc046ec08a104281109801ae629"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::remove_successor" ref="366efcc046ec08a104281109801ae629" args="(receiver&lt; T &gt; &amp;r)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#366efcc046ec08a104281109801ae629">remove_successor</a> (<a class="el" href="a00321.html">receiver</a>&lt; T &gt; &amp;r)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Beginning of range. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8b929d93ddc13f148b11bceef3a3bdf8"></a><!-- doxytag: member="tbb::blocked_range::end" ref="8b929d93ddc13f148b11bceef3a3bdf8" args="() const " -->
+<a class="el" href="a00262.html#1a8d05842c2b3dfc177bc4d347e4cef7">const_iterator</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#8b929d93ddc13f148b11bceef3a3bdf8">end</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes s as a successor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29eb768c10b377880bbf83d31ee49acf"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::try_put" ref="29eb768c10b377880bbf83d31ee49acf" args="(const T &amp;t)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#29eb768c10b377880bbf83d31ee49acf">try_put</a> (const T &amp;t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">One past last value in range. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="a00262.html#f5707bffea38eee5c9680f37358afb8e">size_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#9eaa0b6beff1420f688570bbf6b8c462">size</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Put an item to the receiver. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Size of the range.  <a href="#9eaa0b6beff1420f688570bbf6b8c462"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fcd2e5b8b6c11fd3f20fc0aa9f11bbc2"></a><!-- doxytag: member="tbb::blocked_range::grainsize" ref="fcd2e5b8b6c11fd3f20fc0aa9f11bbc2" args="() const " -->
+<a class="el" href="a00262.html#f5707bffea38eee5c9680f37358afb8e">size_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#fcd2e5b8b6c11fd3f20fc0aa9f11bbc2">grainsize</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The grain size for this range. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8f4f02f530eb3f2e7ea26e06f76aef9d"></a><!-- doxytag: member="tbb::blocked_range::empty" ref="8f4f02f530eb3f2e7ea26e06f76aef9d" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#8f4f02f530eb3f2e7ea26e06f76aef9d">empty</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if range is empty. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#41a58b703d574b6e1ca155df3576f578">is_divisible</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if range is divisible.  <a href="#41a58b703d574b6e1ca155df3576f578"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00262.html#4c0efd2be3f96a0ab3ba5085e8b3fcc7">blocked_range</a> (<a class="el" href="a00262.html">blocked_range</a> &amp;r, <a class="el" href="a00338.html">split</a>)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Split range.  <a href="#4c0efd2be3f96a0ab3ba5085e8b3fcc7"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="395a514a55017e36d571809f1223389b"></a><!-- doxytag: member="tbb::blocked_range::blocked_range2d" ref="395a514a55017e36d571809f1223389b" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>blocked_range2d</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="13d172a4da9be197033e64516fff1f4b"></a><!-- doxytag: member="tbb::blocked_range::blocked_range3d" ref="13d172a4da9be197033e64516fff1f4b" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>blocked_range3d</b></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::flow::interface6::broadcast_node&lt; T &gt;</h3>
+<h3>template&lt;typename Value&gt;<br>
+ class tbb::blocked_range&lt; Value &gt;</h3>
 
-Forwards messages of type T to all successors. 
+A range over which to iterate. 
 <p>
+<hr><h2>Member Typedef Documentation</h2>
+<a class="anchor" name="1a8d05842c2b3dfc177bc4d347e4cef7"></a><!-- doxytag: member="tbb::blocked_range::const_iterator" ref="1a8d05842c2b3dfc177bc4d347e4cef7" args="" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef Value <a class="el" href="a00262.html">tbb::blocked_range</a>&lt; Value &gt;::<a class="el" href="a00262.html#1a8d05842c2b3dfc177bc4d347e4cef7">const_iterator</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Type of a value. 
+<p>
+Called a const_iterator for sake of algorithms that need to treat a <a class="el" href="a00262.html">blocked_range</a> as an STL container. 
+</div>
+</div><p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="94607755c5110d199202234d58d022ac"></a><!-- doxytag: member="tbb::blocked_range::blocked_range" ref="94607755c5110d199202234d58d022ac" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00262.html">tbb::blocked_range</a>&lt; Value &gt;::<a class="el" href="a00262.html">blocked_range</a>           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Construct range with default-constructed values for begin and end. 
+<p>
+Requires that Value have a default constructor. 
+</div>
+</div><p>
+<a class="anchor" name="4c0efd2be3f96a0ab3ba5085e8b3fcc7"></a><!-- doxytag: member="tbb::blocked_range::blocked_range" ref="4c0efd2be3f96a0ab3ba5085e8b3fcc7" args="(blocked_range &amp;r, split)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00262.html">tbb::blocked_range</a>&lt; Value &gt;::<a class="el" href="a00262.html">blocked_range</a>           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00262.html">blocked_range</a>&lt; Value &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00338.html">split</a>&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Split range. 
+<p>
+The new Range *this has the second half, the old range r has the first half. Unspecified if <a class="el" href="a00262.html#8b929d93ddc13f148b11bceef3a3bdf8">end()</a>&lt;<a class="el" href="a00262.html#18d2258400756ac1446dac7676b18df3">begin()</a> or !is_divisible(). 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="41a58b703d574b6e1ca155df3576f578"></a><!-- doxytag: member="tbb::blocked_range::is_divisible" ref="41a58b703d574b6e1ca155df3576f578" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00262.html">tbb::blocked_range</a>&lt; Value &gt;::is_divisible           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+True if range is divisible. 
+<p>
+Unspecified if <a class="el" href="a00262.html#8b929d93ddc13f148b11bceef3a3bdf8">end()</a>&lt;<a class="el" href="a00262.html#18d2258400756ac1446dac7676b18df3">begin()</a>. 
+</div>
+</div><p>
+<a class="anchor" name="9eaa0b6beff1420f688570bbf6b8c462"></a><!-- doxytag: member="tbb::blocked_range::size" ref="9eaa0b6beff1420f688570bbf6b8c462" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00262.html#f5707bffea38eee5c9680f37358afb8e">size_type</a> <a class="el" href="a00262.html">tbb::blocked_range</a>&lt; Value &gt;::size           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Size of the range. 
+<p>
+Unspecified if <a class="el" href="a00262.html#8b929d93ddc13f148b11bceef3a3bdf8">end()</a>&lt;<a class="el" href="a00262.html#18d2258400756ac1446dac7676b18df3">begin()</a>. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00511.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00455.html">blocked_range.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

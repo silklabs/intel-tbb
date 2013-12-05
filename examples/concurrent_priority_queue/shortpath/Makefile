@@ -33,7 +33,7 @@ PERF_RUN_ARGS=auto N=1000 start=0 end=99 silent
 ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # which icc
-ifeq ($(CXX),icc)
+ifneq (,$(filter icc icpc,$(CXX)))
 CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
 endif # icc
 

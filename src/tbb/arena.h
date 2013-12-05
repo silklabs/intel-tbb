@@ -44,21 +44,22 @@
 #include "task_stream.h"
 #include "../rml/include/rml_tbb.h"
 #include "mailbox.h"
+#include "observer_proxy.h"
 
 namespace tbb {
 
+namespace interface6 {
+class task_arena;
+}
 class task_group_context;
 class allocate_root_with_context_proxy;
 
 namespace internal {
 
+class task_scheduler_observer_v3;
 class governor;
 class arena;
 template<typename SchedulerTraits> class custom_scheduler;
-
-//------------------------------------------------------------------------
-// arena
-//------------------------------------------------------------------------
 
 class market;
 
@@ -84,10 +85,10 @@ struct arena_base : intrusive_list_node {
     //! Number of workers that have been marked out by the resource manager to service the arena
     unsigned my_num_workers_allotted;
 
-    //! Number of threads in the arena at the moment
-    /** Consists of the workers servicing the arena and one master until it starts
-        arena shutdown and detaches from it. Plays the role of the arena's ref count. **/
-    atomic<unsigned> my_num_threads_active;
+    //! References of the arena
+    /** Counts workers and master references separately. Bit 0 indicates reference from implicit
+        master or explicit task_arena; the next bits contain number of workers servicing the arena.*/
+    atomic<unsigned> my_references;
 
     //! ABA prevention marker
     uintptr_t my_aba_epoch;
@@ -110,7 +111,7 @@ struct arena_base : intrusive_list_node {
     //! Default task group context.
     /** Used by root tasks allocated directly by the master thread (not from inside
         a TBB task) without explicit context specification. **/
-    task_group_context* my_master_default_ctx;
+    task_group_context* my_default_ctx;
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 #if __TBB_TASK_PRIORITY
@@ -153,6 +154,11 @@ struct arena_base : intrusive_list_node {
     task_stream my_task_stream;
 #endif /* !__TBB_TASK_PRIORITY */
 
+#if __TBB_SCHEDULER_OBSERVER
+    //! List of local observers attached to this arena.
+    observer_list my_observers;
+#endif /* __TBB_SCHEDULER_OBSERVER */
+
     //! Indicates if there is an oversubscribing worker created to service enqueued tasks.
     bool my_mandatory_concurrency;
 
@@ -173,11 +179,15 @@ private:
     friend class generic_scheduler;
     template<typename SchedulerTraits> friend class custom_scheduler;
     friend class governor;
-
+    friend class task_scheduler_observer_v3;
     friend class market;
     friend class tbb::task_group_context;
     friend class allocate_root_with_context_proxy;
     friend class intrusive_list<arena>;
+#if __TBB_TASK_ARENA
+    friend class tbb::interface6::task_arena; // included through in scheduler_common.h
+    friend class interface6::wait_task;
+#endif //__TBB_TASK_ARENA
 
     typedef padded<arena_base> base_type;
 
@@ -229,7 +239,7 @@ private:
 
     //! The number of workers active in the arena.
     unsigned num_workers_active( ) {
-        return my_num_threads_active - (my_slots[0].my_scheduler? 1 : 0);
+        return my_references >> 1;
     }
 
     //! If necessary, raise a flag that there is new job in arena.
@@ -239,11 +249,19 @@ private:
     /** Return true if no job or if arena is being cleaned up. */
     bool is_out_of_work();
 
+    //! enqueue a task into starvation-resistance queue
+#if __TBB_TASK_PRIORITY
+    void enqueue_task( task&, priority_t, unsigned & );
+#else /* !__TBB_TASK_PRIORITY */
+    void enqueue_task( task&, unsigned & );
+#endif /* !__TBB_TASK_PRIORITY */
+
     //! Registers the worker with the arena and enters TBB scheduler dispatch loop
     void process( generic_scheduler& );
 
     //! Notification that worker or master leaves its arena
-    inline void on_thread_leaving ( bool master = false );
+    template<bool is_master>
+    inline void on_thread_leaving ( );
 
 #if __TBB_STATISTICS
     //! Outputs internal statistics accumulated by the arena
@@ -270,11 +288,13 @@ private:
 
 #include "market.h"
 #include "scheduler_common.h"
+#include "governor.h"
 
 namespace tbb {
 namespace internal {
 
-inline void arena::on_thread_leaving ( bool master ) {
+template<bool is_master>
+inline void arena::on_thread_leaving ( ) {
     //
     // Implementation of arena destruction synchronization logic contained various
     // bugs/flaws at the different stages of its evolution, so below is a detailed
@@ -326,15 +346,18 @@ inline void arena::on_thread_leaving ( bool master ) {
     //
     uintptr_t aba_epoch = my_aba_epoch;
     market* m = my_market;
-    if ( !--my_num_threads_active )
-        market::try_destroy_arena( m, this, aba_epoch, master );
+    __TBB_ASSERT(my_references > int(!is_master), "broken arena reference counter");
+    if ( (my_references -= is_master? 1:2 ) == 0 ) // worker's counter starts from bit 1
+        market::try_destroy_arena( m, this, aba_epoch, is_master );
 }
 
 template<bool Spawned> void arena::advertise_new_work() {
     if( !Spawned ) { // i.e. the work was enqueued
         if( my_max_num_workers==0 ) {
             my_max_num_workers = 1;
+            __TBB_ASSERT(!my_mandatory_concurrency, "");
             my_mandatory_concurrency = true;
+            __TBB_ASSERT(!num_workers_active(), "");
             my_pool_state = SNAPSHOT_FULL;
             my_market->adjust_demand( *this, 1 );
             return;
@@ -369,6 +392,7 @@ template<bool Spawned> void arena::advertise_new_work() {
             if( Spawned ) {
                 if( my_mandatory_concurrency ) {
                     __TBB_ASSERT(my_max_num_workers==1, "");
+                    __TBB_ASSERT(!governor::local_scheduler()->is_worker(), "");
                     // There was deliberate oversubscription on 1 core for sake of starvation-resistant tasks.
                     // Now a single active thread (must be the master) supposedly starts a new parallel region
                     // with relaxed sequential semantics, and oversubscription should be avoided.

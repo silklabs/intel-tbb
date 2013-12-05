@@ -21,8 +21,9 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
-@interface OpenGLView : NSOpenGLView
-{}
+@interface OpenGLView : NSOpenGLView{
+    NSTimer *timer;
+}
 
 @property (nonatomic,retain) NSTimer *timer;
 

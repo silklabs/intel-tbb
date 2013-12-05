@@ -102,7 +102,7 @@ protected:
 
 //! Type-independent portion of concurrent_queue_iterator.
 /** @ingroup containers */
-class concurrent_queue_iterator_base {
+class concurrent_queue_iterator_base : no_assign{
     //! concurrent_queue over which we are iterating.
     /** NULL if one past last element in queue. */
     concurrent_queue_iterator_rep* my_rep;

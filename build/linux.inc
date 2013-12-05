@@ -76,6 +76,7 @@ debugger ?= gdb
 
 CMD=sh -c
 CWD=$(shell pwd)
+CP=cp
 RM?=rm -f
 RD?=rmdir
 MD?=mkdir -p

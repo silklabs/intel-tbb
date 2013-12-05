@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface5::internal::task_base Class Reference</title>
+<title>tbb::split Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,22 +21,25 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>interface5</b>::<b>internal</b>::<a class="el" href="a00338.html">task_base</a></div>
-<h1>tbb::interface5::internal::task_base Class Reference</h1><!-- doxytag: class="tbb::interface5::internal::task_base" -->Base class for methods that became static in TBB 3.0.  
+<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00338.html">split</a></div>
+<h1>tbb::split Class Reference<br>
+<small>
+[<a class="el" href="a00432.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::split" -->Dummy type that distinguishes splitting constructor from copy constructor.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00613.html">task.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00659.html">tbb_stddef.h</a>&gt;</code>
 <p>
-<a href="a00130.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Base class for methods that became static in TBB 3.0. 
+Dummy type that distinguishes splitting constructor from copy constructor. 
 <p>
-TBB's evolution caused the "this" argument for several methods to become obsolete. However, for backwards binary compatibility, the new methods need distinct names, otherwise the One Definition Rule would be broken. Hence the new methods are defined in this private base class, and then exposed in class task via using declarations. 
+See description of parallel_for and parallel_reduce for example usages. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00613.html">task.h</a></ul>
+<li><a class="el" href="a00659.html">tbb_stddef.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

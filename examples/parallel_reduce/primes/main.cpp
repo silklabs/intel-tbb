@@ -80,7 +80,7 @@ static RunOptions ParseCommandLine( int argc, const char* argv[] ) {
     utility::parse_cli_arguments(argc,argv,
         utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(number,"number","upper bound of range to search primes in, must be a positive integer")
             .positional_arg(grainSize,"grain-size","must be a positive integer")
             .positional_arg(repeatNumber,"n-of-repeats","repeat the calculation this number of times, must be a positive integer")
@@ -96,7 +96,7 @@ int main( int argc, const char* argv[] ) {
     RunOptions options =ParseCommandLine(argc,argv);
 
     // Try different numbers of threads
-    for( int p=options.threads.first; p<=options.threads.last; ++p ) {
+    for( int p=options.threads.first; p<=options.threads.last; p=options.threads.step(p) ) {
         for (NumberType i=0; i<options.repeatNumber;++i){
             tbb::tick_count iterationBeginMark = tbb::tick_count::now();
             NumberType count = 0;

@@ -318,7 +318,46 @@ void TestDequeueByMaster () {
     tbb::task::destroy(r);
 }
 
+////////////////////// Missed wake-ups ///////
+#include "tbb/blocked_range.h"
+#include "tbb/parallel_for.h"
+
+static const int NUM_TASKS    = 4;
+static const size_t NUM_REPEATS = 100000;
+
+struct Functor : NoAssign
+{
+    Harness::SpinBarrier &my_barrier;
+    Functor(Harness::SpinBarrier &a_barrier) : my_barrier(a_barrier) { }
+    void operator()(const tbb::blocked_range<int>& r) const 
+    {
+        ASSERT(r.size() == 1, NULL);
+        tbb::task *t = new(tbb::task::allocate_root()) tbb::empty_task();
+        tbb::task::enqueue(*t); // ensure no missing wake-ups
+        my_barrier.timed_wait(10, "Attention: poorly reproducible event, if seen stress testing required" );
+    }
+};
+
+void TestWakeups()
+{
+    tbb::task_scheduler_init my(tbb::task_scheduler_init::deferred);
+    if( tbb::task_scheduler_init::default_num_threads() <= NUM_TASKS )
+        my.initialize(NUM_TASKS*2);
+    Harness::SpinBarrier barrier(NUM_TASKS);
+    REMARK("Missing wake-up: affinity_partitioner\n");
+    tbb::affinity_partitioner aff;
+    for (size_t i = 0; i < NUM_REPEATS; ++i)
+        tbb::parallel_for(tbb::blocked_range<int>(0, NUM_TASKS), Functor(barrier), aff);
+    REMARK("Missing wake-up: simple_partitioner\n");
+    for (size_t i = 0; i < NUM_REPEATS; ++i)
+        tbb::parallel_for(tbb::blocked_range<int>(0, NUM_TASKS), Functor(barrier), tbb::simple_partitioner());
+    REMARK("Missing wake-up: auto_partitioner\n");
+    for (size_t i = 0; i < NUM_REPEATS; ++i)
+        tbb::parallel_for(tbb::blocked_range<int>(0, NUM_TASKS), Functor(barrier)); // auto
+}
+
 int TestMain () {
+    TestWakeups();
     TestDequeueByMaster();
     TestCascadedEnqueue();
     for( int p=MinThread; p<=MaxThread; ++p ) {

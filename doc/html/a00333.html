@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::spin_rw_mutex_v3 Class Reference</title>
+<title>tbb::flow::interface6::source_node&lt; Output &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,107 +21,118 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<a class="el" href="a00333.html">spin_rw_mutex_v3</a></div>
-<h1>tbb::spin_rw_mutex_v3 Class Reference<br>
-<small>
-[<a class="el" href="a00429.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::spin_rw_mutex_v3" -->Fast, unfair, spinning reader-writer lock with backoff and writer-preference.  
+<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00333.html">source_node</a></div>
+<h1>tbb::flow::interface6::source_node&lt; Output &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::source_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::sender&lt; Output &gt;" -->An executable node that acts as a source, i.e. it has no predecessors.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00612.html">spin_rw_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00127.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::source_node&lt; Output &gt;:
+<p><center><img src="a00333.png" usemap="#tbb::flow::interface6::source_node< Output >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::source_node< Output >_map">
+<area href="a00292.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,262,24">
+<area href="a00330.html" alt="tbb::flow::interface6::sender< Output >" shape="rect" coords="272,0,534,24">
+</map>
+<a href="a00061.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="407533487cc3f6032c1072cba19c609c"></a><!-- doxytag: member="tbb::flow::interface6::source_node::output_type" ref="407533487cc3f6032c1072cba19c609c" args="" -->
+typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#407533487cc3f6032c1072cba19c609c">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type of the output message, which is complete. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dd7b8fe78f0bec9d6b70cbf1018a69fe"></a><!-- doxytag: member="tbb::flow::interface6::source_node::successor_type" ref="dd7b8fe78f0bec9d6b70cbf1018a69fe" args="" -->
+typedef <a class="el" href="a00324.html">receiver</a>&lt; Output &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#dd7b8fe78f0bec9d6b70cbf1018a69fe">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type of successors of this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="61332b2756de89f3f5f69310cbb6e70c"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::spin_rw_mutex_v3" ref="61332b2756de89f3f5f69310cbb6e70c" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#61332b2756de89f3f5f69310cbb6e70c">spin_rw_mutex_v3</a> ()</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="503c3b395c629296bf5cccd96d6388c1"></a><!-- doxytag: member="tbb::flow::interface6::source_node::source_node" ref="503c3b395c629296bf5cccd96d6388c1" args="(graph &amp;g, Body body, bool is_active=true)" -->
+template&lt;typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00333.html#503c3b395c629296bf5cccd96d6388c1">source_node</a> (<a class="el" href="a00291.html">graph</a> &amp;g, Body body, bool is_active=true)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9a815fb2759e55072ed413f1b6970cf3"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::~spin_rw_mutex_v3" ref="9a815fb2759e55072ed413f1b6970cf3" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#9a815fb2759e55072ed413f1b6970cf3">~spin_rw_mutex_v3</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor for a node with a successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="adaac111fbcace95804219a5f2929304"></a><!-- doxytag: member="tbb::flow::interface6::source_node::source_node" ref="adaac111fbcace95804219a5f2929304" args="(const source_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#adaac111fbcace95804219a5f2929304">source_node</a> (const <a class="el" href="a00333.html">source_node</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor asserts if the mutex is acquired, i.e. state is zero. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4007d6e1523dbc3c2bb7f889ab789a8a"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::lock" ref="4007d6e1523dbc3c2bb7f889ab789a8a" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#4007d6e1523dbc3c2bb7f889ab789a8a">lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="61700b0865fc17188b0abe26bbde65b6"></a><!-- doxytag: member="tbb::flow::interface6::source_node::~source_node" ref="61700b0865fc17188b0abe26bbde65b6" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#61700b0865fc17188b0abe26bbde65b6">~source_node</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire writer lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#088bb256be794cc47d3b83791632fdfc">try_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The destructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="22960d499df9f1569a9d8a544e35afe3"></a><!-- doxytag: member="tbb::flow::interface6::source_node::register_successor" ref="22960d499df9f1569a9d8a544e35afe3" args="(receiver&lt; output_type &gt; &amp;r)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#22960d499df9f1569a9d8a544e35afe3">register_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00333.html#407533487cc3f6032c1072cba19c609c">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring writer lock (non-blocking).  <a href="#088bb256be794cc47d3b83791632fdfc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f9f52ead2098eb5fb12da59d5ae53b55"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::unlock" ref="f9f52ead2098eb5fb12da59d5ae53b55" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#f9f52ead2098eb5fb12da59d5ae53b55">unlock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a new successor to this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="222484bf295f39df36415a29e508e5c9"></a><!-- doxytag: member="tbb::flow::interface6::source_node::remove_successor" ref="222484bf295f39df36415a29e508e5c9" args="(receiver&lt; output_type &gt; &amp;r)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#222484bf295f39df36415a29e508e5c9">remove_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00333.html#407533487cc3f6032c1072cba19c609c">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="13f799708ac4ca437a16be202e263e18"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::lock_read" ref="13f799708ac4ca437a16be202e263e18" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#13f799708ac4ca437a16be202e263e18">lock_read</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="41073ad4d3510ed5a8b6bda9c0f58636"></a><!-- doxytag: member="tbb::flow::interface6::source_node::try_get" ref="41073ad4d3510ed5a8b6bda9c0f58636" args="(output_type &amp;v)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#41073ad4d3510ed5a8b6bda9c0f58636">try_get</a> (<a class="el" href="a00333.html#407533487cc3f6032c1072cba19c609c">output_type</a> &amp;v)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire reader lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#b8667415869013f840d976aa406d385a">try_lock_read</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request an item from the node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ad459713ff3c1c9ad0f4826daa141f65"></a><!-- doxytag: member="tbb::flow::interface6::source_node::try_reserve" ref="ad459713ff3c1c9ad0f4826daa141f65" args="(output_type &amp;v)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#ad459713ff3c1c9ad0f4826daa141f65">try_reserve</a> (<a class="el" href="a00333.html#407533487cc3f6032c1072cba19c609c">output_type</a> &amp;v)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring reader lock (non-blocking).  <a href="#b8667415869013f840d976aa406d385a"></a><br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4c1e60f22c01604ca93c41b8334cc15e"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::is_rw_mutex" ref="4c1e60f22c01604ca93c41b8334cc15e" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = true</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reserves an item. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#494678baf9096835268736b800824460">try_release</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="681a816fe76d6ca7752303f9dcc3c4b2"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::is_recursive_mutex" ref="681a816fe76d6ca7752303f9dcc3c4b2" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release a reserved item.  <a href="#494678baf9096835268736b800824460"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c7fcc29e2894b29138be3c1edce9bc9"></a><!-- doxytag: member="tbb::flow::interface6::source_node::try_consume" ref="2c7fcc29e2894b29138be3c1edce9bc9" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#2c7fcc29e2894b29138be3c1edce9bc9">try_consume</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4dd66d90df6247da6050e88b2aa3b820"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::is_fair_mutex" ref="4dd66d90df6247da6050e88b2aa3b820" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Consumes a reserved item. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4b647e4a93d08ccdd8d323279e4eaaa6"></a><!-- doxytag: member="tbb::flow::interface6::source_node::activate" ref="4b647e4a93d08ccdd8d323279e4eaaa6" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#4b647e4a93d08ccdd8d323279e4eaaa6">activate</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00334.html">scoped_lock</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Activates a node that was created in the inactive state. <br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="a662424d33788bc5059ba4caee5c9d2f"></a><!-- doxytag: member="tbb::flow::interface6::source_node::copy_function_object" ref="a662424d33788bc5059ba4caee5c9d2f" args="()" -->
+template&lt;class Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">Body&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>copy_function_object</b> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00334.html#_details">More...</a><br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d751cdda02bdaa1dc90c4d9609c05df2"></a><!-- doxytag: member="tbb::flow::interface6::source_node::reset" ref="d751cdda02bdaa1dc90c4d9609c05df2" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00333.html#d751cdda02bdaa1dc90c4d9609c05df2">reset</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">resets the node to its initial state <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="15fb463802e1e30f5f836535d490874c"></a><!-- doxytag: member="tbb::flow::interface6::source_node::internal::source_task&lt; source_node&lt; output_type &gt; &gt;" ref="15fb463802e1e30f5f836535d490874c" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::source_task&lt; source_node&lt; output_type &gt; &gt;</b></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Fast, unfair, spinning reader-writer lock with backoff and writer-preference. 
+<h3>template&lt;typename Output&gt;<br>
+ class tbb::flow::interface6::source_node&lt; Output &gt;</h3>
+
+An executable node that acts as a source, i.e. it has no predecessors. 
 <p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="088bb256be794cc47d3b83791632fdfc"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::try_lock" ref="088bb256be794cc47d3b83791632fdfc" args="()" -->
+<a class="anchor" name="494678baf9096835268736b800824460"></a><!-- doxytag: member="tbb::flow::interface6::source_node::try_release" ref="494678baf9096835268736b800824460" args="()" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Output&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool tbb::spin_rw_mutex_v3::try_lock           </td>
+          <td class="memname">bool <a class="el" href="a00333.html">tbb::flow::interface6::source_node</a>&lt; Output &gt;::try_release           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
+          <td width="100%"><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Try acquiring writer lock (non-blocking). 
+Release a reserved item. 
 <p>
-Return true if lock acquired; false otherwise. 
-</div>
-</div><p>
-<a class="anchor" name="b8667415869013f840d976aa406d385a"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::try_lock_read" ref="b8667415869013f840d976aa406d385a" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool tbb::spin_rw_mutex_v3::try_lock_read           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+true = item has been released and so remains in sender, dest must request or reserve future items 
 <p>
-Try acquiring reader lock (non-blocking). 
-<p>
-Return true if reader lock acquired; false otherwise. 
+Reimplemented from <a class="el" href="a00330.html#27036b06d6a91e97007e14f400529199">tbb::flow::interface6::sender&lt; Output &gt;</a>.
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00612.html">spin_rw_mutex.h</a></ul>
+<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

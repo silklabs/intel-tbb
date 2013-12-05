@@ -124,6 +124,12 @@ namespace internal {
             }
             join_helper<N-1>::copy_tag_functors(my_inputs, other_inputs);
         }
+
+        template<typename InputTuple>
+        static inline void reset_inputs(InputTuple &my_input) {
+            join_helper<N-1>::reset_inputs(my_input);
+            std::get<N-1>(my_input).reinitialize_port();
+        }
     };
 
     template< >
@@ -187,6 +193,10 @@ namespace internal {
                 std::get<0>(my_inputs).set_my_tag_func(std::get<0>(other_inputs).my_original_func()->clone());
                 std::get<0>(my_inputs).set_my_original_tag_func(std::get<0>(other_inputs).my_original_func()->clone());
             }
+        }
+        template<typename InputTuple>
+        static inline void reset_inputs(InputTuple &my_input) {
+            std::get<0>(my_input).reinitialize_port();
         }
     };
 
@@ -327,6 +337,17 @@ namespace internal {
             my_aggregator.execute(&op_data);
         }
 
+        void reinitialize_port() {
+            my_predecessors.reset();
+            reserved = false;
+        }
+
+    protected:
+
+        /*override*/void reset_receiver() {
+            my_predecessors.reset();
+        }
+
     private:
         forwarding_base *my_join;
         reservable_predecessor_cache< T, null_mutex > my_predecessors;
@@ -441,6 +462,16 @@ namespace internal {
             return;
         }
 
+        void reinitialize_port() {
+            item_buffer<T>::reset();
+        }
+
+    protected:
+
+        /*override*/void reset_receiver() {
+            // nothing to do.  We queue, so no predecessor cache
+        }
+
     private:
         forwarding_base *my_join;
     };
@@ -454,6 +485,7 @@ namespace internal {
         typedef sender<T> predecessor_type;
         typedef tag_matching_port<T> my_node_type;  // for forwarding, if needed
         typedef function_body<input_type, tag_value> my_tag_func_type;
+        typedef tagged_buffer<tag_value,T,NO_TAG> my_buffer_type;
     private:
 // ----------- Aggregator ------------
     private:
@@ -580,6 +612,16 @@ namespace internal {
         my_tag_func_type *my_func() { return my_tag_func; }
         my_tag_func_type *my_original_func() { return my_original_tag_func; }
 
+        void reinitialize_port() {
+            my_buffer_type::reset();
+        }
+
+    protected:
+
+        /*override*/void reset_receiver() {
+            // nothing to do.  We queue, so no predecessor cache
+        }
+
     private:
         // need map of tags to values
         forwarding_base *my_join;
@@ -629,7 +671,15 @@ namespace internal {
         }
 
         input_type &input_ports() { return my_inputs; }
+
     protected:
+
+        void reset() {
+            // called outside of parallel contexts
+            ports_with_no_inputs = N;
+            join_helper<N>::reset_inputs(my_inputs);
+        }
+
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
         bool tuple_build_may_succeed() {
@@ -689,7 +739,14 @@ namespace internal {
         void increment_port_count() { __TBB_ASSERT(false, NULL); }  // should never be called
 
         input_type &input_ports() { return my_inputs; }
+
     protected:
+
+        void reset() {
+            reset_port_count();
+            join_helper<N>::reset_inputs(my_inputs);
+        }
+
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
         bool tuple_build_may_succeed() {
@@ -864,7 +921,18 @@ namespace internal {
         void increment_port_count() { __TBB_ASSERT(false, NULL); }  // should never be called
 
         input_type &input_ports() { return my_inputs; }
+
     protected:
+
+        void reset() {
+            // called outside of parallel contexts
+            join_helper<N>::reset_inputs(my_inputs);
+
+            my_tag_buffer::reset();  // have to reset the tag counts
+            output_buffer_type::reset();  // also the queue of outputs
+            my_node->current_tag = NO_TAG;
+        }
+
         // all methods on input ports should be called under mutual exclusion from join_node_base.
 
         bool tuple_build_may_succeed() {  // called from back-end
@@ -1025,6 +1093,12 @@ namespace internal {
             join_node_base_operation op_data(v, try__get);
             my_aggregator.execute(&op_data);
             return op_data.status == SUCCEEDED;
+        }
+
+    protected:
+
+        /*override*/void reset() {
+            input_ports_type::reset();
         }
 
     private:

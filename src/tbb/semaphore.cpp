@@ -68,13 +68,17 @@ static void (WINAPI *__TBB_release_binsem)( SRWLOCK* ) = (void (WINAPI *)(SRWLOC
 static const dynamic_link_descriptor SRWLLinkTable[] = {
     DLD(InitializeSRWLock,       __TBB_init_binsem),
     DLD(AcquireSRWLockExclusive, __TBB_acquire_binsem),
-    DLD(ReleaseRWLockExclusive,  __TBB_release_binsem)
+    DLD(ReleaseSRWLockExclusive, __TBB_release_binsem)
 };
 
 inline void init_concmon_module()
 {
     __TBB_ASSERT( (uintptr_t)__TBB_init_binsem==(uintptr_t)&init_binsem_using_event, NULL );
-    dynamic_link( "Kernel32.dll", SRWLLinkTable, 3 );
+    if( dynamic_link( "Kernel32.dll", SRWLLinkTable, sizeof(SRWLLinkTable)/sizeof(dynamic_link_descriptor) ) ) {
+        __TBB_ASSERT( (uintptr_t)__TBB_init_binsem!=(uintptr_t)&init_binsem_using_event, NULL );
+        __TBB_ASSERT( (uintptr_t)__TBB_acquire_binsem!=(uintptr_t)&acquire_binsem_using_event, NULL );
+        __TBB_ASSERT( (uintptr_t)__TBB_release_binsem!=(uintptr_t)&release_binsem_using_event, NULL );
+    }
 }
 
 binary_semaphore::binary_semaphore() {

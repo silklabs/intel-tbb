@@ -30,6 +30,7 @@
 #define _TBB_scheduler_common_H
 
 #include "tbb/tbb_stddef.h"
+#include "tbb/cache_aligned_allocator.h"
 
 #include <string.h>  // for memset, memcpy, memmove
 
@@ -49,6 +50,9 @@
 
 #include "tbb/task.h"
 #include "tbb/tbb_exception.h"
+#if __TBB_TASK_ARENA
+#include "tbb/task_arena.h" // for sake of private friends club :( of class arena ):
+#endif //__TBB_TASK_ARENA
 
 #ifdef undef_private
     #undef private
@@ -82,6 +86,11 @@
 #endif
 
 namespace tbb {
+#if __TBB_TASK_ARENA
+namespace interface6 {
+class wait_task;
+}
+#endif //__TBB_TASK_ARENA
 namespace internal {
 
 class generic_scheduler;
@@ -248,13 +257,12 @@ inline bool ConcurrentWaitsEnabled ( task& t ) { return false; }
 //------------------------------------------------------------------------
 // arena_slot
 //------------------------------------------------------------------------
-
-struct arena_slot {
+struct arena_slot_line1 {
     //! Scheduler of the thread attached to the slot
     /** Marks the slot as busy, and is used to iterate through the schedulers belonging to this arena **/
     generic_scheduler* my_scheduler;
 
-    // Task pool (the deque of task pointers) of the scheduler that owns this slot
+    // Synchronization of access to Task pool
     /** Also is used to specify if the slot is empty or locked:
          0 - empty
         -1 - locked **/
@@ -263,29 +271,63 @@ struct arena_slot {
     //! Index of the first ready task in the deque.
     /** Modified by thieves, and by the owner during compaction/reallocation **/
     __TBB_atomic size_t head;
+};
 
-    //! Padding to avoid false sharing caused by the thieves accessing this slot
-    char pad1[NFS_MaxLineSize - sizeof(size_t) - sizeof(task**) - sizeof(generic_scheduler*)];
+struct arena_slot_line2 {
+    //! Hint provided for operations with the container of starvation-resistant tasks.
+    /** Modified by the owner thread (during these operations). **/
+    unsigned hint_for_pop;
 
     //! Index of the element following the last ready task in the deque.
     /** Modified by the owner thread. **/
     __TBB_atomic size_t tail;
 
-    //! Hints provided for operations with the container of starvation-resistant tasks.
-    /** Modified by the owner thread (during these operations). **/
-    unsigned hint_for_push, hint_for_pop;
+    //! Capacity of the primary task pool (number of elements - pointers to task).
+    size_t my_task_pool_size;
+
+    // Task pool of the scheduler that owns this slot
+    task* *__TBB_atomic task_pool_ptr;
 
 #if __TBB_STATISTICS
     //! Set of counters to accumulate internal statistics related to this arena
     statistics_counters *my_counters;
 #endif /* __TBB_STATISTICS */
-    //! Padding to avoid false sharing caused by the thieves accessing the next slot
-    char pad2[NFS_MaxLineSize - sizeof(size_t) - 2*sizeof(unsigned)
-#if __TBB_STATISTICS
-              - sizeof(statistics_counters*)
-#endif /* __TBB_STATISTICS */
-             ];
-}; // class arena_slot
+};
+
+struct arena_slot : padded<arena_slot_line1>, padded<arena_slot_line2> {
+#if TBB_USE_ASSERT
+    void fill_with_canary_pattern ( size_t first, size_t last ) {
+        for ( size_t i = first; i < last; ++i )
+            poison_pointer(task_pool_ptr[i]);
+    }
+#else
+    void fill_with_canary_pattern ( size_t, size_t ) {}
+#endif /* TBB_USE_ASSERT */
+
+    void allocate_task_pool( size_t n ) {
+        size_t byte_size = ((n * sizeof(task*) + NFS_MaxLineSize - 1) / NFS_MaxLineSize) * NFS_MaxLineSize;
+        my_task_pool_size = byte_size / sizeof(task*);
+        task_pool_ptr = (task**)NFS_Allocate( byte_size, 1, NULL );
+        // No need to clear the fresh deque since valid items are designated by the head and tail members.
+        // But fill it with a canary pattern in the high vigilance debug mode.
+        fill_with_canary_pattern( 0, my_task_pool_size );
+    }
+
+    //! Deallocate task pool that was allocated by means of allocate_task_pool.
+    void free_task_pool( ) {
+#if !__TBB_TASK_ARENA
+        __TBB_ASSERT( !task_pool /*TODO: == EmptyTaskPool*/, NULL);
+#else
+        //TODO: understand the assertion and modify
+#endif
+        if( task_pool_ptr ) {
+           __TBB_ASSERT( my_task_pool_size, NULL);
+           NFS_Free( task_pool_ptr );
+           task_pool_ptr = NULL;
+           my_task_pool_size = 0;
+        }
+    }
+};
 
 } // namespace internal
 } // namespace tbb

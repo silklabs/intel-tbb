@@ -308,7 +308,7 @@ int main(int argc, char *argv[]) {
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(filename,"filename","input filename")
 
             .arg(verbose,"verbose","prints the first solution")
@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
         if ( !filename.empty() )
             read_board( filename.c_str() );
         // otherwise (if file name not specified), the default statically initialized board will be used.
-        for(int p = threads.first; p <= threads.last; ++p ) {
+        for(int p = threads.first; p <= threads.last; p = threads.step(p) ) {
             unsigned number;
             #if __TBB_MIC
             #pragma offload target(mic) in(init_values, p, verbose, find_one) out(number, solve_time)

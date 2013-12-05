@@ -354,7 +354,13 @@ public:
 
 private:
     tbb_exception_ptr ( const std::exception_ptr& src ) : my_ptr(src) {}
-    tbb_exception_ptr ( const captured_exception& src ) : my_ptr(std::copy_exception(src)) {}
+    tbb_exception_ptr ( const captured_exception& src ) :
+        #if __TBB_MAKE_EXCEPTION_PTR_PRESENT
+            my_ptr(std::make_exception_ptr(src))  // the final function name in C++11
+        #else
+            my_ptr(std::copy_exception(src))      // early C++0x drafts name
+        #endif
+    {}
 }; // class tbb::internal::tbb_exception_ptr
 
 } // namespace internal

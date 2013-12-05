@@ -60,13 +60,25 @@ __TBB_SYMBOL( _ZN3tbb19task_scheduler_init19default_num_threadsEv )
 __TBB_SYMBOL( _ZN3tbb19task_scheduler_init10initializeEim )
 __TBB_SYMBOL( _ZN3tbb19task_scheduler_init10initializeEi )
 __TBB_SYMBOL( _ZN3tbb19task_scheduler_init9terminateEv )
+#if __TBB_SCHEDULER_OBSERVER
 __TBB_SYMBOL( _ZN3tbb8internal26task_scheduler_observer_v37observeEb )
+#endif /* __TBB_SCHEDULER_OBSERVER */
 __TBB_SYMBOL( _ZN3tbb10empty_task7executeEv )
 __TBB_SYMBOL( _ZN3tbb10empty_taskD0Ev )
 __TBB_SYMBOL( _ZN3tbb10empty_taskD1Ev )
 __TBB_SYMBOL( _ZTIN3tbb10empty_taskE )
 __TBB_SYMBOL( _ZTSN3tbb10empty_taskE )
 __TBB_SYMBOL( _ZTVN3tbb10empty_taskE )
+
+#if __TBB_TASK_ARENA
+/* arena.cpp */
+__TBB_SYMBOL( _ZN3tbb10interface610task_arena18internal_terminateEv )
+__TBB_SYMBOL( _ZNK3tbb10interface610task_arena16internal_enqueueERNS_4taskEl )
+__TBB_SYMBOL( _ZNK3tbb10interface610task_arena16internal_executeERNS0_8internal13delegate_baseE )
+__TBB_SYMBOL( _ZNK3tbb10interface610task_arena19internal_initializeEi )
+__TBB_SYMBOL( _ZN3tbb10interface610task_arena12current_slotEv )
+__TBB_SYMBOL( _ZNK3tbb10interface610task_arena13internal_waitEv )
+#endif /* __TBB_TASK_ARENA */
 
 #if !TBB_NO_LEGACY
 /* task_v2.cpp */

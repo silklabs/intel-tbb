@@ -339,17 +339,27 @@ int TestMain() {
    for (int p = 0; p < 2; ++p) {
        generate_test<serial_test, std::tuple<float, double> >::do_test();
        generate_test<serial_test, std::tuple<float, double, int, long> >::do_test();
+#if __TBB_VARIADIC_MAX >= 6
        generate_test<serial_test, std::tuple<double, double, int, long, int, short> >::do_test();
+#endif
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 8
        generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long> >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 10
        generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long> >::do_test();
+#endif
 #endif
        generate_test<parallel_test, std::tuple<float, double> >::do_test();
        generate_test<parallel_test, std::tuple<float, int, long> >::do_test();
        generate_test<parallel_test, std::tuple<double, double, int, int, short> >::do_test();
 #if COMPREHENSIVE_TEST
+#if __TBB_VARIADIC_MAX >= 7
        generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long> >::do_test();
+#endif
+#if __TBB_VARIADIC_MAX >= 9
        generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long> >::do_test();
+#endif
 #endif
    }
    return Harness::Done;

@@ -70,7 +70,7 @@ namespace util {
                 argc,argv,
                 utility::cli_argument_pack()
                     //"-h" option for for displaying help is present implicitly
-                    .positional_arg(cfg::threads,"n-of-threads","number of threads to run on; a non-negative integer, or 'auto' to use HW number of threads, or range of the form low:high")
+                    .positional_arg(cfg::threads,"n-of-threads",utility::thread_number_range_desc)
                     .positional_arg(cfg::numberOfPoints,"n-of-points","number of points")
                     .arg(silent,"silent","no output except elapsed time")
                     .arg(verbose,"verbose","turns verbose ON")

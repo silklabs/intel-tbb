@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
 #include "tbb/cache_aligned_allocator.h"
 #include "tbb/tbb_allocator.h"
 #include "tbb/tbb_exception.h"

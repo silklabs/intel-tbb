@@ -27,6 +27,7 @@
 */
 
 #define NOMINMAX
+#include "harness_defs.h"
 #include "test_concurrent_queue.h"
 #include "tbb/concurrent_queue.h"
 #include "tbb/tick_count.h"

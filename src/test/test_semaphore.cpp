@@ -127,7 +127,26 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
 #include "../tbb/semaphore.cpp"
 #if _WIN32||_WIN64
 #include "../tbb/dynamic_link.cpp"
-#endif
+
+void testOSVersion() {
+#ifdef RTL_SRWLOCK_INIT
+     OSVERSIONINFO osvi;
+     BOOL bIsWindowsVistaOrLater;
+
+     memset( (void*)&osvi, 0, sizeof(OSVERSIONINFO) );
+     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+     GetVersionEx(&osvi);
+
+     bIsWindowsVistaOrLater = (osvi.dwMajorVersion >= 6 );
+
+     if( bIsWindowsVistaOrLater ) {
+        ASSERT( (uintptr_t)tbb::internal::__TBB_init_binsem!=(uintptr_t)&tbb::internal::init_binsem_using_event, NULL );
+        ASSERT( (uintptr_t)tbb::internal::__TBB_acquire_binsem!=(uintptr_t)&tbb::internal::acquire_binsem_using_event, NULL );
+        ASSERT( (uintptr_t)tbb::internal::__TBB_release_binsem!=(uintptr_t)&tbb::internal::release_binsem_using_event, NULL );
+     }
+#endif /* RTL_SRWLOCK_INIT */
+}
+#endif /* _WIN32||_WIN64 */
 
 #define N_TIMES 1000
 
@@ -284,6 +303,9 @@ int TestMain() {
                 testSemaphore( semSize, exThreads );
             }
         }
+#if _WIN32||_WIN64
+        testOSVersion();
+#endif
     }
     // Test producer/consumer with varying execution times and buffer sizes
     // ( total tokens, tokens in buffer, sleep for producer, sleep for consumer )

@@ -26,7 +26,11 @@
     the GNU General Public License.
 */
 
+#if __TBB_CPF_BUILD
+    #define TBB_PREVIEW_TASK_ARENA 1
+#endif
 #include "harness.h"
+
 
 #if __TBB_TASK_GROUP_CONTEXT
 
@@ -34,6 +38,11 @@
 #include "tbb/task_scheduler_init.h"
 #include "tbb/atomic.h"
 #include <cstdlib>
+
+#if _MSC_VER && __TBB_NO_IMPLICIT_LINKAGE
+// plays around __TBB_NO_IMPLICIT_LINKAGE. __TBB_LIB_NAME should be defined (in makefiles)
+    #pragma comment(lib, __TBB_STRING(__TBB_LIB_NAME))
+#endif
 
 const int NumIterations = 100;
 const int NumLeafTasks = 2;

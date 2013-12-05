@@ -1,3 +1,36 @@
+------------------------------------------------------------------------
+TBB 4.1
+
+Changes (w.r.t. TBB 4.0 Update 5):
+
+- _WIN32_WINNT must be set to 0x0501 or greater in order to use TBB 
+    on Microsoft* Windows*.
+- parallel_deterministic_reduce template function is fully supported.
+- TBB headers can be used with C++0x/C++11 mode (-std=c++0x) of GCC
+    and Intel(R) Compiler.
+- C++11 std::make_exception_ptr is used where available, instead of
+    std::copy_exception from earlier C++0x implementations.
+- Improvements in the TBB allocator to reduce extra memory consumption.
+- Partial refactoring of the task scheduler data structures.
+- TBB examples allow more flexible specification of the thread number,
+    including arithmetic and geometric progression.
+
+Bugs fixed:
+
+- On Linux & Mac OS* X, pre-built TBB binaries do not yet support exact
+    exception propagation via C++11 exception_ptr. To prevent run time
+    errors, by default TBB headers disable exact exception propagation
+    even if the C++ implementation provides exception_ptr.
+
+Community Preview Features:
+
+- Added: class task_arena, for work submission by multiple application
+    threads with thread-independent control of concurrency level.
+- Added: task_scheduler_observer can be created as local to a master
+    thread, to observe threads that work on behalf of that master.
+    Local observers may have new on_scheduler_leaving() callback.
+
+------------------------------------------------------------------------
 TBB 4.0 Update 5
 
 Changes (w.r.t. TBB 4.0 Update 4):
@@ -8,7 +41,7 @@ Changes (w.r.t. TBB 4.0 Update 4):
 - _VARIADIC_MAX switch is honored for TBB tuple implementation
     and flow::graph nodes based on tuple.
 - Support of Cocoa framework was added to the GUI examples on Mac OS* X
-    systems
+    systems.
 
 Bugs fixed:
 
@@ -51,7 +84,7 @@ Bugs fixed:
 Open-source contributions integrated:
 
 - Multiple improvements by Raf Schietekat.
-- Basic support for Clang on Mac OS X* by Blas Rodriguez Somoza.
+- Basic support for Clang on Mac OS* X by Blas Rodriguez Somoza.
 - Fixes for warnings and corner-case bugs by Blas Rodriguez Somoza
     and Edward Lam.
 

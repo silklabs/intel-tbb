@@ -50,6 +50,7 @@
 #endif
 #include "harness_report.h"
 #include "harness_assert.h"
+#include "harness_defs.h"
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>

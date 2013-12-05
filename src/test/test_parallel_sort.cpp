@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "harness_defs.h"
 #include "tbb/parallel_sort.h"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/concurrent_vector.h"

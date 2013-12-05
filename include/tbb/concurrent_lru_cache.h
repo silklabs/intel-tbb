@@ -140,6 +140,11 @@ private:
         }
     private:
         void operator=(handle_object&);
+#if __SUNPRO_CC
+    // Presumably due to a compiler error, private copy constructor
+    // breaks expressions like handle h = cache[key];
+    public:
+#endif
         handle_object(handle_object &);
     };
 private:

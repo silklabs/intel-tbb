@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 Intel(R) Threading Building Blocks - Release Notes
-		  Version 4.0
+		  Version 4.1
 ------------------------------------------------------------------------
 
 
@@ -40,7 +40,6 @@ Software - Minimum Requirements
 
     Supported operating system (see below)
     Supported compiler (see below)
-    Adobe(R) Reader(R)* 7.0 or higher
 
 Software - Recommended
 
@@ -50,20 +49,18 @@ Software - Recommended
 Software - Supported Operating Systems
 
     Microsoft* Windows* Systems
-	Microsoft* Windows* 7
-	Microsoft* Windows* Server 2008
-	Microsoft* Windows* Vista
-	Microsoft* Windows* XP Professional
-	Microsoft* Windows* Server 2003 (deprecated)
+	Microsoft* Windows* 7 SP1 
+	Microsoft* Windows* Server 2008 SP2
+	Microsoft* Windows* Server 2008 R2 SP1
+	Microsoft* Windows* XP Professional SP3
     Linux* Systems
-	Red Hat* Enterprise Linux* 6, 5, 4 (deprecated)
-	Fedora* 15
-	Asianux* 4.0, 3.0
+	Red Hat* Enterprise Linux* 6, 5
+	Fedora* 17
 	Debian* GNU/Linux* 6.0
-	Ubuntu* 11.04, 10.04 LTS
-	SuSE* Linux* Enterprise Server 10, 11SP1
+	Ubuntu* 11.10, 12.04
+	SuSE* Linux* Enterprise Server 10, 11SP2
     Mac OS* X Systems
-	Mac OS* X 10.6.7 or higher
+	Mac OS* X 10.7.4 or higher
 
 Software - Supported Compilers
 
@@ -73,14 +70,12 @@ Software - Supported Compilers
 	Windows* systems only)
     Microsoft* Visual C++ 9.0 (Microsoft* Visual Studio* 2008,
 	Windows* systems only)
-    Microsoft* Visual C++ 8.0 (Microsoft* Visual Studio* 2005,
-	Windows* systems only, deprecated)
     For each supported Linux* operating system, the standard gcc
 	version provided with that operating system is supported,
-	including gcc 3.4 through 4.6
+	including gcc 4.1 through 4.7
     For each supported Mac OS* X operating system, the standard gcc
 	version provided with that operating system is supported,
-	including: 4.0.1 or higher (Xcode* tool suite 3.2.5 or higher)
+	including: 4.2 or higher (Xcode* tool suite 4.3 or higher)
 
 
 Known Issues
@@ -90,6 +85,11 @@ Please note the following with respect to this particular release of
 Intel(R) Threading Building Blocks.
 
 Library Issues
+
+    - If an application is built for Microsoft* Windows* XP Professional
+	or similar the _WIN32_WINNT macro must be set manually to 0x0501
+	in order to limit the usage of modern API that is available on 
+	newer operating systems.
 
     - If an application uses static version of MSVCRT libraries or uses
 	TBB DLL built with static MSVCRT (vc_mt variant), and throws

@@ -29,6 +29,7 @@
 #if _USRDLL
 
 #include <stdlib.h>
+#include "harness_defs.h"
 #include "tbb/scalable_allocator.h"
 #if __TBB_SOURCE_DIRECTLY_INCLUDED
 #include "../tbbmalloc/tbbmalloc_internal_api.h"

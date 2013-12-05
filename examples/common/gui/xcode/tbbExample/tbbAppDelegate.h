@@ -24,7 +24,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface tbbAppDelegate : NSObject <NSApplicationDelegate>
+@interface tbbAppDelegate : NSObject <NSApplicationDelegate>{
+    NSWindow *_window;
+}
 
 @property (assign) IBOutlet NSWindow *window;
 

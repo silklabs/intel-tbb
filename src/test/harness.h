@@ -37,6 +37,7 @@
 #define tbb_tests_harness_H
 
 #include "tbb/tbb_config.h"
+#include "harness_defs.h"
 
 namespace Harness {
     enum TestResult {
@@ -60,20 +61,6 @@ namespace Harness {
     To provide non-standard variant of main() for the test, define HARNESS_CUSTOM_MAIN
     before including harness.h **/
 int TestMain ();
-
-#if __INTEL_COMPILER
-#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER > 1100 )
-#elif __GNUC__
-#define __TBB_LAMBDAS_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
-#elif _MSC_VER
-#define __TBB_LAMBDAS_PRESENT ( _MSC_VER>=1600 )
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER < 1400
-    #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 1
-#else
-    #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 0
-#endif
 
 #if __SUNPRO_CC
     #include <stdlib.h>
@@ -127,6 +114,7 @@ void SetHarnessErrorProcessing( test_error_extra_t extra_call ) {
     ErrorExtraCall = extra_call;
     // TODO: add tbb::set_assertion_handler(ReportError);
 }
+
 //! Reports errors issued by failed assertions
 void ReportError( const char* filename, int line, const char* expression, const char * message ) {
 #if __TBB_ICL_11_1_CODE_GEN_BROKEN
@@ -140,6 +128,8 @@ void ReportError( const char* filename, int line, const char* expression, const 
     TerminateProcess(GetCurrentProcess(), 1);
 #elif HARNESS_EXIT_ON_ASSERT
     exit(1);
+#elif HARNESS_CONTINUE_ON_ASSERT
+    // continue testing
 #else
     abort();
 #endif /* HARNESS_EXIT_ON_ASSERT */
@@ -148,13 +138,13 @@ void ReportError( const char* filename, int line, const char* expression, const 
 void ReportWarning( const char* filename, int line, const char* expression, const char * message ) {
     REPORT("Warning: %s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
 }
-#else
+#else /* !HARNESS_NO_ASSERT */
 //! Utility template function to prevent "unused" warnings by various compilers.
 template<typename T> void suppress_unused_warning( const T& ) {}
 
 #define ASSERT(p,msg) (suppress_unused_warning(p), (void)0)
 #define ASSERT_WARNING(p,msg) (suppress_unused_warning(p), (void)0)
-#endif /* HARNESS_NO_ASSERT */
+#endif /* !HARNESS_NO_ASSERT */
 
 #if !HARNESS_NO_PARSE_COMMAND_LINE
 

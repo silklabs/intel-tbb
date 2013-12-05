@@ -46,12 +46,12 @@ SOURCES = ../../common/gui/$(UI)video.cpp universe.cpp seismic_video.cpp main.cp
 PERFFLAGS=-msse2
 endif
 
-ifeq ($(CXX), icc)
-TBBLIB = -tbb
-TBBLIB_DEBUG = -tbb
-else
+ifeq (,$(filter icc icpc,$(CXX)))
 TBBLIB = -ltbb
 TBBLIB_DEBUG = -ltbb_debug
+else
+TBBLIB = -tbb
+TBBLIB_DEBUG = -tbb
 endif
 
 include ../../common/gui/Makefile.gmake
@@ -71,7 +71,7 @@ ifeq ($(UI),mac)
 	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
 endif # Mac
 
-release: $(SOURCES) resources
+release: resources
 ifeq ($(offload), mic)
 	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -c -offload-attribute-target=mic $(OFFLOAD_SOURCES)
 endif

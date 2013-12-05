@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
 #include "tbb_main.h"
 #include "governor.h"
 #include "tbb_misc.h"

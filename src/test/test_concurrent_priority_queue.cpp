@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "harness_defs.h"
 #include "tbb/concurrent_priority_queue.h"
 #include "tbb/atomic.h"
 #include "harness.h"

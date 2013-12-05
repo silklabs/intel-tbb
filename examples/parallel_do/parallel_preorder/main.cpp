@@ -55,7 +55,7 @@ static void ParseCommandLine( int argc, const char* argv[] ) {
             argc,argv,
             utility::cli_argument_pack()
                 //"-h" option for for displaying help is present implicitly
-                .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+                .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
                 .positional_arg(nodes,"n-of-nodes","number of nodes in the graph.")
                 .positional_arg(traversals,"n-of-traversals","number of times to evaluate the graph. Reduce it (e.g. to 100) to shorten example run time\n")
                 .arg(SilentFlag,"silent","no output except elapsed time ")
@@ -68,7 +68,7 @@ int main( int argc, const char* argv[] ) {
         ParseCommandLine(argc,argv);
 
         // Start scheduler with given number of threads.
-        for( int p=threads.first; p<=threads.last; ++p ) {
+        for( int p=threads.first; p<=threads.last; p = threads.step(p) ) {
             tbb::tick_count t0 = tbb::tick_count::now();
             tbb::task_scheduler_init init(p);
             srand(2);

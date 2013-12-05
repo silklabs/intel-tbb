@@ -37,7 +37,10 @@
 #if _MSC_VER
 #pragma warning (disable : 4503)      // decorated name length exceeded, name was truncated
 #endif
+#if !__SUNPRO_CC
+// Known issues with compilation of tuple used by flow graph
 #include "tbb/flow_graph.h"
+#endif
 
 static volatile size_t g_sink;
 
@@ -144,6 +147,7 @@ int TestMain ()
     TestTypeDefinitionPresence( combinable<int> );
     TestTypeDefinitionPresence( concurrent_vector<int> );
     TestTypeDefinitionPresence( enumerable_thread_specific<int> );
+#if !__SUNPRO_CC
     TestTypeDefinitionPresence( flow::graph );
     TestTypeDefinitionPresence( flow::source_node<int> );
     TestTypeDefinitionPresence2( flow::function_node<int, int> );
@@ -163,6 +167,7 @@ int TestMain ()
     const join_policy a = tbb::flow::interface6::internal::graph_policy_namespace::queueing;
     TestTypeDefinitionPresence2( flow::join_node< intpair, a > );
     squelch_unused_warning(a);
+#endif // !__SUNPRO_CC
     TestTypeDefinitionPresence( mutex );
     TestTypeDefinitionPresence( null_mutex );
     TestTypeDefinitionPresence( null_rw_mutex );

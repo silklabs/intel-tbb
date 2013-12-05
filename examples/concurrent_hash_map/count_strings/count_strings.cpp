@@ -202,7 +202,7 @@ int main( int argc, char* argv[] ) {
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(N,"n-of-strings","number of strings")
             .arg(verbose,"verbose","verbose mode")
             .arg(silent,"silent","no output except elapsed time")
@@ -214,7 +214,7 @@ int main( int argc, char* argv[] ) {
         CreateData();
 
         if ( threads.first ) {
-            for(int p = threads.first;  p <= threads.last; ++p ) {
+            for(int p = threads.first;  p <= threads.last; p = threads.step(p)) {
                 if ( !silent ) printf("threads = %d  ", p );
                 task_scheduler_init init( p );
                 CountOccurrences( p );

@@ -1482,6 +1482,7 @@ typedef struct ___itt_id
 
 static const __itt_id __itt_null = { 0, 0, 0 };
 
+#if 0 // this function currently is not used
 /**
  * @ingroup ids
  * @brief A convenience function is provided to create an ID without domain control.
@@ -1502,6 +1503,7 @@ INLINE __itt_id ITTAPI __itt_id_make(void* addr, unsigned long long extra)
     id.d3 = (unsigned long long)0; /* Reserved. Must be zero */
     return id;
 }
+#endif
 
 /**
  * @ingroup ids

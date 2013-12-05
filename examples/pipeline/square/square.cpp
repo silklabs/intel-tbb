@@ -245,7 +245,7 @@ int main( int argc, char* argv[] ) {
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
             //"-h" option for for displaying help is present implicitly
-            .positional_arg(threads,"n-of-threads","number of threads to use; a range of the form low[:high], where low and optional high are non-negative integers or 'auto' for the TBB default.")
+            .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(InputFileName,"input-file","input file name")
             .positional_arg(OutputFileName,"output-file","output file name")
             .positional_arg(MAX_CHAR_PER_INPUT_SLICE, "max-slice-size","the maximum number of characters in one slice")
@@ -253,7 +253,7 @@ int main( int argc, char* argv[] ) {
             );
 
         if ( threads.first ) {
-            for(int p = threads.first;  p <= threads.last; ++p ) {
+            for(int p = threads.first;  p <= threads.last; p=threads.step(p) ) {
                 if ( !silent ) printf("threads = %d ", p);
                 tbb::task_scheduler_init init(p);
                 if(!run_pipeline (p))

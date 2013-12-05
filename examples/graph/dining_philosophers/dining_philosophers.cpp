@@ -97,7 +97,7 @@ RunOptions ParseCommandLine(int argc, char *argv[]) {
     pCount += charbuf;
 
     utility::cli_argument_pack cli_pack;
-    cli_pack.positional_arg(threads, "n-of_threads", "number of threads to use, a range of the form low[:high], where low and high are non-negative integers or 'auto' for the TBB default.")
+    cli_pack.positional_arg(threads, "n-of_threads", utility::thread_number_range_desc)
             .positional_arg(nPhilosophers, "n-of-philosophers", pCount)
             .arg(verbose,"verbose","verbose output");
     utility::parse_cli_arguments(argc, argv, cli_pack);
@@ -247,9 +247,9 @@ int main(int argc, char *argv[]) {
         num_philosophers = options.number_of_philosophers;
         verbose = !options.silent;
 
-        for(num_threads = options.threads.first; num_threads <= options.threads.last; ++num_threads) {
-
-            tbb::task_scheduler_init init(num_threads);
+    for(num_threads = options.threads.first; num_threads <= options.threads.last; num_threads = options.threads.step(num_threads)) {
+    
+        tbb::task_scheduler_init init(num_threads);
 
             graph g;
 

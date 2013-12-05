@@ -32,14 +32,13 @@
 // this test should match that in graph.h, so we test whatever tuple is
 // being used by the join_node.
 #if !__SUNPRO_CC
-#if TBB_IMPLEMENT_CPP0X && (!defined(_MSC_VER) || _MSC_VER < 1600)
-#define __TESTING_STD_TUPLE__ 0
-#define TBB_PREVIEW_TUPLE 1
-#include "tbb/compat/tuple"
-#else
+#if __TBB_CPP11_TUPLE_PRESENT
 #define __TESTING_STD_TUPLE__ 1
 #include <tuple>
-#endif
+#else
+#define __TESTING_STD_TUPLE__ 0
+#include "tbb/compat/tuple"
+#endif /*!__TBB_CPP11_TUPLE_PRESENT*/
 #include <string>
 #include <iostream>
 

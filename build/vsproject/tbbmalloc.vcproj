@@ -14,7 +14,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -33,7 +33,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="3" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="3" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -52,7 +52,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -71,7 +71,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /D_USE_RTM_VERSION /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -90,7 +90,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -109,7 +109,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BufferSecurityCheck="false" BasicRuntimeChecks="0" RuntimeLibrary="1" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BufferSecurityCheck="false" BasicRuntimeChecks="0" RuntimeLibrary="1" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -128,7 +128,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -147,7 +147,7 @@
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS- /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -193,69 +193,69 @@
 			</File>
 			<File RelativePath="..\..\src\tbbmalloc\win32-tbbmalloc-export.def">
 				<FileConfiguration Name="Debug|Win32">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release|Win32">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release|x64" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win32-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|Win32">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|Win32">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|x64" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win32-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win32-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 			</File>
 			<File RelativePath="..\..\src\tbbmalloc\win64-tbbmalloc-export.def">
 				<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug|x64">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release|x64">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|Win32" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Debug-MT|x64">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|Win32" ExcludedFromBuild="true">
-					<Tool Name="VCCustomBuildTool" Description="generating tbb.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbb-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbb.def&quot;
-" Outputs="&quot;$(IntDir)\tbb.def&quot;"/>
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbb/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+" Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 				<FileConfiguration Name="Release-MT|x64">
-					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBB_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
+					<Tool Name="VCCustomBuildTool" Description="generating tbbmalloc.def file" CommandLine="cl /nologo /TC /EP ../../src/tbbmalloc/win64-tbbmalloc-export.def /DTBB_USE_DEBUG /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0400 /D__TBBMALLOC_BUILD=1 &gt;&quot;$(IntDir)\tbbmalloc.def&quot;
 " Outputs="&quot;$(IntDir)\tbbmalloc.def&quot;"/>
 				</FileConfiguration>
 			</File>

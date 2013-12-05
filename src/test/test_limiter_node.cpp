@@ -44,6 +44,8 @@ struct serial_receiver : public tbb::flow::receiver<T> {
        ASSERT( next_value++  == v, NULL );
        return true;
    }
+
+   /*override*/void reset_receiver() {next_value = T(0);}
 };
 
 template< typename T >
@@ -57,6 +59,7 @@ struct parallel_receiver : public tbb::flow::receiver<T> {
        ++my_count;
        return true;
    }
+   /*override*/void reset_receiver() {my_count = 0;}
 };
 
 template< typename T >

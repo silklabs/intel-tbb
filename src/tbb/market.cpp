@@ -181,7 +181,7 @@ void market::try_destroy_arena ( arena* a, uintptr_t aba_epoch ) {
             if ( a == &*it ) {
                 if ( it->my_aba_epoch == aba_epoch ) {
                     // Arena is alive
-                    if ( !a->my_num_workers_requested && !a->my_num_threads_active ) {
+                    if ( !a->my_num_workers_requested && !a->my_references ) {
                         __TBB_ASSERT( !a->my_num_workers_allotted && (a->my_pool_state == arena::SNAPSHOT_EMPTY || !a->my_max_num_workers), "Inconsistent arena state" );
                         // Arena is abandoned. Destroy it.
                         detach_arena( *a );
@@ -230,7 +230,7 @@ arena* market::arena_in_need ( arena_list_type &arenas, arena_list_type::iterato
         if ( ++it == arenas.end() )
             it = arenas.begin();
         if ( a.num_workers_active() < a.my_num_workers_allotted ) {
-            ++a.my_num_threads_active;
+            a.my_references+=2; // add a worker
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
             ++a.my_num_workers_present;
             ++my_priority_levels[a.my_top_priority].workers_present;
@@ -297,7 +297,7 @@ arena* market::arena_in_need (
         priority_level_info &pl = my_priority_levels[prev_arena->my_top_priority];
         --prev_arena->my_num_workers_present;
         --pl.workers_present;
-        if ( !--prev_arena->my_num_threads_active && !prev_arena->my_num_workers_requested ) {
+        if ( !--prev_arena->my_references && !prev_arena->my_num_workers_requested ) {
             detach_arena( *a );
             lock.release();
             a->free_arena();
@@ -368,13 +368,23 @@ void market::adjust_demand ( arena& a, int delta ) {
         }
         delta = -prev_req;
     }
+#if __TBB_TASK_ARENA
+    else if ( prev_req < 0 ) {
+        delta = a.my_num_workers_requested;
+    }
+#else  /* __TBB_TASK_ARENA */
     __TBB_ASSERT( prev_req >= 0, "Part-size request to RML?" );
+#endif /* __TBB_TASK_ARENA */
 #if __TBB_TASK_PRIORITY
     intptr_t p = a.my_top_priority;
     priority_level_info &pl = my_priority_levels[p];
     pl.workers_requested += delta;
     __TBB_ASSERT( pl.workers_requested >= 0, NULL );
+#if !__TBB_TASK_ARENA
     __TBB_ASSERT( a.my_num_workers_requested >= 0, NULL );
+#else
+    //TODO: understand the assertion and modify
+#endif
     if ( a.my_num_workers_requested <= 0 ) {
         if ( a.my_top_priority != normalized_normal_priority ) {
             GATHER_STATISTIC( ++governor::local_scheduler_if_initialized()->my_counters.arena_prio_resets );
@@ -394,7 +404,11 @@ void market::adjust_demand ( arena& a, int delta ) {
         update_allotment( my_global_top_priority );
     }
     else if ( p > my_global_top_priority ) {
+#if !__TBB_TASK_ARENA
         __TBB_ASSERT( pl.workers_requested > 0, NULL );
+#else
+        //TODO: understand the assertion and modify
+#endif
         update_global_top_priority(p);
         a.my_num_workers_allotted = min( (int)my_max_num_workers, a.my_num_workers_requested );
         my_priority_levels[p - 1].workers_available = my_max_num_workers - a.my_num_workers_allotted;

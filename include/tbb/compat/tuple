@@ -29,10 +29,6 @@
 #ifndef __TBB_tuple_H
 #define __TBB_tuple_H
 
-#if !TBB_PREVIEW_TUPLE
-#error Set TBB_PREVIEW_TUPLE to include compat/tuple
-#endif
-
 #include <utility>
 #include "../tbb_stddef.h"
 
@@ -502,7 +498,7 @@ inline static typename tuple_element<N,tuple<T0,T1,T2,T3,T4 __TBB_T_PACK > >::ty
 }  // interface5
 } // tbb
 
-#if TBB_IMPLEMENT_CPP0X
+#if !__TBB_CPP11_TUPLE_PRESENT
 namespace std {
 using tbb::interface5::tuple;
 using tbb::interface5::tuple_size;

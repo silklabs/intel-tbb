@@ -74,8 +74,10 @@ void TestStealingIsEnabled () {
 }
 
 int TestMain () {
-    if ( tbb::task_scheduler_init::default_num_threads() == 1 )
+    if ( tbb::task_scheduler_init::default_num_threads() == 1 ) {
+        REPORT( "Known issue: Test requires at least 2 hardware threads.\n" );
         return Harness::Skipped;
+    }
     TestStealingIsEnabled();
     return Harness::Done;
 }

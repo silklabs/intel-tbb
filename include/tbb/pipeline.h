@@ -427,6 +427,11 @@ class concrete_filter: public tbb::filter {
         return u_helper::cast_to_void_ptr(output_u);
     }
 
+    /*override*/ void finalize(void * input) {
+        t_pointer temp_input = t_helper::cast_from_void_ptr(input);
+        t_helper::destroy_token(temp_input);
+    }
+
 public:
     concrete_filter(tbb::filter::mode filter_mode, const Body& body) : filter(filter_mode), my_body(body) {}
 };
@@ -468,6 +473,11 @@ class concrete_filter<T,void,Body>: public filter {
         t_helper::destroy_token(temp_input);
         return NULL;
     }
+    /*override*/ void finalize(void* input) {
+        t_pointer temp_input = t_helper::cast_from_void_ptr(input);
+        t_helper::destroy_token(temp_input);
+    }
+
 public:
     concrete_filter(tbb::filter::mode filter_mode, const Body& body) : filter(filter_mode), my_body(body) {}
 };

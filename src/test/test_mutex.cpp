@@ -35,6 +35,7 @@
 //
 // Compile with _OPENMP and -openmp
 //------------------------------------------------------------------------
+#include "harness_defs.h"
 #include "tbb/spin_mutex.h"
 #include "tbb/critical_section.h"
 #include "tbb/spin_rw_mutex.h"

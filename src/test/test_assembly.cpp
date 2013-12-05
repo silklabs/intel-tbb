@@ -108,11 +108,11 @@ static void TestTinyLock() {
 #endif
     __TBB_LockByte(flags[8]);
     for( unsigned int i=0; i<16; ++i )
-	#ifdef __sparc
+        #ifdef __sparc
         ASSERT( flags[i]==(i==8?0xff:i), NULL );
-	#else
+        #else
         ASSERT( flags[i]==(i==8?1:i), NULL );
-	#endif
+        #endif
     __TBB_UnlockByte(flags[8], 0);
     for( unsigned int i=0; i<16; ++i )
         ASSERT( flags[i] == (i==8?0:i), NULL );

@@ -173,7 +173,7 @@ struct hacked_pipeline {
 //! The struct below repeats layout of tbb::internal::input_buffer.
 struct hacked_input_buffer {
     void* array; // This should be changed to task_info* if ever used
-	void* my_sem; // This should be changed to semaphore* if ever used
+    void* my_sem; // This should be changed to semaphore* if ever used
     tbb::internal::Token array_size;
     tbb::internal::Token low_token;
     tbb::spin_mutex array_mutex;

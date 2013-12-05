@@ -171,6 +171,7 @@ $(MALLOC_C_TESTS): %.$(TEST_EXT): %.$(OBJ) $(MALLOC_LIB)
 # Rules for generating a test DLL
 %_dll.$(DLL): %_dll.$(OBJ)
 	$(LIB_LINK_CMD) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $(PIC_KEY) $< $(LIBS) $(LINK_FLAGS) $(DYLIB_KEY)
+.PRECIOUS: %_dll.$(OBJ)
 
 test_malloc_atexit.$(TEST_EXT): test_malloc_atexit.$(OBJ) test_malloc_atexit_dll.$(DLL)
 	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $< $(MALLOC_PROXY_LIB) $(MALLOC_LIB) test_malloc_atexit_dll.$(LIBEXT) $(LIBS) $(LINK_FLAGS)

@@ -37,6 +37,7 @@
 #include <sstream>
 #include <numeric>
 #include <stdexcept>
+//TODO: for C++11 mode replace usage of auto_ptr with unique_ptr
 #include <memory>
 #include <cassert>
 
@@ -61,10 +62,9 @@ namespace utility{
 
 
         template<typename>
-        struct is_bool { enum{value=false};};
-
+        struct is_bool          { bool static value(){return false;}};
         template<>
-        struct is_bool<bool> { enum{value=true};};
+        struct is_bool<bool>    { bool static value(){return true;}};
 
         class type_base {
             type_base& operator=(const type_base&);
@@ -92,8 +92,8 @@ namespace utility{
             {};
             void parse_and_store (const std::string & s){
                 try{
-                    const bool is_bool_type =is_bool<type>::value;
-                    if ((is_bool_type)&&(s.empty())){
+                    const bool is_bool = internal::is_bool<type>::value();
+                    if (is_bool &&(s.empty())){
                         //to avoid directly assigning true
                         //(as it will impose additional layer of indirection)
                         //so, simply pass it as string
@@ -164,7 +164,6 @@ namespace utility{
             }
             bool is_matched() const{return matched_;}
         };
-
     }
     class cli_argument_pack{
         typedef std::map<std::string,internal::argument> args_map_type;
@@ -188,7 +187,7 @@ namespace utility{
         cli_argument_pack& arg(type& dest,std::string const& name, std::string const& description, bool(*validate)(const type &)= NULL){
             internal::argument a(name,description,dest,validate);
             add_arg(a);
-            if (internal::is_bool<type>::value){
+            if (internal::is_bool<type>::value()){
                 bool_args_names.insert(name);
             }
             return *this;
@@ -200,7 +199,7 @@ namespace utility{
         cli_argument_pack& positional_arg(type& dest,std::string const& name, std::string const& description, bool(*validate)(const type &)= NULL){
             internal::argument a(name,description,dest,validate);
             add_arg(a);
-            if (internal::is_bool<type>::value){
+            if (internal::is_bool<type>::value()){
                 bool_args_names.insert(name);
             }
             positional_arg_names.push_back(name);
@@ -306,13 +305,75 @@ namespace utility{
 }
 
 namespace utility{
+
+    namespace internal {
+        int step_function_plus(int previous,double step){
+            return static_cast<int>(previous+step);
+        }
+        int step_function_multiply(int previous,double multiply){
+            return static_cast<int>(previous*multiply);
+        }
+        typedef int (* step_function_ptr_type)(int,double);
+        struct step_function_descriptor  {
+            char mnemonic;
+            step_function_ptr_type function;
+        public:
+            step_function_descriptor(char a_mnemonic, step_function_ptr_type a_function) : mnemonic(a_mnemonic), function(a_function) {}
+        private:
+            void operator=(step_function_descriptor  const&);
+        };
+
+        step_function_descriptor step_function_descriptors[] = {
+                step_function_descriptor('*',step_function_multiply),
+                step_function_descriptor('+',step_function_plus)
+        };
+
+        template<typename T, size_t N>
+        inline size_t array_length(const T(&)[N])
+        {
+           return N;
+        }
+
+        struct thread_range_step {
+            step_function_ptr_type step_function;
+            double step_function_argument;
+
+            thread_range_step ( step_function_ptr_type step_function_, double step_function_argument_)
+                :step_function(step_function_),step_function_argument(step_function_argument_)
+            {
+                if (!step_function_)
+                    throw std::invalid_argument("step_function for thread range step should not be NULL");
+            }
+            int operator()(int previous)const {
+                return step_function(previous,step_function_argument);
+            }
+            friend std::istream& operator>>(std::istream& input_stream, thread_range_step& step){
+                char function_char;
+                double function_argument;
+                input_stream>>function_char >> function_argument;
+                size_t i = 0;
+                for ( ;(i < array_length(step_function_descriptors)) && step_function_descriptors[i].mnemonic != function_char; ++i );
+                if (i >= array_length(step_function_descriptors)){
+                    throw std::invalid_argument("step_function for thread range step should be known");
+                }
+                step.step_function = step_function_descriptors[i].function;
+                step.step_function_argument = function_argument;
+                return input_stream;
+            }
+        };
+    }
     struct thread_number_range{
         int (*auto_number_of_threads)();
         int first;
         int last;
 
-        thread_number_range( int (*auto_number_of_threads_)(),int low_=1, int high_=-1 )
+        internal::thread_range_step step;
+
+        thread_number_range( int (*auto_number_of_threads_)(),int low_=1, int high_=-1
+                , internal::thread_range_step step_ =  internal::thread_range_step(internal::step_function_plus,1)
+        )
             : auto_number_of_threads(auto_number_of_threads_), first(low_), last((high_>-1) ? high_ : auto_number_of_threads_())
+              ,step(step_)
         {
             if (first>last){
                 throw std::invalid_argument("");
@@ -344,22 +405,40 @@ namespace utility{
                     high= (low = string_to_number_of_threads(s));
                 }else {
                     //it is a range
-                    std::string::iterator semicolon_it = s.begin()+semicolon;
-                    low  = string_to_number_of_threads(std::string(s.begin(),semicolon_it));
-                    high = string_to_number_of_threads(std::string(semicolon_it+1,s.end()));
+                    std::size_t second_semicolon = s.find(':',semicolon+1);
+
+                    low  = string_to_number_of_threads(std::string(s, 0, semicolon)); //not copying the ':' char
+                    high = string_to_number_of_threads(std::string(s, semicolon+1, second_semicolon - (semicolon+1))); //not copying the ':' chars
+                    if (second_semicolon != std::string::npos){
+                        internal::string_to(std::string(s,second_semicolon + 1),range.step);
+                    }
                 }
-                range = thread_number_range(range.auto_number_of_threads,low,high);
+                range = thread_number_range(range.auto_number_of_threads,low,high,range.step);
             }catch(std::invalid_argument&){
                 i.setstate(std::ios::failbit);
             }
             return i;
         }
+
         friend std::ostream& operator<<(std::ostream& o, thread_number_range const& range){
-            o<<range.first<<":"<<range.last;
+            using namespace internal;
+            size_t i = 0;
+            for ( ;(i < array_length(step_function_descriptors)) && step_function_descriptors[i].function != range.step.step_function; ++i );
+            if (i >= array_length(step_function_descriptors)){
+                throw std::invalid_argument("step_function for thread range step should be known");
+            }
+            o<<range.first<<":"<<range.last<<":"<<step_function_descriptors[i].mnemonic<<range.step.step_function_argument;
             return o;
         }
 
     };
+    //TODO: update the thread range description in the .html files
+    static const char* thread_number_range_desc="number of threads to use; a range of the form low[:high[:(+|*)step]]"
+                                                ", where low and optional high are non-negative integers or 'auto' for the TBB default"
+                                                ", and optional step expression specifies how next thread number is chosen."
+                                                " E.g. expression '1:16:*2' means threads from 1 to 16 , where each next thread number"
+                                                " is twice bigger (*2) than previous one."
+   ;
 }
 #include <iostream>
 namespace utility{

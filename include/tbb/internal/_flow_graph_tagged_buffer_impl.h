@@ -120,21 +120,38 @@ private:
         ar[h] = my_elem;
     }
 
-public:
-    tagged_buffer() : my_size(INITIAL_SIZE), nelements(0) {
+    void internal_initialize_buffer() {
         array = pointer_array_allocator_type().allocate(my_size);
         for(size_t i = 0; i < my_size; ++i) array[i] = NULL;
         lists = new list_array_type(INITIAL_SIZE/2, element_type(), Allocator());
         set_up_free_list(&free_list, lists, INITIAL_SIZE/2);
     }
 
-    ~tagged_buffer() {
+    void internal_free_buffer() {
         if(array) {
             pointer_array_allocator_type().deallocate(array, my_size); 
+            array = NULL;
         }
         if(lists) {
             delete lists;
+            lists = NULL;
         }
+        my_size = INITIAL_SIZE;
+        nelements = 0;
+    }
+
+public:
+    tagged_buffer() : my_size(INITIAL_SIZE), nelements(0) {
+        internal_initialize_buffer();
+    }
+
+    ~tagged_buffer() {
+        internal_free_buffer();
+    }
+
+    void reset() {
+        internal_free_buffer();
+        internal_initialize_buffer();
     }
 
     bool tagged_insert(TagType t, value_type v) {

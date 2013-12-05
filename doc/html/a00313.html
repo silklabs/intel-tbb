@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::queue_node&lt; T, A &gt; Class Template Reference</title>
+<title>tbb::pipeline Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,95 +21,85 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00313.html">queue_node</a></div>
-<h1>tbb::flow::interface6::queue_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::queue_node" --><!-- doxytag: inherits="tbb::flow::interface6::buffer_node" -->Forwards messages in FIFO order.  
+<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00313.html">pipeline</a></div>
+<h1>tbb::pipeline Class Reference<br>
+<small>
+[<a class="el" href="a00432.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::pipeline" -->A processing pipeline that applies filters to items.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00511.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00593.html">pipeline.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::queue_node&lt; T, A &gt;:
-<p><center><img src="a00313.png" usemap="#tbb::flow::interface6::queue_node< T, A >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::queue_node< T, A >_map">
-<area href="a00263.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="280,56,550,80">
-<area href="a00289.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,270,24">
-<area href="a00321.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="280,0,550,24">
-<area href="a00327.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="560,0,830,24">
-<area href="a00328.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="280,168,550,192">
-</map>
-<a href="a00074.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00107.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1e71030845210b6c4c7380eb9e11a2ac"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::input_type" ref="1e71030845210b6c4c7380eb9e11a2ac" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#1e71030845210b6c4c7380eb9e11a2ac">input_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="25b5a53ab1f9a342644fa3759bc0b1ad"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::output_type" ref="25b5a53ab1f9a342644fa3759bc0b1ad" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#25b5a53ab1f9a342644fa3759bc0b1ad">output_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5e2fdd33c45d44549dee9c1638e19898"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::predecessor_type" ref="5e2fdd33c45d44549dee9c1638e19898" args="" -->
-typedef <a class="el" href="a00327.html">sender</a>&lt; <a class="el" href="a00313.html#1e71030845210b6c4c7380eb9e11a2ac">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#5e2fdd33c45d44549dee9c1638e19898">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f35076a19f256f9e7a61bed77ca1ccc5"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::successor_type" ref="f35076a19f256f9e7a61bed77ca1ccc5" args="" -->
-typedef <a class="el" href="a00321.html">receiver</a>&lt; <a class="el" href="a00313.html#25b5a53ab1f9a342644fa3759bc0b1ad">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#f35076a19f256f9e7a61bed77ca1ccc5">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c716593a92448b0f429d1f3a38e67996"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_node" ref="c716593a92448b0f429d1f3a38e67996" args="(graph &amp;g)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#c716593a92448b0f429d1f3a38e67996">queue_node</a> (<a class="el" href="a00288.html">graph</a> &amp;g)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="596dc3beba27099c4c8581cb419e1a59"></a><!-- doxytag: member="tbb::pipeline::pipeline" ref="596dc3beba27099c4c8581cb419e1a59" args="()" -->
+__TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#596dc3beba27099c4c8581cb419e1a59">pipeline</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0226762d9ebba28311b7b1518d948ab1"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_node" ref="0226762d9ebba28311b7b1518d948ab1" args="(const queue_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#0226762d9ebba28311b7b1518d948ab1">queue_node</a> (const <a class="el" href="a00313.html">queue_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct empty pipeline. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#49513c6c24f9d5bbbb27edca5efe01c9">~pipeline</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a84ab6bb43d056468ac5df3626219513"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::size_type" ref="a84ab6bb43d056468ac5df3626219513" args="" -->
-typedef <a class="el" href="a00263.html">buffer_node</a>&lt; T, A <br>
-&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38fb5c9c8395dd6f89a4ae2011a83e0d"></a><!-- doxytag: member="tbb::pipeline::add_filter" ref="38fb5c9c8395dd6f89a4ae2011a83e0d" args="(filter &amp;filter_)" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#38fb5c9c8395dd6f89a4ae2011a83e0d">add_filter</a> (<a class="el" href="a00285.html">filter</a> &amp;filter_)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="63c3b0a76cd7964dec2f3d54afbb05f3"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::queue_operation" ref="63c3b0a76cd7964dec2f3d54afbb05f3" args="" -->
-typedef <a class="el" href="a00263.html">buffer_node</a>&lt; T, A <br>
-&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>queue_operation</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add filter to end of pipeline. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f627616049b3fe36801f37ee40403ef8"></a><!-- doxytag: member="tbb::pipeline::run" ref="f627616049b3fe36801f37ee40403ef8" args="(size_t max_number_of_live_tokens)" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#f627616049b3fe36801f37ee40403ef8">run</a> (size_t max_number_of_live_tokens)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab979763449c8716cdd38fda58e607551f1"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::WAIT" ref="b748e310297e1e3f88952a2a9876bab979763449c8716cdd38fda58e607551f1" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Run the pipeline to completion. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="93d7fec8cd607b803dd2d79fb46bd260"></a><!-- doxytag: member="tbb::pipeline::run" ref="93d7fec8cd607b803dd2d79fb46bd260" args="(size_t max_number_of_live_tokens, tbb::task_group_context &amp;context)" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#93d7fec8cd607b803dd2d79fb46bd260">run</a> (size_t max_number_of_live_tokens, <a class="el" href="a00343.html">tbb::task_group_context</a> &amp;context)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab923e845160e46a20fb8550132f04e94aa"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::SUCCEEDED" ref="b748e310297e1e3f88952a2a9876bab923e845160e46a20fb8550132f04e94aa" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Run the pipeline to completion with user-supplied context. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c84aef5b834b555ee220b176e25931e"></a><!-- doxytag: member="tbb::pipeline::clear" ref="2c84aef5b834b555ee220b176e25931e" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#2c84aef5b834b555ee220b176e25931e">clear</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b748e310297e1e3f88952a2a9876bab9ad699b139814d0746be2266041081474"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::FAILED" ref="b748e310297e1e3f88952a2a9876bab9ad699b139814d0746be2266041081474" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove all filters from the pipeline. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8228ce0751009045e8158d2e642715a6"></a><!-- doxytag: member="tbb::pipeline::internal::stage_task" ref="8228ce0751009045e8158d2e642715a6" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::stage_task</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
-<b>SUCCEEDED</b>, 
-<b>FAILED</b>
- }</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05d67150ca324698ba852553e223d3eb"></a><!-- doxytag: member="tbb::pipeline::internal::pipeline_root_task" ref="05d67150ca324698ba852553e223d3eb" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::pipeline_root_task</b></td></tr>
 
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eadcbbb81f9a9d223afabe0f40e77ecb"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_forward" ref="eadcbbb81f9a9d223afabe0f40e77ecb" args="(queue_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html#eadcbbb81f9a9d223afabe0f40e77ecb">internal_forward</a> (queue_operation *op)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4c991e50853b0cac7da039550344d3ef"></a><!-- doxytag: member="tbb::pipeline::filter" ref="4c991e50853b0cac7da039550344d3ef" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>filter</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cfd2350a4c9d14486a8a9285acb9ca49"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_pop" ref="cfd2350a4c9d14486a8a9285acb9ca49" args="(queue_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (queue_operation *op)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e43b69a482df8e053cb199af69eb5139"></a><!-- doxytag: member="tbb::pipeline::thread_bound_filter" ref="e43b69a482df8e053cb199af69eb5139" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>thread_bound_filter</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bf478ff2ae265ec859928191e2f7dbe3"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_reserve" ref="bf478ff2ae265ec859928191e2f7dbe3" args="(queue_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (queue_operation *op)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9d033d41ff53a0ae6ef824aceee7ecbc"></a><!-- doxytag: member="tbb::pipeline::internal::pipeline_cleaner" ref="9d033d41ff53a0ae6ef824aceee7ecbc" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::pipeline_cleaner</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d67eee760d9fd829064927e7fe1b54fb"></a><!-- doxytag: member="tbb::flow::interface6::queue_node::internal_consume" ref="d67eee760d9fd829064927e7fe1b54fb" args="(queue_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (queue_operation *op)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d1ed99300bc4520a481583c448d6fafd"></a><!-- doxytag: member="tbb::pipeline::tbb::interface6::internal::pipeline_proxy" ref="d1ed99300bc4520a481583c448d6fafd" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>tbb::interface6::internal::pipeline_proxy</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
- class tbb::flow::interface6::queue_node&lt; T, A &gt;</h3>
-
-Forwards messages in FIFO order. 
+A processing pipeline that applies filters to items. 
 <p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="49513c6c24f9d5bbbb27edca5efe01c9"></a><!-- doxytag: member="tbb::pipeline::~pipeline" ref="49513c6c24f9d5bbbb27edca5efe01c9" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual __TBB_EXPORTED_METHOD tbb::pipeline::~pipeline           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Though the current implementation declares the destructor virtual, do not rely on this detail. The virtualness is deprecated and may disappear in future versions of TBB. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00511.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00593.html">pipeline.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

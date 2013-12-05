@@ -76,7 +76,7 @@ inline bool is_bit_set( uintptr_t val, int pos ) {
 }
 
 //! The container for "fairness-oriented" aka "enqueued" tasks.
-class task_stream {
+class task_stream : no_copy{
     typedef queue_and_mutex <task*, spin_mutex> lane_t;
     unsigned N;
     uintptr_t population;

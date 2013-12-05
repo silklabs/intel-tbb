@@ -52,7 +52,7 @@ namespace internal {
 #define CILKLIB_NAME "libcilkrts.so"
 #endif
 
-//! Handler for memory allocation
+//! Handler for interoperation with cilkrts library.
 static __cilk_tbb_retcode (*watch_stack_handler)(struct __cilk_tbb_unwatch_thunk* u,
                                                  struct __cilk_tbb_stack_op_thunk o);
 
@@ -182,6 +182,7 @@ void governor::auto_terminate(void* arg){
             // runtime, restore its value.
             if ( !theTLS.get() )
                 theTLS.set(s);
+            else __TBB_ASSERT( s == theTLS.get(), NULL );
             s->cleanup_master();
             __TBB_ASSERT( !theTLS.get(), "cleanup_master has not cleared its TLS slot" );
         }

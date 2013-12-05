@@ -29,8 +29,8 @@
 #ifndef __TBB_atomic_H
 #define __TBB_atomic_H
 
-#include <cstddef>
 #include "tbb_stddef.h"
+#include <cstddef>
 
 #if _MSC_VER
 #define __TBB_LONG_LONG __int64

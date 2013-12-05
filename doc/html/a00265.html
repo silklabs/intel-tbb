@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::cache_aligned_allocator&lt; void &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::broadcast_node&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,73 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<a class="el" href="a00265.html">cache_aligned_allocator&lt; void &gt;</a></div>
-<h1>tbb::cache_aligned_allocator&lt; void &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00428.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::cache_aligned_allocator&lt; void &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00265.html">broadcast_node</a></div>
+<h1>tbb::flow::interface6::broadcast_node&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::broadcast_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::receiver,tbb::flow::interface6::sender" -->Forwards messages of type T to all successors.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00452.html">cache_aligned_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00015.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::broadcast_node&lt; T &gt;:
+<p><center><img src="a00265.png" usemap="#tbb::flow::interface6::broadcast_node< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::broadcast_node< T >_map">
+<area href="a00292.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,249,24">
+<area href="a00324.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="259,0,508,24">
+<area href="a00330.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="518,0,767,24">
+</map>
+<a href="a00071.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ce89776145998f0685a767b4f195272d"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::pointer" ref="ce89776145998f0685a767b4f195272d" args="" -->
-typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="43c775d80e98cc601de69764983319f9"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::input_type" ref="43c775d80e98cc601de69764983319f9" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#43c775d80e98cc601de69764983319f9">input_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4431fbbe1a8cfeb19c48ad0072078f45"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::const_pointer" ref="4431fbbe1a8cfeb19c48ad0072078f45" args="" -->
-typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8fd8d3075823e08b879be46c1215ab0f"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::output_type" ref="8fd8d3075823e08b879be46c1215ab0f" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#8fd8d3075823e08b879be46c1215ab0f">output_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2ab296f4ecdd75f8e193ff92004a697d"></a><!-- doxytag: member="tbb::cache_aligned_allocator&lt; void &gt;::value_type" ref="2ab296f4ecdd75f8e193ff92004a697d" args="" -->
-typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0e2ad9a121cb286aa0d0142fef33c646"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::predecessor_type" ref="0e2ad9a121cb286aa0d0142fef33c646" args="" -->
+typedef <a class="el" href="a00330.html">sender</a>&lt; <a class="el" href="a00265.html#43c775d80e98cc601de69764983319f9">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#0e2ad9a121cb286aa0d0142fef33c646">predecessor_type</a></td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cc6a0eb1c4ee65465770628d8366f055"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::successor_type" ref="cc6a0eb1c4ee65465770628d8366f055" args="" -->
+typedef <a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00265.html#8fd8d3075823e08b879be46c1215ab0f">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#cc6a0eb1c4ee65465770628d8366f055">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="89e20f24ae56d38a5ee52f8d41e1a79c"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::broadcast_node" ref="89e20f24ae56d38a5ee52f8d41e1a79c" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>broadcast_node</b> (<a class="el" href="a00291.html">graph</a> &amp;g)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bdcf84bf5b52c3af2d5332dc9d5fec07"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::broadcast_node" ref="bdcf84bf5b52c3af2d5332dc9d5fec07" args="(const broadcast_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>broadcast_node</b> (const <a class="el" href="a00265.html">broadcast_node</a> &amp;src)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fd0324c9ddb51fe6f95b3d015d338941"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::register_successor" ref="fd0324c9ddb51fe6f95b3d015d338941" args="(receiver&lt; T &gt; &amp;r)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#fd0324c9ddb51fe6f95b3d015d338941">register_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; T &gt; &amp;r)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="366efcc046ec08a104281109801ae629"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::remove_successor" ref="366efcc046ec08a104281109801ae629" args="(receiver&lt; T &gt; &amp;r)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#366efcc046ec08a104281109801ae629">remove_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; T &gt; &amp;r)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes s as a successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29eb768c10b377880bbf83d31ee49acf"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::try_put" ref="29eb768c10b377880bbf83d31ee49acf" args="(const T &amp;t)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00265.html#29eb768c10b377880bbf83d31ee49acf">try_put</a> (const T &amp;t)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Put an item to the receiver. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0f6d6d9e50a9cebe40df876a3c7a8804"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::reset" ref="0f6d6d9e50a9cebe40df876a3c7a8804" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e216903c618e25d2e3780483c763f67"></a><!-- doxytag: member="tbb::flow::interface6::broadcast_node::reset_receiver" ref="4e216903c618e25d2e3780483c763f67" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;&gt;<br>
- class tbb::cache_aligned_allocator&lt; void &gt;</h3>
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface6::broadcast_node&lt; T &gt;</h3>
 
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+Forwards messages of type T to all successors. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00452.html">cache_aligned_allocator.h</a></ul>
+<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

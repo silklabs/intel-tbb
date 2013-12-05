@@ -833,7 +833,7 @@ void thread_map::unbind() {
 
 void thread_map::assist_cleanup( bool assist_null_only ) {
     // To avoid deadlock, the current thread *must* help out with cleanups that have not started,
-    // becausd the thread that created the job may be busy for a long time.
+    // because the thread that created the job may be busy for a long time.
     for( iterator i = begin(); i!=end(); ++i ) {
         rml::job* j=0;
         job_automaton& ja = i->my_automaton;

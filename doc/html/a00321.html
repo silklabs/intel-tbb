@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::receiver&lt; T &gt; Class Template Reference</title>
+<title>tbb::interface5::reader_writer_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,60 +21,195 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00321.html">receiver</a></div>
-<h1>tbb::flow::interface6::receiver&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::receiver" -->Pure virtual template class that defines a receiver of messages of type T.  
+<a class="el" href="a00419.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00321.html">reader_writer_lock</a></div>
+<h1>tbb::interface5::reader_writer_lock Class Reference<br>
+<small>
+[<a class="el" href="a00435.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::interface5::reader_writer_lock" -->Writer-preference reader-writer lock with local-only spinning on readers.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00511.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00611.html">reader_writer_lock.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::receiver&lt; T &gt;:
-<p><center><img src="a00321.png" usemap="#tbb::flow::interface6::receiver< T >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::receiver< T >_map">
-<area href="a00262.html" alt="tbb::flow::interface6::broadcast_node< T >" shape="rect" coords="0,56,352,80">
-<area href="a00263.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
-<area href="a00279.html" alt="tbb::flow::interface6::continue_receiver" shape="rect" coords="724,56,1076,80">
-<area href="a00292.html" alt="tbb::flow::interface6::limiter_node< T >" shape="rect" coords="1086,56,1438,80">
-<area href="a00312.html" alt="tbb::flow::interface6::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
-<area href="a00313.html" alt="tbb::flow::interface6::queue_node< T, A >" shape="rect" coords="543,112,895,136">
-<area href="a00328.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
-</map>
-<a href="a00054.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00114.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0d0524c99313dedea1e04464bbf2f7ef"></a><!-- doxytag: member="tbb::flow::interface6::receiver::input_type" ref="0d0524c99313dedea1e04464bbf2f7ef" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#0d0524c99313dedea1e04464bbf2f7ef">input_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f921f0d7c1812ceb5674418c8b6ccaf005142e2b9af377a8d33c6604d858862"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::waiting_nonblocking" ref="6f921f0d7c1812ceb5674418c8b6ccaf005142e2b9af377a8d33c6604d858862" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>waiting_nonblocking</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7fa8cff811e7c1589b805a4bb4c7a74f"></a><!-- doxytag: member="tbb::flow::interface6::receiver::predecessor_type" ref="7fa8cff811e7c1589b805a4bb4c7a74f" args="" -->
-typedef <a class="el" href="a00327.html">sender</a>&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#7fa8cff811e7c1589b805a4bb4c7a74f">predecessor_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f921f0d7c1812ceb5674418c8b6ccaf18bcc9aae8f056c34fb61bb7fc39b432"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::waiting" ref="6f921f0d7c1812ceb5674418c8b6ccaf18bcc9aae8f056c34fb61bb7fc39b432" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>waiting</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f921f0d7c1812ceb5674418c8b6ccaf423c082d5cdc9bb12d0eeadcae56adb5"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::active" ref="6f921f0d7c1812ceb5674418c8b6ccaf423c082d5cdc9bb12d0eeadcae56adb5" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>active</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f921f0d7c1812ceb5674418c8b6ccafa9a5b17bdfb0a6d59b3cd58fecbd9610"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::invalid" ref="6f921f0d7c1812ceb5674418c8b6ccafa9a5b17bdfb0a6d59b3cd58fecbd9610" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>invalid</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#6f921f0d7c1812ceb5674418c8b6ccaf">status_t</a> { <b>waiting_nonblocking</b>, 
+<b>waiting</b>, 
+<b>active</b>, 
+<b>invalid</b>
+ }</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Status type for nodes associated with lock instances.  <a href="a00321.html#6f921f0d7c1812ceb5674418c8b6ccaf">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b00699b235435f7b65b663d5063624a1"></a><!-- doxytag: member="tbb::flow::interface6::receiver::~receiver" ref="b00699b235435f7b65b663d5063624a1" args="()" -->
-virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#b00699b235435f7b65b663d5063624a1">~receiver</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c1431c4293e777efd9aab9a95c2a46e1"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::reader_writer_lock" ref="c1431c4293e777efd9aab9a95c2a46e1" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#c1431c4293e777efd9aab9a95c2a46e1">reader_writer_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6d5d0cb8ebe5771be91933609fe31b8"></a><!-- doxytag: member="tbb::flow::interface6::receiver::try_put" ref="c6d5d0cb8ebe5771be91933609fe31b8" args="(const T &amp;t)=0" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#c6d5d0cb8ebe5771be91933609fe31b8">try_put</a> (const T &amp;t)=0</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructs a new <a class="el" href="a00321.html">reader_writer_lock</a>. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5135f64f7b7339017f33d956445edbee"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::~reader_writer_lock" ref="5135f64f7b7339017f33d956445edbee" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#5135f64f7b7339017f33d956445edbee">~reader_writer_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Put an item to the receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="30e3316466efe3a713c23062b6e806f3"></a><!-- doxytag: member="tbb::flow::interface6::receiver::register_predecessor" ref="30e3316466efe3a713c23062b6e806f3" args="(predecessor_type &amp;)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#30e3316466efe3a713c23062b6e806f3">register_predecessor</a> (<a class="el" href="a00327.html">predecessor_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructs a <a class="el" href="a00321.html">reader_writer_lock</a> object. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#2653d1a2d560059a51219a8ceab3ade9">lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a predecessor to the node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3bc76547b51d3c9b633e3987d22dce95"></a><!-- doxytag: member="tbb::flow::interface6::receiver::remove_predecessor" ref="3bc76547b51d3c9b633e3987d22dce95" args="(predecessor_type &amp;)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#3bc76547b51d3c9b633e3987d22dce95">remove_predecessor</a> (<a class="el" href="a00327.html">predecessor_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquires the <a class="el" href="a00321.html">reader_writer_lock</a> for write.  <a href="#2653d1a2d560059a51219a8ceab3ade9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#721eb173e154ab38292273e9266a9b07">try_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a predecessor from the node. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to acquire the <a class="el" href="a00321.html">reader_writer_lock</a> for write.  <a href="#721eb173e154ab38292273e9266a9b07"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#d9d16a24d9f6c3dada73c6b9ff214f5b">lock_read</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquires the <a class="el" href="a00321.html">reader_writer_lock</a> for read.  <a href="#d9d16a24d9f6c3dada73c6b9ff214f5b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#595fb23952e3b89426b1f7938dea9b11">try_lock_read</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to acquire the <a class="el" href="a00321.html">reader_writer_lock</a> for read.  <a href="#595fb23952e3b89426b1f7938dea9b11"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5113b32689305599b2c36b5831547704"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::unlock" ref="5113b32689305599b2c36b5831547704" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00321.html#5113b32689305599b2c36b5831547704">unlock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Releases the <a class="el" href="a00321.html">reader_writer_lock</a>. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a36f15b770a1bb0b56e33d7fa75ebd1a"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock" ref="a36f15b770a1bb0b56e33d7fa75ebd1a" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="680274059774b9188889d34986314f81"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read" ref="680274059774b9188889d34986314f81" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock_read</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00322.html">scoped_lock</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped lock pattern for write locks.  <a href="a00322.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html">scoped_lock_read</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped lock pattern for read locks.  <a href="a00323.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::flow::interface6::receiver&lt; T &gt;</h3>
-
-Pure virtual template class that defines a receiver of messages of type T. 
+Writer-preference reader-writer lock with local-only spinning on readers. 
 <p>
+Loosely adapted from Mellor-Crummey and Scott pseudocode at <a href="http://www.cs.rochester.edu/research/synchronization/pseudocode/rw.html#s_wp">http://www.cs.rochester.edu/research/synchronization/pseudocode/rw.html#s_wp</a> 
+<p>
+<hr><h2>Member Enumeration Documentation</h2>
+<a class="anchor" name="6f921f0d7c1812ceb5674418c8b6ccaf"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::status_t" ref="6f921f0d7c1812ceb5674418c8b6ccaf" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="a00321.html#6f921f0d7c1812ceb5674418c8b6ccaf">tbb::interface5::reader_writer_lock::status_t</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Status type for nodes associated with lock instances. 
+<p>
+waiting_nonblocking: the wait state for nonblocking lock instances; for writes, these transition straight to active states; for reads, these are unused.<p>
+waiting: the start and spin state for all lock instances; these will transition to active state when appropriate. Non-blocking write locks transition from this state to waiting_nonblocking immediately.<p>
+active: the active state means that the lock instance holds the lock; it will transition to invalid state during node deletion<p>
+invalid: the end state for all nodes; this is set in the destructor so if we encounter this state, we are looking at memory that has already been freed<p>
+The state diagrams below describe the status transitions. Single arrows indicate that the thread that owns the node is responsible for the transition; double arrows indicate that any thread could make the transition.<p>
+State diagram for <a class="el" href="a00322.html">scoped_lock</a> status:<p>
+waiting ----------&gt; waiting_nonblocking | _____________/ | V V V active -----------------&gt; invalid<p>
+State diagram for <a class="el" href="a00323.html">scoped_lock_read</a> status:<p>
+waiting | V active -----------------&gt;invalid 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="2653d1a2d560059a51219a8ceab3ade9"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::lock" ref="2653d1a2d560059a51219a8ceab3ade9" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Acquires the <a class="el" href="a00321.html">reader_writer_lock</a> for write. 
+<p>
+If the lock is currently held in write mode by another context, the writer will block by spinning on a local variable. Exceptions thrown: <a class="el" href="a00293.html">improper_lock</a> The context tries to acquire a <a class="el" href="a00321.html">reader_writer_lock</a> that it already has write ownership of. 
+</div>
+</div><p>
+<a class="anchor" name="d9d16a24d9f6c3dada73c6b9ff214f5b"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::lock_read" ref="d9d16a24d9f6c3dada73c6b9ff214f5b" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::lock_read           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Acquires the <a class="el" href="a00321.html">reader_writer_lock</a> for read. 
+<p>
+If the lock is currently held by a writer, this reader will block and wait until the writers are done. Exceptions thrown: <a class="el" href="a00293.html">improper_lock</a> The context tries to acquire a <a class="el" href="a00321.html">reader_writer_lock</a> that it already has write ownership of. 
+</div>
+</div><p>
+<a class="anchor" name="721eb173e154ab38292273e9266a9b07"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::try_lock" ref="721eb173e154ab38292273e9266a9b07" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::try_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Tries to acquire the <a class="el" href="a00321.html">reader_writer_lock</a> for write. 
+<p>
+This function does not block. Return Value: True or false, depending on whether the lock is acquired or not. If the lock is already held by this acquiring context, <a class="el" href="a00321.html#721eb173e154ab38292273e9266a9b07">try_lock()</a> returns false. 
+</div>
+</div><p>
+<a class="anchor" name="595fb23952e3b89426b1f7938dea9b11"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::try_lock_read" ref="595fb23952e3b89426b1f7938dea9b11" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::try_lock_read           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Tries to acquire the <a class="el" href="a00321.html">reader_writer_lock</a> for read. 
+<p>
+This function does not block. Return Value: True or false, depending on whether the lock is acquired or not. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00511.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00611.html">reader_writer_lock.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

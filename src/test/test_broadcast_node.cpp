@@ -68,6 +68,8 @@ public:
         return true;
     }
 
+    /*override*/void reset_receiver() { }
+
 };
 
 template< typename T >

@@ -55,6 +55,7 @@ public:
        return true;
     }
 
+    /*override*/void reset_receiver() {}
 };
 
 template< typename T >
@@ -90,7 +91,7 @@ public:
 
     bool operator()( T v ) {
         ++my_counters[(int)v];
-		return true;
+        return true;
     } 
 
 };

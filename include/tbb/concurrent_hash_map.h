@@ -596,7 +596,7 @@ protected:
             return ptr;
         }
         // match placement-new form above to be called if exception thrown in constructor
-        void operator delete( void *ptr, node_allocator_type &a ) {return a.deallocate(static_cast<node*>(ptr),1); }
+        void operator delete( void *ptr, node_allocator_type &a ) { a.deallocate(static_cast<node*>(ptr),1); }
     };
 
     void delete_node( node_base *n ) {

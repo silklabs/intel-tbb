@@ -244,10 +244,7 @@ int main(int argc, char *argv[]) {
         utility::parse_cli_arguments(argc, argv,
                                      utility::cli_argument_pack()
                                      //"-h" option for for displaying help is present implicitly
-                                     .positional_arg(threads,"#threads","  number of threads to use; a range of the "
-                                                     "form low[:high]\n              where low and optional high are "
-                                                     "non-negative integers,\n              or 'auto' for the TBB "
-                                                     "default")
+                                     .positional_arg(threads,"#threads",utility::thread_number_range_desc)
                                      .arg(verbose,"verbose","   print diagnostic output to screen")
                                      .arg(silent,"silent","    limits output to timing info; overrides verbose")
                                      .arg(N,"N","         number of values to pack")
@@ -270,7 +267,7 @@ int main(int argc, char *argv[]) {
         min_B = (item_sum % V) ? item_sum/V + 1 : item_sum/V;
 
         tick_count start = tick_count::now();
-        for(int p = threads.first; p <= threads.last; ++p ) {
+        for(int p = threads.first; p <= threads.last; p = threads.step(p)) {
             task_scheduler_init init(p);
             packed_sum = 0;
             packed_items = 0;

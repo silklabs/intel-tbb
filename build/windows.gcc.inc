@@ -98,6 +98,7 @@ CPLUS_FLAGS += -D_WIN32_WINNT=$(_WIN32_WINNT)
 CPLUS_FLAGS += -DMINGW_HAS_SECURE_API=1 -D__MSVCRT_VERSION__=0x0700 -msse -mthreads
 
 CONLY = gcc
+debugger = gdb
 C_FLAGS = $(CPLUS_FLAGS)
 
 ifeq (intel64,$(arch))

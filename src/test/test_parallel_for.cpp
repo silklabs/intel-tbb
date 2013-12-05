@@ -45,6 +45,7 @@
 #define _SCL_SECURE_NO_WARNINGS
 #endif //#if _MSC_VER
 
+#include "harness_defs.h"
 #include "tbb/parallel_for.h"
 #include "tbb/atomic.h"
 #include "harness_assert.h"

@@ -236,8 +236,8 @@ int main(int argc, char *argv[] ) {
 // Fill dictionary with version strings for platforms 
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
-    vector->push_back(string_pair("TBB: VERSION\t\t4.0", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6005", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: VERSION\t\t4.1", required));          // check TBB_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6100", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));
@@ -254,13 +254,13 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
     vector->push_back(string_pair("TBB: BUILD_SUNCC", required));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
-#else //We use version_info_linux.sh for unsupported OSes
+#else // We use version_info_linux.sh for unsupported OSes
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
     vector->push_back(string_pair("TBB: BUILD_GCC", required));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
-    vector->push_back(string_pair("TBB: BUILD_GLIBC", required));
+    vector->push_back(string_pair("TBB: BUILD_LIBC", required));
     vector->push_back(string_pair("TBB: BUILD_LD", required));
-#endif
+#endif // OS
     vector->push_back(string_pair("TBB: BUILD_TARGET", required));
     vector->push_back(string_pair("TBB: BUILD_COMMAND", required));
     vector->push_back(string_pair("TBB: TBB_USE_DEBUG", required));

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt; Class Template Reference</title>
+<title>tbb::interface6::memory_pool_allocator&lt; void, P &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,45 +21,69 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00414.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00300.html">multifunction_node</a></div>
-<h1>tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::multifunction_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->implements a function node that supports Input -&gt; (set of outputs)  
+<a class="el" href="a00419.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00300.html">memory_pool_allocator&lt; void, P &gt;</a></div>
+<h1>tbb::interface6::memory_pool_allocator&lt; void, P &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00434.html">Memory Allocation</a>]</small>
+</h1><!-- doxytag: class="tbb::interface6::memory_pool_allocator&lt; void, P &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00511.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00530.html">memory_pool.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt;:
-<p><center><img src="a00300.png" usemap="#tbb::flow::interface6::multifunction_node< Input, Output,, Allocator >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::multifunction_node< Input, Output,, Allocator >_map">
-<area href="a00289.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,393,24">
-</map>
-<a href="a00064.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00084.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f8f076085598fc5687fdc00d7756ad4"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::input_type" ref="9f8f076085598fc5687fdc00d7756ad4" args="" -->
-typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7cc2e35b1d34d0543b5a029414ef41f8"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::pool_type" ref="7cc2e35b1d34d0543b5a029414ef41f8" args="" -->
+typedef P&nbsp;</td><td class="memItemRight" valign="bottom"><b>pool_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48523618e24d62c7d60f55d58e1323fd"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::output_ports_type" ref="48523618e24d62c7d60f55d58e1323fd" args="" -->
-typedef internal::wrap_tuple_elements&lt;<br>
- N, internal::function_output,<br>
- Output &gt;::type&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_ports_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48afbf9aed30662f09217c1fe229861d"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::pointer" ref="48afbf9aed30662f09217c1fe229861d" args="" -->
+typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="94ac6954c897981fc8adf6bf5978145b"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::const_pointer" ref="94ac6954c897981fc8adf6bf5978145b" args="" -->
+typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2b9b8af832a8b240cf22c5cc37406f45"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::value_type" ref="2b9b8af832a8b240cf22c5cc37406f45" args="" -->
+typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
 
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5112769f6063d733734c1631ab105911"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::multifunction_node" ref="5112769f6063d733734c1631ab105911" args="(graph &amp;g, size_t concurrency, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>multifunction_node</b> (<a class="el" href="a00288.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1601367c80ed73278e1234012631df24"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="1601367c80ed73278e1234012631df24" args="(pool_type &amp;pool)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (pool_type &amp;pool)  throw ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4aa18bfb6faef08ddf94364013ef0f28"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::multifunction_node" ref="4aa18bfb6faef08ddf94364013ef0f28" args="(const multifunction_node &amp;other)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>multifunction_node</b> (const <a class="el" href="a00300.html">multifunction_node</a> &amp;other)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4ce5d3f231c9e786aee8f64d53c7f1a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="e4ce5d3f231c9e786aee8f64d53c7f1a" args="(const memory_pool_allocator &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a> &amp;src)  throw ()</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="49bd821cb72e23714d7efc480ac4cc9d"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="49bd821cb72e23714d7efc480ac4cc9d" args="(const memory_pool_allocator&lt; U, P &gt; &amp;src)" -->
+template&lt;typename U&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, P &gt; &amp;src)  throw ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="67b8e6e057db62e7fdbe985ce275b039"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::my_pool" ref="67b8e6e057db62e7fdbe985ce275b039" args="" -->
+pool_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_pool</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="193c7eeb6ed852d587b652828f52ca92"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::memory_pool_allocator" ref="193c7eeb6ed852d587b652828f52ca92" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b></td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="f4fe0fa75b911081eff469ddb3e7e52a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::operator==" ref="f4fe0fa75b911081eff469ddb3e7e52a" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
+template&lt;typename V, typename U, typename R&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="4bb06a39de4a5290b4ec03be19d61c36"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator&lt; void, P &gt;::operator!=" ref="4bb06a39de4a5290b4ec03be19d61c36" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
+template&lt;typename V, typename U, typename R&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Input, typename Output, graph_buffer_policy = queueing, typename Allocator = cache_aligned_allocator&lt;Input&gt;&gt;<br>
- class tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt;</h3>
+<h3>template&lt;typename P&gt;<br>
+ class tbb::interface6::memory_pool_allocator&lt; void, P &gt;</h3>
 
-implements a function node that supports Input -&gt; (set of outputs) 
+Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00511.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00530.html">memory_pool.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

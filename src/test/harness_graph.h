@@ -256,6 +256,8 @@ struct harness_counting_receiver : public tbb::flow::receiver<T>, NoCopy {
         ASSERT( n == num_copies*max_value, NULL );
     }
 
+    /*override*/void reset_receiver() { my_count = 0; }
+
 };
 
 //! Counts the number of puts received
@@ -310,6 +312,8 @@ struct harness_mapped_receiver : public tbb::flow::receiver<T>, NoCopy {
             ASSERT( n == num_copies*max_value, NULL );
         }
     }
+
+    /*override*/void reset_receiver() { my_count = 0; if(my_map) delete my_map; my_map = new map_type; }
 
 };
 

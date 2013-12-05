@@ -34,7 +34,12 @@
 #------------------------------------------------------------------------------
 CPLUS = cl /nologo
 LINK_FLAGS = /link /nologo
-LIB_LINK_FLAGS=/link /nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO
+LIB_LINK_FLAGS=/link /nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DYNAMICBASE /NXCOMPAT
+
+ifeq ($(arch), ia32)
+	LIB_LINK_FLAGS += /SAFESEH
+endif
+
 ifeq ($(runtime), vc_mt)
 	MS_CRT_KEY = /MT$(if $(findstring debug,$(cfg)),d)
 else
@@ -50,7 +55,7 @@ ifeq ($(cfg), debug)
         CPLUS_FLAGS = $(MS_CRT_KEY) /Od /Ob0 /Zi $(EH_FLAGS) /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=$(TBB.LIB)
         ASM_FLAGS = /DUSE_FRAME_POINTER
 endif
-
+CPLUS_FLAGS += /GS
 
 COMPILE_ONLY = /c
 PREPROC_ONLY = /TP /EP
@@ -82,9 +87,6 @@ endif
 ifeq ($(runtime),vc_mt)
         OPENMP_FLAG = /openmp
 endif
-ifeq (intel64,$(arch))
-        CPLUS_FLAGS += /GS-
-endif
 
 CPLUS_FLAGS += /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
         /D_WIN32_WINNT=$(_WIN32_WINNT)
@@ -105,7 +107,7 @@ ifeq (intel64,$(arch))
     MALLOC_ASM.OBJ = atomic_support.obj
 else
     ASM=ml /nologo
-    ASM_FLAGS += /c /coff /Zi
+    ASM_FLAGS += /c /coff /Zi /safeseh
     TBB_ASM.OBJ = atomic_support.obj lock_byte.obj
 endif
 #------------------------------------------------------------------------------
@@ -124,3 +126,4 @@ M_CPLUS_FLAGS = $(subst $(EH_FLAGS),/EHs-,$(CPLUS_FLAGS))
 #------------------------------------------------------------------------------
 # End of define compiler-specific variables.
 #------------------------------------------------------------------------------
+

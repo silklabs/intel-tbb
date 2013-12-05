@@ -422,8 +422,9 @@ static void TestPoolKeepTillDestroy()
         pool_malloc(pool, 8*1024*1024);
         if (keep)
             ASSERT(currGetCalls == getMemCalls, "Must not lead to new getMem call");
+        size_t currPuts = putMemCalls;
         pool_reset(pool);
-        ASSERT(!putMemCalls, "Pool is not releasing memory during reset.");
+        ASSERT(currPuts == putMemCalls, "Pool is not releasing memory during reset.");
         pool_destroy(pool);
         ASSERT(putMemCalls, NULL);
         totalPutMemCalls += putMemCalls;

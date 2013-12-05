@@ -35,6 +35,7 @@
 //
 // Compile with _OPENMP and -openmp
 //------------------------------------------------------------------------
+#include "../test/harness_defs.h"
 #include "tbb/atomic.h"
 #include "tbb/blocked_range.h"
 #include "tbb/parallel_for.h"

@@ -57,6 +57,7 @@ namespace internal {
         /*override*/ source_body_leaf* clone() { 
             return new source_body_leaf< Output, Body >(init_body); 
         }
+        Body get_body() { return body; }
     private:
         Body body;
         Body init_body;
@@ -280,7 +281,7 @@ namespace internal {
     //! A cache of predecessors that only supports try_get
     template< typename T, typename M=spin_mutex >
     class predecessor_cache : public node_cache< sender<T>, M > {
-        public:
+    public:
         typedef M my_mutex_type;
         typedef T output_type; 
         typedef sender<output_type> predecessor_type;
@@ -318,8 +319,24 @@ namespace internal {
             } while ( msg == false );
             return msg;
         }
-    
+
+        void reset() {
+            if(!my_owner) {
+                return;  // retain ownership of edges
+            }
+            for(;;) {
+                predecessor_type *src;
+                {
+                    typename my_mutex_type::scoped_lock lock(this->my_mutex);
+                    if(this->internal_empty()) break;
+                    src = &this->internal_pop();
+                }
+                src->register_successor( *my_owner);
+            }
+        }
+
     protected:
+    
         successor_type *my_owner;
     };
     
@@ -377,13 +394,18 @@ namespace internal {
             reserved_src = NULL;
             return true;
         }
+
+        void reset() {
+            reserved_src = NULL;
+            predecessor_cache<T,M>::reset();
+        }
     
     private:
         predecessor_type *reserved_src;
     };
     
     
-    //! An abstract cache of succesors
+    //! An abstract cache of successors
     template<typename T, typename M=spin_rw_mutex >
     class successor_cache : tbb::internal::no_copy {
     protected:
@@ -452,10 +474,8 @@ namespace internal {
         void register_successor( receiver<continue_msg> &r ) {
             my_mutex_type::scoped_lock l(my_mutex, true);
             my_successors.push_back( &r ); 
-            if ( my_owner ) {
-                continue_receiver *cr = dynamic_cast< continue_receiver * >(&r);
-                if ( cr ) 
-                    cr->register_predecessor( *my_owner );
+            if ( my_owner && r.is_continue_receiver() ) {
+                r.register_predecessor( *my_owner );
             }
         }
         

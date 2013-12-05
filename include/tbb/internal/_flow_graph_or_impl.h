@@ -125,6 +125,8 @@ namespace internal {
         bool try_put(const T &v) {
             return my_or_node->try_put_with_index(my_index, reinterpret_cast<void *>(const_cast<T*>(&v)));
         }
+    protected:
+        /*override*/void reset_receiver() {}
     };
 
     template<typename InputTuple, typename OutputType, typename StructTypes>
@@ -235,6 +237,9 @@ namespace internal {
             my_aggregator.execute(&op_data);
             return op_data.status == SUCCEEDED;
         }
+
+    protected:
+        /*override*/void reset() {}
 
     private:
         broadcast_cache<output_type, null_rw_mutex> my_successors;

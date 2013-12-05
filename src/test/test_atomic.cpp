@@ -343,8 +343,9 @@ void TestIndirection() {
         // Test various syntaxes for indirection to fields with non-zero offset.
         T value1=T(), value2=T();
         for( size_t j=0; j<sizeof(T); ++j ) {
-            *(char*)&value1 = char(k^j);
-            *(char*)&value2 = char(k^j*j);
+            ((char*)&value1)[j] = char(k^j);
+            ((char*)&value2)[j] = char(k^j*j);
+
         }
         pointer->y = value1;
         (*pointer).z = value2;
