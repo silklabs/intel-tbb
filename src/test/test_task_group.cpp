@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -28,7 +28,8 @@
 
 #include "harness_defs.h"
 
-//TODO: check why test fails with metro
+//Concurency scheduler is not support by Windows* new UI apps
+//TODO: check whether we can test anything here
 #include "tbb/tbb_config.h"
 #if !__TBB_WIN8UI_SUPPORT
 #ifndef TBBTEST_USE_TBB
@@ -36,6 +37,8 @@
 #endif
 #else
     #define TBBTEST_USE_TBB 0
+    #undef __TBB_TASK_GROUP_CONTEXT
+    #define __TBB_TASK_GROUP_CONTEXT 0
 #endif
 
 #if !TBBTEST_USE_TBB
@@ -260,8 +263,8 @@ atomic_t g_Sum;
 //------------------------------------------------------------------------
 // Test for a complex tree of task groups
 //
-// The test executes a tree of task groups of the same sort with asymmetric 
-// descendant nodes distribution at each level at each level. 
+// The test executes a tree of task groups of the same sort with asymmetric
+// descendant nodes distribution at each level at each level.
 //
 // The chores are specified as functor objects. Each task group contains only one chore.
 //------------------------------------------------------------------------
@@ -273,7 +276,7 @@ struct FibTask : NoAssign, Harness::NoAfterlife {
     FibTask( uint_t* y, uint_t n ) : m_pRes(y), m_Num(n) {}
     void operator() () const {
         *m_pRes = Func(m_Num);
-    } 
+    }
 };
 
 uint_t Fib_SpawnRightChildOnly ( uint_t n ) {
@@ -292,7 +295,7 @@ uint_t Fib_SpawnRightChildOnly ( uint_t n ) {
 
 void TestFib1 () {
     FIB_TEST_PROLOGUE();
-    uint_t sum = 0; 
+    uint_t sum = 0;
     for( unsigned i = 0; i < numRepeats; ++i )
         sum += Fib_SpawnRightChildOnly(N);
     FIB_TEST_EPILOGUE(sum);
@@ -302,7 +305,7 @@ void TestFib1 () {
 //------------------------------------------------------------------------
 // Test for a mixed tree of task groups.
 //
-// The test executes a tree with multiple task of one sort at the first level, 
+// The test executes a tree with multiple task of one sort at the first level,
 // each of which originates in its turn a binary tree of descendant task groups.
 //
 // The chores are specified both as functor objects and as function pointers
@@ -329,7 +332,7 @@ void RunFib2 () {
 
 void TestFib2 () {
     FIB_TEST_PROLOGUE();
-    g_Sum = 0; 
+    g_Sum = 0;
     Concurrency::task_group rg;
     for( unsigned i = 0; i < numRepeats - 1; ++i )
         rg.run( &RunFib2 );
@@ -377,7 +380,7 @@ uint_t RunFib3 ( uint_t n ) {
 
 void TestTaskHandle () {
     FIB_TEST_PROLOGUE();
-    uint_t sum = 0; 
+    uint_t sum = 0;
     for( unsigned i = 0; i < numRepeats; ++i )
         sum += RunFib3(N);
     FIB_TEST_EPILOGUE(sum);
@@ -400,7 +403,7 @@ public:
         if( m_Num < 2 ) {
             *m_pRes = m_Num;
         } else {
-            uint_t  x = ~0u, // initialized only to suppress warning 
+            uint_t  x = ~0u, // initialized only to suppress warning
                     y = ~0u;
             task_group_type tg;
             Concurrency::task_handle<FibTask_SpawnBothChildren> h1 = FibTask_SpawnBothChildren(&y, m_Num-1),
@@ -424,7 +427,7 @@ void RunFib4 () {
 template<class task_group_type>
 void TestTaskHandle2 () {
     FIB_TEST_PROLOGUE();
-    g_Sum = 0; 
+    g_Sum = 0;
     task_group_type rg;
     const unsigned hSize = sizeof(handle_type);
     char *handles = new char [numRepeats * hSize];
@@ -572,7 +575,7 @@ public:
         Harness::ConcurrencyTracker ct;
         AssertLive();
         if ( g_Throw ) {
-            if ( ++m_TaskCount == SKIP_CHORES ) 
+            if ( ++m_TaskCount == SKIP_CHORES )
                 __TBB_THROW( test_exception(EXCEPTION_DESCR1) );
             __TBB_Yield();
         }
@@ -616,7 +619,7 @@ void TestEh1 () {
     ResetGlobals( true, false );
     Concurrency::task_group rg;
     for( unsigned i = 0; i < NUM_GROUPS; ++i )
-        // TBB version does not require taking function address 
+        // TBB version does not require taking function address
         rg.run( &LaunchChildren );
     try {
         rg.wait();
@@ -632,7 +635,7 @@ void TestEh2 () {
     Concurrency::task_group rg;
     bool exceptionCaught = false;
     for( unsigned i = 0; i < NUM_GROUPS; ++i )
-        // TBB version does not require taking function address 
+        // TBB version does not require taking function address
         rg.run( &LaunchChildren );
     try {
         rg.wait();
@@ -657,7 +660,7 @@ void TestCancellation1 () {
     ResetGlobals( false, false );
     Concurrency::task_group rg;
     for( unsigned i = 0; i < NUM_GROUPS; ++i )
-        // TBB version does not require taking function address 
+        // TBB version does not require taking function address
         rg.run( &LaunchChildren );
     ASSERT ( !Concurrency::is_current_task_group_canceling(), "Unexpected cancellation" );
     ASSERT ( !rg.is_canceling(), "Unexpected cancellation" );

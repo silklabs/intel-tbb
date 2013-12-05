@@ -1,6 +1,6 @@
 @echo off
 REM
-REM Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+REM Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 REM
 REM This file is part of Threading Building Blocks.
 REM
@@ -29,7 +29,10 @@ REM
 
 REM no LD_PRELOAD under Windows
 if "%1"=="-l" (
-    echo skip
+    if exist "%2" (
+        REM but run the test to check "#pragma comment" construction
+        %3
+    )
     exit
 )
 

@@ -1,4 +1,4 @@
-# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -93,6 +93,7 @@ LINK_MALLOC.LIB = $(MALLOC.LIB)
 
 MALLOCPROXY.DLL = tbbmalloc_proxy$(DEBUG_SUFFIX).$(DLL)
 MALLOCPROXY.LIB = tbbmalloc_proxy$(DEBUG_SUFFIX).$(LIBEXT)
+LINK_MALLOCPROXY.LIB = $(MALLOCPROXY.LIB)
 
 PROXY.LIB = tbbproxy$(DEBUG_SUFFIX).$(LIBEXT)
 

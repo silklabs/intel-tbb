@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -86,12 +86,18 @@ class task_stream : no_copy{
 public:
     task_stream() : N(), population(), random(unsigned(&N-(unsigned*)NULL)), lanes()
     {
-        __TBB_ASSERT( sizeof(population) * CHAR_BIT >= 32, NULL );
     }
 
     void initialize( unsigned n_lanes ) {
-        N = n_lanes>=32 ? 32 : n_lanes>2 ? 1<<(__TBB_Log2(n_lanes-1)+1) : 2;
-        __TBB_ASSERT( N==32 || N>=n_lanes && ((N-1)&N)==0, "number of lanes miscalculated");
+        const unsigned max_lanes =
+#if __TBB_MORE_FIFO_LANES
+                sizeof(population) * CHAR_BIT;
+#else
+                32;
+#endif
+        N = n_lanes>=max_lanes ? max_lanes : n_lanes>2 ? 1<<(__TBB_Log2(n_lanes-1)+1) : 2;
+        __TBB_ASSERT( N==max_lanes || N>=n_lanes && ((N-1)&N)==0, "number of lanes miscalculated");
+        __TBB_ASSERT( N <= sizeof(population) * CHAR_BIT, NULL );
         lanes = new padded<lane_t>[N];
         __TBB_ASSERT( !population, NULL );
     }

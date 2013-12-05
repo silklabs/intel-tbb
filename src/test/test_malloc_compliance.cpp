@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -28,6 +28,20 @@
 
 const unsigned MByte = 1024*1024;
 bool __tbb_test_errno = false;
+
+#include "tbb/tbb_config.h"
+
+#if __TBB_WIN8UI_SUPPORT	
+// testing allocator itself not iterfaces
+// so we can use desktop functions
+#define _CRT_USE_WINAPI_FAMILY_DESKTOP_APP 1
+#define HARNESS_NO_PARSE_COMMAND_LINE 1
+#include "harness.h"
+// FIXME: fix the test to support New Windows *8 Store Apps mode.
+int TestMain() {
+    return Harness::Skipped;
+}
+#else /* __TBB_WIN8UI_SUPPORT	 */
 
 /* _WIN32_WINNT should be defined at the very beginning,
    because other headers might include <windows.h>
@@ -1013,3 +1027,6 @@ void CMemTest::RunAllTests(int total_threads)
 #endif
     if (FullLog) REPORT("Tests for %d threads ended\n", total_threads);
 }
+
+#endif /* __TBB_WIN8UI_SUPPORT	 */
+

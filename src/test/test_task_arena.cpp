@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -90,7 +90,6 @@ class ArenaObserver : public tbb::task_scheduler_observer {
     /*override*/
     void on_scheduler_exit( bool is_worker ) {
         REMARK("a %s #%p is leaving arena %d to %d\n", is_worker?"worker":"master", &local_id.local(), myId, old_id.local());
-        //ASSERT(old_id.local(), "call to on_scheduler_exit without prior entry");
         ASSERT(local_id.local() == myId, "nesting of arenas is broken");
         ASSERT(slot_id.local() == tbb::task_arena::current_slot(), NULL);
         slot_id.local() = -1;

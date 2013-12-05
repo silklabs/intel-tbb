@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -50,7 +50,7 @@ inline generic_scheduler* allocate_scheduler ( arena* a, size_t index ) {
 }
 
 #if __TBB_TASK_GROUP_CONTEXT
-spin_mutex the_context_state_propagation_mutex;
+context_state_propagation_mutex_type the_context_state_propagation_mutex;
 
 uintptr_t the_context_state_propagation_epoch = 0;
 
@@ -514,7 +514,20 @@ inline task** generic_scheduler::lock_task_pool( arena_slot* victim_arena_slot )
         }
         GATHER_STATISTIC( ++my_counters.thieves_conflicts );
         // Someone else acquired a lock, so pause and do exponential backoff.
+#if __TBB_STEALING_ABORT_ON_CONTENTION
+        if(!backoff.bounded_pause()) {
+            // the 16 was acquired empirically and a theory behind it supposes
+            // that number of threads becomes much bigger than number of
+            // tasks which can be spawned by one thread causing excessive contention.
+            // TODO: However even small arenas can benefit from the abort on contention
+            //       if preemption of a thief is a problem
+            if(my_arena->my_limit >= 16)
+                return EmptyTaskPool;
+            __TBB_Yield();
+        }
+#else
         backoff.pause();
+#endif
     }
     __TBB_ASSERT( victim_task_pool == EmptyTaskPool ||
                   (victim_arena_slot->task_pool == LockedTaskPool && victim_task_pool != LockedTaskPool),
@@ -840,7 +853,6 @@ retry:
         size_t H = __TBB_load_relaxed(my_arena_slot->head); // mirror
         if ( (intptr_t)H <= (intptr_t)T ) {
             // The thief backed off - grab the task
-            // Task pool pointer from our arena slot is garbled by above taken lock.
             result = my_arena_slot->task_pool_ptr[T];
             __TBB_ASSERT( !is_poisoned(result), NULL );
             poison_pointer( my_arena_slot->task_pool_ptr[T] );
@@ -939,6 +951,7 @@ retry:
         }
         poison_pointer( victim_pool[H0] );
     }
+
     unlock_task_pool( &victim_slot, victim_pool );
     __TBB_ASSERT( skip_and_bump <= 2, NULL );
     if( --skip_and_bump > 0 ) { // if both: task skipped and head&tail bumped
@@ -1085,8 +1098,9 @@ void generic_scheduler::cleanup_master() {
             __TBB_ASSERT ( governor::is_set(this), "Other thread reused our TLS key during the task pool cleanup" );
         }
     }
-#if _WIN32|_WIN64
     __TBB_ASSERT( s.my_market, NULL );
+    market *my_market = s.my_market;
+#if _WIN32|_WIN64
     s.my_market->unregister_master( s.master_exec_resource );
 #endif /* _WIN32|_WIN64 */
     arena* a = s.my_arena;
@@ -1115,7 +1129,11 @@ void generic_scheduler::cleanup_master() {
 #if __TBB_STATISTICS_EARLY_DUMP
     GATHER_STATISTIC( a->dump_arena_statistics() );
 #endif
+    if (governor::needsWaitWorkers())
+        my_market->prepare_wait_workers();
     a->on_thread_leaving</*is_master*/true>();
+    if (governor::needsWaitWorkers())
+        my_market->wait_workers();
 }
 
 } // namespace internal

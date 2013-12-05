@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -282,19 +282,15 @@ int main(int argc, char *argv[]) {
 
             // attach chopstick buffers and think function_nodes to joins
             for(int i = 0; i < num_philosophers; ++i) {
-                think_nodes[i]->register_successor(done_vector[i]);
-                done_vector[i].register_successor(input_port<0>(join_vector[i]));
-                places[i].register_successor(input_port<1>(join_vector[i])); // left chopstick
-                places[(i+1) % num_philosophers].register_successor(input_port<2>(join_vector[i]));  // right chopstick
-                // attach join to eat function_node
-                join_vector[i].register_successor(*(eat_nodes[i]));
-                // attach eat to forward mofn
-                make_edge(*(eat_nodes[i]), *(forward_nodes[i]));
-                // attach mofn to think function_nodes
-                output_port<0>(*(forward_nodes[i])).register_successor(*(think_nodes[i]));
-                // attach mofn to chopstick queues
-                output_port<1>(*(forward_nodes[i])).register_successor(places[i]);
-                output_port<2>(*(forward_nodes[i])).register_successor(places[(i+1) % num_philosophers]);
+                make_edge( *think_nodes[i], done_vector[i] );
+                make_edge( done_vector[i], input_port<0>(join_vector[i]) );
+                make_edge( places[i], input_port<1>(join_vector[i]) ); // left chopstick
+                make_edge( places[(i+1) % num_philosophers], input_port<2>(join_vector[i]) ); // right chopstick
+                make_edge( join_vector[i], *eat_nodes[i] );
+                make_edge( *eat_nodes[i], *forward_nodes[i] );
+                make_edge( output_port<0>(*forward_nodes[i]), *think_nodes[i] );
+                make_edge( output_port<1>(*forward_nodes[i]), places[i] );
+                make_edge( output_port<2>(*forward_nodes[i]), places[(i+1) % num_philosophers] );
             }
 
             // start all the philosophers thinking

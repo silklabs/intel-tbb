@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -234,8 +234,15 @@ void RunTests() {
 
     for (int i=0; i<THRDS; i++)
         thrs[i].join();
+
+#if !__TBB_WIN8UI_SUPPORT
+    //  TODO: to find out the way to find thread_id without GetThreadId and other
+    //  desktop functions.
+    //  Now tbb_thread does have its own thread_id that stores std::thread object
+    //  Test will fail in case it is run in desktop mode against New Windows*8 UI library
     for (int i=0; i<THRDS; i++)
         ASSERT(  real_ids[i] == uniq_ids[i], NULL );
+#endif
 
     int current_sum = sum;
     ASSERT( current_sum == 104, NULL );

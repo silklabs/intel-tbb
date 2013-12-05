@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -49,6 +49,10 @@ basic_tls<generic_scheduler*> governor::theTLS;
 unsigned governor::DefaultNumberOfThreads;
 rml::tbb_factory governor::theRMLServerFactory;
 bool governor::UsePrivateRML;
+const task_scheduler_init *governor::BlockingTSI;
+#if TBB_USE_ASSERT
+bool governor::IsBlockingTermiantionInProgress;
+#endif
 
 //------------------------------------------------------------------------
 // market data

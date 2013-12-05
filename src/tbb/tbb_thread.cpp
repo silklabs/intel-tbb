@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -56,7 +56,12 @@ void free_closure_v3( void *ptr )
 void tbb_thread_v3::join()
 {
     __TBB_ASSERT( joinable(), "thread should be joinable when join called" );
-#if _WIN32||_WIN64 
+#if _WIN32||_WIN64
+#if __TBB_WIN8UI_SUPPORT
+    std::thread* thread_tmp=(std::thread*)my_thread_id;
+    thread_tmp->join();
+    delete thread_tmp;
+#else // __TBB_WIN8UI_SUPPORT
     DWORD status = WaitForSingleObjectEx( my_handle, INFINITE, FALSE );
     if ( status == WAIT_FAILED )
         handle_win_error( GetLastError() );
@@ -64,11 +69,12 @@ void tbb_thread_v3::join()
     if ( close_stat == 0 )
         handle_win_error( GetLastError() );
     my_thread_id = 0;
+#endif // __TBB_WIN8UI_SUPPORT
 #else
     int status = pthread_join( my_handle, NULL );
     if( status )
         handle_perror( status, "pthread_join" );
-#endif // _WIN32||_WIN64 
+#endif // _WIN32||_WIN64
     my_handle = 0;
 }
 
@@ -90,17 +96,26 @@ void tbb_thread_v3::detach() {
 void tbb_thread_v3::internal_start( __TBB_NATIVE_THREAD_ROUTINE_PTR(start_routine),
                                     void* closure ) {
 #if _WIN32||_WIN64
+#if __TBB_WIN8UI_SUPPORT
+    std::thread* thread_tmp=new std::thread(start_routine, closure);
+    my_handle  = thread_tmp->native_handle();
+//  TODO: to find out the way to find thread_id without GetThreadId and other
+//  desktop functions.
+//  Now tbb_thread does have its own thread_id that stores std::thread object
+    my_thread_id = (size_t)thread_tmp;
+#else
     unsigned thread_id;
     // The return type of _beginthreadex is "uintptr_t" on new MS compilers,
     // and 'unsigned long' on old MS compilers.  uintptr_t works for both.
     uintptr_t status = _beginthreadex( NULL, ThreadStackSize, start_routine,
-                                     closure, 0, &thread_id ); 
+                                     closure, 0, &thread_id );
     if( status==0 )
         handle_perror(errno,"__beginthreadex");
     else {
         my_handle = (HANDLE)status;
         my_thread_id = thread_id;
     }
+#endif
 #else
     pthread_t thread_handle;
     int status;

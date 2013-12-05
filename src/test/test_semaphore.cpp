@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -105,7 +105,7 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
     REMARK( " sem(%d) with %d extra threads\n", semInitCnt, extraThreads);
     pCount = 0;
     NativeParallelFor(nThreads, myBody);
-    if(extraThreads == 0) { 
+    if(extraThreads == 0) {
         double allPWaits = 0;
         for(vector<double>::const_iterator j = totTimes.begin(); j != totTimes.end(); ++j) {
             allPWaits += *j;
@@ -130,14 +130,17 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
 
 void testOSVersion() {
 #if __TBB_USE_SRWLOCK
-     OSVERSIONINFO osvi;
      BOOL bIsWindowsVistaOrLater;
+#if  __TBB_WIN8UI_SUPPORT
+     bIsWindowsVistaOrLater = true;
+#else
+     OSVERSIONINFO osvi;
 
      memset( (void*)&osvi, 0, sizeof(OSVERSIONINFO) );
      osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
      GetVersionEx(&osvi);
-
      bIsWindowsVistaOrLater = (osvi.dwMajorVersion >= 6 );
+#endif
 
      if( bIsWindowsVistaOrLater ) {
         REMARK("Checking SRWLock is loaded\n");
@@ -161,7 +164,7 @@ struct Counter {
 
 //! Function object for use with parallel_for.h.
 template<typename C>
-struct AddOne: NoAssign { 
+struct AddOne: NoAssign {
     C& my_counter;
     /** Increments counter once for each iteration in the iteration space. */
     void operator()( int /*tid*/ ) const {
@@ -199,15 +202,15 @@ protected:
     unsigned curToken;
 public:
     FilterBase( FilterType ima_
-            ,unsigned totTokens_ 
-            ,tbb::atomic<unsigned>& myTokens_ 
+            ,unsigned totTokens_
+            ,tbb::atomic<unsigned>& myTokens_
             ,tbb::atomic<unsigned>& otherTokens_
             ,unsigned myWait_
-            ,semaphore &mySem_ 
+            ,semaphore &mySem_
             ,semaphore &nextSem_
             ,unsigned* myBuffer_
             ,unsigned* nextBuffer_
-            ) 
+            )
         : ima(ima_),totTokens(totTokens_),myTokens(myTokens_),otherTokens(otherTokens_),myWait(myWait_),mySem(mySem_),
           nextSem(nextSem_),myBuffer(myBuffer_),nextBuffer(nextBuffer_)
     {
@@ -232,19 +235,19 @@ void FilterBase::Produce(const int /*tid*/) {
     nextBuffer[0] = 0;  // just in case we provide no tokens
     sBarrier.wait();
     while(totTokens) {
-        while(!myTokens) 
+        while(!myTokens)
             mySem.P();
         // we have a slot available.
         --myTokens;  // moving this down reduces spurious wakeups
         --totTokens;
-        if(totTokens) 
+        if(totTokens)
             nextBuffer[curToken&(MAX_TOKENS-1)] = curToken*3+1;
         else
             nextBuffer[curToken&(MAX_TOKENS-1)] = (unsigned)NULL;
         ++curToken;
         Harness::Sleep(myWait);
         unsigned temp = ++otherTokens;
-        if(temp == 1) 
+        if(temp == 1)
             nextSem.V();
     }
     nextSem.V();  // final wakeup
@@ -254,7 +257,7 @@ void FilterBase::Consume(const int /*tid*/) {
     unsigned myToken;
     sBarrier.wait();
     do {
-        while(!myTokens) 
+        while(!myTokens)
             mySem.P();
         // we have a slot available.
         --myTokens;  // moving this down reduces spurious wakeups
@@ -264,7 +267,7 @@ void FilterBase::Consume(const int /*tid*/) {
             ++curToken;
             Harness::Sleep(myWait);
             unsigned temp = ++otherTokens;
-            if(temp == 1) 
+            if(temp == 1)
                 nextSem.V();
         }
     } while(myToken);

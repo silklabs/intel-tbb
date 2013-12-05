@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -172,6 +172,22 @@ template<> struct atomic_selector<8> {
 };
 
 }} // namespaces internal, tbb
+
+#define __TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(M)                                        \
+    inline void __TBB_machine_generic_store8##M(volatile void *ptr, int64_t value) {         \
+        for(;;) {                                                                            \
+            int64_t result = *(int64_t *)ptr;                                                \
+            if( __TBB_machine_cmpswp8##M(ptr,value,result)==result ) break;                  \
+        }                                                                                    \
+    }                                                                                        \
+
+#define __TBB_MACHINE_DEFINE_LOAD8_GENERIC_FENCED(M)                                         \
+    inline int64_t __TBB_machine_generic_load8##M(const volatile void *ptr) {                \
+        /* Comparand and new value may be anything, they only must be equal, and      */     \
+        /* the value should have a low probability to be actually found in 'location'.*/     \
+        const int64_t anyvalue = 2305843009213693951LL;                                      \
+        return __TBB_machine_cmpswp8##M(const_cast<volatile void *>(ptr),anyvalue,anyvalue); \
+    }                                                                                        \
 
 #if _WIN32||_WIN64
 
@@ -541,19 +557,21 @@ __TBB_MACHINE_DEFINE_ATOMIC_SELECTOR_FETCH_STORE(8)
 #endif /* __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE */
 
 #if __TBB_USE_GENERIC_DWORD_LOAD_STORE
-inline void __TBB_machine_store8 (volatile void *ptr, int64_t value) {
-    for(;;) {
-        int64_t result = *(int64_t *)ptr;
-        if( __TBB_machine_cmpswp8(ptr,value,result)==result ) break;
-    }
-}
+/*TODO: find a more elegant way to handle function names difference*/
+#if ! __TBB_USE_FENCED_ATOMICS
+    /* This name forwarding is needed for generic implementation of
+     * load8/store8 defined below (via macro) to pick the right CAS function*/
+    #define   __TBB_machine_cmpswp8full_fence __TBB_machine_cmpswp8
+#endif
+__TBB_MACHINE_DEFINE_LOAD8_GENERIC_FENCED(full_fence)
+__TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(full_fence)
 
-inline int64_t __TBB_machine_load8 (const volatile void *ptr) {
-    // Comparand and new value may be anything, they only must be equal, and
-    // the value should have a low probability to be actually found in 'location'.
-    const int64_t anyvalue = 2305843009213693951LL;
-    return __TBB_machine_cmpswp8(const_cast<volatile void *>(ptr),anyvalue,anyvalue);
-}
+#if ! __TBB_USE_FENCED_ATOMICS
+    #undef   __TBB_machine_cmpswp8full_fence
+#endif
+
+#define __TBB_machine_store8 tbb::internal::__TBB_machine_generic_store8full_fence
+#define __TBB_machine_load8  tbb::internal::__TBB_machine_generic_load8full_fence
 #endif /* __TBB_USE_GENERIC_DWORD_LOAD_STORE */
 
 #if __TBB_USE_GENERIC_HALF_FENCED_LOAD_STORE

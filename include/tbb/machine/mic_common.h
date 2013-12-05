@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -45,6 +45,10 @@
 
 /** FPU control setting **/
 #define __TBB_CPU_CTL_ENV_PRESENT 0
+
+/** Specifics **/
+#define __TBB_STEALING_ABORT_ON_CONTENTION 1
+#define __TBB_YIELD2P 1
 
 #if ! ( __FreeBSD__ || __linux__ )
     #error Intel(R) Many Integrated Core Compiler does not define __FreeBSD__ or __linux__ anymore. Check for the __TBB_XXX_BROKEN defined under __FreeBSD__ or __linux__.

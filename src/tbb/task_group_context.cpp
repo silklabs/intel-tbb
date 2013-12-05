@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -288,7 +288,7 @@ void task_group_context::bind_to ( generic_scheduler *local_sched ) {
         // repeated under the lock.
         if ( local_count_snapshot != the_context_state_propagation_epoch ) {
             // Another thread may be propagating state change right now. So resort to lock.
-            spin_mutex::scoped_lock lock(the_context_state_propagation_mutex);
+            context_state_propagation_mutex_type::scoped_lock lock(the_context_state_propagation_mutex);
             my_cancellation_requested = my_parent->my_cancellation_requested;
 #if __TBB_TASK_PRIORITY
             my_priority = my_parent->my_priority;
@@ -349,7 +349,7 @@ bool market::propagate_task_group_state ( T task_group_context::*mptr_state, tas
     // The whole propagation algorithm is under the lock in order to ensure correctness 
     // in case of concurrent state changes at the different levels of the context tree.
     // See the note 3 at the bottom of scheduler.cpp
-    spin_mutex::scoped_lock lock(the_context_state_propagation_mutex);
+    context_state_propagation_mutex_type::scoped_lock lock(the_context_state_propagation_mutex);
     if ( src.*mptr_state != new_state )
         // Another thread has concurrently changed the state. Back off.
         return false;

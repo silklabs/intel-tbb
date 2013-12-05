@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -169,17 +169,32 @@ static inline void __TBB_machine_and( volatile void *ptr, uint32_t addend ) {
 #define __TBB_fistpq "fistpq"
 #endif
 
-static inline int64_t __TBB_machine_load8 (const volatile void *ptr) {
+static inline int64_t __TBB_machine_aligned_load8 (const volatile void *ptr) {
+    __TBB_ASSERT(tbb::internal::is_aligned(ptr,8),"__TBB_machine_aligned_load8 should be used with 8 byte aligned locations only \n");
     int64_t result;
-    if( ((uint32_t)ptr&7u)==0 ) {
-        // Aligned load
-        __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
-                               __TBB_fistpq " %0" :  "=m"(result) : "m"(*(const __TBB_VOLATILE uint64_t*)ptr) : "memory" );
+    __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
+                           __TBB_fistpq " %0" :  "=m"(result) : "m"(*(const __TBB_VOLATILE uint64_t*)ptr) : "memory" );
+    return result;
+}
+
+static inline void __TBB_machine_aligned_store8 (volatile void *ptr, int64_t value ) {
+    __TBB_ASSERT(tbb::internal::is_aligned(ptr,8),"__TBB_machine_aligned_store8 should be used with 8 byte aligned locations only \n");
+    // Aligned store
+    __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
+                           __TBB_fistpq " %0" :  "=m"(*(__TBB_VOLATILE int64_t*)ptr) : "m"(value) : "memory" );
+}
+
+static inline int64_t __TBB_machine_load8 (const volatile void *ptr) {
+#if __TBB_FORCE_64BIT_ALIGNMENT_BROKEN
+    if( tbb::internal::is_aligned(ptr,8)) {
+#endif
+        return __TBB_machine_aligned_load8(ptr);
+#if __TBB_FORCE_64BIT_ALIGNMENT_BROKEN
     } else {
         // Unaligned load
-        result = __TBB_machine_cmpswp8(const_cast<void*>(ptr),0,0);
+        return __TBB_machine_cmpswp8(const_cast<void*>(ptr),0,0);
     }
-    return result;
+#endif
 }
 
 //! Handles misaligned 8-byte store
@@ -188,10 +203,11 @@ extern "C" void __TBB_machine_store8_slow( volatile void *ptr, int64_t value );
 extern "C" void __TBB_machine_store8_slow_perf_warning( volatile void *ptr );
 
 static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
-    if( ((uint32_t)ptr&7u)==0 ) {
-        // Aligned store
-        __asm__ __volatile__ ( __TBB_fildq  " %1\n\t"
-                               __TBB_fistpq " %0" :  "=m"(*(__TBB_VOLATILE int64_t*)ptr) : "m"(value) : "memory" );
+#if __TBB_FORCE_64BIT_ALIGNMENT_BROKEN
+    if( tbb::internal::is_aligned(ptr,8)) {
+#endif
+        __TBB_machine_aligned_store8(ptr,value);
+#if __TBB_FORCE_64BIT_ALIGNMENT_BROKEN
     } else {
         // Unaligned store
 #if TBB_USE_PERFORMANCE_WARNINGS
@@ -199,6 +215,7 @@ static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
 #endif /* TBB_USE_PERFORMANCE_WARNINGS */
         __TBB_machine_store8_slow(ptr,value);
     }
+#endif
 }
  
 // Machine specific atomic operations

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -134,7 +134,7 @@ void init_tbbmalloc() {
 /* Preventing TBB allocator library from unloading to prevent
    resource leak, as memory is not released on the library unload.
 */
-#if USE_WINTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED
+#if USE_WINTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED && !__TBB_WIN8UI_SUPPORT
     // Prevent Windows from displaying message boxes if it fails to load library
     UINT prev_mode = SetErrorMode (SEM_FAILCRITICALERRORS);
     HMODULE lib = LoadLibrary(MALLOCLIB_NAME);
@@ -145,7 +145,7 @@ void init_tbbmalloc() {
 
 #if !__TBB_SOURCE_DIRECTLY_INCLUDED
 #if USE_WINTHREAD
-extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
+extern "C" BOOL WINAPI DllMain( HINSTANCE /*hInst*/, DWORD callReason, LPVOID )
 {
 
     if (callReason==DLL_THREAD_DETACH)

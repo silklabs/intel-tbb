@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 1
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6101
+#define TBB_INTERFACE_VERSION 6102
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -98,30 +98,6 @@
     - \subpage parallel_scan_body_req
     - \subpage parallel_sort_iter_req
 **/
-
-// Define preprocessor symbols used to determine architecture
-#if _WIN32||_WIN64
-#   if defined(_M_X64)||defined(__x86_64__)  // the latter for MinGW support
-#       define __TBB_x86_64 1
-#   elif defined(_M_IA64)
-#       define __TBB_ipf 1
-#   elif defined(_M_IX86)||defined(__i386__) // the latter for MinGW support
-#       define __TBB_x86_32 1
-#   endif
-#else /* Assume generic Unix */
-#   if !__linux__ && !__APPLE__
-#       define __TBB_generic_os 1
-#   endif
-#   if __x86_64__
-#       define __TBB_x86_64 1
-#   elif __ia64__
-#       define __TBB_ipf 1
-#   elif __i386__||__i386  // __i386 is for Sun OS
-#       define __TBB_x86_32 1
-#   else
-#       define __TBB_generic_arch 1
-#   endif
-#endif
 
 // tbb_config.h should be included the first since it contains macro definitions used in other headers
 #include "tbb_config.h"
@@ -380,6 +356,11 @@ inline size_t size_t_select( unsigned u, unsigned long long ull ) {
     return (sizeof(size_t)==sizeof(u)) ? size_t(u) : size_t(ull);
 }
 
+template<typename T>
+static inline bool is_aligned(T* pointer, uintptr_t alignment) {
+    return 0==((uintptr_t)pointer & (alignment-1));
+}
+
 // Struct to be used as a version tag for inline functions.
 /** Version tag can be necessary to prevent loader on Linux from using the wrong 
     symbol in debug builds (when inline functions are compiled as out-of-line). **/
@@ -391,6 +372,29 @@ typedef version_tag_v3 version_tag;
 //! @endcond
 
 } // tbb
+
+namespace tbb { namespace internal {
+template <bool condition>
+struct STATIC_ASSERTION_FAILED;
+
+template <>
+struct STATIC_ASSERTION_FAILED<false> { enum {value=1};};
+
+template<>
+struct STATIC_ASSERTION_FAILED<true>; //intentionally left undefined to cause compile time error
+}} // namespace tbb { namespace internal {
+
+#if    __TBB_STATIC_ASSERT_PRESENT
+#define __TBB_STATIC_ASSERT(condition,msg) static_assert(condition,msg)
+#else
+//please note condition is intentionally inverted to get a bit more understandable error msg
+#define __TBB_STATIC_ASSERT_IMPL1(condition,msg,line)       \
+    enum {static_assert_on_line_##line = tbb::internal::STATIC_ASSERTION_FAILED<!(condition)>::value}
+
+#define __TBB_STATIC_ASSERT_IMPL(condition,msg,line) __TBB_STATIC_ASSERT_IMPL1(condition,msg,line)
+//! Verify at compile time that passed in condition is hold
+#define __TBB_STATIC_ASSERT(condition,msg) __TBB_STATIC_ASSERT_IMPL(condition,msg,__LINE__)
+#endif
 
 #endif /* RC_INVOKED */
 #endif /* __TBB_tbb_stddef_H */

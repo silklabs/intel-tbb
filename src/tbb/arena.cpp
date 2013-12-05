@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -306,7 +306,7 @@ void arena::dump_arena_statistics () {
 #endif /* __TBB_STATISTICS */
 
 #if __TBB_TASK_PRIORITY
-// TODO: This function seems deserving refactoring
+// TODO: This function seems deserving refactoring, e.g. get rid of 's'
 inline bool arena::may_have_tasks ( generic_scheduler* s, arena_slot& slot, bool& tasks_present, bool& dequeuing_possible ) {
     suppress_unused_warning(slot);
     if ( !s ) {
@@ -383,6 +383,7 @@ bool arena::is_out_of_work() {
                         // may be destroyed at any moment (workers' schedulers are 
                         // guaranteed to be alive while at least one thread is in arena).
                         // Have to exclude concurrency with task group state change propagation too.
+                        // TODO: check whether it is still necessary since some pools belong to slots now
                         my_market->my_arenas_list_mutex.lock();
                         generic_scheduler *s = my_slots[0].my_scheduler;
                         if ( s && __TBB_CompareAndSwapW(&my_slots[0].my_scheduler, (intptr_t)LockedMaster, (intptr_t)s) == (intptr_t)s ) {
@@ -561,6 +562,10 @@ void task_arena::internal_enqueue( task& t, intptr_t prio ) const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT(s, "Scheduler is not initialized");
+#if __TBB_TASK_GROUP_CONTEXT
+    __TBB_ASSERT(s->my_innermost_running_task->prefix().context == t.prefix().context, "using non-default context? consider reimplement code below");
+    t.prefix().context = my_arena->my_default_ctx;
+#endif
     my_arena->enqueue_task( t,
 #if __TBB_TASK_PRIORITY
                             (priority_t)prio,

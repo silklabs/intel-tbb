@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -146,11 +146,21 @@ void market::release () {
         my_server->request_close_connection();
 }
 
+void market::wait_workers () {
+    // usable for this kind of scheduler only
+    __TBB_ASSERT(governor::needsWaitWorkers(), NULL);
+    // wait till terminating last worker decresed my_ref_count
+    while (__TBB_load_with_acquire(my_ref_count) > 1)
+        __TBB_Yield();
+    __TBB_ASSERT(1 == my_ref_count, NULL);
+    release();
+}
+
 arena& market::create_arena ( unsigned max_num_workers, size_t stack_size ) {
     market &m = global_market( max_num_workers, stack_size ); // increases market's ref count
     arena& a = arena::allocate_arena( m, min(max_num_workers, m.my_max_num_workers) );
     // Add newly created arena into the existing market's list.
-    spin_mutex::scoped_lock lock(m.my_arenas_list_mutex);
+    arenas_list_mutex_type::scoped_lock lock(m.my_arenas_list_mutex);
     m.insert_arena_into_list(a);
     return a;
 }
@@ -169,7 +179,7 @@ void market::detach_arena ( arena& a ) {
 
 void market::try_destroy_arena ( arena* a, uintptr_t aba_epoch ) {
     __TBB_ASSERT ( a, NULL );
-    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
+    arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
     assert_market_valid();
 #if __TBB_TASK_PRIORITY
     for ( int p = my_global_top_priority; p >= my_global_bottom_priority; --p ) {
@@ -290,7 +300,7 @@ arena* market::arena_in_need (
 #endif /* __TBB_TRACK_PRIORITY_LEVEL_SATURATION */
                              )
 {
-    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
+    arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
     assert_market_valid();
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
     if ( prev_arena ) {
@@ -519,7 +529,7 @@ void market::update_arena_top_priority ( arena& a, intptr_t new_priority ) {
 }
 
 bool market::lower_arena_priority ( arena& a, intptr_t new_priority, intptr_t old_priority ) {
-    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
+    arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
     if ( a.my_top_priority != old_priority ) {
         assert_market_valid();
         return false;
@@ -545,7 +555,7 @@ bool market::lower_arena_priority ( arena& a, intptr_t new_priority, intptr_t ol
 }
 
 bool market::update_arena_priority ( arena& a, intptr_t new_priority ) {
-    spin_mutex::scoped_lock lock(my_arenas_list_mutex);
+    arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
     if ( a.my_top_priority == new_priority ) {
         assert_market_valid();
         return false;

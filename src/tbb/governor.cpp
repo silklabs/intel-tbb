@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -26,6 +26,8 @@
     the GNU General Public License.
 */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "governor.h"
 #include "tbb_main.h"
 #include "scheduler.h"
@@ -148,6 +150,13 @@ void governor::sign_off(generic_scheduler* s) {
 #endif /* __TBB_SURVIVE_THREAD_SWITCH */
 }
 
+void governor::setBlockingTerminate(const task_scheduler_init *tsi) {
+    __TBB_ASSERT(!IsBlockingTermiantionInProgress, "It's impossible to create task_scheduler_init while blocking termination is in progress.");
+    if (BlockingTSI)
+        throw_exception(eid_blocking_sch_init);
+    BlockingTSI = tsi;
+}
+
 generic_scheduler* governor::init_scheduler( unsigned num_threads, stack_size_type stack_size, bool auto_init ) {
     if( !__TBB_InitOnce::initialization_done() )
         DoOneTimeInitializations();
@@ -168,16 +177,34 @@ generic_scheduler* governor::init_scheduler( unsigned num_threads, stack_size_ty
     return s;
 }
 
-void governor::terminate_scheduler( generic_scheduler* s ) {
+void governor::terminate_scheduler( generic_scheduler* s, const task_scheduler_init* tsi_ptr ) {
     __TBB_ASSERT( s == theTLS.get(), "Attempt to terminate non-local scheduler instance" );
-    if( !--(s->my_ref_count) )
+    if (--(s->my_ref_count)) {
+        if (BlockingTSI && BlockingTSI==tsi_ptr) {
+            // can't throw exception, because this is on dtor's call chain
+            fprintf(stderr, "Attempt to terminate nested scheduler in blocking mode\n");
+            exit(1);
+        }
+    } else {
+#if TBB_USE_ASSERT
+        if (BlockingTSI) {
+            __TBB_ASSERT( BlockingTSI == tsi_ptr, "For blocking termiantion last terminate_scheduler must be blocking." );
+            IsBlockingTermiantionInProgress = true;
+        }
+#endif
         s->cleanup_master();
+        BlockingTSI = NULL;
+#if TBB_USE_ASSERT
+        IsBlockingTermiantionInProgress = false;
+#endif
+    }
 }
 
 void governor::auto_terminate(void* arg){
     generic_scheduler* s = static_cast<generic_scheduler*>(arg);
     if( s && s->my_auto_initialized ) {
         if( !--(s->my_ref_count) ) {
+            __TBB_ASSERT( !BlockingTSI, "Blocking auto-termiante is not supported." );
             // If the TLS slot is already cleared by OS or underlying concurrency
             // runtime, restore its value.
             if ( !theTLS.get() )
@@ -275,10 +302,17 @@ void task_scheduler_init::initialize( int number_of_threads, stack_size_type thr
 #endif
     thread_stack_size &= ~(stack_size_type)propagation_mode_mask;
     if( number_of_threads!=deferred ) {
+        bool blocking_terminate = false;
+        if (my_scheduler == (scheduler*)wait_workers_in_terminate_flag) {
+            blocking_terminate = true;
+            my_scheduler = NULL;
+        }
         __TBB_ASSERT( !my_scheduler, "task_scheduler_init already initialized" );
         __TBB_ASSERT( number_of_threads==-1 || number_of_threads>=1,
                     "number_of_threads for task_scheduler_init must be -1 or positive" );
-        internal::generic_scheduler *s = governor::init_scheduler( number_of_threads, thread_stack_size );
+        if (blocking_terminate)
+            governor::setBlockingTerminate(this);
+        internal::generic_scheduler *s = governor::init_scheduler( number_of_threads, thread_stack_size, /*auto_init=*/false );
 #if __TBB_TASK_GROUP_CONTEXT && TBB_USE_EXCEPTIONS
         if ( s->master_outermost_level() ) {
             uintptr_t &vt = s->default_context()->my_version_and_traits;
@@ -313,7 +347,7 @@ void task_scheduler_init::terminate() {
                                         : vt & ~task_group_context::exact_exception;
     }
 #endif /* __TBB_TASK_GROUP_CONTEXT && TBB_USE_EXCEPTIONS */
-    governor::terminate_scheduler(s);
+    governor::terminate_scheduler(s, this);
 }
 
 int task_scheduler_init::default_num_threads() {

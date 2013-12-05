@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -60,7 +60,9 @@
 #include "tbb/spin_rw_mutex.h"
 #include "tbb/aligned_space.h"
 #include "tbb/atomic.h"
+#define __TBB_concurrent_unordered_set_H
 #include "tbb/internal/_concurrent_unordered_impl.h"
+#undef __TBB_concurrent_unordered_set_H
 // for test
 #include "tbb/spin_mutex.h"
 #include "time_framework.h"
@@ -265,4 +267,3 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-

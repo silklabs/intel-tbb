@@ -1,4 +1,4 @@
-# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -109,7 +109,7 @@ ifneq ($(BUILDING_PHASE),1)
  # definitions for top-level Makefiles
  origin_build_dir:=$(origin tbb_build_dir)
  tbb_build_dir?=$(tbb_root)$(SLASH)build
- tbb_build_prefix?=$(tbb_os)_$(arch)_$(compiler)_$(runtime)
+ tbb_build_prefix?=$(tbb_os)_$(arch)_$(compiler)_$(runtime)$(CPF_SUFFIX)
  work_dir=$(tbb_build_dir)$(SLASH)$(tbb_build_prefix)
 endif  # BUILDING_PHASE != 1
 

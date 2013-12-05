@@ -1,4 +1,4 @@
-# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -91,6 +91,11 @@ endif
 ifeq ($(cfg), debug)
         CPLUS_FLAGS = -g -O0 -DTBB_USE_DEBUG
 endif
+
+ifneq (00,$(lambdas)$(cpp0x))
+    CXX_ONLY_FLAGS += $(CPP11_FLAGS)
+endif
+
 CPLUS_FLAGS += -DUSE_WINTHREAD
 CPLUS_FLAGS += -D_WIN32_WINNT=$(_WIN32_WINNT)
 

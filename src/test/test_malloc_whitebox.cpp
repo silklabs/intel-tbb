@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -99,7 +99,7 @@ public:
         // push to maximal cache limit
         for (int i=0; i<2; i++) {
             const int sizes[] = { MByte/sizeof(int),
-                                  (MByte-2*largeBlockCacheStep)/sizeof(int) };
+                                  (MByte-2*LargeObjectCache::largeBlockCacheStep)/sizeof(int) };
             for (int q=0; q<2; q++) {
                 size_t curr = 0;
                 for (int j=0; j<LARGE_MEM_SIZES_NUM; j++, curr++)
@@ -438,7 +438,7 @@ void TestPools() {
     pool_free(fixedPool, largeObj);
 
     // provoke large object cache cleanup and hope no leaks occurs
-    for (size_t sz=minLargeObjectSize; sz<1*1024*1024; sz+=largeBlockCacheStep) {
+    for (size_t sz=minLargeObjectSize; sz<1*1024*1024; sz+=LargeObjectCache::largeBlockCacheStep) {
         ptr = pool_malloc(mallocPool, sz);
         ASSERT(ptr, "Memory was not allocated");
         memset(ptr, sz, sz);
@@ -456,24 +456,24 @@ void TestPools() {
         void *p[5];
         pool_create_v1(0, &pol, &mallocPool);
         const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
-        p[3] = pool_malloc(mallocPool, minLargeObjectSize+2*largeBlockCacheStep);
+        p[3] = pool_malloc(mallocPool, minLargeObjectSize+2*LargeObjectCache::largeBlockCacheStep);
         for (int i=0; i<10; i++) {
             p[0] = pool_malloc(mallocPool, minLargeObjectSize);
-            p[1] = pool_malloc(mallocPool, minLargeObjectSize+largeBlockCacheStep);
+            p[1] = pool_malloc(mallocPool, minLargeObjectSize+LargeObjectCache::largeBlockCacheStep);
             pool_free(mallocPool, p[0]);
             pool_free(mallocPool, p[1]);
         }
         ASSERT(loc->getUsedSize(), NULL);
         pool_free(mallocPool, p[3]);
-        ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
+        ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+LargeObjectCache::largeBlockCacheStep), NULL);
         const size_t maxLocalLOCSize = LocalLOC<3,30>::getMaxSize();
         ASSERT(loc->getUsedSize() <= maxLocalLOCSize, NULL);
         for (int i=0; i<3; i++)
-            p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+            p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*LargeObjectCache::largeBlockCacheStep);
         size_t currUser = loc->getUsedSize();
-        ASSERT(!loc->getLOCSize() && currUser >= 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
-        p[4] = pool_malloc(mallocPool, minLargeObjectSize+3*largeBlockCacheStep);
-        ASSERT(loc->getUsedSize() - currUser >= minLargeObjectSize+3*largeBlockCacheStep, NULL);
+        ASSERT(!loc->getLOCSize() && currUser >= 3*(minLargeObjectSize+LargeObjectCache::largeBlockCacheStep), NULL);
+        p[4] = pool_malloc(mallocPool, minLargeObjectSize+3*LargeObjectCache::largeBlockCacheStep);
+        ASSERT(loc->getUsedSize() - currUser >= minLargeObjectSize+3*LargeObjectCache::largeBlockCacheStep, NULL);
         pool_free(mallocPool, p[4]);
         ASSERT(loc->getUsedSize() <= currUser+maxLocalLOCSize, NULL);
         pool_reset(mallocPool);
@@ -488,11 +488,11 @@ void TestPools() {
         rml::internal::ExtMemoryPool *mPool = &((rml::internal::MemoryPool*)mallocPool)->extMemPool;
         const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
         for (int i=0; i<22; i++) {
-            void *o = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+            void *o = pool_malloc(mallocPool, minLargeObjectSize+i*LargeObjectCache::largeBlockCacheStep);
             bool ret = lLOC.put(((LargeObjectHdr*)o - 1)->memoryBlock, mPool);
             ASSERT(ret, NULL);
 
-            o = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+            o = pool_malloc(mallocPool, minLargeObjectSize+i*LargeObjectCache::largeBlockCacheStep);
             ret = lLOC.put(((LargeObjectHdr*)o - 1)->memoryBlock, mPool);
             ASSERT(ret, NULL);
         }

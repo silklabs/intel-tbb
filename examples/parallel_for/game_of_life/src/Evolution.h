@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -161,7 +161,7 @@ public:
 
 /**
     class ParallelEvolution - derived from Evolution - calculate life generations
-    in parallel using Intel's TBB package
+    in parallel using Intel(R) TBB
 **/
 #ifndef _CONSOLE
 public ref class ParallelEvolution: public Evolution

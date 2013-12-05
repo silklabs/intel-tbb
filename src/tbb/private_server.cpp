@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -30,7 +30,7 @@
 #include "../server/thread_monitor.h"
 #include "tbb/atomic.h"
 #include "tbb/cache_aligned_allocator.h"
-#include "tbb/spin_mutex.h"
+#include "scheduler_common.h"
 #include "governor.h"
 #include "tbb_misc.h"
 
@@ -39,6 +39,8 @@ using rml::internal::thread_monitor;
 namespace tbb {
 namespace internal {
 namespace rml {
+
+typedef thread_monitor::handle_type thread_handle;
 
 class private_server;
 
@@ -81,6 +83,11 @@ class private_worker: no_copy {
         "my_slack<=0 && my_state==st_normal && I am on server's list of asleep threads" */
     thread_monitor my_thread_monitor;
 
+    //! Handle of the OS thread associated with this worker
+    thread_handle my_handle;
+
+    atomic<bool> my_handle_ready; // make atomic to add fences
+
     //! Link for list of workers that are sleeping or have no associated thread.
     private_worker* my_next;
 
@@ -103,9 +110,9 @@ protected:
         my_client(client),
         my_index(i)
     {
+        my_handle_ready = false;
         my_state = st_init;
     }
-
 };
 
 static const size_t cache_line_size = tbb::internal::NFS_MaxLineSize;
@@ -150,7 +157,8 @@ class private_server: public tbb_server, no_copy {
     tbb::atomic<private_worker*> my_asleep_list_root;
 
     //! Protects my_asleep_list_root
-    tbb::spin_mutex my_asleep_list_mutex;
+    typedef scheduler_mutex_type asleep_list_mutex_type;
+    asleep_list_mutex_type my_asleep_list_mutex;
 
 #if TBB_USE_ASSERT
     atomic<int> my_net_slack_requests;
@@ -251,6 +259,17 @@ void private_worker::start_shutdown() {
         // Perform action that otherwise would be performed by associated thread when it quits.
         my_server.remove_server_ref();
     }
+    // Do not need join for st_init state,
+    // because in this case the thread wasn't started yet.
+    if (s!=st_init) {
+        while (!my_handle_ready)
+            __TBB_Yield();
+        // my_handle is valid at this point
+        if (governor::needsWaitWorkers())
+            thread_monitor::join(my_handle);
+        else
+            thread_monitor::detach_thread(my_handle);
+    }
 }
 
 void private_worker::run() {
@@ -287,15 +306,16 @@ void private_worker::run() {
 inline void private_worker::wake_or_launch() {
     if( my_state==st_init && my_state.compare_and_swap( st_starting, st_init )==st_init ) {
 #if USE_WINTHREAD
-        thread_monitor::launch( thread_routine, this, my_server.my_stack_size, &this->my_index );
+        my_handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size, &this->my_index );
 #elif USE_PTHREAD
         {
         affinity_helper fpa;
         fpa.protect_affinity_mask();
-        thread_monitor::launch( thread_routine, this, my_server.my_stack_size );
+        my_handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size );
         // Implicit destruction of fpa resets original affinity mask.
         }
 #endif /* USE_PTHREAD */
+        my_handle_ready = true;
     }
     else
         my_thread_monitor.notify();
@@ -334,7 +354,7 @@ private_server::~private_server() {
 }
 
 inline bool private_server::try_insert_in_asleep_list( private_worker& t ) {
-    tbb::spin_mutex::scoped_lock lock(my_asleep_list_mutex);
+    asleep_list_mutex_type::scoped_lock lock(my_asleep_list_mutex);
     // Contribute to slack under lock so that if another takes that unit of slack,
     // it sees us sleeping on the list and wakes us up.
     int k = ++my_slack;
@@ -353,7 +373,7 @@ void private_server::wake_some( int additional_slack ) {
     private_worker* wakee[2];
     private_worker**w = wakee;
     {
-        tbb::spin_mutex::scoped_lock lock(my_asleep_list_mutex);
+        asleep_list_mutex_type::scoped_lock lock(my_asleep_list_mutex);
         while( my_asleep_list_root && w<wakee+2 ) {
             if( additional_slack>0 ) {
                 if (additional_slack+my_slack<=0) // additional demand does not exceed surplus supply
@@ -398,4 +418,5 @@ tbb_server* make_private_server( tbb_client& client ) {
         
 } // namespace rml
 } // namespace internal
+
 } // namespace tbb

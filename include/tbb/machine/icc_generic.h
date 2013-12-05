@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -77,46 +77,40 @@ typedef enum memory_order {
     memory_order_release, memory_order_acq_rel, memory_order_seq_cst
 } memory_order;
 
+namespace icc_intrinsics_port {
+    template <typename T>
+    T convert_argument(T value){
+        return value;
+    }
+    //The overload below is needed to have explicit conversion of pointer to void* in argument list.
+    //compiler bug?
+    //TODO: add according broken macro and recheck with ICC 13.0 if the overload is still needed
+    template <typename T>
+    void* convert_argument(T* value){
+        return (void*)value;
+    }
+}
+//TODO: code bellow is a bit repetitive, consider simplifying it
 template <typename T, size_t S>
 struct machine_load_store {
     static T load_with_acquire ( const volatile T& location ) {
         return __atomic_load_explicit(&location, memory_order_acquire);
     }
     static void store_with_release ( volatile T &location, T value ) {
-        __atomic_store_explicit(&location, value, memory_order_release);
+        __atomic_store_explicit(&location, icc_intrinsics_port::convert_argument(value), memory_order_release);
     }
 };
-//The specializations below are needed to have explicit conversion of pointer to void* in argument list.
-//compiler bug?
-//TODO: move to workaround to separate layer by wrapping the call to __atomic_store_explicit in overloaded template function
-template <typename T, size_t S>
-struct machine_load_store<T*, S> {
-    static T* load_with_acquire ( T* const volatile & location ) {
-        return __atomic_load_explicit(&location, memory_order_acquire);
-    }
-    static void store_with_release ( T* volatile &location, T* value ) {
-        __atomic_store_explicit(&location, (void*) value, memory_order_release);
-    }
-};
+
 template <typename T, size_t S>
 struct machine_load_store_relaxed {
     static inline T load ( const T& location ) {
         return __atomic_load_explicit(&location, memory_order_relaxed);
     }
     static inline void store (  T& location, T value ) {
-        __atomic_store_explicit(&location, value, memory_order_relaxed);
+        __atomic_store_explicit(&location, icc_intrinsics_port::convert_argument(value), memory_order_relaxed);
     }
 };
 
-template <typename T, size_t S>
-struct machine_load_store_relaxed<T*, S> {
-    static inline T* load ( T* const& location ) {
-        return (T*)__atomic_load_explicit(&location, memory_order_relaxed);
-    }
-    static inline void store (  T*& location, T* value ) {
-        __atomic_store_explicit(&location, (void*)value, memory_order_relaxed);
-    }
-};
 template <typename T, size_t S>
 struct machine_load_store_seq_cst {
     static T load ( const volatile T& location ) {
@@ -127,6 +121,7 @@ struct machine_load_store_seq_cst {
         __atomic_store_explicit(&location, value, memory_order_seq_cst);
     }
 };
+
 }} // namespace tbb::internal
 
 namespace tbb{ namespace internal { namespace icc_intrinsics_port{
@@ -182,6 +177,76 @@ __TBB_MACHINE_DEFINE_ATOMICS(8,tbb::internal::int64_t, relaxed)
 
 #define __TBB_USE_FENCED_ATOMICS                            1
 
+namespace tbb { namespace internal {
+#if __TBB_FORCE_64BIT_ALIGNMENT_BROKEN
+__TBB_MACHINE_DEFINE_LOAD8_GENERIC_FENCED(full_fence)
+__TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(full_fence)
+
+__TBB_MACHINE_DEFINE_LOAD8_GENERIC_FENCED(acquire)
+__TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(release)
+
+__TBB_MACHINE_DEFINE_LOAD8_GENERIC_FENCED(relaxed)
+__TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(relaxed)
+
+template <typename T>
+struct machine_load_store<T,8> {
+    static T load_with_acquire ( const volatile T& location ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            return __atomic_load_explicit(&location, memory_order_acquire);
+        } else {
+            return __TBB_machine_generic_load8acquire(&location);
+        }
+    }
+    static void store_with_release ( volatile T &location, T value ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            __atomic_store_explicit(&location, icc_intrinsics_port::convert_argument(value), memory_order_release);
+        } else {
+            return __TBB_machine_generic_store8release(&location,value);
+        }
+    }
+};
+
+template <typename T>
+struct machine_load_store_relaxed<T,8> {
+    static T load( const volatile T& location ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            return __atomic_load_explicit(&location, memory_order_relaxed);
+        } else {
+            return __TBB_machine_generic_load8relaxed(&location);
+        }
+    }
+    static void store( volatile T &location, T value ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            __atomic_store_explicit(&location, icc_intrinsics_port::convert_argument(value), memory_order_relaxed);
+        } else {
+            return __TBB_machine_generic_store8relaxed(&location,value);
+        }
+    }
+};
+
+template <typename T >
+struct machine_load_store_seq_cst<T,8> {
+    static T load ( const volatile T& location ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            return __atomic_load_explicit(&location, memory_order_seq_cst);
+        } else {
+            return __TBB_machine_generic_load8full_fence(&location);
+        }
+
+    }
+
+    static void store ( volatile T &location, T value ) {
+        if( tbb::internal::is_aligned(&location,8)) {
+            __atomic_store_explicit(&location, value, memory_order_seq_cst);
+        } else {
+            return __TBB_machine_generic_store8full_fence(&location,value);
+        }
+
+    }
+};
+
+#endif
+}} // namespace tbb::internal
 template <typename T>
 inline void __TBB_machine_OR( T *operand, T addend ) {
     __atomic_fetch_or_explicit(operand, addend, tbb::internal::memory_order_seq_cst);

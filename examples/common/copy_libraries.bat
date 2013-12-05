@@ -1,6 +1,6 @@
 @echo off
 REM
-REM Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+REM Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 REM
 REM This file is part of Threading Building Blocks.
 REM
@@ -41,7 +41,6 @@ if ("%4") NEQ ("") set TBBROOT=%4
 if ("%TBBROOT%") == ("") set TBBROOT=%~d0%~p0..\..\
 
 :: Getting vs folders in case vc_mt binaries are not provided
-if ("%VS80COMNTOOLS%")  NEQ ("") set vc_dir=vc8
 if ("%VS90COMNTOOLS%")  NEQ ("") set vc_dir=vc9
 if ("%VS100COMNTOOLS%") NEQ ("") set vc_dir=vc10
 if ("%VS110COMNTOOLS%") NEQ ("") set vc_dir=vc11

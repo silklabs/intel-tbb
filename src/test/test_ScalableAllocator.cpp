@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -136,7 +136,7 @@ void TestSmallFixedSizePool()
 }
 
 int TestMain () {
-#if _MSC_VER && !__TBBMALLOC_NO_IMPLICIT_LINKAGE
+#if _MSC_VER && !__TBBMALLOC_NO_IMPLICIT_LINKAGE && !__TBB_WIN8UI_SUPPORT
     #ifdef _DEBUG
         ASSERT(!GetModuleHandle("tbbmalloc.dll") && GetModuleHandle("tbbmalloc_debug.dll"),
             "test linked with wrong (non-debug) tbbmalloc library");

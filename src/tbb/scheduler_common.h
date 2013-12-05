@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -58,9 +58,11 @@
     #undef private
 #endif
 
-#if __TBB_TASK_GROUP_CONTEXT
+#ifndef __TBB_SCHEDULER_MUTEX_TYPE
+#define __TBB_SCHEDULER_MUTEX_TYPE tbb::spin_mutex
+#endif
+// TODO: add conditional inclusion based on specified type
 #include "tbb/spin_mutex.h"
-#endif /* __TBB_TASK_GROUP_CONTEXT */
 
 // This macro is an attempt to get rid of ugly ifdefs in the shared parts of the code.
 // It drops the second argument depending on whether the controlling macro is defined.
@@ -116,6 +118,9 @@ inline intptr_t& priority ( task& t ) {
 }
 #endif /* __TBB_TASK_PRIORITY */
 
+//! Mutex type for global locks in the scheduler
+typedef __TBB_SCHEDULER_MUTEX_TYPE scheduler_mutex_type;
+
 #if __TBB_TASK_GROUP_CONTEXT
 //! Task group state change propagation global epoch
 /** Together with generic_scheduler::my_context_state_propagation_epoch forms
@@ -131,7 +136,8 @@ extern uintptr_t the_context_state_propagation_epoch;
 
 //! Mutex guarding state change propagation across task groups forest.
 /** Also protects modification of related data structures. **/
-extern spin_mutex the_context_state_propagation_mutex;
+typedef scheduler_mutex_type context_state_propagation_mutex_type;
+extern context_state_propagation_mutex_type the_context_state_propagation_mutex;
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 //! Alignment for a task object

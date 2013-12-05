@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -143,6 +143,9 @@ void throw_exception_v4 ( exception_id eid ) {
     case eid_reservation_length_error: DO_THROW( length_error, ("reservation size exceeds permitted max size") );
     case eid_invalid_key: DO_THROW( out_of_range, ("invalid key") );
     case eid_user_abort: DO_THROW( user_abort, () );
+#if __TBB_SUPPORTS_WORKERS_WAITING_IN_TERMINATE
+    case eid_blocking_sch_init: DO_THROW( runtime_error, ("Nesting of blocking termiantion is impossible") );
+#endif
     default: break;
     }
 #if !TBB_USE_EXCEPTIONS && __APPLE__

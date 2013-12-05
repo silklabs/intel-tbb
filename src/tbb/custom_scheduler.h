@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -155,6 +155,7 @@ task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic ref
         }
     }
 #endif /* __TBB_TASK_PRIORITY */
+    int yield_count = 0;
     // The state "failure_count==-1" is used only when itt_possible is true,
     // and denotes that a sync_prepare has not yet been issued.
     for( int failure_count = -static_cast<int>(SchedulerTraits::itt_possible);; ++failure_count) {
@@ -256,8 +257,13 @@ fail:
         }
         // Pause, even if we are going to yield, because the yield might return immediately.
         __TBB_Pause(PauseTime);
-        int yield_threshold = 2*int(n);
-        if( failure_count>=yield_threshold ) {
+        const int failure_threshold = 2*int(n);
+        if( failure_count>=failure_threshold ) {
+#if __TBB_YIELD2P
+            failure_count = 0;
+#else
+            failure_count = failure_threshold;
+#endif
             __TBB_Yield();
 #if __TBB_TASK_PRIORITY
             // Check if there are tasks abandoned by other workers
@@ -285,7 +291,8 @@ fail:
                 }
             }
 #endif /* __TBB_TASK_PRIORITY */
-            if( failure_count>=yield_threshold+100 ) {
+            const int yield_threshold = 100;
+            if( yield_count++ >= yield_threshold ) {
                 // When a worker thread has nothing to do, return it to RML.
                 // For purposes of affinity support, the thread is considered idle while in RML.
 #if __TBB_TASK_PRIORITY
@@ -315,7 +322,6 @@ fail:
                     }
                 }
 #endif /* __TBB_TASK_PRIORITY */
-                failure_count = yield_threshold;
             } // end of arena snapshot branch
         } // end of yielding branch
     } // end of nonlocal task retrieval loop

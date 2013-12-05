@@ -1,4 +1,4 @@
-# Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -74,6 +74,12 @@ NUL= /dev/null
 SLASH=/
 MAKE_VERSIONS=sh $(tbb_root)/build/version_info_macos.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.ver
 MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh
+
+ifdef DYLD_LIBRARY_PATH
+        export DYLD_LIBRARY_PATH := .:$(DYLD_LIBRARY_PATH)
+else
+        export DYLD_LIBRARY_PATH := .
+endif
 
 ####### Build settings ########################################################
 

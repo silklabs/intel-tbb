@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -27,6 +27,7 @@
 */
 
 #include "proxy.h"
+#include "tbb/tbb_config.h"
 
 #if !defined(__EXCEPTIONS) && !defined(_CPPUNWIND) && !defined(__SUNPRO_CC) || defined(_XBOX)
     #if TBB_USE_EXCEPTIONS
@@ -52,8 +53,8 @@ static inline void initPageSize()
     memoryPageSize = sysconf(_SC_PAGESIZE);
 }
 
-/* For the expected behaviour (i.e., finding malloc/free/etc from libc.so, 
-   not from ld-linux.so) dlsym(RTLD_NEXT) should be called from 
+/* For the expected behaviour (i.e., finding malloc/free/etc from libc.so,
+   not from ld-linux.so) dlsym(RTLD_NEXT) should be called from
    a LD_PRELOADed library, not another dynamic library.
    So we have to put find_original_malloc here.
  */
@@ -67,7 +68,7 @@ extern "C" bool __TBB_internal_find_original_malloc(int num, const char *names[]
     return true;
 }
 
-/* __TBB_malloc_proxy used as a weak symbol by libtbbmalloc for: 
+/* __TBB_malloc_proxy used as a weak symbol by libtbbmalloc for:
    1) detection that the proxy library is loaded
    2) check that dlsym("malloc") found something different from our replacement malloc
 */
@@ -122,7 +123,7 @@ void * valloc(size_t size) __THROW
     return scalable_aligned_malloc(size, memoryPageSize);
 }
 
-/* pvalloc allocates smallest set of complete pages which can hold 
+/* pvalloc allocates smallest set of complete pages which can hold
    the requested number of bytes. Result is aligned on page boundary. */
 void * pvalloc(size_t size) __THROW
 {
@@ -198,6 +199,8 @@ void operator delete[](void* ptr, const std::nothrow_t&) throw() {
 #ifdef _WIN32
 #include <windows.h>
 
+#if !__TBB_WIN8UI_SUPPORT
+
 #include <stdio.h>
 #include "tbb_function_replacement.h"
 
@@ -235,7 +238,7 @@ void* safer_scalable_aligned_realloc_##CRTLIB( void *ptr, size_t size, size_t al
 {                                                                                         \
     orig_ptrs func_ptrs = {orig_free_##CRTLIB, orig_msize_##CRTLIB};                      \
     return safer_scalable_aligned_realloc( ptr, size, aligment, &func_ptrs );             \
-} 
+}
 
 // limit is 30 bytes/60 symbols per line
 const char* known_bytecodes[] = {
@@ -361,11 +364,11 @@ _aligned_malloc
 _expand (by dummy implementation)
 ??2@YAPAXI@Z      operator new                         (ia32)
 ??_U@YAPAXI@Z     void * operator new[] (size_t size)  (ia32)
-??3@YAXPAX@Z      operator delete                      (ia32)  
+??3@YAXPAX@Z      operator delete                      (ia32)
 ??_V@YAXPAX@Z     operator delete[]                    (ia32)
 ??2@YAPEAX_K@Z    void * operator new(unsigned __int64)   (intel64)
 ??_V@YAXPEAX@Z    void * operator new[](unsigned __int64) (intel64)
-??3@YAXPEAX@Z     operator delete                         (intel64)  
+??3@YAXPEAX@Z     operator delete                         (intel64)
 ??_V@YAXPEAX@Z    operator delete[]                       (intel64)
 ??2@YAPAXIABUnothrow_t@std@@@Z      void * operator new (size_t sz, const std::nothrow_t&) throw()  (optional)
 ??_U@YAPAXIABUnothrow_t@std@@@Z     void * operator new[] (size_t sz, const std::nothrow_t&) throw() (optional)
@@ -395,7 +398,7 @@ FRDATA routines_to_replace[] = {
     { "??_U@YAPEAX_K@Z", (FUNCPTR)operator_new_arr, FRR_FAIL },
     { "??3@YAXPEAX@Z", (FUNCPTR)operator_delete, FRR_FAIL },
     { "??_V@YAXPEAX@Z", (FUNCPTR)operator_delete_arr, FRR_FAIL },
-#else 
+#else
     { "??2@YAPAXI@Z", (FUNCPTR)operator_new, FRR_FAIL },
     { "??_U@YAPAXI@Z", (FUNCPTR)operator_new_arr, FRR_FAIL },
     { "??3@YAXPAX@Z", (FUNCPTR)operator_delete, FRR_FAIL },
@@ -455,10 +458,13 @@ void doMallocReplacement()
         }
 }
 
+#endif // !__TBB_WIN8UI_SUPPORT
+
 extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID reserved )
 {
 
     if ( callReason==DLL_PROCESS_ATTACH && reserved && hInst ) {
+#if !__TBB_WIN8UI_SUPPORT
 #if TBBMALLOC_USE_TBB_FOR_ALLOCATOR_ENV_CONTROLLED
         char pinEnvVariable[50];
         if( GetEnvironmentVariable("TBBMALLOC_USE_TBB_FOR_ALLOCATOR", pinEnvVariable, 50))
@@ -468,6 +474,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID reserv
 #else
         doMallocReplacement();
 #endif
+#endif // !__TBB_WIN8UI_SUPPORT
     }
 
     return TRUE;

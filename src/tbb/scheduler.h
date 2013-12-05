@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -30,6 +30,7 @@
 #define _TBB_scheduler_H
 
 #include "scheduler_common.h"
+#include "tbb/spin_mutex.h"
 #include "mailbox.h"
 #include "tbb_misc.h" // for FastRandom
 #include "itt_notify.h"
@@ -149,6 +150,7 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
 
     static const size_t null_arena_index = ~size_t(0);
 
+    // TODO: Rename into is_task_pool_published()
     inline bool in_arena () const;
 
     inline bool is_local_task_pool_quiescent () const;
@@ -165,7 +167,7 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
 
     //! Hint provided for operations with the container of starvation-resistant tasks.
     /** Modified by the owner thread (during these operations). **/
-    unsigned hint_for_push;
+    unsigned hint_for_push; //TODO: Replace by my_random?
 
     //! Free list of small tasks that can be reused.
     task* my_free_list;
@@ -196,6 +198,7 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     //! Returns true if stealing is allowed
     bool can_steal () {
         int anchor;
+        // TODO IDEA: Add performance warning?
 #if __TBB_ipf
         return my_stealing_threshold < (uintptr_t)&anchor && (uintptr_t)__TBB_get_bsp() < my_rsb_stealing_threshold;
 #else
@@ -389,6 +392,7 @@ public:
     context_list_node_t my_context_list_head;
 
     //! Mutex protecting access to the list of task group contexts.
+    // TODO: check whether it can be deadly preempted and replace by spinning/sleeping mutex
     spin_mutex my_context_list_mutex;
 
     //! Last state propagation epoch known to this thread 
@@ -418,6 +422,7 @@ public:
         take into account global top priority (among all arenas in the market). **/
     volatile intptr_t *my_ref_top_priority;
 
+    // TODO: move into slots and fix is_out_of_work
     //! Task pool for offloading tasks with priorities lower than the current top priority.
     task* my_offloaded_tasks;
 
@@ -504,11 +509,14 @@ namespace tbb {
 namespace internal {
 
 inline bool generic_scheduler::in_arena () const {
+    __TBB_ASSERT(my_arena_slot, 0);
     return my_arena_slot->task_pool != EmptyTaskPool;
 }
 
 inline bool generic_scheduler::is_local_task_pool_quiescent () const {
-    return my_arena_slot->task_pool == EmptyTaskPool || my_arena_slot->task_pool == LockedTaskPool;
+    __TBB_ASSERT(my_arena_slot, 0);
+    task** tp = my_arena_slot->task_pool;
+    return tp == EmptyTaskPool || tp == LockedTaskPool;
 }
 
 inline bool generic_scheduler::is_quiescent_local_task_pool_empty () const {
@@ -609,6 +617,9 @@ void generic_scheduler::free_task( task& t ) {
         GATHER_STATISTIC(++my_counters.free_list_length);
         p.next = my_free_list;
         my_free_list = &t;
+    } else if( p.origin && uintptr_t(p.origin) < uintptr_t(4096) ) {
+        // a special value reserved for future use, do nothing since
+        // origin is not pointing to a scheduler instance
     } else if( !(h&local_task) && p.origin ) {
         free_nonlocal_small_task(t);
     } else {

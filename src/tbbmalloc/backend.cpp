@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -370,21 +370,30 @@ void Backend::Bin::removeBlock(FreeBlock *fBlock)
         fBlock->next->prev = fBlock->prev;
 }
 
-void Backend::IndexedBins::addBlock(int binIdx, FreeBlock *fBlock, size_t blockSz)
+void Backend::IndexedBins::addBlock(int binIdx, FreeBlock *fBlock, size_t blockSz, bool addToTail)
 {
     Bin *b = &freeBins[binIdx];
 
     fBlock->myBin = binIdx;
     fBlock->aligned = toAlignedBin(fBlock, blockSz);
-    fBlock->prev = NULL;
+    fBlock->next = fBlock->prev = NULL;
     {
         MallocMutex::scoped_lock scopedLock(b->tLock);
-        fBlock->next = b->head;
-        b->head = fBlock;
-        if (fBlock->next)
-            fBlock->next->prev = fBlock;
-        if (!b->tail)
+        if (addToTail) {
+            fBlock->prev = b->tail;
             b->tail = fBlock;
+            if (fBlock->prev)
+                fBlock->prev->next = fBlock;
+            if (!b->head)
+                b->head = fBlock;
+        } else {
+            fBlock->next = b->head;
+            b->head = fBlock;
+            if (fBlock->next)
+                fBlock->next->prev = fBlock;
+            if (!b->tail)
+                b->tail = fBlock;
+        }
     }
     bitMask.set(binIdx, true);
 }
@@ -729,11 +738,12 @@ void Backend::putBackRefSpace(void *b, size_t size, bool rawMemUsed)
 
 void Backend::removeBlockFromBin(FreeBlock *fBlock)
 {
-    if (fBlock->myBin != Backend::NO_BIN)
+    if (fBlock->myBin != Backend::NO_BIN) {
         if (fBlock->aligned)
             freeAlignedBins.lockRemoveBlock(fBlock->myBin, fBlock);
         else
             freeLargeBins.lockRemoveBlock(fBlock->myBin, fBlock);
+    }
 }
 
 void Backend::genericPutBlock(FreeBlock *fBlock, size_t blockSz)
@@ -773,8 +783,7 @@ void AllLargeBlocksList::removeAll(Backend *backend)
         next = lmb->gNext;
         // nothing left to AllLargeBlocksList::remove
         lmb->gNext = lmb->gPrev = NULL;
-        removeBackRef(lmb->backRefIdx);
-        backend->putLargeBlock(lmb);
+        backend->returnLargeObject(lmb);
     }
 }
 
@@ -783,6 +792,13 @@ void Backend::putLargeBlock(LargeMemoryBlock *lmb)
     if (extMemPool->mustBeAddedToGlobalLargeBlockList())
         extMemPool->lmbList.remove(lmb);
     genericPutBlock((FreeBlock *)lmb, lmb->unalignedSize);
+}
+
+void Backend::returnLargeObject(LargeMemoryBlock *lmb)
+{
+    removeBackRef(lmb->backRefIdx);
+    putLargeBlock(lmb);
+    STAT_increment(getThreadId(), ThreadCommonCounters, freeLargeObj);
 }
 
 void Backend::releaseRegion(MemRegion *memRegion)
@@ -886,7 +902,7 @@ FreeBlock *Backend::doCoalesc(FreeBlock *fBlock, MemRegion **mRegion)
     return resBlock;
 }
 
-void Backend::coalescAndPutList(FreeBlock *list, bool forceCoalescQDrop, bool doStat)
+void Backend::coalescAndPutList(FreeBlock *list, bool forceCoalescQDrop)
 {
     FreeBlock *helper;
     MemRegion *memRegion;
@@ -933,9 +949,10 @@ void Backend::coalescAndPutList(FreeBlock *list, bool forceCoalescQDrop, bool do
             // It's not a leak because the block later can be coalesced.
             if (currSz >= minBinnedSize) {
                 toRet->sizeTmp = currSz;
-                if (!(toAligned?
-                      freeAlignedBins.tryAddBlock(bin, toRet, addToTail) :
-                      freeLargeBins.tryAddBlock(bin, toRet, addToTail))) {
+                IndexedBins *target = toAligned? &freeAlignedBins : &freeLargeBins;
+                if (forceCoalescQDrop) {
+                    target->tryAddBlock(bin, toRet, addToTail);
+                } else if (!target->tryAddBlock(bin, toRet, addToTail)) {
                     coalescQ.putBlock(toRet);
                     continue;
                 }
@@ -959,7 +976,7 @@ void Backend::coalescAndPut(FreeBlock *fBlock, size_t blockSz)
     fBlock->sizeTmp = blockSz;
     fBlock->nextToFree = NULL;
 
-    coalescAndPutList(fBlock, /*forceCoalescQDrop=*/false, /*doStat=*/false);
+    coalescAndPutList(fBlock, /*forceCoalescQDrop=*/false);
 }
 
 bool Backend::scanCoalescQ(bool forceCoalescQDrop)
@@ -967,7 +984,7 @@ bool Backend::scanCoalescQ(bool forceCoalescQDrop)
     FreeBlock *currCoalescList = coalescQ.getAll();
 
     if (currCoalescList)
-        coalescAndPutList(currCoalescList, forceCoalescQDrop, /*doStat=*/true);
+        coalescAndPutList(currCoalescList, forceCoalescQDrop);
     return currCoalescList;
 }
 
@@ -1016,9 +1033,9 @@ void Backend::startUseBlock(MemRegion *region, FreeBlock *fBlock)
 
     unsigned targetBin = sizeToBin(blockSz);
     if (!region->exact && toAlignedBin(fBlock, blockSz)) {
-        freeAlignedBins.addBlock(targetBin, fBlock, blockSz);
+        freeAlignedBins.addBlock(targetBin, fBlock, blockSz, /*addToTail=*/false);
     } else {
-        freeLargeBins.addBlock(targetBin, fBlock, blockSz);
+        freeLargeBins.addBlock(targetBin, fBlock, blockSz, /*addToTail=*/false);
     }
 }
 

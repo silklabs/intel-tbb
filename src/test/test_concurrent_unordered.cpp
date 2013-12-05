@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -41,7 +41,9 @@ using namespace std;
 
 typedef local_counting_allocator<debug_allocator<std::pair<const int,int>,std::allocator> > MyAllocator;
 typedef tbb::concurrent_unordered_map<int, int, tbb::tbb_hash<int>, std::equal_to<int>, MyAllocator> MyMap;
+typedef tbb::concurrent_unordered_multimap<int, int, tbb::tbb_hash<int>, std::equal_to<int>, MyAllocator> MyMultiMap;
 typedef tbb::concurrent_unordered_set<int, tbb::tbb_hash<int>, std::equal_to<int>, MyAllocator> MySet;
+typedef tbb::concurrent_unordered_multiset<int, tbb::tbb_hash<int>, std::equal_to<int>, MyAllocator> MyMultiSet;
 
 #define CheckAllocatorE(t,a,f) CheckAllocator(t,a,f,true,__LINE__)
 #define CheckAllocatorA(t,a,f) CheckAllocator(t,a,f,false,__LINE__)
@@ -121,16 +123,76 @@ struct SpecialTests <MyMap>
         // size_type size() const;
         ASSERT(ccont.size() == 1, "Concurrent container size incorrect");
 
-        ASSERT(cont[1] == 2, "Concurrent container size incorrect");
+        ASSERT(cont[1] == 2, "Concurrent container value incorrect");
 
         // mapped_type& at( const key_type& k );
         // const mapped_type& at(const key_type& k) const;
-        ASSERT(cont.at(1) == 2, "Concurrent container size incorrect");
-        ASSERT(ccont.at(1) == 2, "Concurrent container size incorrect");
+        ASSERT(cont.at(1) == 2, "Concurrent container value incorrect");
+        ASSERT(ccont.at(1) == 2, "Concurrent container value incorrect");
 
         // iterator find(const key_type& k);
         MyMap::const_iterator it = cont.find(1);
         ASSERT(it != cont.end() && Value<MyMap>::get(*(it)) == 2, "Element with key 1 not properly found");
+        cont.unsafe_erase(it);
+        it = cont.find(1);
+        ASSERT(it == cont.end(), "Element with key 1 not properly erased");
+
+        REMARK("passed -- specialized %s tests\n", str);
+    }
+};
+
+// test assumes the unordered multimap puts items in ascending order, and the insertions
+// occur at the end of a range.  This assumption may not always be valid.
+template <>
+struct SpecialTests <MyMultiMap>
+{
+#define VALUE1 7
+#define VALUE2 2
+    static void Test(const char *str)
+    {
+        MyMultiMap cont(0);
+        const MyMultiMap &ccont(cont);
+        // mapped_type& operator[](const key_type& k);
+        cont.insert(make_pair(1, VALUE1));
+
+        // bool empty() const;    
+        ASSERT(!ccont.empty(), "Concurrent container empty after adding an element");
+
+        // size_type size() const;
+        ASSERT(ccont.size() == 1, "Concurrent container size incorrect");
+        ASSERT((*(cont.begin())).second == VALUE1, "Concurrent container value incorrect");
+        ASSERT((*(cont.equal_range(1)).first).second == VALUE1, "Improper value from equal_range");
+        ASSERT((cont.equal_range(1)).second == cont.end(), "Improper iterator from equal_range");
+
+        cont.insert(make_pair(1,VALUE2));
+
+        // bool empty() const;    
+        ASSERT(!ccont.empty(), "Concurrent container empty after adding an element");
+
+        // size_type size() const;
+        ASSERT(ccont.size() == 2, "Concurrent container size incorrect");
+        ASSERT((*(cont.begin())).second == VALUE1, "Concurrent container value incorrect");
+        ASSERT((*(cont.equal_range(1)).first).second == VALUE1, "Improper value from equal_range");
+        ASSERT((cont.equal_range(1)).second == cont.end(), "Improper iterator from equal_range");
+
+        // check that the second value is part of the range.
+        // though I am not sure there are guarantees what order the insertions appear in the range
+        // if the order differs the ASSERT above will fail already.
+        std::pair<MyMultiMap::iterator, MyMultiMap::iterator> range = cont.equal_range(1);
+        MyMultiMap::iterator ii = range.first;
+        ++ii;
+        ASSERT((*ii).second == VALUE2, "Improper value for second insertion");
+
+        cont.insert(make_pair(0, 4));
+
+        // bool empty() const;    
+        ASSERT(!ccont.empty(), "Concurrent container empty after adding an element");
+
+        // size_type size() const;
+        ASSERT(ccont.size() == 3, "Concurrent container size incorrect");
+        ASSERT((*(cont.begin())).second == 4, "Concurrent container value incorrect");
+        ASSERT((*(cont.equal_range(1)).first).second == VALUE1, "Improper value from equal_range");
+        ASSERT((cont.equal_range(1)).second == cont.end(), "Improper iterator from equal_range");
 
         REMARK("passed -- specialized %s tests\n", str);
     }
@@ -404,11 +466,31 @@ struct ParallelTraverseBody: NoAssign {
     }
 };
 
-void CheckRange( AtomicByte array[], int n ) {
-    for( int k=0; k<n; ++k ) {
-        if( array[k] != 1 ) {
-            REPORT("array[%d]=%d\n", k, int(array[k]));
-            ASSERT(false,NULL);
+// if multimapping, oddCount is the value that each odd-indexed array element should have.
+// not meaningful for non-multimapped case.
+void CheckRange( AtomicByte array[], int n, bool allowMultiMapping, int oddCount ) {
+    if(allowMultiMapping) {
+        for( int k = 0; k<n; ++k) {
+            if(k%2) {
+                if( array[k] != oddCount ) {
+                    REPORT("array[%d]=%d (should be %d)\n", k, int(array[k]), oddCount);
+                    ASSERT(false,NULL);
+                }
+            }
+            else {
+                if(array[k] != 2) {
+                    REPORT("array[%d]=%d\n", k, int(array[k]));
+                    ASSERT(false,NULL);
+                }
+            }
+        }
+    }
+    else {
+        for( int k=0; k<n; ++k ) {
+            if( array[k] != 1 ) {
+                REPORT("array[%d]=%d\n", k, int(array[k]));
+                ASSERT(false,NULL);
+            }
         }
     }
 }
@@ -444,6 +526,33 @@ public:
     }
 };
 
+// multiset: for i, inserts i i%3+1 times
+template<>
+class AssignBody<MyMultiSet>: NoAssign {
+    MyMultiSet &table;
+public:
+    AssignBody(MyMultiSet &t) : NoAssign(), table(t) {}
+    void operator()(int i) const {
+        int num = i % 3 + 1;
+        for( int j = 0; j < num; ++j) {
+            table.insert(i);
+        }
+    }
+};
+
+// for multimap insert (i%3)+1 items  [i,3*i], [i,3*i+1] ..
+template<>
+class AssignBody<MyMultiMap>: NoAssign {
+    MyMultiMap &table;
+public:
+    AssignBody(MyMultiMap &t) : NoAssign(), table(t) {}
+    void operator()(int i) const {
+        for(int j = 0; j < (i % 3) + 1; ++j) {
+            table.insert(std::pair<int,int>(i,3*i+j-1));
+        }
+    }
+};
+
 template<typename T>
 void test_concurrent(const char *tablename) {
 #if TBB_USE_ASSERT
@@ -451,31 +560,45 @@ void test_concurrent(const char *tablename) {
 #else
     int items = 100000;
 #endif
+    int nItemsInserted = 0;
+    int nThreads = 0;
     T table(items/1000);
-    tbb::tick_count t0 = tbb::tick_count::now();
     #if __bgp__
-    NativeParallelFor(  6/*min 6*/, FillTable<T>(table, items) );
+    nThreads = 6;
     #else
-    NativeParallelFor( 16/*min 6*/, FillTable<T>(table, items) );
+    nThreads = 16;
     #endif
+    if(T::allow_multimapping) {
+        // even passes (threads 0 & 1) put N/2 items each
+        // odd passes  (threads > 1)   put N/2 if thread is odd, else checks if even.
+        items = 4*items / (nThreads + 2);  // approximately same number of items inserted.
+        nItemsInserted = items + (nThreads-2) * items / 4;
+    }
+    else {
+        nItemsInserted = items;
+    }
+    REMARK("%s items == %d\n", tablename, items);
+    tbb::tick_count t0 = tbb::tick_count::now();
+    NativeParallelFor( nThreads, FillTable<T>(table, items) );
     tbb::tick_count t1 = tbb::tick_count::now();
-    REMARK( "time for filling '%s' by %d items = %g\n", tablename, items, (t1-t0).seconds() );
-    ASSERT( int(table.size()) == items, NULL);
+    REMARK( "time for filling '%s' by %d items = %g\n", tablename, table.size(), (t1-t0).seconds() );
+    ASSERT( int(table.size()) == nItemsInserted, NULL);
 
     AtomicByte* array = new AtomicByte[items];
     memset( array, 0, items*sizeof(AtomicByte) );
 
     typename T::range_type r = table.range();
-    ASSERT((items == CheckRecursiveRange<T,typename T::iterator>(r).first), NULL);
+    std::pair<int,int> p = CheckRecursiveRange<T,typename T::iterator>(r);
+    ASSERT((nItemsInserted == p.first), NULL);
     tbb::parallel_for( r, ParallelTraverseBody<T, typename T::const_range_type>( array, items ));
-    CheckRange( array, items );
+    CheckRange( array, items, T::allow_multimapping, (nThreads - 1)/2 );
 
     const T &const_table = table;
     memset( array, 0, items*sizeof(AtomicByte) );
     typename T::const_range_type cr = const_table.range();
-    ASSERT((items == CheckRecursiveRange<T,typename T::const_iterator>(cr).first), NULL);
+    ASSERT((nItemsInserted == CheckRecursiveRange<T,typename T::const_iterator>(cr).first), NULL);
     tbb::parallel_for( cr, ParallelTraverseBody<T, typename T::const_range_type>( array, items ));
-    CheckRange( array, items );
+    CheckRange( array, items, T::allow_multimapping, (nThreads - 1) / 2 );
     delete[] array;
 
     tbb::parallel_for( 0, items, CheckTable<T>( table ) );
@@ -495,5 +618,9 @@ int TestMain () {
     test_concurrent<MyMap>("concurrent unordered map");
     test_basic<MySet>("concurrent unordered set");
     test_concurrent<MySet>("concurrent unordered set");
+    test_basic<MyMultiMap>("concurrent unordered MultiMap");
+    test_concurrent<MyMultiMap>("concurrent unordered MultiMap");
+    test_basic<MyMultiSet>("concurrent unordered MultiSet");
+    test_concurrent<MyMultiSet>("concurrent unordered multiset");
     return Harness::Done;
 }

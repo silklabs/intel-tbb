@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -79,6 +79,13 @@ static RegisterProcessShutdownNotification reg;
 #define __TBB_NO_IMPLICIT_LINKAGE 1
 #define HARNESS_NO_PARSE_COMMAND_LINE 1
 #include "harness.h"
+#if __TBB_WIN8UI_SUPPORT	
+// FIXME: fix the test to support New Windows *8 Store Apps mode.
+int TestMain() {
+    return Harness::Skipped;
+}
+#else /* __TBB_WIN8UI_SUPPORT	 */
+
 #include "harness_memory.h"
 #include "harness_tbb_independence.h"
 #include "harness_barrier.h"
@@ -172,3 +179,4 @@ int TestMain () {
 }
 
 #endif // _USRDLL
+#endif /* __TBB_WIN8UI_SUPPORT	 */

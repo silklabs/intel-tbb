@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -27,14 +27,15 @@
 */
 
 
+#define HARNESS_NO_PARSE_COMMAND_LINE 1
+#include "harness.h"
+
 #if __linux__
 #define MALLOC_REPLACEMENT_AVAILABLE 1
-#elif _WIN32 && !__MINGW32__ && !__MINGW64__
+#elif _WIN32 && !__MINGW32__ && !__MINGW64__ && !__TBB_WIN8UI_SUPPORT
 #define MALLOC_REPLACEMENT_AVAILABLE 2
 #include "tbb/tbbmalloc_proxy.h"
 #endif
-
-#if MALLOC_REPLACEMENT_AVAILABLE
 
 #if _WIN32 || _WIN64
 // As the test is intentionally build with /EHs-, suppress multiple VS2005's 
@@ -47,7 +48,10 @@
 #endif
 // to use strdup and putenv w/o warnings
 #define _CRT_NONSTDC_NO_DEPRECATE 1
-#endif
+#endif // _WIN32 || _WIN64
+
+#if MALLOC_REPLACEMENT_AVAILABLE
+
 #include "harness_report.h"
 #include "harness_assert.h"
 #include "harness_defs.h"
@@ -75,7 +79,7 @@ typedef unsigned __int64 uint64_t;
 #endif /* OS selection */
 
 #if _WIN32
-// On Windows, the tricky way to print "done" is necessary to create 
+// On Windows, the trick with string "dependence on msvcpXX.dll" is necessary to create 
 // dependence on msvcpXX.dll, for sake of a regression test.
 // On Linux, C++ RTL headers are undesirable because of breaking strict ANSI mode.
 #if defined(_MSC_VER) && _MSC_VER >= 1300 && _MSC_VER <= 1310 && !defined(__INTEL_COMPILER)
@@ -178,14 +182,11 @@ struct BigStruct {
     char f[minLargeObjectSize];
 };
 
-int main(int , char *[]) {
+int TestMain() {
     void *ptr, *ptr1;
 
 #if MALLOC_REPLACEMENT_AVAILABLE == 1
-    if (NULL == dlsym(RTLD_DEFAULT, "scalable_malloc")) {
-        REPORT("libtbbmalloc not found\nfail\n");
-        return 1;
-    }
+    ASSERT(dlsym(RTLD_DEFAULT, "scalable_malloc"), "libtbbmalloc not found");
 #endif
 
 /* On Windows, memory block size returned by _msize() is sometimes used 
@@ -278,24 +279,17 @@ int main(int , char *[]) {
     delete []f;
 
 #if _WIN32
-    std::string stdstring = "done";
-    const char* s = stdstring.c_str();
-#else
-    const char* s = "done";
+    std::string stdstring = "dependence on msvcpXX.dll";
+    ASSERT(strcmp(stdstring.c_str(), "dependence on msvcpXX.dll") == 0, NULL);
 #endif
-    REPORT("%s\n", s);
-    return 0;
-}
 
-#define HARNESS_NO_PARSE_COMMAND_LINE 1
-#define HARNESS_CUSTOM_MAIN 1
-#include "harness.h"
+    return Harness::Done;
+}
 
 #else  /* !MALLOC_REPLACEMENT_AVAILABLE */
 #include <stdio.h>
 
-int main(int , char *[]) {
-    printf("skip\n");
-    return 0;
+int TestMain() {
+    return Harness::Skipped;
 }
 #endif /* !MALLOC_REPLACEMENT_AVAILABLE */

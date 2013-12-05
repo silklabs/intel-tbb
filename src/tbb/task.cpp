@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -74,7 +74,7 @@ void allocate_root_proxy::free( task& task ) {
 task& allocate_root_with_context_proxy::allocate( size_t size ) const {
     internal::generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT( s, "Scheduler auto-initialization failed?" );
-    task& t = s->allocate_task( size, __TBB_CONTEXT_ARG(NULL, &my_context) );
+    task& t = s->allocate_task( size, NULL, &my_context );
     // Supported usage model prohibits concurrent initial binding. Thus we do not
     // need interlocked operations or fences to manipulate with my_context.my_kind
     if ( my_context.my_kind == task_group_context::binding_required ) {

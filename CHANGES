@@ -1,3 +1,28 @@
+TBB 4.1 Update 2
+
+Changes (w.r.t. TBB 4.1 Update 1):
+
+- Objects up to 128 MB are now cached by the tbbmalloc. Previously
+    the threshold was 8MB. Objects larger than 128 MB are still
+    processed by direct OS calls.
+- concurrent_unordered_multiset and concurrent_unordered_multimap
+    have been added, based on Microsoft* PPL prototype.
+- Ability to value-initialize a tbb::atomic<T> variable on construction
+    in C++11, with const expressions properly supported.
+
+Community Preview Features:
+
+- Added a possibility to wait until all worker threads terminate.
+    This is necessary before calling fork() from an application.
+
+Bugs fixed:
+
+- Fixed data race in tbbmalloc that might lead to memory leaks
+    for large object allocations.
+- Fixed task_arena::enqueue() to use task_group_context of target arena.
+- Improved implementation of 64 bit atomics on ia32.
+
+------------------------------------------------------------------------
 TBB 4.1 Update 1
 
 Changes (w.r.t. TBB 4.1):

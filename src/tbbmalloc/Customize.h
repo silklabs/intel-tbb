@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -120,6 +120,11 @@ inline void SpinWaitUntilEq(const volatile intptr_t &location, const intptr_t va
 
 inline intptr_t BitScanRev(uintptr_t x) {
     return !x? -1 : __TBB_Log2(x);
+}
+
+template<typename T>
+static inline bool isAligned(T* arg, uintptr_t alignment) {
+    return tbb::internal::is_aligned(arg,alignment);
 }
 
 inline void AtomicOr(volatile void *operand, uintptr_t addend) {

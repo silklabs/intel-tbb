@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -40,14 +40,21 @@
     #define TlsGetValue_func pthread_getspecific
     #include <sched.h>
     inline void do_yield() {sched_yield();}
-    #include <dlfcn.h>    /* for dlsym */
     extern "C" { static void mallocThreadShutdownNotification(void*); }
 
 #elif USE_WINTHREAD
+#if __TBB_WIN8UI_SUPPORT
+#include<thread>
+    #define TlsSetValue_func FlsSetValue
+    #define TlsGetValue_func FlsGetValue
+    #define TlsAlloc() FlsAlloc(NULL)
+    #define TlsFree FlsFree
+    inline void do_yield() {std::this_thread::yield();}
+#else
     #define TlsSetValue_func TlsSetValue
     #define TlsGetValue_func TlsGetValue
     inline void do_yield() {SwitchToThread();}
-
+#endif
 #else
     #error Must define USE_PTHREAD or USE_WINTHREAD
 
@@ -278,17 +285,18 @@ public:
     void reset();
     void destroy();
 
-    TLSData *getTLS(bool create);
+    inline TLSData *getTLS(bool create);
     void clearTLS() { extMemPool.tlsPointerKey.setThreadMallocTLS(NULL); }
 
     Bin *getAllocationBin(TLSData* tls, size_t size);
     Block *getEmptyBlock(size_t size);
     void returnEmptyBlock(Block *block, bool poolTheBlock);
 
-    void *getFromTLCache(TLSData *tls, size_t size, size_t alignment);
-    void putToTLCache(TLSData *tls, void *object);
+    // get/put large object to/from local large object cache
+    void *getFromLLOCache(TLSData *tls, size_t size, size_t alignment);
+    void putToLLOCache(TLSData *tls, void *object);
 
-    void allocatorCalledHook(TLSData *tls);
+    inline void allocatorCalledHook(TLSData *tls);
 };
 
 static char defaultMemPool_space[sizeof(MemoryPool)];
@@ -358,12 +366,13 @@ public:
     bool isStartupAllocObject() const { return objectSize == startupAllocObjSizeMark; }
     inline FreeObject *findObjectToFree(void *object) const;
     bool checkFreePrecond(void *object) const {
-        if (allocatedCount>0)
+        if (allocatedCount>0) {
             if (startupAllocObjSizeMark == objectSize) // startup block
                 return object<=bumpPtr;
             else
                 return allocatedCount <= (slabSize-sizeof(Block))/objectSize
                        && (!bumpPtr || object>bumpPtr);
+	}
         return false;
     }
     const BackRefIdx *getBackRef() const { return &backRefIdx; }
@@ -1678,8 +1687,8 @@ static MallocMutex initMutex;
     delivers a clean result. */
 static char VersionString[] = "\0" TBBMALLOC_VERSION_STRINGS;
 
-#if _XBOX
-bool GetBoolEnvironmentVariable(const char *name) { return false; }
+#if _XBOX || __TBB_WIN8UI_SUPPORT
+bool GetBoolEnvironmentVariable(const char *) { return false; }
 #else
 bool GetBoolEnvironmentVariable(const char *name)
 {
@@ -1939,15 +1948,13 @@ void LocalLOC<LOW_MARK, HIGH_MARK>::allocatorCalledHook(ExtMemoryPool *extMemPoo
     lastSeenOSCallsCnt = currCnt;
 }
 
-void *MemoryPool::getFromTLCache(TLSData* tls, size_t size, size_t alignment)
+void *MemoryPool::getFromLLOCache(TLSData* tls, size_t size, size_t alignment)
 {
     LargeMemoryBlock *lmb = NULL;
-    void *alignedArea = NULL;
 
     size_t headersSize = sizeof(LargeMemoryBlock)+sizeof(LargeObjectHdr);
-    // TODO: take into account that they are already largeObjectAlignment-aligned
-    size_t allocationSize = alignUp(size+headersSize+alignment, largeBlockCacheStep);
-    if (allocationSize < size) // allocationSize is wrapped around after alignUp
+    size_t allocationSize = LargeObjectCache::alignToBin(size+headersSize+alignment);
+    if (allocationSize < size) // allocationSize is wrapped around after alignToBin
         return NULL;
 
     if (tls)
@@ -1971,7 +1978,7 @@ void *MemoryPool::getFromTLCache(TLSData* tls, size_t size, size_t alignment)
     return NULL;
 }
 
-void MemoryPool::putToTLCache(TLSData *tls, void *object)
+void MemoryPool::putToLLOCache(TLSData *tls, void *object)
 {
     LargeObjectHdr *header = (LargeObjectHdr*)object - 1;
     // overwrite backRefIdx to simplify double free detection
@@ -2071,7 +2078,7 @@ static void *allocateAligned(MemoryPool *memPool, size_t size, size_t alignment)
         memPool->allocatorCalledHook(tls);
         // take into account only alignment that are higher then natural
         result =
-            memPool->getFromTLCache(tls, size, largeObjectAlignment>alignment?
+            memPool->getFromLLOCache(tls, size, largeObjectAlignment>alignment?
                                                largeObjectAlignment: alignment);
     }
 
@@ -2216,7 +2223,7 @@ static void *internalPoolMalloc(MemoryPool* memPool, size_t size)
      * Use Large Object Allocation
      */
     if (size >= minLargeObjectSize)
-        return memPool->getFromTLCache(tls, size, largeObjectAlignment);
+        return memPool->getFromLLOCache(tls, size, largeObjectAlignment);
 
     /*
      * Get an element in thread-local array corresponding to the given size;
@@ -2294,7 +2301,7 @@ static bool internalPoolFree(MemoryPool *memPool, void *object)
     if (tls) memPool->allocatorCalledHook(tls);
 
     if (isLargeObject(object))
-        memPool->putToTLCache(tls, object);
+        memPool->putToLLOCache(tls, object);
     else
         freeSmallObject(memPool, tls, object);
     return true;
@@ -2308,7 +2315,7 @@ static void *internalMalloc(size_t size)
     if (RecursiveMallocCallProtector::sameThreadActive())
         return size<minLargeObjectSize? StartupBlock::allocate(size) :
             // nested allocation, so skip tls
-            (FreeObject*)defaultMemPool->getFromTLCache(NULL, size, slabSize);
+            (FreeObject*)defaultMemPool->getFromLLOCache(NULL, size, slabSize);
 #endif
 
     if (!isMallocInitialized())
@@ -2486,6 +2493,7 @@ void mallocThreadShutdownNotification(void* arg)
     TRACEF(( "[ScalableMalloc trace] Thread id %d blocks return start %d\n",
              getThreadId(),  threadGoingDownCount++ ));
 #if USE_WINTHREAD
+    suppress_unused_warning(arg);
     MallocMutex::scoped_lock lock(MemoryPool::memPoolListLock);
     // The routine is called once per thread, need to walk through all pools on Windows
     for (MemoryPool *memPool = defaultMemPool; memPool; memPool = memPool->next) {
@@ -2524,6 +2532,7 @@ extern "C" void __TBB_mallocProcessShutdownNotification()
 #if __TBB_MALLOC_LOCACHE_STAT
     printf("cache hit ratio %f, size hit %f\n",
            1.*cacheHits/mallocCalls, 1.*memHitKB/memAllocKB);
+    defaultMemPool->extMemPool.loc.reportStat(stdout);
 #endif
     shutdownSync.processExit();
 #if __TBB_SOURCE_DIRECTLY_INCLUDED
@@ -2578,7 +2587,7 @@ extern "C" void safer_scalable_free (void *object, void (*original_free)(void*))
         TLSData *tls = defaultMemPool->getTLS(/*create=*/false);
         if (tls) defaultMemPool->allocatorCalledHook(tls);
 
-        defaultMemPool->putToTLCache(tls, object);
+        defaultMemPool->putToLLOCache(tls, object);
     } else if (isSmallObject(object)) {
         TLSData *tls = defaultMemPool->getTLS(/*create=*/false);
         if (tls) defaultMemPool->allocatorCalledHook(tls);

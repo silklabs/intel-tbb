@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -67,6 +67,13 @@ class governor {
 
     static bool UsePrivateRML;
 
+    //! Instance of task_scheduler_init that requested blocking termination.
+    static const task_scheduler_init *BlockingTSI;
+
+#if TBB_USE_ASSERT
+    static bool IsBlockingTermiantionInProgress;
+#endif
+
     //! Create key for thread-local storage and initialize RML.
     static void acquire_resources ();
 
@@ -92,7 +99,7 @@ public:
     static generic_scheduler* init_scheduler( unsigned num_threads, stack_size_type stack_size, bool auto_init = false );
 
     //! Processes scheduler termination request (possibly nested) in a master thread
-    static void terminate_scheduler( generic_scheduler* s );
+    static void terminate_scheduler( generic_scheduler* s, const task_scheduler_init *tsi_ptr );
 
     //! Returns number of worker threads in the currently active arena.
     inline static unsigned max_number_of_workers ();
@@ -129,6 +136,11 @@ public:
     static void print_version_info ();
 
     static void initialize_rml_factory ();
+
+    static bool needsWaitWorkers () { return BlockingTSI!=NULL; }
+
+    //! Must be called before init_scheduler
+    static void setBlockingTerminate(const task_scheduler_init *tsi);
 
 #if __TBB_SURVIVE_THREAD_SWITCH
     static __cilk_tbb_retcode stack_op_handler( __cilk_tbb_stack_op op, void* );

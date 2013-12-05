@@ -10,7 +10,7 @@ This directory has example usages of Intel&reg; Threading Building Blocks (Intel
 <DD>Examples from the Getting Started Guide.
 <DT><A HREF="concurrent_hash_map/index.html">concurrent_hash_map</A>
 <DD>Examples using <CODE>concurrent_hash_map</CODE>.
-<DT><A HREF="concurrent_priority_queue/index.html">concurrent_priority_queue</A>
+<DT><A HREF="concurrent_priority_queue/shortpath/index.html">concurrent_priority_queue</A>
 <DD>Examples using <CODE>concurrent_priority_queue</CODE>.
 <DT><A HREF="graph/index.html">graph</A>
 <DD>Examples using <CODE>tbb::flow graph</CODE>.
@@ -94,7 +94,7 @@ Perform the following steps:
 Perform the following steps:
 <OL>
 <LI>Open a shell window.  For Windows* systems, make sure this shell window has the proper environment
-    defined for use with Microsoft* Visual Studio* (.NET 2003 or 2005); such a shell can be invoked
+    defined for use with Microsoft* Visual Studio* (2005, 2008, 2010 or 2012); such a shell can be invoked
     from the Start menu, under Visual Studio, Visual Studio Tools, Visual Studio Command Prompt.
 <LI>Set up the environment in this shell window for use with Intel TBB.
     <BR>See below for how to set up the environment for <A href="#env_1">Windows*</A>, <A href="#env_23">Linux*</A> or <A href="#env_23">Mac OS* X</A> systems.
@@ -140,6 +140,7 @@ it may be set up, for a given type of shell window, by using one of the followin
        vs2005      : Set to use with Microsoft Visual Studio 2005 runtime DLLs
        vs2008      : Set to use with Microsoft Visual Studio 2008 runtime DLLs
        vs2010      : Set to use with Microsoft Visual Studio 2010 runtime DLLs
+       vs2012      : Set to use with Microsoft Visual Studio 2012 runtime DLLs
        all         : Set to use TBB statically linked with Microsoft Visual C++ runtime
    if (vs) is not set TBB statically linked with Microsoft Visual C++ runtime will be used.
 </pre>
@@ -151,18 +152,10 @@ The environment may be set up, for a given type of shell window, by using one of
 <DT>For sh, bash, ksh (or compatibles):
 <DD>. &lt;<I>installdir</I>&gt;/bin/tbbvars.sh (arch)
 <DT>For csh (or compatibles):
-<DD>source &lt;<I>installdir</I>&gt;/bin/tbbvars.csh
-    (arch)<DT>For sh, bash, ksh (or compatibles), when using an alternate architecture or platform:
-<DD>. &lt;<I>installdir</I>&gt;/{ia32,intel64}/cc&lt;<I>gccversion</I>&gt;_libc&lt;<I>libcversion</I>&gt;_kernel&lt;<I>kernelversion</I>&gt;/bin/tbbvars.sh
-<DT>For csh (or compatibles), when using an alternate architecture or platform:
-<DD>source &lt;<I>installdir</I>&gt;/{ia32,intel64}/cc&lt;<I>gccversion</I>&gt;_libc&lt;<I>libcversion</I>&gt;_kernel&lt;<I>kernelversion</I>&gt;/bin/tbbvars.csh
+<DD>source &lt;<I>installdir</I>&gt;/bin/tbbvars.csh (arch)
 <DT><I>Notes:</I>
 <DD><I><SL>
     <LI>Choose one of {ia32,intel64} depending on the architecture to be used.
-    <LI>Choose a cc&lt;<I>gccversion</I>&gt;_libc&lt;<I>libcversion</I>&gt;_kernel&lt;<I>kernelversion</I>&gt;
-	value, from among the available platforms installed with Intel TBB
-	(for <A HREF=../ia32>ia32</A> or <A HREF=../intel64>intel64</A>),
-	depending on the platform to be used.
     <LI>Environment setup need only be performed once per shell window to be used.
     <LI>Always source tbbvars.sh or tbbvars.csh rather than executing them directly.
     </SL></I>
@@ -171,7 +164,7 @@ The environment may be set up, for a given type of shell window, by using one of
 <HR>
 <A href="../index.html">Up to parent directory</A>
 <p></p>
-Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.
+Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.
 <P></P>
 Intel is a registered trademark or trademark of Intel Corporation
 or its subsidiaries in the United States and other countries.

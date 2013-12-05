@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -345,7 +345,13 @@ public:
     void start() {
 #if _WIN32||_WIN64
         unsigned thread_id;
+#if __TBB_WIN8UI_SUPPORT
+        std::thread* thread_tmp=new std::thread(thread_function, this);
+        thread_handle = thread_tmp->native_handle();
+        thread_id = 0;
+#else
         thread_handle = (HANDLE)_beginthreadex( NULL, 0, thread_function, this, 0, &thread_id );
+#endif
         ASSERT( thread_handle!=0, "NativeParallelFor: _beginthreadex failed" );
 #else
 #if __ICC==1100

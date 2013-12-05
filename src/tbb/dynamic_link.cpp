@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2012 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -365,6 +365,9 @@ bool dynamic_link( const char* library, const dynamic_link_descriptor descriptor
     // Get library handle in case it is already loaded into the current process
 #if ! __TBB_DYNAMIC_LOAD_ENABLED
     dynamic_link_handle library_handle = NULL;
+#ifndef __TBB_ASSERT_EX
+#define __TBB_ASSERT_EX LIBRARY_ASSERT 
+#endif 
     __TBB_ASSERT_EX( library, "library name must be provided");
 #elif _WIN32||_WIN64
     dynamic_link_handle library_handle = GetModuleHandle( library );
