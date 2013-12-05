@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::pre_scan_tag Struct Reference</title>
+<title>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,27 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00314.html">pre_scan_tag</a></div>
-<h1>tbb::pre_scan_tag Struct Reference<br>
-<small>
-[<a class="el" href="a00432.html">Algorithms</a>]</small>
-</h1><!-- doxytag: class="tbb::pre_scan_tag" -->Used to indicate that the initial scan is being performed.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00314.html">parallel_do_feeder</a></div>
+<h1>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</h1><!-- doxytag: class="tbb::parallel_do_feeder" -->Class the user supplied algorithm body uses to add new tasks.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00568.html">parallel_scan.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00545.html">parallel_do.h</a>&gt;</code>
 <p>
-<a href="a00096.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00094.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d45d2cf548e51140ad6faafbea8ca6b5"></a><!-- doxytag: member="tbb::pre_scan_tag::is_final_scan" ref="d45d2cf548e51140ad6faafbea8ca6b5" args="()" -->
-static bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_final_scan</b> ()</td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c095c6b1a32e9c0be010aa32875d7a63"></a><!-- doxytag: member="tbb::parallel_do_feeder::add" ref="c095c6b1a32e9c0be010aa32875d7a63" args="(const Item &amp;item)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00314.html#c095c6b1a32e9c0be010aa32875d7a63">add</a> (const Item &amp;item)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a work item to a running parallel_do. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d51de1d8a68b81186b1950730be75770"></a><!-- doxytag: member="tbb::parallel_do_feeder::internal::parallel_do_feeder_impl" ref="d51de1d8a68b81186b1950730be75770" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::parallel_do_feeder_impl</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Used to indicate that the initial scan is being performed. 
+<h3>template&lt;typename Item&gt;<br>
+ class tbb::parallel_do_feeder&lt; Item &gt;</h3>
+
+Class the user supplied algorithm body uses to add new tasks. 
 <p>
-<hr>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="a00568.html">parallel_scan.h</a></ul>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Item</em>&nbsp;</td><td>Work item type </td></tr>
+  </table>
+</dl>
+
+<p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="a00545.html">parallel_do.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

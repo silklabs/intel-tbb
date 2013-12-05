@@ -103,8 +103,13 @@ void handle_perror( int error_code, const char* what ) {
 #if _WIN32||_WIN64 
 void handle_win_error( int error_code ) {
     char buf[512];
+#if !__TBB_WIN8UI_SUPPORT
     FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                     NULL, error_code, 0, buf, sizeof(buf), NULL );
+#else
+//TODO: update with right replacement for FormatMessageA
+	sprintf_s((char*)&buf, 512, "error code %d", error_code);
+#endif
 #if TBB_USE_EXCEPTIONS
     throw runtime_error(buf);
 #else
@@ -148,15 +153,15 @@ void throw_exception_v4 ( exception_id eid ) {
 #endif /* !TBB_USE_EXCEPTIONS && __APPLE__ */
 }
 
-#if _XBOX
-bool GetBoolEnvironmentVariable( const char * name ) { return false;}
-#else
+#if _XBOX || __TBB_WIN8UI_SUPPORT
+bool GetBoolEnvironmentVariable( const char * ) { return false;}
+#else  /* _XBOX || __TBB_WIN8UI_SUPPORT */
 bool GetBoolEnvironmentVariable( const char * name ) {
     if( const char* s = getenv(name) )
         return strcmp(s,"0") != 0;
     return false;
 }
-#endif /* !_XBOX */
+#endif /* _XBOX || __TBB_WIN8UI_SUPPORT */
 
 #include "tbb_version.h"
 

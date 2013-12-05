@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::thread_bound_filter Class Reference</title>
+<title>tbb::tbb_allocator&lt; void &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,97 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00352.html">thread_bound_filter</a></div>
-<h1>tbb::thread_bound_filter Class Reference<br>
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00352.html">tbb_allocator&lt; void &gt;</a></div>
+<h1>tbb::tbb_allocator&lt; void &gt; Class Template Reference<br>
 <small>
-[<a class="el" href="a00432.html">Algorithms</a>]</small>
-</h1><!-- doxytag: class="tbb::thread_bound_filter" --><!-- doxytag: inherits="tbb::filter" -->A stage in a pipeline served by a user thread.  
+[<a class="el" href="a00438.html">Memory Allocation</a>]</small>
+</h1><!-- doxytag: class="tbb::tbb_allocator&lt; void &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00593.html">pipeline.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00650.html">tbb_allocator.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::thread_bound_filter:
-<p><center><img src="a00352.png" usemap="#tbb::thread_bound_filter_map" border="0" alt=""></center>
-<map name="tbb::thread_bound_filter_map">
-<area href="a00285.html" alt="tbb::filter" shape="rect" coords="0,0,145,24">
-</map>
-<a href="a00106.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00148.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="902c4645e624e8f589b89841df5331de0c135a0274225f59d2b2a682d1103f23"></a><!-- doxytag: member="tbb::thread_bound_filter::success" ref="902c4645e624e8f589b89841df5331de0c135a0274225f59d2b2a682d1103f23" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>success</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8fda536620d85d53caa82c45ffa49dd8"></a><!-- doxytag: member="tbb::tbb_allocator&lt; void &gt;::pointer" ref="8fda536620d85d53caa82c45ffa49dd8" args="" -->
+typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="902c4645e624e8f589b89841df5331de5243cf0030982cfa4ac1a8e97acb39f4"></a><!-- doxytag: member="tbb::thread_bound_filter::item_not_available" ref="902c4645e624e8f589b89841df5331de5243cf0030982cfa4ac1a8e97acb39f4" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>item_not_available</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="401d3c91a38b09410a20fe69d4d9745d"></a><!-- doxytag: member="tbb::tbb_allocator&lt; void &gt;::const_pointer" ref="401d3c91a38b09410a20fe69d4d9745d" args="" -->
+typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="902c4645e624e8f589b89841df5331ded4085a8b251604b51c0f19602eeef09f"></a><!-- doxytag: member="tbb::thread_bound_filter::end_of_stream" ref="902c4645e624e8f589b89841df5331ded4085a8b251604b51c0f19602eeef09f" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>end_of_stream</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fef43ed21663982050fbae7b970e33f6"></a><!-- doxytag: member="tbb::tbb_allocator&lt; void &gt;::value_type" ref="fef43ed21663982050fbae7b970e33f6" args="" -->
+typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>result_type</b> { <b>success</b>, 
-<b>item_not_available</b>, 
-<b>end_of_stream</b>
- }</td></tr>
-
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">result_type __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00352.html#c4f90f2c771bce748beb9be734fa286c">try_process_item</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If a data item is available, invoke operator() on that item.  <a href="#c4f90f2c771bce748beb9be734fa286c"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">result_type __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00352.html#5e726bdc7fbd924c0b07bd558b1d4d5d">process_item</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Wait until a data item becomes available, and invoke operator() on that item.  <a href="#5e726bdc7fbd924c0b07bd558b1d4d5d"></a><br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="413fad2ade743d9af5dcabc56aedf4fe"></a><!-- doxytag: member="tbb::thread_bound_filter::thread_bound_filter" ref="413fad2ade743d9af5dcabc56aedf4fe" args="(mode filter_mode)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>thread_bound_filter</b> (mode filter_mode)</td></tr>
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-A stage in a pipeline served by a user thread. 
-<p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="5e726bdc7fbd924c0b07bd558b1d4d5d"></a><!-- doxytag: member="tbb::thread_bound_filter::process_item" ref="5e726bdc7fbd924c0b07bd558b1d4d5d" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">result_type __TBB_EXPORTED_METHOD tbb::thread_bound_filter::process_item           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
+<h3>template&lt;&gt;<br>
+ class tbb::tbb_allocator&lt; void &gt;</h3>
 
+Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
 <p>
-Wait until a data item becomes available, and invoke operator() on that item. 
-<p>
-This interface is blocking. Returns 'success' if an item was processed. Returns 'end_of_stream' if there are no more items to process. Never returns 'item_not_available', as it blocks until another return condition applies. 
-</div>
-</div><p>
-<a class="anchor" name="c4f90f2c771bce748beb9be734fa286c"></a><!-- doxytag: member="tbb::thread_bound_filter::try_process_item" ref="c4f90f2c771bce748beb9be734fa286c" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">result_type __TBB_EXPORTED_METHOD tbb::thread_bound_filter::try_process_item           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-If a data item is available, invoke operator() on that item. 
-<p>
-This interface is non-blocking. Returns 'success' if an item was processed. Returns 'item_not_available' if no item can be processed now but more may arrive in the future, or if token limit is reached. Returns 'end_of_stream' if there are no more items to process. 
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00593.html">pipeline.h</a></ul>
+<li><a class="el" href="a00650.html">tbb_allocator.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

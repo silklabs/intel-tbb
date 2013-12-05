@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::continue_receiver Class Reference</title>
+<title>tbb::deprecated::concurrent_queue&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,119 +21,88 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00282.html">continue_receiver</a></div>
-<h1>tbb::flow::interface6::continue_receiver Class Reference</h1><!-- doxytag: class="tbb::flow::interface6::continue_receiver" --><!-- doxytag: inherits="tbb::flow::interface6::receiver" -->Base class for receivers of completion messages.  
+<a class="el" href="a00423.html">tbb</a>::<b>deprecated</b>::<a class="el" href="a00282.html">concurrent_queue</a></div>
+<h1>tbb::deprecated::concurrent_queue&lt; T, A &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00437.html">Containers</a>]</small>
+</h1><!-- doxytag: class="tbb::deprecated::concurrent_queue" --><!-- doxytag: inherits="tbb::concurrent_bounded_queue" -->A high-performance thread-safe blocking concurrent bounded queue.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00486.html">concurrent_queue.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::continue_receiver:
-<p><center><img src="a00282.png" usemap="#tbb::flow::interface6::continue_receiver_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::continue_receiver_map">
-<area href="a00324.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="0,0,230,24">
+<p>Inheritance diagram for tbb::deprecated::concurrent_queue&lt; T, A &gt;:
+<p><center><img src="a00282.png" usemap="#tbb::deprecated::concurrent_queue< T, A >_map" border="0" alt=""></center>
+<map name="tbb::deprecated::concurrent_queue< T, A >_map">
+<area href="a00275.html" alt="tbb::concurrent_bounded_queue< T, A >" shape="rect" coords="0,0,257,24">
 </map>
-<a href="a00055.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00038.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3c43c166af832d9187035985841e0a7f"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::input_type" ref="3c43c166af832d9187035985841e0a7f" args="" -->
-typedef <a class="el" href="a00280.html">continue_msg</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#3c43c166af832d9187035985841e0a7f">input_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="112f9c42f53dffaa9c40476b3c9f0163"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::iterator" ref="112f9c42f53dffaa9c40476b3c9f0163" args="" -->
+typedef <a class="el" href="a00275.html">concurrent_bounded_queue</a>&lt;<br>
+ T, A &gt;::iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f9c58b3e9c46afd2518d0fd8957a5a2f"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::predecessor_type" ref="f9c58b3e9c46afd2518d0fd8957a5a2f" args="" -->
-typedef <a class="el" href="a00330.html">sender</a>&lt; <a class="el" href="a00280.html">continue_msg</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#f9c58b3e9c46afd2518d0fd8957a5a2f">predecessor_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="da4cdd6e903dd46e3788c9d8feaba85d"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::const_iterator" ref="da4cdd6e903dd46e3788c9d8feaba85d" args="" -->
+typedef <a class="el" href="a00275.html">concurrent_bounded_queue</a>&lt;<br>
+ T, A &gt;::const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_iterator</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="177db82d548a1f8471371331890b91a8"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::continue_receiver" ref="177db82d548a1f8471371331890b91a8" args="(int number_of_predecessors=0)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#177db82d548a1f8471371331890b91a8">continue_receiver</a> (int number_of_predecessors=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dc192aba16ef123aebbc4ada0fb53708"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::concurrent_queue" ref="dc192aba16ef123aebbc4ada0fb53708" args="(const A &amp;a=A())" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#dc192aba16ef123aebbc4ada0fb53708">concurrent_queue</a> (const A &amp;a=A())</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a0b292ed7fa6556b2a735f6d1e82dc74"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::continue_receiver" ref="a0b292ed7fa6556b2a735f6d1e82dc74" args="(const continue_receiver &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#a0b292ed7fa6556b2a735f6d1e82dc74">continue_receiver</a> (const <a class="el" href="a00282.html">continue_receiver</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct empty queue. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a7d1fb274d89c0109fa72d9d87ed329d"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::concurrent_queue" ref="a7d1fb274d89c0109fa72d9d87ed329d" args="(const concurrent_queue &amp;src, const A &amp;a=A())" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#a7d1fb274d89c0109fa72d9d87ed329d">concurrent_queue</a> (const <a class="el" href="a00282.html">concurrent_queue</a> &amp;src, const A &amp;a=A())</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1e14828fa079b9835ff7267df5ee45d7"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::~continue_receiver" ref="1e14828fa079b9835ff7267df5ee45d7" args="()" -->
-virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#1e14828fa079b9835ff7267df5ee45d7">~continue_receiver</a> ()</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="e40b5350b81502a0fece0e24df77f994"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::concurrent_queue" ref="e40b5350b81502a0fece0e24df77f994" args="(InputIterator b, InputIterator e, const A &amp;a=A())" -->
+template&lt;typename InputIterator&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00282.html#e40b5350b81502a0fece0e24df77f994">concurrent_queue</a> (InputIterator b, InputIterator e, const A &amp;a=A())</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2fcfa4990a42417bbeb1f3c8b9ac8a22"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::register_predecessor" ref="2fcfa4990a42417bbeb1f3c8b9ac8a22" args="(predecessor_type &amp;)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#2fcfa4990a42417bbeb1f3c8b9ac8a22">register_predecessor</a> (<a class="el" href="a00330.html">predecessor_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">[begin,end) constructor <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#129cde9f5f101ddd623619c838be07f3">push_if_not_full</a> (const T &amp;source)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Increments the trigger threshold. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#cb691b18416d4742265aed84d496ebbd">remove_predecessor</a> (<a class="el" href="a00330.html">predecessor_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enqueue an item at tail of queue if queue is not already full.  <a href="#129cde9f5f101ddd623619c838be07f3"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#8d6825341ca673ea316202474a021174">pop_if_present</a> (T &amp;destination)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Decrements the trigger threshold.  <a href="#cb691b18416d4742265aed84d496ebbd"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#3969c70fb89c0a982f142ae9eb5facae">try_put</a> (const <a class="el" href="a00280.html">input_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attempt to dequeue an item from head of queue.  <a href="#8d6825341ca673ea316202474a021174"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d648858b6ba8bd3b4ad8f886de855c42"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::begin" ref="d648858b6ba8bd3b4ad8f886de855c42" args="()" -->
+iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>begin</b> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Puts a <a class="el" href="a00280.html">continue_msg</a> to the receiver.  <a href="#3969c70fb89c0a982f142ae9eb5facae"></a><br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e884193748f7637fded5bda02e3b7a9d"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::reset_receiver" ref="e884193748f7637fded5bda02e3b7a9d" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6539cec6179a0f51ad78d69aed406b86"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::end" ref="6539cec6179a0f51ad78d69aed406b86" args="()" -->
+iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#40ca8b7e96c5bc3428b4d1e409725ee5">execute</a> ()=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="171c35afe03799768bd08ab6bfe438d5"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::begin" ref="171c35afe03799768bd08ab6bfe438d5" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>begin</b> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Does whatever should happen when the threshold is reached.  <a href="#40ca8b7e96c5bc3428b4d1e409725ee5"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7adfecde604fd68d9b0e1e6ae28d9783"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::is_continue_receiver" ref="7adfecde604fd68d9b0e1e6ae28d9783" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_continue_receiver</b> ()</td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5cddbd33109e94a68fb5457682a62110"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::my_mutex" ref="5cddbd33109e94a68fb5457682a62110" args="" -->
-<a class="el" href="a00334.html">spin_mutex</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_mutex</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="66df49f67e70e7f8e9831d0e362ba84c"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::my_predecessor_count" ref="66df49f67e70e7f8e9831d0e362ba84c" args="" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_predecessor_count</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05fd1ce3c3fd7be3e74817b31fd2f068"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::my_current_count" ref="05fd1ce3c3fd7be3e74817b31fd2f068" args="" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_current_count</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a0d4c3084fd13902c2d38f31c1dc232"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::my_initial_predecessor_count" ref="8a0d4c3084fd13902c2d38f31c1dc232" args="" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_initial_predecessor_count</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ec0ba8d8052b1669468ea5bb7345927c"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::end" ref="ec0ba8d8052b1669468ea5bb7345927c" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><b>end</b> () const </td></tr>
 
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3b6d13039c2a8c1e369e5790895b0088"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::limiter_node" ref="3b6d13039c2a8c1e369e5790895b0088" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00282.html#3b6d13039c2a8c1e369e5790895b0088">limiter_node</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put receiver back in initial state <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7e5acd3345f7903a0265a1ef9f3b66bc"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::internal::successor_cache" ref="7e5acd3345f7903a0265a1ef9f3b66bc" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::successor_cache</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a34db52508586e2b6071e14302c9379b"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::internal::concurrent_queue_iterator" ref="a34db52508586e2b6071e14302c9379b" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::concurrent_queue_iterator</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Base class for receivers of completion messages. 
+<h3>template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::deprecated::concurrent_queue&lt; T, A &gt;</h3>
+
+A high-performance thread-safe blocking concurrent bounded queue. 
 <p>
-These receivers automatically reset, but cannot be explicitly waited on 
+This is the pre-PPL TBB concurrent queue which support boundedness and blocking semantics. Note that method names agree with the PPL-style concurrent queue. Multiple threads may each push and pop concurrently. Assignment construction is not allowed. 
 <p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="40ca8b7e96c5bc3428b4d1e409725ee5"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::execute" ref="40ca8b7e96c5bc3428b4d1e409725ee5" args="()=0" -->
+<a class="anchor" name="8d6825341ca673ea316202474a021174"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::pop_if_present" ref="8d6825341ca673ea316202474a021174" args="(T &amp;destination)" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tbb::flow::interface6::continue_receiver::execute           </td>
+          <td class="memname">bool <a class="el" href="a00282.html">tbb::deprecated::concurrent_queue</a>&lt; T, A &gt;::pop_if_present           </td>
           <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [protected, pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Does whatever should happen when the threshold is reached. 
-<p>
-This should be very fast or else spawn a task. This is called while the sender is blocked in the <a class="el" href="a00282.html#3969c70fb89c0a982f142ae9eb5facae">try_put()</a>. 
-</div>
-</div><p>
-<a class="anchor" name="cb691b18416d4742265aed84d496ebbd"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::remove_predecessor" ref="cb691b18416d4742265aed84d496ebbd" args="(predecessor_type &amp;)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool tbb::flow::interface6::continue_receiver::remove_predecessor           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="a00330.html">predecessor_type</a> &amp;&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">T &amp;&nbsp;</td>
+          <td class="paramname"> <em>destination</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inline]</code></td>
         </tr>
@@ -142,20 +111,23 @@ This should be very fast or else spawn a task. This is called while the sender i
 <div class="memdoc">
 
 <p>
-Decrements the trigger threshold. 
+Attempt to dequeue an item from head of queue. 
 <p>
-Does not check to see if the removal of the predecessor now makes the current count exceed the new threshold. So removing a predecessor while the graph is active can cause unexpected results. 
+Does not wait for item to become available. Returns true if successful; false otherwise. <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use <a class="el" href="a00275.html#3086cb4dcdeee245ef5cf34f72fb3e10">try_pop()</a> </dd></dl>
+
 </div>
 </div><p>
-<a class="anchor" name="3969c70fb89c0a982f142ae9eb5facae"></a><!-- doxytag: member="tbb::flow::interface6::continue_receiver::try_put" ref="3969c70fb89c0a982f142ae9eb5facae" args="(const input_type &amp;)" -->
+<a class="anchor" name="129cde9f5f101ddd623619c838be07f3"></a><!-- doxytag: member="tbb::deprecated::concurrent_queue::push_if_not_full" ref="129cde9f5f101ddd623619c838be07f3" args="(const T &amp;source)" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool tbb::flow::interface6::continue_receiver::try_put           </td>
+          <td class="memname">bool <a class="el" href="a00282.html">tbb::deprecated::concurrent_queue</a>&lt; T, A &gt;::push_if_not_full           </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="a00280.html">input_type</a> &amp;&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">const T &amp;&nbsp;</td>
+          <td class="paramname"> <em>source</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inline]</code></td>
         </tr>
@@ -164,13 +136,13 @@ Does not check to see if the removal of the predecessor now makes the current co
 <div class="memdoc">
 
 <p>
-Puts a <a class="el" href="a00280.html">continue_msg</a> to the receiver. 
+Enqueue an item at tail of queue if queue is not already full. 
 <p>
-If the message causes the message count to reach the predecessor count, <a class="el" href="a00282.html#40ca8b7e96c5bc3428b4d1e409725ee5">execute()</a> is called and the message count is reset to 0. Otherwise the message count is incremented. 
+Does not wait for queue to become not full. Returns true if item is pushed; false if queue was already full. 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00486.html">concurrent_queue.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

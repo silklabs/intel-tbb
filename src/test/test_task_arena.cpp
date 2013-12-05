@@ -54,22 +54,24 @@
 
 typedef tbb::blocked_range<int> Range;
 
-class ConcurrencyTrackingBody {
-public:
-    void operator() ( const Range& ) const {
-        Harness::ConcurrencyTracker ct;
-        for ( volatile int i = 0; i < 1000000; ++i )
-            ;
-    }
-};
-
 Harness::SpinBarrier our_barrier;
 
-static tbb::enumerable_thread_specific<int> local_id, old_id;
+static tbb::enumerable_thread_specific<int> local_id, old_id, slot_id(-1);
 void ResetTLS() {
     local_id.clear();
     old_id.clear();
+    slot_id.clear();
 }
+
+class ConcurrencyTrackingBody {
+public:
+    void operator() ( const Range& ) const {
+        ASSERT(slot_id.local() == tbb::task_arena::current_slot(), NULL);
+        Harness::ConcurrencyTracker ct;
+        for ( volatile int i = 0; i < 100000; ++i )
+            ;
+    }
+};
 
 class ArenaObserver : public tbb::task_scheduler_observer {
     int myId;
@@ -81,6 +83,7 @@ class ArenaObserver : public tbb::task_scheduler_observer {
         old_id.local() = local_id.local();
         ASSERT(old_id.local() != myId, "double-entry to the same arena");
         local_id.local() = myId;
+        slot_id.local() = tbb::task_arena::current_slot();
         if(is_worker) ASSERT(tbb::task_arena::current_slot()>0, NULL);
         else ASSERT(tbb::task_arena::current_slot()==0, NULL);
     }
@@ -89,11 +92,14 @@ class ArenaObserver : public tbb::task_scheduler_observer {
         REMARK("a %s #%p is leaving arena %d to %d\n", is_worker?"worker":"master", &local_id.local(), myId, old_id.local());
         //ASSERT(old_id.local(), "call to on_scheduler_exit without prior entry");
         ASSERT(local_id.local() == myId, "nesting of arenas is broken");
+        ASSERT(slot_id.local() == tbb::task_arena::current_slot(), NULL);
+        slot_id.local() = -1;
         local_id.local() = old_id.local();
         old_id.local() = 0;
     }
     /*override*/
     bool on_scheduler_leaving() {
+        ASSERT(slot_id.local() == tbb::task_arena::current_slot(), NULL);
         return tbb::task_arena::current_slot() >= myTrappedSlot;
     }
 public:
@@ -115,7 +121,7 @@ struct AsynchronousWork : NoAssign {
     : my_barrier(a_barrier), my_is_blocking(blocking) {}
     void operator()() const {
         ASSERT(local_id.local() != 0, "not in explicit arena");
-        tbb::parallel_for(Range(0,35), ConcurrencyTrackingBody());
+        tbb::parallel_for(Range(0,500), ConcurrencyTrackingBody(), tbb::simple_partitioner());
         if(my_is_blocking) my_barrier.timed_wait(10); // must be asynchronous to master thread
         else my_barrier.signal_nowait();
     }

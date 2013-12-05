@@ -91,6 +91,62 @@ bool LargeObjectCache::CacheBin::put(ExtMemoryPool *extMemPool,
     return blockCached;
 }
 
+LargeMemoryBlock *LargeObjectCache::CacheBin::
+    putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *head, int num, int idx)
+{
+    BinStatus binStatus = NOT_CHANGED;
+    size_t size = head->unalignedSize;
+    LargeMemoryBlock *curr = head, *tail, *toRelease = NULL;
+    BinBitMask *bitMask = &extMemPool->loc.bitMask;
+
+    MALLOC_ASSERT(num>1, ASSERT_TEXT);
+    head->prev = NULL;
+    for (int i=0; i<num-1; i++, curr=curr->next)
+        curr->next->prev = curr;
+    tail = curr;
+    for (curr = tail; curr; curr = curr->prev)
+        curr->age = extMemPool->loc.cleanupCacheIfNeeded(extMemPool);
+    {
+        MallocMutex::scoped_lock scoped_cs(lock);
+        usedSize -= num*size;
+        if (!usedSize)
+            binStatus = SET_EMPTY;
+
+        if (!lastCleanedAge) {
+            // 1st object of such size was released.
+            // Not cache it, and remeber when this occurs
+            // to take into account during cache miss.
+            lastCleanedAge = tail->age;
+            toRelease = tail;
+            tail = tail->prev;
+            toRelease->prev = toRelease->next = NULL;
+            tail->next = NULL;
+            num--;
+        }
+        // add [head;tail] list to cache
+        tail->next = first;
+        first = head;
+        if (tail->next) {
+            tail->next->prev = tail;
+            MALLOC_ASSERT(idx == bitMask->getMaxTrue(idx),
+                          "Bin must be marked in bitmask.");
+            binStatus = NOT_CHANGED;
+        } else {
+            MALLOC_ASSERT(0 == oldest, ASSERT_TEXT);
+            oldest = tail->age;
+            last = tail;
+            binStatus = SET_NON_EMPTY;
+        }
+
+        cachedSize += num*size;
+    }
+    // Bitmask is modified out of lock. As bitmask is used only for cleanup,
+    // this is not violating correctness.
+    if (binStatus != NOT_CHANGED)
+        bitMask->set(idx, binStatus == SET_NON_EMPTY);
+    return toRelease;
+}
+
 LargeMemoryBlock *
     LargeObjectCache::CacheBin::get(ExtMemoryPool *extMemPool, size_t size,
                                     int idx)
@@ -346,15 +402,8 @@ void LargeObjectCache::rollbackCacheState(size_t size)
         bin[idx].decrUsedSize(size, &bitMask, idx);
 }
 
-void *ExtMemoryPool::mallocLargeObject(size_t size, size_t alignment)
+LargeMemoryBlock *ExtMemoryPool::mallocLargeObject(size_t allocationSize)
 {
-    size_t headersSize = sizeof(LargeMemoryBlock)+sizeof(LargeObjectHdr);
-    // TODO: take into account that they are already largeObjectAlignment-aligned
-    size_t allocationSize = alignUp(size+headersSize+alignment, largeBlockCacheStep);
-
-    if (allocationSize < size) // allocationSize is wrapped around after alignUp
-        return NULL;
-
 #if __TBB_MALLOC_LOCACHE_STAT
     AtomicIncrement(mallocCalls);
     AtomicAdd(memAllocKB, allocationSize/1024);
@@ -380,31 +429,20 @@ void *ExtMemoryPool::mallocLargeObject(size_t size, size_t alignment)
         AtomicAdd(memHitKB, allocationSize/1024);
 #endif
     }
-
-    void *alignedArea = (void*)alignUp((uintptr_t)lmb+headersSize, alignment);
-    LargeObjectHdr *header = (LargeObjectHdr*)alignedArea-1;
-    header->memoryBlock = lmb;
-    header->backRefIdx = lmb->backRefIdx;
-    setBackRef(header->backRefIdx, header);
-
-    lmb->objectSize = size;
-
-    MALLOC_ASSERT( isLargeObject(alignedArea), ASSERT_TEXT );
-    return alignedArea;
+    return lmb;
 }
 
-bool LargeObjectCache::put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock)
+void LargeObjectCache::put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock)
 {
     size_t idx = sizeToIdx(largeBlock->unalignedSize);
     if (idx<numLargeBlockBins) {
         MALLOC_ITT_SYNC_RELEASING(bin+idx);
         if (bin[idx].put(extMemPool, largeBlock, idx)) {
             STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeBlk);
-            return true;
-        } else
-            return false;
+            return;
+        }
     }
-    return false;
+    extMemPool->returnLargeObjectToBackend(largeBlock);
 }
 
 #if __TBB_MALLOC_LOCACHE_STAT
@@ -418,17 +456,110 @@ void LargeObjectCache::reportStat(FILE *f)
 }
 #endif
 
-void ExtMemoryPool::freeLargeObject(void *object)
+void LargeObjectCache::addToBin(ExtMemoryPool *extMemPool, LargeMemoryBlock *toCache,
+                                int num, int idx)
 {
-    LargeObjectHdr *header = (LargeObjectHdr*)object - 1;
+    LargeMemoryBlock *toRelease = NULL;
+    if (num==1) {
+        if (!bin[idx].put(extMemPool, toCache, idx))
+            extMemPool->returnLargeObjectToBackend(toCache);
+    } else {
+        toRelease = bin[idx].putList(extMemPool, toCache, num, idx);
 
-    // overwrite backRefIdx to simplify double free detection
-    header->backRefIdx = BackRefIdx();
-    if (!loc.put(this, header->memoryBlock)) {
-        removeBackRef(header->memoryBlock->backRefIdx);
-        backend.putLargeBlock(header->memoryBlock);
-        STAT_increment(getThreadId(), ThreadCommonCounters, freeLargeObj);
+        if (toRelease) {
+            MALLOC_ASSERT(!toRelease->next, ASSERT_TEXT);
+            MALLOC_ASSERT(!toRelease->prev, ASSERT_TEXT);
+            extMemPool->returnLargeObjectToBackend(toRelease);
+        }
     }
+    STAT_increment(getThreadId(), ThreadCommonCounters, cacheLargeBlk); // XXX: counters!
+}
+
+// Sort cached blocks using insertion sort to group blocks with size related to
+// same bin together and return all them to a bin during single lock operation.
+LargeMemoryBlock *LargeObjectCache::sort(ExtMemoryPool *extMemPool,
+                                         LargeMemoryBlock *list)
+{
+    LargeMemoryBlock *sorted = NULL;
+
+    for (LargeMemoryBlock *inserting = list; inserting; ) {
+        LargeMemoryBlock *helper = inserting->next;
+        int myIdx = sizeToIdx(inserting->unalignedSize);
+
+        if (myIdx < numLargeBlockBins) {
+            if (!sorted) {
+                sorted = inserting;
+                sorted->next = sorted->prev = NULL;
+            } else {
+                bool added = false;
+                LargeMemoryBlock *prev = NULL;
+
+                for (LargeMemoryBlock *curr = sorted; curr; curr = curr->next) {
+                    if (sizeToIdx(curr->unalignedSize) <= myIdx) {
+                        if (prev) {
+                            prev->next = inserting;
+                            inserting->next = curr;
+                        } else {
+                            inserting->next = sorted;
+                            sorted = inserting;
+                        }
+                        added = true;
+                        break;
+                    }
+                    prev = curr;
+                }
+                if (!added) {
+                    prev->next = inserting;
+                    inserting->next = NULL;
+                }
+            }
+        } else {
+            extMemPool->returnLargeObjectToBackend(inserting);
+        }
+        inserting = helper;
+    }
+    return sorted;
+}
+
+void LargeObjectCache::putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *list)
+{
+    if (LargeMemoryBlock *sorted = sort(extMemPool, list)) {
+        LargeMemoryBlock *toSameBin = sorted;
+        int num = 1, toSameBinIdx = sizeToIdx(toSameBin->unalignedSize);
+
+        for (LargeMemoryBlock *curr = sorted->next; curr;) {
+            LargeMemoryBlock *next = curr->next;
+            int idxCurr = sizeToIdx(curr->unalignedSize);
+            // if curr fits to another bin,
+            // put all previous blocks to toSameBinIdx bin
+            if (idxCurr != toSameBinIdx) {
+                addToBin(extMemPool, toSameBin, num, toSameBinIdx);
+                toSameBin = curr;
+                toSameBinIdx = idxCurr;
+                num = 1;
+            } else
+                num++;
+            curr = next;
+        }
+        addToBin(extMemPool, toSameBin, num, toSameBinIdx);
+    }
+}
+
+void ExtMemoryPool::returnLargeObjectToBackend(LargeMemoryBlock *lmb)
+{
+    removeBackRef(lmb->backRefIdx);
+    backend.putLargeBlock(lmb);
+    STAT_increment(getThreadId(), ThreadCommonCounters, freeLargeObj);
+}
+
+void ExtMemoryPool::freeLargeObject(LargeMemoryBlock *mBlock)
+{
+    loc.put(this, mBlock);
+}
+
+void ExtMemoryPool::freeLargeObjectList(LargeMemoryBlock *head)
+{
+    loc.putList(this, head);
 }
 
 /*********** End allocation of large objects **********/

@@ -39,6 +39,9 @@
 
 #if _WIN32||_WIN64
 #include "tbb/machine/windows_api.h"
+#if __TBB_WIN8UI_SUPPORT
+#include <thread>
+#endif
 #else
 #include <unistd.h>
 #if __linux__
@@ -59,7 +62,7 @@
 namespace tbb {
 namespace internal {
 
-#if __linux__ || __FreeBSD_version >= 701000
+#if __TBB_OS_AFFINITY_SYSCALL_PRESENT
 
 static void set_affinity_mask( size_t maskSize, const basic_mask_t* threadMask ) {
 #if __linux__
@@ -183,8 +186,24 @@ int AvailableHwConcurrency() {
     return theNumProcs;
 }
 
-#elif defined(_SC_NPROCESSORS_ONLN)
+#elif __ANDROID__
+// Work-around for Android that reads the correct number of available CPUs since system calls are unreliable.
+// Format of "present" file is: ([<int>-<int>|<int>],)+
+int AvailableHwConcurrency() {
+    FILE *fp = fopen("/sys/devices/system/cpu/present", "r");
+    if (fp == NULL) return 1;
+    int num_args, lower, upper, num_cpus=0;
+    while ((num_args = fscanf(fp, "%u-%u", &lower, &upper)) != EOF) {
+        switch(num_args) {
+            case 2: num_cpus += upper - lower + 1; break;
+            case 1: num_cpus += 1; break;
+        }
+        fscanf(fp, ",");
+    }
+    return (num_cpus > 0) ? num_cpus : 1;
+}
 
+#elif defined(_SC_NPROCESSORS_ONLN)
 int AvailableHwConcurrency() {
     int n = sysconf(_SC_NPROCESSORS_ONLN);
     return (n > 0) ? n : 1;
@@ -244,10 +263,13 @@ static const dynamic_link_descriptor ProcessorGroupsApiLinkTable[] = {
 };
 
 static void initialize_hardware_concurrency_info () {
-    dynamic_link( GetModuleHandleA( "Kernel32.dll" ), ProcessorGroupsApiLinkTable,
+#if __TBB_WIN8UI_SUPPORT
+    unsigned int nproc = std::thread::hardware_concurrency();
+#else /* __TBB_WIN8UI_SUPPORT */
+    dynamic_link( "Kernel32.dll", ProcessorGroupsApiLinkTable,
                   sizeof(ProcessorGroupsApiLinkTable)/sizeof(dynamic_link_descriptor) );
     SYSTEM_INFO si;
-    GetSystemInfo(&si);
+    GetNativeSystemInfo(&si);
     DWORD_PTR pam, sam, m = 1;
     GetProcessAffinityMask( GetCurrentProcess(), &pam, &sam );
     int nproc = 0;
@@ -280,6 +302,7 @@ static void initialize_hardware_concurrency_info () {
             return;
         }
     }
+#endif /* __TBB_WIN8UI_SUPPORT */
     // Either the process has restricting affinity mask or only a single processor groups is present
     theProcessorGroups[0].numProcs = theProcessorGroups[0].numProcsRunningTotal = nproc;
 

@@ -55,6 +55,14 @@ ifeq ($(cfg), debug)
         CPLUS_FLAGS = $(MS_CRT_KEY) /Od /Ob0 /Zi $(EH_FLAGS) /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=$(TBB.LIB)
         ASM_FLAGS = /DUSE_FRAME_POINTER
 endif
+
+ifeq ($(target_ui), win8ui)
+        CPLUS_FLAGS += /D__TBB_DYNAMIC_LOAD_ENABLED=0 /D "_UNICODE" /D "UNICODE" /D "WINAPI_FAMILY=WINAPI_FAMILY_APP"
+        _WIN32_WINNT=0x0602
+else
+        CPLUS_FLAGS += /DDO_ITT_NOTIFY
+endif
+
 CPLUS_FLAGS += /GS
 
 COMPILE_ONLY = /c
@@ -69,6 +77,7 @@ ifeq ($(runtime),vc7.1)
         WARNING_KEY = /W3
 else
         WARNING_KEY = /W4
+        OPENMP_FLAG = /openmp
 endif
 
 DYLIB_KEY = /DLL
@@ -77,18 +86,11 @@ NODEFAULTLIB_KEY = /Zl
 NOINTRINSIC_KEY = /Oi-
 
 ifeq ($(runtime),vc8)
-        OPENMP_FLAG = /openmp
         WARNING_KEY += /Wp64
         CPLUS_FLAGS += /D_USE_RTM_VERSION
 endif
-ifeq ($(runtime),vc9)
-        OPENMP_FLAG = /openmp
-endif
-ifeq ($(runtime),vc_mt)
-        OPENMP_FLAG = /openmp
-endif
 
-CPLUS_FLAGS += /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
+CPLUS_FLAGS += /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
         /D_WIN32_WINNT=$(_WIN32_WINNT)
 C_FLAGS = $(CPLUS_FLAGS)
 #------------------------------------------------------------------------------

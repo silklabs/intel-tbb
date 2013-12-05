@@ -34,6 +34,9 @@
 #include "tbb/tbb_thread.h"
 #include "tbb/tbb_allocator.h"
 #include "governor.h"       // default_num_threads()
+#if __TBB_WIN8UI_SUPPORT
+#include <thread>
+#endif
 
 namespace tbb {
 namespace internal {
@@ -54,7 +57,7 @@ void tbb_thread_v3::join()
 {
     __TBB_ASSERT( joinable(), "thread should be joinable when join called" );
 #if _WIN32||_WIN64 
-    DWORD status = WaitForSingleObject( my_handle, INFINITE );
+    DWORD status = WaitForSingleObjectEx( my_handle, INFINITE, FALSE );
     if ( status == WAIT_FAILED )
         handle_win_error( GetLastError() );
     BOOL close_stat = CloseHandle( my_handle );
@@ -155,7 +158,12 @@ void thread_sleep_v3(const tick_count::interval_t &i)
          double remainder = (i-(t1-t0)).seconds()*1e3;  // milliseconds remaining to sleep
          if( remainder<=0 ) break;
          DWORD t = remainder>=INFINITE ? INFINITE-1 : DWORD(remainder);
+#if !__TBB_WIN8UI_SUPPORT
          Sleep( t );
+#else
+         std::chrono::milliseconds sleep_time( t );
+         std::this_thread::sleep_for( sleep_time );
+#endif
          t1 = tick_count::now();
     }
 #else

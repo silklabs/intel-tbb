@@ -94,7 +94,7 @@ protected:
     typedef multifunction_node< typename input_port_t::output_type, tuple<signal_t> > gate_fn_t;
     typedef typename gate_fn_t::output_ports_type ports_type;
 public:
-    static const int N = std::tuple_size<GateInput>::value;
+    static const int N = tbb::flow::tuple_size<GateInput>::value;
 
     template <typename Body>
     gate(graph& g, Body b) : my_graph(g), in_ports(g), gate_fn(g, 1, b) {
@@ -118,7 +118,7 @@ template <int N>
 struct or_output_helper {
     template <typename OrOutputType>
     static inline signal_t get_or_output(const OrOutputType& out) {
-        if (N-1 == out.indx) return std::get<N-1>(out.result);
+        if (N-1 == out.indx) return tbb::flow::get<N-1>(out.result);
         else return or_output_helper<N-1>::get_or_output(out);
     }
 };
@@ -126,7 +126,7 @@ template <>
 struct or_output_helper<1> {
     template <typename OrOutputType>
     static inline signal_t get_or_output(const OrOutputType& out) {
-        return std::get<0>(out.result);
+        return tbb::flow::get<0>(out.result);
     }
 };
 
@@ -242,9 +242,9 @@ class buffer : public gate<one_input> {
     public:
         buffer_body() : state(undefined), touched(false) {}
         void operator()(const input_port_t::output_type &v, ports_type& p) { 
-            if (!touched || state != std::get<0>(v.result)) {
-                state = std::get<0>(v.result); 
-                std::get<0>(p).try_put(state); 
+            if (!touched || state != tbb::flow::get<0>(v.result)) {
+                state = tbb::flow::get<0>(v.result); 
+                tbb::flow::get<0>(p).try_put(state); 
                 touched = true;
             }
         }
@@ -264,11 +264,11 @@ class not_gate : public gate<one_input> {
     public:
     not_body() : port(undefined), touched(false) {}
         void operator()(const input_port_t::output_type &v, ports_type& p) {
-            if (!touched || port != std::get<0>(v.result)) {
-                port = std::get<0>(v.result);
+            if (!touched || port != tbb::flow::get<0>(v.result)) {
+                port = tbb::flow::get<0>(v.result);
                 signal_t state = low;
                 if (port==low) state = high; 
-                std::get<0>(p).try_put(state);
+                tbb::flow::get<0>(p).try_put(state);
                 touched = true;
             }
         }
@@ -306,7 +306,7 @@ class and_gate : public gate<GateInput> {
             }
             if (!touched || state != new_state) {
                 state = new_state;
-                std::get<0>(p).try_put(state);
+                tbb::flow::get<0>(p).try_put(state);
                 touched = true;
             }
         }
@@ -344,7 +344,7 @@ class or_gate : public gate<GateInput> {
             }
             if (!touched || state != new_state) {
                 state = new_state;
-                std::get<0>(p).try_put(state);
+                tbb::flow::get<0>(p).try_put(state);
                 touched = true;
             }
         }
@@ -384,7 +384,7 @@ class xor_gate : public gate<GateInput> {
             }
             if (!touched || state != new_state) {
                 state = new_state;
-                std::get<0>(p).try_put(state);
+                tbb::flow::get<0>(p).try_put(state);
                 touched = true;
             }
         }
@@ -424,7 +424,7 @@ class nor_gate : public gate<GateInput> {
             else if (new_state == low) new_state = high;
             if (!touched || state != new_state) {
                 state = new_state;
-                std::get<0>(p).try_put(state);
+                tbb::flow::get<0>(p).try_put(state);
                 touched = true;
             }
         }
@@ -503,10 +503,10 @@ class digit : public gate<four_input> {
         }
         void operator()(const input_port_t::output_type& v, ports_type& p) {
             unsigned int new_state = 0;
-            if (v.indx == 0) ports[0] = std::get<0>(v.result);
-            else if (v.indx == 1) ports[1] = std::get<1>(v.result);
-            else if (v.indx == 2) ports[2] = std::get<2>(v.result);
-            else if (v.indx == 3) ports[3] = std::get<3>(v.result);
+            if (v.indx == 0) ports[0] = tbb::flow::get<0>(v.result);
+            else if (v.indx == 1) ports[1] = tbb::flow::get<1>(v.result);
+            else if (v.indx == 2) ports[2] = tbb::flow::get<2>(v.result);
+            else if (v.indx == 3) ports[3] = tbb::flow::get<3>(v.result);
             if (ports[0] == high) ++new_state;
             if (ports[1] == high) new_state += 2;
             if (ports[2] == high) new_state += 4;

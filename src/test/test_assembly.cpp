@@ -28,8 +28,10 @@
 
 // Program for basic correctness testing of assembly-language routines.
 #include "harness_defs.h"
-
-#if __TBB_TEST_SKIP_BUILTINS_MODE
+//for ICC builtins mode the test will be skipped as
+//macro __TBB_GCC_BUILTIN_ATOMICS_PRESENT used to define __TBB_TEST_SKIP_GCC_BUILTINS_MODE
+//will not be defined (it is explicitly disabled for ICC)
+#if __TBB_TEST_SKIP_GCC_BUILTINS_MODE
 #include "harness.h"
 int TestMain() {
     REPORT("Known issue: GCC builtins aren't available\n");
@@ -44,6 +46,7 @@ int TestMain() {
 
 using tbb::internal::reference_count;
 
+//TODO: remove this function when atomic function __TBB_XXX are dropped
 //! Test __TBB_CompareAndSwapW
 static void TestCompareExchange() {
     ASSERT( intptr_t(-10)<10, "intptr_t not a signed integral type?" ); 
@@ -67,6 +70,7 @@ static void TestCompareExchange() {
             }
 }
 
+//TODO: remove this function when atomic function __TBB_XXX are dropped
 //! Test __TBB___TBB_FetchAndIncrement and __TBB___TBB_FetchAndDecrement
 static void TestAtomicCounter() {
     // "canary" is a value used to detect illegal overwrites.

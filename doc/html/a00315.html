@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</title>
+<title>tbb::parallel_while&lt; Body &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,113 +21,114 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00315.html">priority_queue_node</a></div>
-<h1>tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::priority_queue_node" --><!-- doxytag: inherits="tbb::flow::interface6::buffer_node" -->Forwards messages in priority order.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00315.html">parallel_while</a></div>
+<h1>tbb::parallel_while&lt; Body &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00436.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::parallel_while" -->Parallel iteration over a stream, with optional addition of more work.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00581.html">parallel_while.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt;:
-<p><center><img src="a00315.png" usemap="#tbb::flow::interface6::priority_queue_node< T, Compare, A >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::priority_queue_node< T, Compare, A >_map">
-<area href="a00266.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
-<area href="a00292.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,352,24">
-<area href="a00324.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="362,0,714,24">
-<area href="a00330.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="724,0,1076,24">
-</map>
-<a href="a00076.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00098.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b2829b518979874ad3d2a939e14ae7bd"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::input_type" ref="b2829b518979874ad3d2a939e14ae7bd" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#b2829b518979874ad3d2a939e14ae7bd">input_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2442f019427e608d46801376267e44a8"></a><!-- doxytag: member="tbb::parallel_while::value_type" ref="2442f019427e608d46801376267e44a8" args="" -->
+typedef Body::argument_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#2442f019427e608d46801376267e44a8">value_type</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2cb099b590246b6bc93cc15e78c6ee5c"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::output_type" ref="2cb099b590246b6bc93cc15e78c6ee5c" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#2cb099b590246b6bc93cc15e78c6ee5c">output_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4968bda48aceffa4d65445bf8d0f8048"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::base_type" ref="4968bda48aceffa4d65445bf8d0f8048" args="" -->
-typedef <a class="el" href="a00266.html">buffer_node</a>&lt; T, A &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>base_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdea783bf9d5a4c98e794ac7e0f84ccf"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::predecessor_type" ref="fdea783bf9d5a4c98e794ac7e0f84ccf" args="" -->
-typedef <a class="el" href="a00330.html">sender</a>&lt; <a class="el" href="a00315.html#b2829b518979874ad3d2a939e14ae7bd">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#fdea783bf9d5a4c98e794ac7e0f84ccf">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09ab5064ca8192e68c03da47603e68eb"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::successor_type" ref="09ab5064ca8192e68c03da47603e68eb" args="" -->
-typedef <a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00315.html#2cb099b590246b6bc93cc15e78c6ee5c">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#09ab5064ca8192e68c03da47603e68eb">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type of items. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="497ec2612615249bf5a294eb1b7b93b3"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::priority_queue_node" ref="497ec2612615249bf5a294eb1b7b93b3" args="(graph &amp;g)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#497ec2612615249bf5a294eb1b7b93b3">priority_queue_node</a> (<a class="el" href="a00291.html">graph</a> &amp;g)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="220a7307358aa36802c8754ea45ca385"></a><!-- doxytag: member="tbb::parallel_while::parallel_while" ref="220a7307358aa36802c8754ea45ca385" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#220a7307358aa36802c8754ea45ca385">parallel_while</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="17a4f66e23d54100b64805405e905d62"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::priority_queue_node" ref="17a4f66e23d54100b64805405e905d62" args="(const priority_queue_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#17a4f66e23d54100b64805405e905d62">priority_queue_node</a> (const <a class="el" href="a00315.html">priority_queue_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct empty non-running parallel while. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c2fd559c8a38639fa1ba97a0d5639ca8"></a><!-- doxytag: member="tbb::parallel_while::~parallel_while" ref="c2fd559c8a38639fa1ba97a0d5639ca8" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#c2fd559c8a38639fa1ba97a0d5639ca8">~parallel_while</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d1c6c5e02b9cc144b2b3ccc9f18bf047"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::size_type" ref="d1c6c5e02b9cc144b2b3ccc9f18bf047" args="" -->
-typedef <a class="el" href="a00266.html">buffer_node</a>&lt; T, A <br>
-&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor cleans up data members before returning. <br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Stream&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00315.html#83cbedb9e57dfca2745ff38c88df008d">run</a> (Stream &amp;stream, const Body &amp;body)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb98634e74bee4d82676f1aca0f6864c"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::item_type" ref="eb98634e74bee4d82676f1aca0f6864c" args="" -->
-typedef <a class="el" href="a00266.html">buffer_node</a>&lt; T, A <br>
-&gt;::item_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>item_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Apply body.apply to each item in the stream.  <a href="#83cbedb9e57dfca2745ff38c88df008d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#4861989d7f5e3111d264d4d6013e8fe1">add</a> (const <a class="el" href="a00315.html#2442f019427e608d46801376267e44a8">value_type</a> &amp;item)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f80f04dc8886a8a6b177123f094bdb43"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::prio_operation" ref="f80f04dc8886a8a6b177123f094bdb43" args="" -->
-typedef <a class="el" href="a00266.html">buffer_node</a>&lt; T, A <br>
-&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>prio_operation</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="274cc306c7a22cf9e27c4c2c3a66ce8e579c547cd1c044d3e6190401d87ee101"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::WAIT" ref="274cc306c7a22cf9e27c4c2c3a66ce8e579c547cd1c044d3e6190401d87ee101" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="274cc306c7a22cf9e27c4c2c3a66ce8e67ced6b76fb4bcd40404499619fbd0b9"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::SUCCEEDED" ref="274cc306c7a22cf9e27c4c2c3a66ce8e67ced6b76fb4bcd40404499619fbd0b9" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="274cc306c7a22cf9e27c4c2c3a66ce8eb74545a431cbeaf85ab0bfcec52261ff"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::FAILED" ref="274cc306c7a22cf9e27c4c2c3a66ce8eb74545a431cbeaf85ab0bfcec52261ff" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
-<b>SUCCEEDED</b>, 
-<b>FAILED</b>
- }</td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="534a669bacdb8b335c8eaaadc9462795"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::reset" ref="534a669bacdb8b335c8eaaadc9462795" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="abff2e0891477135c24f44747e991c6c"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::handle_operations" ref="abff2e0891477135c24f44747e991c6c" args="(prio_operation *op_list)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>handle_operations</b> (prio_operation *op_list)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ed2d8dc0a9c1c2571e4a69df2f2209e5"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_forward" ref="ed2d8dc0a9c1c2571e4a69df2f2209e5" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00315.html#ed2d8dc0a9c1c2571e4a69df2f2209e5">internal_forward</a> (prio_operation *op)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05d8747ea54ca84a7196f8cacdc81ca5"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_push" ref="05d8747ea54ca84a7196f8cacdc81ca5" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_push</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6c7cd11240fbe0737344f36b587492f9"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_pop" ref="6c7cd11240fbe0737344f36b587492f9" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9238c5c44ccc46ed1be218651f36feea"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_reserve" ref="9238c5c44ccc46ed1be218651f36feea" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="caefc7ba7a16a7120b6b37de42e705b4"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_consume" ref="caefc7ba7a16a7120b6b37de42e705b4" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="400304719e359e66e9560157577fc2fe"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_release" ref="400304719e359e66e9560157577fc2fe" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_release</b> (prio_operation *op)</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a work item while running.  <a href="#4861989d7f5e3111d264d4d6013e8fe1"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, typename Compare = std::less&lt;T&gt;, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
- class tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt;</h3>
+<h3>template&lt;typename Body&gt;<br>
+ class tbb::parallel_while&lt; Body &gt;</h3>
 
-Forwards messages in priority order. 
+Parallel iteration over a stream, with optional addition of more work. 
 <p>
+The Body b has the requirement: <br>
+ "b(v)" <br>
+ "b.argument_type" <br>
+ where v is an argument_type 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="4861989d7f5e3111d264d4d6013e8fe1"></a><!-- doxytag: member="tbb::parallel_while::add" ref="4861989d7f5e3111d264d4d6013e8fe1" args="(const value_type &amp;item)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00315.html">tbb::parallel_while</a>&lt; Body &gt;::add           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00315.html#2442f019427e608d46801376267e44a8">value_type</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>item</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a work item while running. 
+<p>
+Should be executed only by body.apply or a thread spawned therefrom. 
+</div>
+</div><p>
+<a class="anchor" name="83cbedb9e57dfca2745ff38c88df008d"></a><!-- doxytag: member="tbb::parallel_while::run" ref="83cbedb9e57dfca2745ff38c88df008d" args="(Stream &amp;stream, const Body &amp;body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+<div class="memtemplate">
+template&lt;typename Stream&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00315.html">tbb::parallel_while</a>&lt; Body &gt;::run           </td>
+          <td>(</td>
+          <td class="paramtype">Stream &amp;&nbsp;</td>
+          <td class="paramname"> <em>stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Body &amp;&nbsp;</td>
+          <td class="paramname"> <em>body</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Apply body.apply to each item in the stream. 
+<p>
+A Stream s has the requirements <br>
+ "S::value_type" <br>
+ "s.pop_if_present(value) is convertible to bool 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00581.html">parallel_while.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

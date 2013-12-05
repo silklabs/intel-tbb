@@ -33,7 +33,7 @@
 #define __TBB_machine_linux_ia32_H
 
 #include <stdint.h>
-#include <unistd.h>
+#include "gcc_ia32_common.h"
 
 #define __TBB_WORDSIZE 4
 #define __TBB_BIG_ENDIAN 0
@@ -96,6 +96,7 @@ static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, 
 #if __TBB_GCC_BUILTIN_ATOMICS_PRESENT
     return __sync_val_compare_and_swap( reinterpret_cast<volatile int64_t*>(ptr), comparand, value );
 #else /* !__TBB_GCC_BUILTIN_ATOMICS_PRESENT */
+    //TODO: look like ICC 13.0 has some issues with this code, investigate it more deeply
     int64_t result;
     union {
         int64_t i64;
@@ -148,12 +149,6 @@ static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, 
 #pragma warning( pop )
 #endif // warning 998 is back
 
-static inline int32_t __TBB_machine_lg( uint32_t x ) {
-    int32_t j;
-    __asm__ ("bsr %1,%0" : "=r"(j) : "r"(x));
-    return j;
-}
-
 static inline void __TBB_machine_or( volatile void *ptr, uint32_t addend ) {
     __asm__ __volatile__("lock\norl %1,%0" : "=m"(*(__TBB_VOLATILE uint32_t *)ptr) : "r"(addend), "m"(*(__TBB_VOLATILE uint32_t *)ptr) : "memory");
 }
@@ -161,13 +156,6 @@ static inline void __TBB_machine_or( volatile void *ptr, uint32_t addend ) {
 static inline void __TBB_machine_and( volatile void *ptr, uint32_t addend ) {
     __asm__ __volatile__("lock\nandl %1,%0" : "=m"(*(__TBB_VOLATILE uint32_t *)ptr) : "r"(addend), "m"(*(__TBB_VOLATILE uint32_t *)ptr) : "memory");
 }
-
-static inline void __TBB_machine_pause( int32_t delay ) {
-    for (int32_t i = 0; i < delay; i++) {
-       __asm__ __volatile__("pause;");
-    }
-    return;
-}   
 
 //TODO: Check if it possible and profitable for IA-32 on (Linux and Windows)
 //to use of 64-bit load/store via floating point registers together with full fence
@@ -217,10 +205,6 @@ static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
 #define __TBB_AtomicOR(P,V) __TBB_machine_or(P,V)
 #define __TBB_AtomicAND(P,V) __TBB_machine_and(P,V)
 
-// Definition of other functions
-#define __TBB_Pause(V) __TBB_machine_pause(V)
-#define __TBB_Log2(V)  __TBB_machine_lg(V)
-
 #define __TBB_USE_GENERIC_DWORD_FETCH_ADD                   1
 #define __TBB_USE_GENERIC_DWORD_FETCH_STORE                 1
 #define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1
@@ -228,25 +212,3 @@ static inline void __TBB_machine_store8(volatile void *ptr, int64_t value) {
 #define __TBB_USE_GENERIC_RELAXED_LOAD_STORE                1
 #define __TBB_USE_GENERIC_SEQUENTIAL_CONSISTENCY_LOAD_STORE 1
 
-// API to retrieve/update FPU control setting
-#define __TBB_CPU_CTL_ENV_PRESENT 1
-
-struct __TBB_cpu_ctl_env_t {
-    int     mxcsr;
-    short   x87cw;
-};
-
-inline void __TBB_get_cpu_ctl_env ( __TBB_cpu_ctl_env_t* ctl ) {
-    __asm__ __volatile__ (
-            "stmxcsr %0\n\t"
-            "fstcw   %1"
-            : "=m"(ctl->mxcsr), "=m"(ctl->x87cw)
-    );
-}
-inline void __TBB_set_cpu_ctl_env ( const __TBB_cpu_ctl_env_t* ctl ) {
-    __asm__ __volatile__ (
-            "ldmxcsr %0\n\t"
-            "fldcw   %1"
-            : : "m"(ctl->mxcsr), "m"(ctl->x87cw)
-    );
-}

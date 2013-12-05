@@ -265,6 +265,7 @@ bool dynamic_link( dynamic_link_handle, const dynamic_link_descriptor descriptor
 
 #else /* !__TBB_WEAK_SYMBOLS */
 
+#if __TBB_DYNAMIC_LOAD_ENABLED
 bool dynamic_link( dynamic_link_handle module, const dynamic_link_descriptor descriptors[], size_t n, size_t required )
 {
     LIBRARY_ASSERT( module != NULL, "Module handle is NULL" );
@@ -304,6 +305,12 @@ bool dynamic_link( dynamic_link_handle module, const dynamic_link_descriptor des
         *descriptors[k].handler = h[k];
     return true;
 }
+#else
+bool dynamic_link( dynamic_link_handle, const dynamic_link_descriptor [], size_t, size_t )
+{
+    return false;
+}
+#endif
 
 #endif /* !__TBB_WEAK_SYMBOLS */
 

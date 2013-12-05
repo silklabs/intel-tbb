@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::split Class Reference</title>
+<title>tbb::spin_mutex Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,25 +21,105 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00338.html">split</a></div>
-<h1>tbb::split Class Reference<br>
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00338.html">spin_mutex</a></div>
+<h1>tbb::spin_mutex Class Reference<br>
 <small>
-[<a class="el" href="a00432.html">Algorithms</a>]</small>
-</h1><!-- doxytag: class="tbb::split" -->Dummy type that distinguishes splitting constructor from copy constructor.  
+[<a class="el" href="a00439.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::spin_mutex" -->A lock that occupies a single byte.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00659.html">tbb_stddef.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00622.html">spin_mutex.h</a>&gt;</code>
 <p>
-<table border="0" cellpadding="0" cellspacing="0">
+<a href="a00125.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#6c96196965bf7df426311d282ad3c378">spin_mutex</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired lock.  <a href="#6c96196965bf7df426311d282ad3c378"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4ec484f4df6ec5595ec821ef20bd6cd7"></a><!-- doxytag: member="tbb::spin_mutex::internal_construct" ref="4ec484f4df6ec5595ec821ef20bd6cd7" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_construct</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8957e40b0781192419d01d28e5205ec4"></a><!-- doxytag: member="tbb::spin_mutex::lock" ref="8957e40b0781192419d01d28e5205ec4" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#8957e40b0781192419d01d28e5205ec4">lock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#003ffb196d22bf22ca22142338b7eeab">try_lock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#003ffb196d22bf22ca22142338b7eeab"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dfcf8fe840aa73c08c2cadd570fd48fd"></a><!-- doxytag: member="tbb::spin_mutex::unlock" ref="dfcf8fe840aa73c08c2cadd570fd48fd" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#dfcf8fe840aa73c08c2cadd570fd48fd">unlock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7c3354db4bd5cc81bccee9f249abb9e8"></a><!-- doxytag: member="tbb::spin_mutex::is_rw_mutex" ref="7c3354db4bd5cc81bccee9f249abb9e8" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0cae048c5dc5deffe75464e4a3a2b752"></a><!-- doxytag: member="tbb::spin_mutex::is_recursive_mutex" ref="0cae048c5dc5deffe75464e4a3a2b752" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d00ec9a97f34c9160300950b36deac3e"></a><!-- doxytag: member="tbb::spin_mutex::is_fair_mutex" ref="d00ec9a97f34c9160300950b36deac3e" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fcf922650b2fd9d76b7b939d8511bbd8"></a><!-- doxytag: member="tbb::spin_mutex::scoped_lock" ref="fcf922650b2fd9d76b7b939d8511bbd8" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00339.html">scoped_lock</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Represents acquisition of a mutex.  <a href="a00339.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Dummy type that distinguishes splitting constructor from copy constructor. 
+A lock that occupies a single byte. 
 <p>
-See description of parallel_for and parallel_reduce for example usages. 
+A <a class="el" href="a00338.html">spin_mutex</a> is a spin mutex that fits in a single byte. It should be used only for locking short critical sections (typically less than 20 instructions) when fairness is not an issue. If zero-initialized, the mutex is considered unheld. 
 <p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="6c96196965bf7df426311d282ad3c378"></a><!-- doxytag: member="tbb::spin_mutex::spin_mutex" ref="6c96196965bf7df426311d282ad3c378" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">tbb::spin_mutex::spin_mutex           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Construct unacquired lock. 
+<p>
+Equivalent to zero-initialization of *this. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="003ffb196d22bf22ca22142338b7eeab"></a><!-- doxytag: member="tbb::spin_mutex::try_lock" ref="003ffb196d22bf22ca22142338b7eeab" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::spin_mutex::try_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try acquiring lock (non-blocking). 
+<p>
+Return true if lock acquired; false otherwise. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00659.html">tbb_stddef.h</a></ul>
+<li><a class="el" href="a00622.html">spin_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

@@ -38,6 +38,7 @@
 **/
 
 #define __TBB_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+
 #if __clang__
     #define __TBB_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 #endif
@@ -84,14 +85,19 @@
         #define __TBB_EXCEPTION_PTR_PRESENT        0
     #endif
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       (_MSC_VER >= 1700 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600))
+    #define __TBB_STATIC_ASSERT_PRESENT            __GXX_EXPERIMENTAL_CXX0X__ || (_MSC_VER >= 1600)
     #define __TBB_CPP11_TUPLE_PRESENT              (_MSC_VER >= 1600) || ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
+    /** TODO: re-check for compiler version greater than 12.1 if it supports initializer lists**/
+    #define __TBB_INITIALIZER_LISTS_PRESENT        0
 #elif __clang__
 //TODO: these options need to be rechecked
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
     #define __TBB_CPP11_RVALUE_REF_PRESENT         (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
     #define __TBB_EXCEPTION_PTR_PRESENT            __GXX_EXPERIMENTAL_CXX0X__
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION > 30100)// TODO: check version
+    #define __TBB_STATIC_ASSERT_PRESENT            (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_CLANG_VERSION >= 20900)
     #define __TBB_CPP11_TUPLE_PRESENT              ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
+    #define __TBB_INITIALIZER_LISTS_PRESENT        0
 #elif __GNUC__
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT __GXX_EXPERIMENTAL_CXX0X__
     #define __TBB_CPP11_RVALUE_REF_PRESENT         __GXX_EXPERIMENTAL_CXX0X__
@@ -100,19 +106,25 @@
         If the compiler has no atomic intrinsics, the C++ library should not expect those as well. **/
     #define __TBB_EXCEPTION_PTR_PRESENT            (__GXX_EXPERIMENTAL_CXX0X__ && (__TBB_GCC_VERSION >= 40404) && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600)
+    #define __TBB_STATIC_ASSERT_PRESENT            ((__TBB_GCC_VERSION >= 40300) && (__GXX_EXPERIMENTAL_CXX0X__))
     #define __TBB_CPP11_TUPLE_PRESENT              ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40300))
+    #define __TBB_INITIALIZER_LISTS_PRESENT        ((__GXX_EXPERIMENTAL_CXX0X__) && (__TBB_GCC_VERSION >= 40400))
 #elif _MSC_VER
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT 0
     #define __TBB_CPP11_RVALUE_REF_PRESENT         0
     #define __TBB_EXCEPTION_PTR_PRESENT            (_MSC_VER >= 1600)
+    #define __TBB_STATIC_ASSERT_PRESENT            (_MSC_VER >= 1600)
     #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       (_MSC_VER >= 1700)
     #define __TBB_CPP11_TUPLE_PRESENT              (_MSC_VER >= 1600)
+    #define __TBB_INITIALIZER_LISTS_PRESENT        0
 #else
     #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT 0
     #define __TBB_CPP11_RVALUE_REF_PRESENT         0
     #define __TBB_EXCEPTION_PTR_PRESENT            0
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       0    
+    #define __TBB_STATIC_ASSERT_PRESENT            0
+    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT       0
     #define __TBB_CPP11_TUPLE_PRESENT              0
+    #define __TBB_INITIALIZER_LISTS_PRESENT        0
 #endif
 
 //TODO: not clear how exactly this macro affects exception_ptr - investigate
@@ -133,10 +145,17 @@
     #define __TBB_DECLSPEC_ALIGN_PRESENT 1
 #endif
 
+/* Actually ICC supports gcc __sync_* intrinsics starting 11.1,
+ * but 64 bit support for 32 bit target comes in later ones*/
 /* TODO: change the version back to 4.1.2 once macro __TBB_WORD_SIZE become optional */
-#if (__TBB_GCC_VERSION >= 40306) && !defined(__INTEL_COMPILER)
+#if (__TBB_GCC_VERSION >= 40306) || (__INTEL_COMPILER >= 1200)
     /** built-in atomics available in GCC since 4.1.2 **/
     #define __TBB_GCC_BUILTIN_ATOMICS_PRESENT 1
+#endif
+
+#if (__INTEL_COMPILER >= 1210)
+    /** built-in C++11 style atomics available in compiler since 12.1 **/
+    #define __TBB_ICC_BUILTIN_ATOMICS_PRESENT 1
 #endif
 
 /** User controlled TBB features & modes **/
@@ -227,17 +246,17 @@
 
 /** Internal TBB features & modes **/
 
-/** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to dynamic load libraries
-    __TBB_SOURCE_DIRECTLY_INCLUDED is a mode used in whitebox testing when 
-    it's necessary to test internal functions not exported from TBB DLLs
-**/
+/** __TBB_WEAK_SYMBOLS_PRESENT denotes that the system supports the weak symbol mechanism **/
+#define __TBB_WEAK_SYMBOLS_PRESENT !_WIN32 && !__APPLE__ && !__sun && ((__TBB_GCC_VERSION >= 40000) || defined(__INTEL_COMPILER))
 
+/** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to load shared libraries at run time **/
 #ifndef __TBB_DYNAMIC_LOAD_ENABLED
     #define __TBB_DYNAMIC_LOAD_ENABLED 1
-#elif !(_WIN32||_WIN64) && !__TBB_DYNAMIC_LOAD_ENABLED
-    #define __TBB_WEAK_SYMBOLS 1
 #endif
 
+/** __TBB_SOURCE_DIRECTLY_INCLUDED is a mode used in whitebox testing when 
+    it's necessary to test internal functions not exported from TBB DLLs
+**/
 #if (_WIN32||_WIN64) && __TBB_SOURCE_DIRECTLY_INCLUDED
     #define __TBB_NO_IMPLICIT_LINKAGE 1
     #define __TBBMALLOC_NO_IMPLICIT_LINKAGE 1
@@ -285,7 +304,7 @@
 #endif
 
 #if !defined(__TBB_SURVIVE_THREAD_SWITCH) && \
-          (_WIN32 || _WIN64 || __APPLE__ || __linux__)
+          (_WIN32 || _WIN64 || __APPLE__ || (__linux__ && !__ANDROID__))
     #define __TBB_SURVIVE_THREAD_SWITCH 1
 #endif /* __TBB_SURVIVE_THREAD_SWITCH */
 
@@ -314,6 +333,13 @@
     removed as soon as the corresponding bugs are fixed or the buggy OS/compiler
     versions go out of the support list. 
 **/
+
+#if __ANDROID__ && __TBB_GCC_VERSION <= 40403 && !__GCC_HAVE_SYNC_COMPARE_AND_SWAP_8 
+    /** Necessary because on Android 8-byte CAS and F&A are not available for some processor architectures,
+        but no mandatory warning message appears from GCC 4.4.3. Instead, only a linkage error occurs when
+        these atomic operations are used (such as in unit test test_atomic.exe). **/
+    #define __TBB_GCC_64BIT_ATOMIC_BUILTINS_BROKEN 1
+#endif
 
 #if __GNUC__ && __TBB_x86_64 && __INTEL_COMPILER == 1200
     #define __TBB_ICC_12_0_INL_ASM_FSTCW_BROKEN 1
@@ -396,7 +422,13 @@
     #define __TBB_MAIN_THREAD_AFFINITY_BROKEN 1
 #endif
 
-#if !defined(__EXCEPTIONS) && __GNUC__==4 && (__GNUC_MINOR__==4 ||__GNUC_MINOR__==5) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#if defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_APP
+#define __TBB_WIN8UI_SUPPORT 1
+#else
+#define __TBB_WIN8UI_SUPPORT 0
+#endif
+
+#if !defined(__EXCEPTIONS) && __GNUC__==4 && (__GNUC_MINOR__==4 ||__GNUC_MINOR__==5 || (__INTEL_COMPILER==1300 && __TBB_GCC_VERSION>=40600 && __TBB_GCC_VERSION<=40700)) && defined(__GXX_EXPERIMENTAL_CXX0X__)
 /* There is an issue for specific GCC toolchain when C++11 is enabled
    and exceptions are disabled:
    exceprion_ptr.h/nested_exception.h are using throw unconditionally.

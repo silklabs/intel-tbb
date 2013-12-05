@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::queuing_rw_mutex Class Reference</title>
+<title>tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,51 +21,113 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00319.html">queuing_rw_mutex</a></div>
-<h1>tbb::queuing_rw_mutex Class Reference<br>
-<small>
-[<a class="el" href="a00435.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::queuing_rw_mutex" -->Queuing reader-writer mutex with local-only spinning.  
+<a class="el" href="a00423.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00319.html">priority_queue_node</a></div>
+<h1>tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::priority_queue_node" --><!-- doxytag: inherits="tbb::flow::interface6::buffer_node" -->Forwards messages in priority order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00610.html">queuing_rw_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00521.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00112.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt;:
+<p><center><img src="a00319.png" usemap="#tbb::flow::interface6::priority_queue_node< T, Compare, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::priority_queue_node< T, Compare, A >_map">
+<area href="a00270.html" alt="tbb::flow::interface6::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
+<area href="a00296.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,352,24">
+<area href="a00328.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="362,0,714,24">
+<area href="a00334.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="724,0,1076,24">
+</map>
+<a href="a00076.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d396bd30ce353b800ba6ac1246ef5f7e"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::input_type" ref="d396bd30ce353b800ba6ac1246ef5f7e" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#d396bd30ce353b800ba6ac1246ef5f7e">input_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="933cb2949383ed7f7c643c8f062eb03f"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::output_type" ref="933cb2949383ed7f7c643c8f062eb03f" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#933cb2949383ed7f7c643c8f062eb03f">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="60311f74b1a52ea232a02502f97b107b"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::base_type" ref="60311f74b1a52ea232a02502f97b107b" args="" -->
+typedef <a class="el" href="a00270.html">buffer_node</a>&lt; T, A &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>base_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5e432105b0f469ceaacf3ab9cc26bf76"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::predecessor_type" ref="5e432105b0f469ceaacf3ab9cc26bf76" args="" -->
+typedef <a class="el" href="a00334.html">sender</a>&lt; <a class="el" href="a00319.html#d396bd30ce353b800ba6ac1246ef5f7e">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#5e432105b0f469ceaacf3ab9cc26bf76">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="edce05709d3df2657bb62b3e26fb9742"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::successor_type" ref="edce05709d3df2657bb62b3e26fb9742" args="" -->
+typedef <a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00319.html#933cb2949383ed7f7c643c8f062eb03f">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#edce05709d3df2657bb62b3e26fb9742">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="85c90877c3447690ac4e2ac4ff8dea5e"></a><!-- doxytag: member="tbb::queuing_rw_mutex::queuing_rw_mutex" ref="85c90877c3447690ac4e2ac4ff8dea5e" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#85c90877c3447690ac4e2ac4ff8dea5e">queuing_rw_mutex</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="23a3f5ef8f64501f99c308c58ffa311a"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::priority_queue_node" ref="23a3f5ef8f64501f99c308c58ffa311a" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#23a3f5ef8f64501f99c308c58ffa311a">priority_queue_node</a> (<a class="el" href="a00295.html">graph</a> &amp;g)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1ba73e3d95cfdf8323880bc623af9099"></a><!-- doxytag: member="tbb::queuing_rw_mutex::~queuing_rw_mutex" ref="1ba73e3d95cfdf8323880bc623af9099" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#1ba73e3d95cfdf8323880bc623af9099">~queuing_rw_mutex</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="392a7f631383043cd3c203c52b9a7dee"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::priority_queue_node" ref="392a7f631383043cd3c203c52b9a7dee" args="(const priority_queue_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#392a7f631383043cd3c203c52b9a7dee">priority_queue_node</a> (const <a class="el" href="a00319.html">priority_queue_node</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor asserts if the mutex is acquired, i.e. q_tail is non-NULL. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb88522d145ad7bcf5bebfa7d2a6122b"></a><!-- doxytag: member="tbb::queuing_rw_mutex::internal_construct" ref="eb88522d145ad7bcf5bebfa7d2a6122b" args="()" -->
-void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_construct</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b4481dc2b8ead1b818a7f784cc27a310"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::size_type" ref="b4481dc2b8ead1b818a7f784cc27a310" args="" -->
+typedef <a class="el" href="a00270.html">buffer_node</a>&lt; T, A <br>
+&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
 
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0dc1e28d3033e8f9556f5b13b7b57d0f"></a><!-- doxytag: member="tbb::queuing_rw_mutex::is_rw_mutex" ref="0dc1e28d3033e8f9556f5b13b7b57d0f" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = true</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="75703e76227c7437f190575cdd4916e3"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::item_type" ref="75703e76227c7437f190575cdd4916e3" args="" -->
+typedef <a class="el" href="a00270.html">buffer_node</a>&lt; T, A <br>
+&gt;::item_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>item_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e6ad08ef251f9ea898bd5f67963869c5"></a><!-- doxytag: member="tbb::queuing_rw_mutex::is_recursive_mutex" ref="e6ad08ef251f9ea898bd5f67963869c5" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3f2e657bd98abb7167e3d7409588a635"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::prio_operation" ref="3f2e657bd98abb7167e3d7409588a635" args="" -->
+typedef <a class="el" href="a00270.html">buffer_node</a>&lt; T, A <br>
+&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>prio_operation</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="147b34120505e419f6ea8d631ec4375d"></a><!-- doxytag: member="tbb::queuing_rw_mutex::is_fair_mutex" ref="147b34120505e419f6ea8d631ec4375d" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = true</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29dde398e290ff2f34cae71bd0ab1ba699a2f28017baf76807dc66d69018a597"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::WAIT" ref="29dde398e290ff2f34cae71bd0ab1ba699a2f28017baf76807dc66d69018a597" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00320.html">scoped_lock</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29dde398e290ff2f34cae71bd0ab1ba6b903eebd0e381f97e713d335722b617b"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::SUCCEEDED" ref="29dde398e290ff2f34cae71bd0ab1ba6b903eebd0e381f97e713d335722b617b" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00320.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29dde398e290ff2f34cae71bd0ab1ba697bbeb94fd8eab6bca570080fa485959"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::FAILED" ref="29dde398e290ff2f34cae71bd0ab1ba697bbeb94fd8eab6bca570080fa485959" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1a540fd4d3c4ba093d35213c9cb64b97"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::reset" ref="1a540fd4d3c4ba093d35213c9cb64b97" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7f5982e31a2c5ca3adbe24be5d1d48df"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::handle_operations" ref="7f5982e31a2c5ca3adbe24be5d1d48df" args="(prio_operation *op_list)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>handle_operations</b> (prio_operation *op_list)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dc7559f6009ba72398121b2548712c25"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_forward_task" ref="dc7559f6009ba72398121b2548712c25" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00319.html#dc7559f6009ba72398121b2548712c25">internal_forward_task</a> (prio_operation *op)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cf6484dd859c7e5659a2f2c8102a5c18"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_push" ref="cf6484dd859c7e5659a2f2c8102a5c18" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_push</b> (prio_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7d41d57a55826776c23bb9556f094a8a"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_pop" ref="7d41d57a55826776c23bb9556f094a8a" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (prio_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f7832aca594908525a0abb5d8a147759"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_reserve" ref="f7832aca594908525a0abb5d8a147759" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (prio_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d0f3ef805b00552968139aeade3d27fc"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_consume" ref="d0f3ef805b00552968139aeade3d27fc" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (prio_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="23c2d32744a5071c145d990372f6225f"></a><!-- doxytag: member="tbb::flow::interface6::priority_queue_node::internal_release" ref="23c2d32744a5071c145d990372f6225f" args="(prio_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_release</b> (prio_operation *op)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Queuing reader-writer mutex with local-only spinning. 
-<p>
-Adapted from Krieger, Stumm, et al. pseudocode at <a href="http://www.eecg.toronto.edu/parallel/pubs_abs.html#Krieger_etal_ICPP93">http://www.eecg.toronto.edu/parallel/pubs_abs.html#Krieger_etal_ICPP93</a> 
+<h3>template&lt;typename T, typename Compare = std::less&lt;T&gt;, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface6::priority_queue_node&lt; T, Compare, A &gt;</h3>
+
+Forwards messages in priority order. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00610.html">queuing_rw_mutex.h</a></ul>
+<li><a class="el" href="a00521.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

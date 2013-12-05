@@ -35,8 +35,6 @@
 #include "tbb/flow_graph.h"
 #include "tbb/task_scheduler_init.h"
 
-#if !__SUNPRO_CC
-
 //
 // Tests
 //
@@ -89,7 +87,7 @@ template<int N>
 struct tuple_helper {
     template<typename TupleType>
     static void set_element( TupleType &t, int i) {
-        std::get<N-1>(t) = (typename std::tuple_element<N-1,TupleType>::type)(i * (N+1));
+        tbb::flow::get<N-1>(t) = (typename tbb::flow::tuple_element<N-1,TupleType>::type)(i * (N+1));
         tuple_helper<N-1>::set_element(t, i);
     }
 };
@@ -98,7 +96,7 @@ template<>
 struct tuple_helper<1> {
     template<typename TupleType>
     static void set_element(TupleType &t, int i) {
-        std::get<0>(t) = (typename std::tuple_element<0,TupleType>::type)(i * 2);
+        tbb::flow::get<0>(t) = (typename tbb::flow::tuple_element<0,TupleType>::type)(i * 2);
     }
 };
 
@@ -107,7 +105,7 @@ struct tuple_helper<1> {
 template<typename TupleType>
 class source_body {
     typedef TupleType TT;
-    static const int N = std::tuple_size<TT>::value;
+    static const int N = tbb::flow::tuple_size<TT>::value;
     int my_count;
     const int addend;
     source_body& operator=( const source_body& other);
@@ -142,7 +140,7 @@ template<int ELEM, typename SType>
 class sink_node_helper {
 public:
     typedef typename SType::input_type TT;
-    typedef typename std::tuple_element<ELEM-1,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<ELEM-1,TT>::type IT;
     typedef typename tbb::flow::queue_node<IT> my_sink_node_type;
     static void print_parallel_remark() {
         sink_node_helper<ELEM-1,SType>::print_parallel_remark();
@@ -183,7 +181,7 @@ public:
 template<typename SType>
 class sink_node_helper<1, SType> {
     typedef typename SType::input_type TT;
-    typedef typename std::tuple_element<0,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<0,TT>::type IT;
     typedef typename tbb::flow::queue_node<IT> my_sink_node_type;
 public:
     static void print_parallel_remark() {
@@ -223,7 +221,7 @@ class parallel_test {
 public:
     typedef typename SType::input_type TType;
     typedef tbb::flow::source_node<TType> source_type;
-    static const int N = std::tuple_size<TType>::value;
+    static const int N = tbb::flow::tuple_size<TType>::value;
     static void test() {
         TType v;
         source_type* all_source_nodes[MaxNSources];
@@ -270,7 +268,7 @@ public:
 template<typename SType>
 void test_one_serial( SType &my_split, tbb::flow::graph &g) {
     typedef typename SType::input_type TType;
-    static const int SIZE = std::tuple_size<TType>::value;
+    static const int SIZE = tbb::flow::tuple_size<TType>::value;
     sink_node_helper<SIZE, SType>::add_sink_nodes(my_split,g);
     typedef TType q3_input_type;
     tbb::flow::queue_node< q3_input_type >  q3(g);
@@ -297,7 +295,7 @@ void test_one_serial( SType &my_split, tbb::flow::graph &g) {
 template<typename SType>
 class serial_test {
     typedef typename SType::input_type TType;
-    static const int SIZE = std::tuple_size<TType>::value;
+    static const int SIZE = tbb::flow::tuple_size<TType>::value;
     static const int ELEMS = 3;
 public:
 static void test() {
@@ -337,37 +335,30 @@ int TestMain() {
     REMARK("  Using platform tuple\n");
 #endif
    for (int p = 0; p < 2; ++p) {
-       generate_test<serial_test, std::tuple<float, double> >::do_test();
-       generate_test<serial_test, std::tuple<float, double, int, long> >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double> >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, long> >::do_test();
 #if __TBB_VARIADIC_MAX >= 6
-       generate_test<serial_test, std::tuple<double, double, int, long, int, short> >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short> >::do_test();
 #endif
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 8
-       generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long> >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long> >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 10
-       generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long> >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long> >::do_test();
 #endif
 #endif
-       generate_test<parallel_test, std::tuple<float, double> >::do_test();
-       generate_test<parallel_test, std::tuple<float, int, long> >::do_test();
-       generate_test<parallel_test, std::tuple<double, double, int, int, short> >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double> >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, long> >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short> >::do_test();
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 7
-       generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long> >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long> >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 9
-       generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long> >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long> >::do_test();
 #endif
 #endif
    }
    return Harness::Done;
 }
-#else  // __SUNPRO_CC
-
-int TestMain() {
-    return Harness::Skipped;
-}
-
-#endif  // SUNPRO_CC

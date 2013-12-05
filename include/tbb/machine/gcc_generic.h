@@ -37,6 +37,15 @@
 
 #define __TBB_WORDSIZE      __SIZEOF_POINTER__
 
+#if __TBB_GCC_64BIT_ATOMIC_BUILTINS_BROKEN
+    #define __TBB_64BIT_ATOMICS 0
+#endif
+
+/** FPU control setting not available for non-Intel architectures on Android **/
+#if __ANDROID__ && __TBB_generic_arch 
+    #define __TBB_CPU_CTL_ENV_PRESENT 0
+#endif
+
 #ifdef __BYTE_ORDER__
     #if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
         #define __TBB_BIG_ENDIAN    1

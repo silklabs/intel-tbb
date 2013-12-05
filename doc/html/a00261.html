@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::bad_last_alloc Class Reference</title>
+<title>tbb::atomic&lt; T &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,35 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00261.html">bad_last_alloc</a></div>
-<h1>tbb::bad_last_alloc Class Reference</h1><!-- doxytag: class="tbb::bad_last_alloc" -->Exception for concurrent containers.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00261.html">atomic</a></div>
+<h1>tbb::atomic&lt; T &gt; Struct Template Reference<br>
+<small>
+[<a class="el" href="a00439.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::atomic" -->Primary template for atomic.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00650.html">tbb_exception.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00451.html">atomic.h</a>&gt;</code>
 <p>
-<a href="a00154.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00008.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ec7a57742ff4dc214266179d88984015"></a><!-- doxytag: member="tbb::bad_last_alloc::what" ref="ec7a57742ff4dc214266179d88984015" args="() const " -->
-const char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const   throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5942feb81281f810edddc61a48dd7a39"></a><!-- doxytag: member="tbb::atomic::operator=" ref="5942feb81281f810edddc61a48dd7a39" args="(T rhs)" -->
+T&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (T rhs)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7d65b6cae3bd11c79a8e51e25055be52"></a><!-- doxytag: member="tbb::atomic::operator=" ref="7d65b6cae3bd11c79a8e51e25055be52" args="(const atomic&lt; T &gt; &amp;rhs)" -->
+<a class="el" href="a00261.html">atomic</a>&lt; T &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00261.html">atomic</a>&lt; T &gt; &amp;rhs)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Exception for concurrent containers. 
+<h3>template&lt;typename T&gt;<br>
+ struct tbb::atomic&lt; T &gt;</h3>
+
+Primary template for atomic. 
 <p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00650.html">tbb_exception.h</a></ul>
+See the Reference for details. 
+<p>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li><a class="el" href="a00451.html">atomic.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

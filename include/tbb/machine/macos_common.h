@@ -56,7 +56,7 @@ static inline int __TBB_macos_available_cpu() {
     #define __TBB_UnknownArchitecture 1
 #endif
 
-#if __TBB_UnknownArchitecture || __TBB_WORDSIZE==4
+#if __TBB_UnknownArchitecture || (__TBB_WORDSIZE==4 && !TBB_USE_ICC_BUILTINS)
 // In case of IA32 this is a workaround for compiler bugs triggered by inline
 // assembly implementation of __TBB_machine_cmpswp8 in linux_ia32.h, which may
 // lead to incorrect codegen (gcc) or compilation failures (any icc including 12.0.4).
@@ -81,7 +81,7 @@ static inline int64_t __TBB_machine_cmpswp8_OsX(volatile void *ptr, int64_t valu
 
 #define __TBB_machine_cmpswp8 __TBB_machine_cmpswp8_OsX
 
-#endif /* __TBB_UnknownArchitecture || __TBB_WORDSIZE==4 */
+#endif /* __TBB_UnknownArchitecture || (__TBB_WORDSIZE==4 && !TBB_USE_ICC_BUILTINS) */
 
 #if __TBB_UnknownArchitecture
 

@@ -28,8 +28,14 @@
 
 #include "harness_defs.h"
 
+//TODO: check why test fails with metro
+#include "tbb/tbb_config.h"
+#if !__TBB_WIN8UI_SUPPORT
 #ifndef TBBTEST_USE_TBB
     #define TBBTEST_USE_TBB 1
+#endif
+#else
+    #define TBBTEST_USE_TBB 0
 #endif
 
 #if !TBBTEST_USE_TBB

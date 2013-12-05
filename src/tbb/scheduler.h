@@ -576,7 +576,8 @@ inline void generic_scheduler::reset_deque_and_leave_arena ( bool locked ) {
 //TODO: move to arena_slot
 inline void generic_scheduler::commit_spawned_tasks( size_t new_tail ) {
     __TBB_ASSERT ( new_tail <= my_arena_slot->my_task_pool_size, "task deque end was overwritten" );
-    ITT_NOTIFY(sync_releasing, my_arena_slot);
+    // emit "task was released" signal
+    ITT_NOTIFY(sync_releasing, (void*)((uintptr_t)my_arena_slot+sizeof(uintptr_t)));
     // Release fence is necessary to make sure that previously stored task pointers
     // are visible to thieves.
     __TBB_store_with_release( my_arena_slot->tail, new_tail );

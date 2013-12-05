@@ -34,8 +34,7 @@
 // #define USE_TASK_SCHEDULER_OBSERVER 1
 #define TBB_PREVIEW_GRAPH_NODES 1
 
-// For Solaris Studio, known issues with compilation of tuple make the test fail
-#if TBB_USE_EXCEPTIONS && !__SUNPRO_CC
+#if TBB_USE_EXCEPTIONS
 #if USE_TASK_SCHEDULER_OBSERVER
 #include "tbb/task_scheduler_observer.h"
 #endif
@@ -222,27 +221,27 @@ public:
 // helper classes
 template<int N,class PortsType>
 struct IssueOutput {
-    typedef typename std::tuple_element<N-1,PortsType>::type::output_type my_type;
+    typedef typename tbb::flow::tuple_element<N-1,PortsType>::type::output_type my_type;
 
     static void issue_tuple_element( PortsType &my_ports) {
-        ASSERT(std::get<N-1>(my_ports).try_put(my_type()), "Error putting to successor");
+        ASSERT(tbb::flow::get<N-1>(my_ports).try_put(my_type()), "Error putting to successor");
         IssueOutput<N-1,PortsType>::issue_tuple_element(my_ports);
     }
 };
 
 template<class PortsType>
 struct IssueOutput<1,PortsType> {
-    typedef typename std::tuple_element<0,PortsType>::type::output_type my_type;
+    typedef typename tbb::flow::tuple_element<0,PortsType>::type::output_type my_type;
 
     static void issue_tuple_element( PortsType &my_ports) {
-        ASSERT(std::get<0>(my_ports).try_put(my_type()), "Error putting to successor");
+        ASSERT(tbb::flow::get<0>(my_ports).try_put(my_type()), "Error putting to successor");
     }
 };
 
 template<class InputType, class OutputTupleType, TestNodeTypeEnum T, size_t Conc>
 class multifunction_node_body : WaitThrow<Conc,T> {
     using WaitThrow<Conc,T>::WaitAndThrow;
-    static const int N = std::tuple_size<OutputTupleType>::value;
+    static const int N = tbb::flow::tuple_size<OutputTupleType>::value;
     typedef typename tbb::flow::multifunction_node<InputType,OutputTupleType> NodeType;
     typedef typename NodeType::output_ports_type PortsType;
     tbb::atomic<int> *my_count;
@@ -300,8 +299,8 @@ public:
 // --------- Source body for split_node test.
 template <class OutputTuple, TestNodeTypeEnum TType>
 class tuple_test_source_body : WaitThrow<serial_type, TType> {
-    typedef typename std::tuple_element<0,OutputTuple>::type ItemType0;
-    typedef typename std::tuple_element<1,OutputTuple>::type ItemType1;
+    typedef typename tbb::flow::tuple_element<0,OutputTuple>::type ItemType0;
+    typedef typename tbb::flow::tuple_element<1,OutputTuple>::type ItemType1;
     using WaitThrow<serial_type, TType>::WaitAndThrow;
     tbb::atomic<int> *my_current_val;
 public:
@@ -658,8 +657,8 @@ template<
 >
 void run_multifunction_node_test() {
 
-    typedef typename std::tuple_element<0,ItemTuple>::type Item23Type0;
-    typedef typename std::tuple_element<1,ItemTuple>::type Item23Type1;
+    typedef typename tbb::flow::tuple_element<0,ItemTuple>::type Item23Type0;
+    typedef typename tbb::flow::tuple_element<1,ItemTuple>::type Item23Type1;
     typedef test_source_body<Item12,SType0> SBodyType1;
     typedef test_source_body<Item12,SType1> SBodyType2;
     typedef multifunction_node_body<Item12, ItemTuple, FType, Conc> TestBodyType;
@@ -697,35 +696,35 @@ void run_multifunction_node_test() {
 void test_multifunction_node() {
     REMARK("Testing multifunction_node\n");
     // serial rejecting
-    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, std::tuple<int,float>, nonThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, isThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
+    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,float>, nonThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, isThrowing, nonThrowing, tbb::flow::rejecting, serial_type>();
 
     // serial queueing
-    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
+    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     check_type_counter = 0;
-    run_multifunction_node_test<nonThrowing, nonThrowing, check_type<int>, nonThrowing, std::tuple<check_type<int>, check_type<int> >, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, check_type<int>, nonThrowing, tbb::flow::tuple<check_type<int>, check_type<int> >, isThrowing, nonThrowing, tbb::flow::queueing, serial_type>();
     ASSERT(!check_type_counter, "Some items leaked in test");
 
     // unlimited parallel rejecting
-    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, unlimited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, unlimited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::rejecting, unlimited_type>();
+    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, unlimited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, unlimited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::rejecting, unlimited_type>();
 
     // limited parallel rejecting
-    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, limited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, (size_t)limited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::rejecting, (size_t)limited_type>();
+    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, limited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::rejecting, (size_t)limited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::rejecting, (size_t)limited_type>();
 
     // limited parallel queueing
-    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, (size_t)limited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, std::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, (size_t)limited_type>();
-    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, std::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::queueing, (size_t)limited_type>();
+    run_multifunction_node_test<isThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, (size_t)limited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, isThrowing, tbb::flow::tuple<int,int>, nonThrowing, nonThrowing, tbb::flow::queueing, (size_t)limited_type>();
+    run_multifunction_node_test<nonThrowing, nonThrowing, int, nonThrowing, tbb::flow::tuple<int,int>, nonThrowing, isThrowing, tbb::flow::queueing, (size_t)limited_type>();
 
     // everyone throwing
-    run_multifunction_node_test<isThrowing, isThrowing, int, isThrowing, std::tuple<int,int>, isThrowing, isThrowing, tbb::flow::rejecting, unlimited_type>();
+    run_multifunction_node_test<isThrowing, isThrowing, int, isThrowing, tbb::flow::tuple<int,int>, isThrowing, isThrowing, tbb::flow::rejecting, unlimited_type>();
 }
 
 //
@@ -1249,8 +1248,8 @@ template<
 struct run_one_join_node_test {
     run_one_join_node_test() {}
     static void execute_test(bool throwException,bool flog) {
-        typedef typename std::tuple_element<0,OutputTuple>::type ItemType0;
-        typedef typename std::tuple_element<1,OutputTuple>::type ItemType1;
+        typedef typename tbb::flow::tuple_element<0,OutputTuple>::type ItemType0;
+        typedef typename tbb::flow::tuple_element<1,OutputTuple>::type ItemType1;
 
         tbb::flow::graph g;
         tbb::atomic<int>source0_count;
@@ -1352,8 +1351,8 @@ struct run_one_join_node_test<
     > {
     run_one_join_node_test() {}
     static void execute_test(bool throwException,bool flog) {
-        typedef typename std::tuple_element<0,OutputTuple>::type ItemType0;
-        typedef typename std::tuple_element<1,OutputTuple>::type ItemType1;
+        typedef typename tbb::flow::tuple_element<0,OutputTuple>::type ItemType0;
+        typedef typename tbb::flow::tuple_element<1,OutputTuple>::type ItemType1;
 
         tbb::flow::graph g;
 
@@ -1437,8 +1436,8 @@ template<tbb::flow::graph_buffer_policy JP, class OutputTuple,
              TestNodeTypeEnum SourceThrowType,
              TestNodeTypeEnum SinkThrowType>
 void run_join_node_test() {
-    typedef typename std::tuple_element<0,OutputTuple>::type ItemType0;
-    typedef typename std::tuple_element<1,OutputTuple>::type ItemType1;
+    typedef typename tbb::flow::tuple_element<0,OutputTuple>::type ItemType0;
+    typedef typename tbb::flow::tuple_element<1,OutputTuple>::type ItemType1;
     typedef test_source_body<ItemType0,SourceThrowType> SourceBodyType0;
     typedef test_source_body<ItemType1,SourceThrowType> SourceBodyType1;
     typedef absorber_body<OutputTuple,tbb::flow::continue_msg,SinkThrowType,unlimited_type> SinkBodyType;
@@ -1469,11 +1468,11 @@ template<tbb::flow::graph_buffer_policy JP>
 void test_join_node() {
     REMARK("Testing join_node<%s>\n", graph_policy_name<JP>::name());
     // only doing two-input joins
-    run_join_node_test<JP, std::tuple<int,int>,  isThrowing, nonThrowing>();
+    run_join_node_test<JP, tbb::flow::tuple<int,int>,  isThrowing, nonThrowing>();
     check_type_counter = 0;
-    run_join_node_test<JP, std::tuple<check_type<int>,int>, nonThrowing, isThrowing>();
+    run_join_node_test<JP, tbb::flow::tuple<check_type<int>,int>, nonThrowing, isThrowing>();
     ASSERT(!check_type_counter, "Dropped items in test");
-    run_join_node_test<JP, std::tuple<int,int>,  isThrowing, isThrowing>();
+    run_join_node_test<JP, tbb::flow::tuple<int,int>,  isThrowing, isThrowing>();
 }
 
 // ------------------- limiter_node -------------
@@ -1668,8 +1667,8 @@ template<class InputTuple,
              TestNodeTypeEnum SourceThrowType,
              TestNodeTypeEnum SinkThrowType>
 void run_split_node_test() {
-    typedef typename std::tuple_element<0,InputTuple>::type ItemType0;
-    typedef typename std::tuple_element<1,InputTuple>::type ItemType1;
+    typedef typename tbb::flow::tuple_element<0,InputTuple>::type ItemType0;
+    typedef typename tbb::flow::tuple_element<1,InputTuple>::type ItemType1;
     typedef tuple_test_source_body<InputTuple,SourceThrowType> SourceBodyType;
     typedef absorber_body<ItemType0,tbb::flow::continue_msg,SinkThrowType,unlimited_type> SinkBodyType0;
     typedef absorber_body<ItemType1,tbb::flow::continue_msg,SinkThrowType,unlimited_type> SinkBodyType1;
@@ -1698,9 +1697,9 @@ void run_split_node_test() {
 
 void test_split_node() {
     REMARK("Testing split_node\n");
-    run_split_node_test<std::tuple<int,int>, isThrowing, nonThrowing>();
-    run_split_node_test<std::tuple<int,int>, nonThrowing, isThrowing>();
-    run_split_node_test<std::tuple<int,int>, isThrowing,  isThrowing>();
+    run_split_node_test<tbb::flow::tuple<int,int>, isThrowing, nonThrowing>();
+    run_split_node_test<tbb::flow::tuple<int,int>, nonThrowing, isThrowing>();
+    run_split_node_test<tbb::flow::tuple<int,int>, isThrowing,  isThrowing>();
 }
 
 #if TBB_PREVIEW_GRAPH_NODES
@@ -1715,8 +1714,8 @@ template < class InputTuple,
     class SinkType,
     class SinkBodyType>
 void run_one_or_node_test(bool throwException,bool flog) {
-    typedef typename std::tuple_element<0,InputTuple>::type ItemType0;
-    typedef typename std::tuple_element<1,InputTuple>::type ItemType1;
+    typedef typename tbb::flow::tuple_element<0,InputTuple>::type ItemType0;
+    typedef typename tbb::flow::tuple_element<1,InputTuple>::type ItemType1;
 
     tbb::flow::graph g;
 
@@ -1799,8 +1798,8 @@ template<class InputTuple,
     TestNodeTypeEnum SourceThrowType,
     TestNodeTypeEnum SinkThrowType>
 void run_or_node_test() {
-    typedef typename std::tuple_element<0,InputTuple>::type ItemType0;
-    typedef typename std::tuple_element<1,InputTuple>::type ItemType1;
+    typedef typename tbb::flow::tuple_element<0,InputTuple>::type ItemType0;
+    typedef typename tbb::flow::tuple_element<1,InputTuple>::type ItemType1;
     typedef test_source_body<ItemType0,SourceThrowType> SourceBodyType0;
     typedef test_source_body<ItemType1,SourceThrowType> SourceBodyType1;
     typedef typename tbb::flow::or_node<InputTuple> TestNodeType;
@@ -1828,9 +1827,9 @@ void run_or_node_test() {
 
 void test_or_node() {
     REMARK("Testing or_node\n");
-    run_or_node_test<std::tuple<int,int>, isThrowing, nonThrowing>();
-    run_or_node_test<std::tuple<int,int>, nonThrowing, isThrowing>();
-    run_or_node_test<std::tuple<int,int>, isThrowing,  isThrowing>();
+    run_or_node_test<tbb::flow::tuple<int,int>, isThrowing, nonThrowing>();
+    run_or_node_test<tbb::flow::tuple<int,int>, nonThrowing, isThrowing>();
+    run_or_node_test<tbb::flow::tuple<int,int>, isThrowing,  isThrowing>();
 }
 #endif
 
@@ -1940,9 +1939,9 @@ void TestOneThreadNum(int nThread) {
 #endif
     }
 }
-#endif // TBB_USE_EXCEPTIONS && !__SUNPRO_CC
+#endif // TBB_USE_EXCEPTIONS
 
-#if TBB_USE_EXCEPTIONS && !__SUNPRO_CC
+#if TBB_USE_EXCEPTIONS
 int TestMain() {
     // reversing the order of tests
     for(int nThread=MaxThread; nThread >= MinThread; --nThread) {
@@ -1955,4 +1954,4 @@ int TestMain() {
 int TestMain() {
     return Harness::Skipped;
 }
-#endif // TBB_USE_EXCEPTIONS && !__SUNPRO_CC
+#endif // TBB_USE_EXCEPTIONS

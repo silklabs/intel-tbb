@@ -1,34 +1,18 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbb", "tbb.vcproj", "{F62787DD-1327-448B-9818-030062BCFAA5}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbbmalloc", "tbbmalloc.vcproj", "{B15F131E-328A-4D42-ADC2-9FF4CA6306D8}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{F62787DD-1327-448B-9818-030062BCFAA5} = {F62787DD-1327-448B-9818-030062BCFAA5}
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8898CE0B-0BFB-45AE-AA71-83735ED2510D}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
 		index.html = index.html
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbbmalloc_proxy", "tbbmalloc_proxy.vcproj", "{02F61511-D5B6-46E6-B4BB-DEAA96E6BCC7}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbb", "tbb.vcproj", "{F62787DD-1327-448B-9818-030062BCFAA5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbbmalloc", "tbbmalloc.vcproj", "{B15F131E-328A-4D42-ADC2-9FF4CA6306D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F62787DD-1327-448B-9818-030062BCFAA5} = {F62787DD-1327-448B-9818-030062BCFAA5}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tbbmalloc_proxy", "tbbmalloc_proxy.vcproj", "{02F61511-D5B6-46E6-B4BB-DEAA96E6BCC7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B15F131E-328A-4D42-ADC2-9FF4CA6306D8} = {B15F131E-328A-4D42-ADC2-9FF4CA6306D8}
 	EndProjectSection

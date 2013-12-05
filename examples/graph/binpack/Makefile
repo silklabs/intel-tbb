@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=binpack
 ARGS=4 N=1000
 PERF_RUN_ARGS=auto N=1000 silent
@@ -35,7 +36,12 @@ CXX=icc
 endif # which icc
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:    release test
@@ -50,7 +56,7 @@ clean:
 	$(RM) $(PROG) *.o *.d
 
 test:
-	./$(PROG) $(ARGS)
+	$(run_cmd) ./$(PROG) $(ARGS)
 
 perf_build: release
 

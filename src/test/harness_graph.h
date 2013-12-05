@@ -38,6 +38,7 @@
 #include "tbb/null_rw_mutex.h"
 #include "tbb/atomic.h"
 #include "tbb/concurrent_unordered_map.h"
+#include "tbb/task.h"
 
 // Needed conversion to and from continue_msg, but didn't want to add
 // conversion operators to the class, since we don't want it in general,
@@ -68,7 +69,7 @@ template<size_t N>
 struct mof_helper {
     template<typename InputType, typename ports_type>
     static inline void output_converted_value(const InputType &i, ports_type &p) {
-        (void)std::get<N-1>(p).try_put(convertor<InputType,typename std::tuple_element<N-1,ports_type>::type::output_type>::convert_value(i));
+        (void)tbb::flow::get<N-1>(p).try_put(convertor<InputType,typename tbb::flow::tuple_element<N-1,ports_type>::type::output_type>::convert_value(i));
         output_converted_value<N-1>(i, p);
     }
 };
@@ -78,7 +79,7 @@ struct mof_helper<1> {
     template<typename InputType, typename ports_type>
     static inline void output_converted_value(const InputType &i, ports_type &p) {
         // just emit a default-constructed object
-        (void)std::get<0>(p).try_put(convertor<InputType,typename std::tuple_element<0,ports_type>::type::output_type>::convert_value(i));
+        (void)tbb::flow::get<0>(p).try_put(convertor<InputType,typename tbb::flow::tuple_element<0,ports_type>::type::output_type>::convert_value(i));
     }
 };
 
@@ -112,7 +113,7 @@ struct harness_graph_default_functor< tbb::flow::continue_msg, tbb::flow::contin
 
 template<typename InputType, typename OutputSet>
 struct harness_graph_default_multifunction_functor {
-    static const int N = std::tuple_size<OutputSet>::value;
+    static const int N = tbb::flow::tuple_size<OutputSet>::value;
     typedef typename tbb::flow::multifunction_node<InputType,OutputSet>::output_ports_type ports_type;
     static void construct(const InputType &i, ports_type &p) {
         mof_helper<N>::output_converted_value(i, p);
@@ -164,7 +165,7 @@ struct harness_graph_executor {
 template< typename InputType, typename OutputTuple, typename M=tbb::null_rw_mutex >
 struct harness_graph_multifunction_executor {
     typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type ports_type;
-    typedef typename std::tuple_element<0,OutputTuple>::type OutputType;
+    typedef typename tbb::flow::tuple_element<0,OutputTuple>::type OutputType;
 
     typedef void (*mfunction_ptr_type)( const InputType& v, ports_type &p );
 
@@ -178,7 +179,7 @@ struct harness_graph_multifunction_executor {
         typename M::scoped_lock l( mutex );
         size_t c = current_executors.fetch_and_increment();
         ASSERT( max_executors == 0 || c <= max_executors, NULL ); 
-        ASSERT(std::tuple_size<OutputTuple>::value == 1, NULL);
+        ASSERT(tbb::flow::tuple_size<OutputTuple>::value == 1, NULL);
         ++execute_count;
         (*fptr)(v,p);
         current_executors.fetch_and_decrement();
@@ -246,9 +247,9 @@ struct harness_counting_receiver : public tbb::flow::receiver<T>, NoCopy {
        num_copies = c;
     }
 
-    /* override */ bool try_put( const T & ) {
+    /* override */ tbb::task *try_put_task( const T & ) {
       ++my_count;
-      return true;
+      return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
     }
 
     void validate() {
@@ -286,7 +287,7 @@ struct harness_mapped_receiver : public tbb::flow::receiver<T>, NoCopy {
        my_map = new map_type;
     }
 
-    /* override */ bool try_put( const T &t ) {
+    /* override */ tbb::task * try_put_task( const T &t ) {
       if ( my_map ) {
           tbb::atomic<size_t> a;
           a = 1;
@@ -298,7 +299,7 @@ struct harness_mapped_receiver : public tbb::flow::receiver<T>, NoCopy {
       } else {
           ++my_count;
       }
-      return true;
+      return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
     }
 
     void validate() {

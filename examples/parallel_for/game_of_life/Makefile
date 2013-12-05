@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=game_of_life
 ARGS=2:4 -t 5
 LIGHT_ARGS=1:2 -t 5
@@ -33,7 +34,12 @@ CXX=icc
 endif # icc
 
 ifeq ($(shell uname), Linux)
-LIBS+= -lrt
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
+LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -48,6 +54,6 @@ clean:
 	rm -f $(PROG) *.o *.d
 
 test:
-	./$(PROG) $(ARGS)
+	$(run_cmd) ./$(PROG) $(ARGS)
 light_test:
 	./$(PROG) $(LIGHT_ARGS)

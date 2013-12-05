@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::improper_lock Class Reference</title>
+<title>tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,78 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00293.html">improper_lock</a></div>
-<h1>tbb::improper_lock Class Reference</h1><!-- doxytag: class="tbb::improper_lock" -->Exception for PPL locks.  
+<a class="el" href="a00423.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00293.html">function_node</a></div>
+<h1>tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::function_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->Implements a function node that supports Input -&gt; Output.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00650.html">tbb_exception.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00521.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00155.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt;:
+<p><center><img src="a00293.png" usemap="#tbb::flow::interface6::function_node< Input, Output,, Allocator >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::function_node< Input, Output,, Allocator >_map">
+<area href="a00296.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,368,24">
+</map>
+<a href="a00062.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="30ef7b3bf4471f54d5348c2704464b16"></a><!-- doxytag: member="tbb::flow::interface6::function_node::input_type" ref="30ef7b3bf4471f54d5348c2704464b16" args="" -->
+typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="50eb55eeb6b296c5774ff1d0154ac3bf"></a><!-- doxytag: member="tbb::flow::interface6::function_node::output_type" ref="50eb55eeb6b296c5774ff1d0154ac3bf" args="" -->
+typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e6bcb6d92c948bd87937107ba11e8323"></a><!-- doxytag: member="tbb::flow::interface6::function_node::predecessor_type" ref="e6bcb6d92c948bd87937107ba11e8323" args="" -->
+typedef <a class="el" href="a00334.html">sender</a>&lt; input_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09ab838563aef5d554f53a7abb660ea8"></a><!-- doxytag: member="tbb::flow::interface6::function_node::successor_type" ref="09ab838563aef5d554f53a7abb660ea8" args="" -->
+typedef <a class="el" href="a00328.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="daa1de4be8c36bfcd0694416466ce3f9"></a><!-- doxytag: member="tbb::flow::interface6::function_node::fInput_type" ref="daa1de4be8c36bfcd0694416466ce3f9" args="" -->
+typedef internal::function_input&lt;<br>
+ input_type, output_type,<br>
+ Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c4a710a45628ab95d669fb05a5371b6f"></a><!-- doxytag: member="tbb::flow::interface6::function_node::fOutput_type" ref="c4a710a45628ab95d669fb05a5371b6f" args="" -->
+typedef internal::function_output&lt;<br>
+ output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
+
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="74213c2d20407e1fa16b70ca55ef27c6"></a><!-- doxytag: member="tbb::improper_lock::what" ref="74213c2d20407e1fa16b70ca55ef27c6" args="() const " -->
-const char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const   throw ()</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="d6e2cb5fc4e1d173f1e9b0552fad8332"></a><!-- doxytag: member="tbb::flow::interface6::function_node::function_node" ref="d6e2cb5fc4e1d173f1e9b0552fad8332" args="(graph &amp;g, size_t concurrency, Body body)" -->
+template&lt;typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00293.html#d6e2cb5fc4e1d173f1e9b0552fad8332">function_node</a> (<a class="el" href="a00295.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a5e9b0b9da9c12a70557962812becf8e"></a><!-- doxytag: member="tbb::flow::interface6::function_node::function_node" ref="a5e9b0b9da9c12a70557962812becf8e" args="(const function_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00293.html#a5e9b0b9da9c12a70557962812becf8e">function_node</a> (const <a class="el" href="a00293.html">function_node</a> &amp;src)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="74fc684eb5bf2856b3dc7f03003496a7"></a><!-- doxytag: member="tbb::flow::interface6::function_node::reset" ref="74fc684eb5bf2856b3dc7f03003496a7" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="380568be45f705b4d10f787840a4d322"></a><!-- doxytag: member="tbb::flow::interface6::function_node::successors" ref="380568be45f705b4d10f787840a4d322" args="()" -->
+internal::broadcast_cache&lt;<br>
+ output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8955395cf98bbc7767c2cdaf2d4589c4"></a><!-- doxytag: member="tbb::flow::interface6::function_node::run_and_put_task" ref="8955395cf98bbc7767c2cdaf2d4589c4" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>run_and_put_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f25421c4c4f7068e044d20c464491d39"></a><!-- doxytag: member="tbb::flow::interface6::function_node::internal::broadcast_cache" ref="f25421c4c4f7068e044d20c464491d39" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29d5ecd73b70aabbe35424df37f36dec"></a><!-- doxytag: member="tbb::flow::interface6::function_node::internal::round_robin_cache" ref="29d5ecd73b70aabbe35424df37f36dec" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Exception for PPL locks. 
+<h3>template&lt;typename Input, typename Output = continue_msg, graph_buffer_policy = queueing, typename Allocator = cache_aligned_allocator&lt;Input&gt;&gt;<br>
+ class tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt;</h3>
+
+Implements a function node that supports Input -&gt; Output. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00650.html">tbb_exception.h</a></ul>
+<li><a class="el" href="a00521.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

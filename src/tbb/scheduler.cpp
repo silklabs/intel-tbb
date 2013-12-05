@@ -918,6 +918,8 @@ retry:
             }
         }
         __TBB_ASSERT( result, NULL );
+        // emit "task was consumed" signal
+        ITT_NOTIFY(sync_acquired, (void*)((uintptr_t)&victim_slot+sizeof(uintptr_t)));
         const size_t H1 = H0 + 1;
         if ( H1 < H ) {
             // Some proxies in the task pool have been bypassed. Need to close

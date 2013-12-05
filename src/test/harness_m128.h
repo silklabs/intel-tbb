@@ -35,6 +35,12 @@
 //  Do not create file-scope objects of the class, because MinGW (as of May 2010)
 //  did not always provide proper stack alignment in destructors of such objects.
 
+#if (_MSC_VER>=1600)
+//TODO: handle /arch:AVX in the right way. 
+#pragma warning (push)
+#pragma warning (disable: 4752)
+#endif
+
 template<typename __Mvec>
 class ClassWithVectorType {
     static const int n = 16;
@@ -109,4 +115,8 @@ bool have_AVX() {
 #include <xmmintrin.h>
 #define HAVE_m128 1
 typedef ClassWithVectorType<__m128> ClassWithSSE;
+#endif
+
+#if (_MSC_VER>=1600)
+#pragma warning (pop)
 #endif

@@ -53,7 +53,7 @@ public:
     internal_construct();
 #else
   #if _WIN32||_WIN64
-        InitializeCriticalSection(&impl);
+        InitializeCriticalSectionEx(&impl, 4000, 0);
   #else
         int error_code = pthread_mutex_init(&impl,NULL);
         if( error_code )

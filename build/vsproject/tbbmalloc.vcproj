@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1251"?>
-<VisualStudioProject ProjectType="Visual C++" Version="8,00" Name="tbbmalloc" ProjectGUID="{B15F131E-328A-4D42-ADC2-9FF4CA6306D8}" RootNamespace="tbbmalloc" Keyword="Win32Proj">
+<VisualStudioProject ProjectType="Visual C++" Version="9.00" Name="tbbmalloc" ProjectGUID="{B15F131E-328A-4D42-ADC2-9FF4CA6306D8}" RootNamespace="tbbmalloc" Keyword="Win32Proj" TargetFrameworkVersion="131072">
 	<Platforms>
 		<Platform Name="Win32"/>
 		<Platform Name="x64"/>
@@ -13,12 +13,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" TargetMachine="1"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="1"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -32,12 +33,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" BufferSecurityCheck="false" RuntimeLibrary="3" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="3" BufferSecurityCheck="false" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" TargetMachine="17"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="17"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -51,12 +53,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" TargetMachine="1"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="1"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -70,12 +73,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /D_USE_RTM_VERSION /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="2" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" TargetMachine="17"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="17"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -89,12 +93,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" TargetMachine="1"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="1"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -108,12 +113,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BufferSecurityCheck="false" BasicRuntimeChecks="0" RuntimeLibrary="1" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHs- /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." Optimization="0" AdditionalIncludeDirectories="." MinimalRebuild="false" ExceptionHandling="0" BasicRuntimeChecks="0" RuntimeLibrary="1" BufferSecurityCheck="false" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" TargetMachine="17"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc_debug.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="17"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -127,12 +133,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" TargetMachine="1"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="1"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>
@@ -146,12 +153,13 @@
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="MASM"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /GS /DDO_ITT_NOTIFY /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" BufferSecurityCheck="false" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHs- /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBBMALLOC_BUILD=1 /I../../src /I../../src/rml/include /I../../include /I../../src/tbbmalloc /I../../src/tbbmalloc /I." AdditionalIncludeDirectories="." PreprocessorDefinitions="" ExceptionHandling="0" RuntimeLibrary="0" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" TargetMachine="17"/>
+			<Tool Name="VCLinkerTool" AdditionalOptions="/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:&quot;$(IntDir)\tbbmalloc.def&quot;" OutputFile="$(OutDir)\tbbmalloc.dll" LinkIncremental="1" GenerateDebugInformation="true" SubSystem="2" OptimizeReferences="2" EnableCOMDATFolding="2" RandomizedBaseAddress="1" DataExecutionPrevention="0" TargetMachine="17"/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
 			<Tool Name="VCXDCMakeTool"/>

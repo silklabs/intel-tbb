@@ -116,7 +116,7 @@ class chopstick {};
 
 using namespace tbb::flow;
 
-typedef std::tuple<continue_msg, chopstick, chopstick> join_output;
+typedef tbb::flow::tuple<continue_msg, chopstick, chopstick> join_output;
 typedef join_node< join_output, reserving > join_node_type;
 
 typedef function_node<continue_msg, continue_msg> think_node_type;
@@ -199,10 +199,10 @@ void philosopher::check() {
 void philosopher::forward( const continue_msg &/*in*/, forward_node_type::output_ports_type &out_ports ) {
     if(my_count < 0) abort();
     --my_count;
-    (void)std::get<1>(out_ports).try_put(chopstick());
-    (void)std::get<2>(out_ports).try_put(chopstick());
+    (void)tbb::flow::get<1>(out_ports).try_put(chopstick());
+    (void)tbb::flow::get<2>(out_ports).try_put(chopstick());
     if (my_count > 0) {
-        (void)std::get<0>(out_ports).try_put(continue_msg());  //start thinking again
+        (void)tbb::flow::get<0>(out_ports).try_put(continue_msg());  //start thinking again
     } else {
         if(verbose) {
             tbb::spin_mutex::scoped_lock lock(my_mutex);

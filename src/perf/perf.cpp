@@ -283,7 +283,7 @@ namespace internal {
         public:
             Initializer () {
                 SYSTEM_INFO si;
-                GetSystemInfo(&si);
+                GetNativeSystemInfo(&si);
                 ASSERT( si.dwNumberOfProcessors <= MaxAffinitySetSize, "Too many CPUs" );
                 AffinitySetSize = min (si.dwNumberOfProcessors, MaxAffinitySetSize);
                 cpu_set_t systemMask = 0;

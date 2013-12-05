@@ -639,6 +639,62 @@ void TestConcurrentGrowBy( int nthread ) {
     ASSERT( items_allocated == items_freed, NULL);
     ASSERT( allocations == frees, NULL);
 }
+//TODO: move this to more appropriate place, smth like test_harness.cpp
+void TestArrayLength(){
+    int five_elementh_array[5] = {0};
+    ASSERT(array_length(five_elementh_array)==5,"array_length failed to determine length of non empty non dynamic array");
+}
+
+#if __TBB_INITIALIZER_LISTS_PRESENT
+//TODO: move init list test set to separate header
+//TODO: split into set of tests
+//TODO: add test for no leaks, and correct element lifetime
+//the need for macro comes from desire to test different scenarios where initializer sequence is compile time constant
+#define __TBB_TEST_INIT_LIST_SUITE(FUNC_NAME, CONTAINER, ELEMENT_TYPE, INIT_SEQ)                                                                  \
+void FUNC_NAME(){                                                                                                                                 \
+    typedef ELEMENT_TYPE element_type;                                                                                                            \
+    typedef CONTAINER<element_type> container_type;                                                                                               \
+    element_type test_seq[] = INIT_SEQ;                                                                                                           \
+    container_type expected(test_seq,test_seq + array_length(test_seq));                                                                          \
+                                                                                                                                                  \
+    /*test for explicit contructor call*/                                                                                                         \
+    container_type vd (INIT_SEQ,tbb::cache_aligned_allocator<int>());                                                                             \
+    ASSERT(vd == expected,"initialization via explicit constructor call with init list failed");                                                  \
+    /*test for explicit contructor call with std::initializer_list*/                                                                              \
+                                                                                                                                                  \
+    std::initializer_list<element_type> init_list = INIT_SEQ;                                                                                     \
+    container_type v1 (init_list,tbb::cache_aligned_allocator<int>());                                                                            \
+    ASSERT(v1 == expected,"initialization via explicit constructor call with std::initializer_list failed");                                      \
+                                                                                                                                                  \
+    /*implicit constructor call test*/                                                                                                            \
+    container_type v = INIT_SEQ;                                                                                                                  \
+    ASSERT(v == expected,"init list constructor failed");                                                                                         \
+                                                                                                                                                  \
+    /*assignment operator test*/                                                                                                                  \
+    /*TODO: count created and destroyed injects to assert that no extra copy of vector was created implicitly*/                                   \
+    container_type va;                                                                                                                            \
+    va = INIT_SEQ;                                                                                                                                \
+    ASSERT(va == expected,"init list operator= failed");                                                                                          \
+                                                                                                                                                  \
+    container_type vae;                                                                                                                           \
+    vae.assign(INIT_SEQ);                                                                                                                          \
+    ASSERT(vae == expected,"init list assign failed");                                                                                             \
+}
+
+#define __TBB_CVECTOR_TEST_INIT_SEQ {1,2,3,4,5}
+__TBB_TEST_INIT_LIST_SUITE(TestInitListIml,tbb::concurrent_vector,char,__TBB_CVECTOR_TEST_INIT_SEQ )
+#undef __TBB_CVECTOR_TEST_INIT_SEQ
+
+#define __TBB_CVECTOR_TEST_EMPTY_INIT_SEQ {}
+__TBB_TEST_INIT_LIST_SUITE(TestEmptyInitListIml,tbb::concurrent_vector,int,__TBB_CVECTOR_TEST_EMPTY_INIT_SEQ )
+#undef __TBB_CVECTOR_TEST_EMPTY_INIT_SEQ
+
+void TestInitList(){
+    REMARK("testing initializer_list methods \n");
+    TestEmptyInitListIml();
+    TestInitListIml();
+}
+#endif //if __TBB_INITIALIZER_LISTS_PRESENT
 
 //! Test the assignment operator and swap
 void TestAssign() {
@@ -990,6 +1046,10 @@ int TestMain () {
 #if !TBB_DEPRECATED
     TestIteratorTraits<tbb::concurrent_vector<Foo>::iterator,Foo>();
     TestIteratorTraits<tbb::concurrent_vector<Foo>::const_iterator,const Foo>();
+    TestArrayLength();
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    TestInitList();
+#endif
     TestSequentialFor<FooWithAssign> ();
     TestResizeAndCopy();
     TestAssign();

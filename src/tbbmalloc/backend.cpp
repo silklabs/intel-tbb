@@ -59,20 +59,35 @@ bool freeRawMemory (void *object, size_t size) {
     return UnmapMemory(object, size);
 }
 
+void ExtMemoryPool::reportHugePageStatus(bool available)
+{
+    // reports huge page status only once
+    if (FencedLoad(needHugePageStatus)
+        && AtomicCompareExchange(needHugePageStatus, 0, 1))
+        fprintf(stderr, "TBBmalloc: scalable allocator\t%s\n",
+                available? "use huge pages" : "no huge pages" );
+}
+
 void *Backend::getRawMem(size_t &size) const
 {
     if (extMemPool->userPool()) {
         size = alignUpGeneric(size, extMemPool->granularity);
         return (*extMemPool->rawAlloc)(extMemPool->poolId, size);
     }
+    // try to get them at 1st allocation and still use, if successful
+    // if 1st try is unsuccessful, no more trying
     if (ExtMemoryPool::useHugePages) {
         size_t hugeSize = alignUpGeneric(size, ExtMemoryPool::hugePageSize);
         if (void *res = getRawMemory(hugeSize, /*hugePages=*/true)) {
             size = hugeSize;
+            if (!ExtMemoryPool::seenHugePages)
+                ExtMemoryPool::seenHugePages = true;
+            ExtMemoryPool::reportHugePageStatus(/*available=*/true);
             return res;
         }
         ExtMemoryPool::useHugePages = false;
     }
+    ExtMemoryPool::reportHugePageStatus(/*available=*/false);
     size_t granSize = alignUpGeneric(size, extMemPool->granularity);
     if (void *res = getRawMemory(granSize, /*hugePages=*/false)) {
         size = granSize;
@@ -86,10 +101,12 @@ void Backend::freeRawMem(void *object, size_t size) const
     if (extMemPool->userPool())
         (*extMemPool->rawFree)(extMemPool->poolId, object, size);
     else {
+        // We got huge page at least once and
         // something that looks like a huge page is releasing,
-        // so a huge page might be available at next allocation
+        // so a huge page might be available at next allocation.
         // TODO: keep page status in regions and use exact check here
-        if (ExtMemoryPool::hugePageSize && !(size % ExtMemoryPool::hugePageSize))
+        if (ExtMemoryPool::seenHugePages && !(size % ExtMemoryPool::hugePageSize)
+            && !ExtMemoryPool::useHugePages)
             ExtMemoryPool::useHugePages = true;
         freeRawMemory(object, size);
     }
@@ -580,6 +597,7 @@ bool Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
         maxBinSize = addNewRegion(regSz_sizeBased, /*exact=*/true);
     }
     memExtendingSema.signal();
+    askMemFromOSCounter.OSasked();
 
     // When blockSize >= maxBinnedSize, and getRawMem failed
     // for this allocation, allocation in bins
@@ -872,7 +890,6 @@ void Backend::coalescAndPutList(FreeBlock *list, bool forceCoalescQDrop, bool do
 {
     FreeBlock *helper;
     MemRegion *memRegion;
-    int alignedSpaceIdx = -1;
 
     for (;list; list = helper) {
         bool addToTail = false;
@@ -1094,6 +1111,7 @@ void Backend::IndexedBins::verify()
             uintptr_t mySz = fb->myL.value;
             MALLOC_ASSERT(mySz>GuardedSize::MAX_SPEC_VAL, ASSERT_TEXT);
             FreeBlock *right = (FreeBlock*)((uintptr_t)fb + mySz);
+            suppress_unused_warning(right);
             MALLOC_ASSERT(right->myL.value<=GuardedSize::MAX_SPEC_VAL, ASSERT_TEXT);
             MALLOC_ASSERT(right->leftL.value==mySz, ASSERT_TEXT);
             MALLOC_ASSERT(fb->leftL.value<=GuardedSize::MAX_SPEC_VAL, ASSERT_TEXT);

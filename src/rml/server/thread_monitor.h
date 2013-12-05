@@ -47,6 +47,9 @@
 #include "tbb/itt_notify.h"
 #include "tbb/atomic.h"
 #include "tbb/semaphore.h"
+#if __TBB_WIN8UI_SUPPORT
+#include <thread>
+#endif
 
 // All platform-specific threading support is in this header.
 
@@ -147,16 +150,23 @@ inline void thread_monitor::launch( thread_routine_type thread_routine, void* ar
         fprintf(stderr,"thread_monitor::launch: _beginthreadex failed\n");
         exit(1); 
     }
+#if !__TBB_WIN8UI_SUPPORT
     if ( number_of_processor_groups > 1 ) {
         tbb::internal::MoveThreadIntoProcessorGroup( (HANDLE)status,
                         tbb::internal::FindProcessorGroupIndex( static_cast<int>(*worker_index) ) );
         ResumeThread( (HANDLE)status );
     }
+#endif
     CloseHandle( (HANDLE)status );
 }
 
 inline void thread_monitor::yield() {
+// TODO: consider unification via __TBB_Yield or tbb::this_tbb_thread::yield
+#if !__TBB_WIN8UI_SUPPORT
     SwitchToThread();
+#else
+    std::this_thread::yield();
+#endif
 }
 #endif /* USE_WINTHREAD */
 

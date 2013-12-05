@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</title>
+<title>tbb::filter Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,71 +21,210 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00289.html">function_node</a></div>
-<h1>tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::function_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->Implements a function node that supports Input -&gt; Output.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00289.html">filter</a></div>
+<h1>tbb::filter Class Reference<br>
+<small>
+[<a class="el" href="a00436.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::filter" -->A stage in a pipeline.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00598.html">pipeline.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt;:
-<p><center><img src="a00289.png" usemap="#tbb::flow::interface6::function_node< Input, Output,, Allocator >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::function_node< Input, Output,, Allocator >_map">
-<area href="a00292.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,368,24">
+<p>Inheritance diagram for tbb::filter:
+<p><center><img src="a00289.png" usemap="#tbb::filter_map" border="0" alt=""></center>
+<map name="tbb::filter_map">
+<area href="a00356.html" alt="tbb::thread_bound_filter" shape="rect" coords="0,56,145,80">
 </map>
-<a href="a00062.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00105.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eed5be58daf252aebed0df276ef9829b"></a><!-- doxytag: member="tbb::flow::interface6::function_node::input_type" ref="eed5be58daf252aebed0df276ef9829b" args="" -->
-typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6b1ada4ae95bcc11f3ecc7d8b407038"></a><!-- doxytag: member="tbb::flow::interface6::function_node::output_type" ref="a6b1ada4ae95bcc11f3ecc7d8b407038" args="" -->
-typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7bffd3b755433095325cc554ea2ae752"></a><!-- doxytag: member="tbb::flow::interface6::function_node::predecessor_type" ref="7bffd3b755433095325cc554ea2ae752" args="" -->
-typedef <a class="el" href="a00330.html">sender</a>&lt; input_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c24f9bbb872a81053cea4f38e214f458"></a><!-- doxytag: member="tbb::flow::interface6::function_node::successor_type" ref="c24f9bbb872a81053cea4f38e214f458" args="" -->
-typedef <a class="el" href="a00324.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3ad406125e6938567d61b5b7ad7039a0"></a><!-- doxytag: member="tbb::flow::interface6::function_node::fInput_type" ref="3ad406125e6938567d61b5b7ad7039a0" args="" -->
-typedef internal::function_input&lt;<br>
- input_type, output_type,<br>
- Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6bde48df8336f0bdc4fbb8c1879e13d6"></a><!-- doxytag: member="tbb::flow::interface6::function_node::fOutput_type" ref="6bde48df8336f0bdc4fbb8c1879e13d6" args="" -->
-typedef internal::function_output&lt;<br>
- output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
-
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5c215b40e3daf73d1c6802ecb5aded6c"></a><!-- doxytag: member="tbb::flow::interface6::function_node::function_node" ref="5c215b40e3daf73d1c6802ecb5aded6c" args="(graph &amp;g, size_t concurrency, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00289.html#5c215b40e3daf73d1c6802ecb5aded6c">function_node</a> (<a class="el" href="a00291.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6efb96f4660820fc6d47f9f480c07d35"></a><!-- doxytag: member="tbb::filter::is_serial" ref="6efb96f4660820fc6d47f9f480c07d35" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#6efb96f4660820fc6d47f9f480c07d35">is_serial</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d5132323fd2ac6a00ea0c78beda78723"></a><!-- doxytag: member="tbb::flow::interface6::function_node::function_node" ref="d5132323fd2ac6a00ea0c78beda78723" args="(const function_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#d5132323fd2ac6a00ea0c78beda78723">function_node</a> (const <a class="el" href="a00289.html">function_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if filter is serial. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ce53ff32ffb066e52c44f439c9150a05"></a><!-- doxytag: member="tbb::filter::is_ordered" ref="ce53ff32ffb066e52c44f439c9150a05" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#ce53ff32ffb066e52c44f439c9150a05">is_ordered</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bac36ad296662eb7e77ccd3a56688b64"></a><!-- doxytag: member="tbb::flow::interface6::function_node::try_put" ref="bac36ad296662eb7e77ccd3a56688b64" args="(const input_type &amp;i)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_put</b> (const input_type &amp;i)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if filter must receive stream in order. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a3a4a81d3130c3749ada365387023623"></a><!-- doxytag: member="tbb::filter::is_bound" ref="a3a4a81d3130c3749ada365387023623" args="() const " -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#a3a4a81d3130c3749ada365387023623">is_bound</a> () const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if filter is thread-bound. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb5fbff6b01a85e0c74c8976b6f761de"></a><!-- doxytag: member="tbb::filter::object_may_be_null" ref="eb5fbff6b01a85e0c74c8976b6f761de" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#eb5fbff6b01a85e0c74c8976b6f761de">object_may_be_null</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">true if an input filter can emit null <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#04b442ece10fd08f98d098ed5d0cbe35">operator()</a> (void *item)=0</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Operate on an item from the input stream, and return item for output stream.  <a href="#04b442ece10fd08f98d098ed5d0cbe35"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#5149028d5600af129d93ca71986cab09">~filter</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy filter.  <a href="#5149028d5600af129d93ca71986cab09"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#7f48cc9951e3cf7389e4c39d8b76e8ac">finalize</a> (void *)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys item if pipeline was cancelled.  <a href="#7f48cc9951e3cf7389e4c39d8b76e8ac"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a2f67f16e52b111e33365120f47d094c"></a><!-- doxytag: member="tbb::flow::interface6::function_node::reset" ref="a2f67f16e52b111e33365120f47d094c" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="24884ee6ac2a27f7e7d0372e5caab3ff"></a><!-- doxytag: member="tbb::filter::x1" ref="24884ee6ac2a27f7e7d0372e5caab3ff" args="((is_serial_?serial:parallel)|exact_exception_propagation))" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>x1</b> ((is_serial_?serial:parallel)|<a class="el" href="a00289.html#ab9689e23a96c6c9bf1c8caae74d92ee">exact_exception_propagation</a>))</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ffad8dcf70ebebc751dcf2c82cd5e1ad"></a><!-- doxytag: member="tbb::flow::interface6::function_node::successors" ref="ffad8dcf70ebebc751dcf2c82cd5e1ad" args="()" -->
-internal::broadcast_cache&lt;<br>
- output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6c4f3ecf1054dd2d68ff3bfb7463d3f8"></a><!-- doxytag: member="tbb::filter::prev_filter_in_pipeline" ref="6c4f3ecf1054dd2d68ff3bfb7463d3f8" args="(not_in_pipeline())" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>prev_filter_in_pipeline</b> (not_in_pipeline())</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="943c55e18617c52314fcd19dd12b98f8"></a><!-- doxytag: member="tbb::filter::my_pipeline" ref="943c55e18617c52314fcd19dd12b98f8" args="(NULL)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_pipeline</b> (NULL)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d2ed0aa344bf9137645293516729a1de"></a><!-- doxytag: member="tbb::filter::next_segment" ref="d2ed0aa344bf9137645293516729a1de" args="(NULL)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>next_segment</b> (NULL)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1cf46b6eb3b93fa0dc9864dc72ae4c1d"></a><!-- doxytag: member="tbb::filter::filter" ref="1cf46b6eb3b93fa0dc9864dc72ae4c1d" args="(mode filter_mode)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>filter</b> (mode filter_mode)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="940eb56a3a7df4b52e812552a9a4932b"></a><!-- doxytag: member="tbb::filter::set_end_of_input" ref="940eb56a3a7df4b52e812552a9a4932b" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_end_of_input</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Static Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e9dab2e01b0963b341ab04b59eec1475"></a><!-- doxytag: member="tbb::filter::filter_is_serial" ref="e9dab2e01b0963b341ab04b59eec1475" args="" -->
+static const unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#e9dab2e01b0963b341ab04b59eec1475">filter_is_serial</a> = 0x1</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The lowest bit 0 is for parallel vs. serial. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static const unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#091fcf6abc79edfa5c8bf01f742e2392">filter_is_out_of_order</a> = 0x1&lt;&lt;4</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">4th bit distinguishes ordered vs unordered filters.  <a href="#091fcf6abc79edfa5c8bf01f742e2392"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1382f216bd094064a18eb48ecc43c86b"></a><!-- doxytag: member="tbb::filter::filter_is_bound" ref="1382f216bd094064a18eb48ecc43c86b" args="" -->
+static const unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#1382f216bd094064a18eb48ecc43c86b">filter_is_bound</a> = 0x1&lt;&lt;5</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">5th bit distinguishes thread-bound and regular filters. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6645ec56872b6ba2056dcaa467e292f7"></a><!-- doxytag: member="tbb::filter::filter_may_emit_null" ref="6645ec56872b6ba2056dcaa467e292f7" args="" -->
+static const unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#6645ec56872b6ba2056dcaa467e292f7">filter_may_emit_null</a> = 0x1&lt;&lt;6</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">6th bit marks input filters emitting small objects <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static const unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#ab9689e23a96c6c9bf1c8caae74d92ee">exact_exception_propagation</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">7th bit defines exception propagation mode expected by the application.  <a href="#ab9689e23a96c6c9bf1c8caae74d92ee"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="88bd11ed4d74f6de43a7d3b0bc05f2c3"></a><!-- doxytag: member="tbb::filter::internal::stage_task" ref="88bd11ed4d74f6de43a7d3b0bc05f2c3" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::stage_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6f9dcf41617866d7bf0e72d8efc11e7"></a><!-- doxytag: member="tbb::filter::internal::pipeline_root_task" ref="a6f9dcf41617866d7bf0e72d8efc11e7" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::pipeline_root_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="687d6d86bc5e18eb1d32acf3f6e7bd9f"></a><!-- doxytag: member="tbb::filter::pipeline" ref="687d6d86bc5e18eb1d32acf3f6e7bd9f" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>pipeline</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b4463cf8612c362ee109224e45fad104"></a><!-- doxytag: member="tbb::filter::thread_bound_filter" ref="b4463cf8612c362ee109224e45fad104" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>thread_bound_filter</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Input, typename Output = continue_msg, graph_buffer_policy = queueing, typename Allocator = cache_aligned_allocator&lt;Input&gt;&gt;<br>
- class tbb::flow::interface6::function_node&lt; Input, Output,, Allocator &gt;</h3>
-
-Implements a function node that supports Input -&gt; Output. 
+A stage in a pipeline. 
 <p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="5149028d5600af129d93ca71986cab09"></a><!-- doxytag: member="tbb::filter::~filter" ref="5149028d5600af129d93ca71986cab09" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual __TBB_EXPORTED_METHOD tbb::filter::~filter           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Destroy filter. 
+<p>
+If the filter was added to a pipeline, the pipeline must be destroyed first. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="7f48cc9951e3cf7389e4c39d8b76e8ac"></a><!-- doxytag: member="tbb::filter::finalize" ref="7f48cc9951e3cf7389e4c39d8b76e8ac" args="(void *)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void tbb::filter::finalize           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Destroys item if pipeline was cancelled. 
+<p>
+Required to prevent memory leaks. Note it can be called concurrently even for serial filters. 
+</div>
+</div><p>
+<a class="anchor" name="04b442ece10fd08f98d098ed5d0cbe35"></a><!-- doxytag: member="tbb::filter::operator()" ref="04b442ece10fd08f98d098ed5d0cbe35" args="(void *item)=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void* tbb::filter::operator()           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>item</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Operate on an item from the input stream, and return item for output stream. 
+<p>
+Returns NULL if filter is a sink. 
+</div>
+</div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="ab9689e23a96c6c9bf1c8caae74d92ee"></a><!-- doxytag: member="tbb::filter::exact_exception_propagation" ref="ab9689e23a96c6c9bf1c8caae74d92ee" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned char <a class="el" href="a00289.html#ab9689e23a96c6c9bf1c8caae74d92ee">tbb::filter::exact_exception_propagation</a><code> [static, protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<b>Initial value:</b><div class="fragment"><pre class="fragment">
+<span class="preprocessor">#if TBB_USE_CAPTURED_EXCEPTION</span>
+<span class="preprocessor">            0x0</span>
+</pre></div>7th bit defines exception propagation mode expected by the application. 
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="091fcf6abc79edfa5c8bf01f742e2392"></a><!-- doxytag: member="tbb::filter::filter_is_out_of_order" ref="091fcf6abc79edfa5c8bf01f742e2392" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned char <a class="el" href="a00289.html#091fcf6abc79edfa5c8bf01f742e2392">tbb::filter::filter_is_out_of_order</a> = 0x1&lt;&lt;4<code> [static, protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+4th bit distinguishes ordered vs unordered filters. 
+<p>
+The bit was not set for parallel filters in TBB 2.1 and earlier, but <a class="el" href="a00289.html#ce53ff32ffb066e52c44f439c9150a05">is_ordered()</a> function always treats parallel filters as out of order. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00598.html">pipeline.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

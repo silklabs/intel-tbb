@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::scalable_allocator&lt; void &gt; Class Template Reference</title>
+<title>tbb::recursive_mutex Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,92 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00329.html">scalable_allocator&lt; void &gt;</a></div>
-<h1>tbb::scalable_allocator&lt; void &gt; Class Template Reference<br>
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00329.html">recursive_mutex</a></div>
+<h1>tbb::recursive_mutex Class Reference<br>
 <small>
-[<a class="el" href="a00434.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::scalable_allocator&lt; void &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+[<a class="el" href="a00439.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::recursive_mutex" -->Mutex that allows recursive mutex acquisition.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00614.html">scalable_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00617.html">recursive_mutex.h</a>&gt;</code>
 <p>
-<a href="a00123.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00117.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2046816029c2c7856f7684aed2af9cff"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::pointer" ref="2046816029c2c7856f7684aed2af9cff" args="" -->
-typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d40334b0e26d5addfde5596e7f9aaec"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="3d40334b0e26d5addfde5596e7f9aaec" args="" -->
+typedef LPCRITICAL_SECTION&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00329.html#3d40334b0e26d5addfde5596e7f9aaec">native_handle_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="591c568d23f8aadf6ea8d1dc939c4e75"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::const_pointer" ref="591c568d23f8aadf6ea8d1dc939c4e75" args="" -->
-typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return native_handle. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="59f90e65656fec5a07e375c6e7cd39f3"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="59f90e65656fec5a07e375c6e7cd39f3" args="" -->
+typedef pthread_mutex_t *&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="64dbab666af0740c30b77edac9f157ce"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::value_type" ref="64dbab666af0740c30b77edac9f157ce" args="" -->
-typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="47eb6e7e7ffa5d35341125792b17236b"></a><!-- doxytag: member="tbb::recursive_mutex::recursive_mutex" ref="47eb6e7e7ffa5d35341125792b17236b" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00329.html#47eb6e7e7ffa5d35341125792b17236b">recursive_mutex</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired <a class="el" href="a00329.html">recursive_mutex</a>. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dea997b45dc4a360f38d14bde9c991f2"></a><!-- doxytag: member="tbb::recursive_mutex::lock" ref="dea997b45dc4a360f38d14bde9c991f2" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00329.html#dea997b45dc4a360f38d14bde9c991f2">lock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00329.html#8b181d9aaa95444145222cfe206e8094">try_lock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#8b181d9aaa95444145222cfe206e8094"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f57e8d25e0e7614e98bcfa50bc9416c8"></a><!-- doxytag: member="tbb::recursive_mutex::unlock" ref="f57e8d25e0e7614e98bcfa50bc9416c8" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00329.html#f57e8d25e0e7614e98bcfa50bc9416c8">unlock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="050ca2a8d3b5c98f9d6c1252856436db"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle" ref="050ca2a8d3b5c98f9d6c1252856436db" args="()" -->
+<a class="el" href="a00329.html#3d40334b0e26d5addfde5596e7f9aaec">native_handle_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="668511b8520c41a342c038ba26ce70ff"></a><!-- doxytag: member="tbb::recursive_mutex::is_rw_mutex" ref="668511b8520c41a342c038ba26ce70ff" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2817cf2c1a7875590548f49a834ca668"></a><!-- doxytag: member="tbb::recursive_mutex::is_recursive_mutex" ref="2817cf2c1a7875590548f49a834ca668" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = true</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bcc4a830c307cb4d25311550a527fe4d"></a><!-- doxytag: member="tbb::recursive_mutex::is_fair_mutex" ref="bcc4a830c307cb4d25311550a527fe4d" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fcf922650b2fd9d76b7b939d8511bbd8"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock" ref="fcf922650b2fd9d76b7b939d8511bbd8" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
 
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00330.html">scoped_lock</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00330.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;&gt;<br>
- class tbb::scalable_allocator&lt; void &gt;</h3>
-
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+Mutex that allows recursive mutex acquisition. 
 <p>
+Mutex that allows recursive mutex acquisition. 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="8b181d9aaa95444145222cfe206e8094"></a><!-- doxytag: member="tbb::recursive_mutex::try_lock" ref="8b181d9aaa95444145222cfe206e8094" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::recursive_mutex::try_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try acquiring lock (non-blocking). 
+<p>
+Return true if lock acquired; false otherwise. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00614.html">scalable_allocator.h</a></ul>
+<li><a class="el" href="a00617.html">recursive_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

@@ -33,8 +33,6 @@
 
 #include "harness.h"
 
-#if !__SUNPRO_CC
-
 #include "tbb/flow_graph.h"
 #include "tbb/task_scheduler_init.h"
 
@@ -112,12 +110,12 @@ template<typename TT>
 class recirc_func_body {
     TT my_mult;
 public:
-    typedef std::tuple<int, tbb::flow::continue_msg> input_type;
+    typedef tbb::flow::tuple<int, tbb::flow::continue_msg> input_type;
     recirc_func_body(TT multiplier ) : my_mult(multiplier) {}
     recirc_func_body(const recirc_func_body &other) : my_mult(other.my_mult) { }
     void operator=( const recirc_func_body &other) { my_mult = other.my_mult; }
     TT operator()(const input_type &v) {
-        return TT(std::get<0>(v)) * my_mult;
+        return TT(tbb::flow::get<0>(v)) * my_mult;
     }
 };
 
@@ -186,8 +184,8 @@ public:
 template<typename JType>
 class makeJoin<2,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -202,9 +200,9 @@ public:
 template<typename JType>
 class makeJoin<3,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -220,10 +218,10 @@ public:
 template<typename JType>
 class makeJoin<4,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -240,11 +238,11 @@ public:
 template<typename JType>
 class makeJoin<5,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -262,12 +260,12 @@ public:
 template<typename JType>
 class makeJoin<6,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
-    typedef typename std::tuple_element<5, TType>::type T5;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<5, TType>::type T5;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -288,13 +286,13 @@ public:
 template<typename JType>
 class makeJoin<7,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
-    typedef typename std::tuple_element<5, TType>::type T5;
-    typedef typename std::tuple_element<6, TType>::type T6;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<5, TType>::type T5;
+    typedef typename tbb::flow::tuple_element<6, TType>::type T6;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -316,14 +314,14 @@ public:
 template<typename JType>
 class makeJoin<8,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
-    typedef typename std::tuple_element<5, TType>::type T5;
-    typedef typename std::tuple_element<6, TType>::type T6;
-    typedef typename std::tuple_element<7, TType>::type T7;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<5, TType>::type T5;
+    typedef typename tbb::flow::tuple_element<6, TType>::type T6;
+    typedef typename tbb::flow::tuple_element<7, TType>::type T7;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -346,15 +344,15 @@ public:
 template<typename JType>
 class makeJoin<9,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
-    typedef typename std::tuple_element<5, TType>::type T5;
-    typedef typename std::tuple_element<6, TType>::type T6;
-    typedef typename std::tuple_element<7, TType>::type T7;
-    typedef typename std::tuple_element<8, TType>::type T8;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<5, TType>::type T5;
+    typedef typename tbb::flow::tuple_element<6, TType>::type T6;
+    typedef typename tbb::flow::tuple_element<7, TType>::type T7;
+    typedef typename tbb::flow::tuple_element<8, TType>::type T8;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -378,16 +376,16 @@ public:
 template<typename JType>
 class makeJoin<10,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
-    typedef typename std::tuple_element<0, TType>::type T0;
-    typedef typename std::tuple_element<1, TType>::type T1;
-    typedef typename std::tuple_element<2, TType>::type T2;
-    typedef typename std::tuple_element<3, TType>::type T3;
-    typedef typename std::tuple_element<4, TType>::type T4;
-    typedef typename std::tuple_element<5, TType>::type T5;
-    typedef typename std::tuple_element<6, TType>::type T6;
-    typedef typename std::tuple_element<7, TType>::type T7;
-    typedef typename std::tuple_element<8, TType>::type T8;
-    typedef typename std::tuple_element<9, TType>::type T9;
+    typedef typename tbb::flow::tuple_element<0, TType>::type T0;
+    typedef typename tbb::flow::tuple_element<1, TType>::type T1;
+    typedef typename tbb::flow::tuple_element<2, TType>::type T2;
+    typedef typename tbb::flow::tuple_element<3, TType>::type T3;
+    typedef typename tbb::flow::tuple_element<4, TType>::type T4;
+    typedef typename tbb::flow::tuple_element<5, TType>::type T5;
+    typedef typename tbb::flow::tuple_element<6, TType>::type T6;
+    typedef typename tbb::flow::tuple_element<7, TType>::type T7;
+    typedef typename tbb::flow::tuple_element<8, TType>::type T8;
+    typedef typename tbb::flow::tuple_element<9, TType>::type T9;
 public:
     static JType *create(tbb::flow::graph& g) {
         JType *temp = new JType(g, 
@@ -416,11 +414,11 @@ template<int ELEM, typename JNT>
 class source_node_helper {
 public:
     typedef JNT join_node_type;
-    typedef tbb::flow::join_node<std::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
+    typedef tbb::flow::join_node<tbb::flow::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
     typedef typename join_node_type::output_type TT;
-    typedef typename std::tuple_element<ELEM-1,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<ELEM-1,TT>::type IT;
     typedef typename tbb::flow::source_node<IT> my_source_node_type;
-    typedef typename tbb::flow::function_node<std::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
+    typedef typename tbb::flow::function_node<tbb::flow::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
     static void print_remark(const char * str) {
         source_node_helper<ELEM-1,JNT>::print_remark(str);
         REMARK(", %s", name_of<IT>::name());
@@ -444,15 +442,15 @@ public:
     }
 
     static void only_check_value(const int i, const TT &v) {
-        ASSERT( std::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
+        ASSERT( tbb::flow::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
         source_node_helper<ELEM-1,JNT>::only_check_value(i, v);
     }
 
     static void check_value(int i, TT &v, bool is_serial) {
         // the fetched value will match only if there is only one source_node.
-        ASSERT(!is_serial || std::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
+        ASSERT(!is_serial || tbb::flow::get<ELEM-1>(v) == (IT)(i*(ELEM+1)), NULL);
         // tally the fetched value.
-        int ival = (int)std::get<ELEM-1>(v);
+        int ival = (int)tbb::flow::get<ELEM-1>(v);
         ASSERT(!(ival%(ELEM+1)), NULL);
         ival /= (ELEM+1);
         ASSERT(!outputCheck[ELEM-1][ival], NULL);
@@ -480,11 +478,11 @@ public:
 template<typename JNT>
 class source_node_helper<1, JNT> {
     typedef JNT join_node_type;
-    typedef tbb::flow::join_node<std::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
+    typedef tbb::flow::join_node<tbb::flow::tuple<int, tbb::flow::continue_msg>, tbb::flow::reserving> input_join_type;
     typedef typename join_node_type::output_type TT;
-    typedef typename std::tuple_element<0,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<0,TT>::type IT;
     typedef typename tbb::flow::source_node<IT> my_source_node_type;
-    typedef typename tbb::flow::function_node<std::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
+    typedef typename tbb::flow::function_node<tbb::flow::tuple<int,tbb::flow::continue_msg>, IT> my_recirc_function_type;
 public:
     static void print_remark(const char * str) {
         REMARK("%s< %s", str, name_of<IT>::name());
@@ -505,12 +503,12 @@ public:
     }
 
     static void only_check_value(const int i, const TT &v) {
-        ASSERT( std::get<0>(v) == (IT)(i*2), NULL);
+        ASSERT( tbb::flow::get<0>(v) == (IT)(i*2), NULL);
     }
 
     static void check_value(int i, TT &v, bool is_serial) {
-        ASSERT(!is_serial || std::get<0>(v) == (IT)(i*(2)), NULL);
-        int ival = (int)std::get<0>(v);
+        ASSERT(!is_serial || tbb::flow::get<0>(v) == (IT)(i*(2)), NULL);
+        int ival = (int)tbb::flow::get<0>(v);
         ASSERT(!(ival%2), NULL);
         ival /= 2;
         ASSERT(!outputCheck[0][ival], NULL);
@@ -539,9 +537,9 @@ class recirc_output_func_body {
 public:
     // we only need this to use source_node_helper
     typedef typename tbb::flow::join_node<OutputTupleType, tbb::flow::tag_matching> join_node_type;
-    static const int N = std::tuple_size<OutputTupleType>::value;
+    static const int N = tbb::flow::tuple_size<OutputTupleType>::value;
     int operator()(const OutputTupleType &v) {
-        int out = int(std::get<0>(v)) / 2;
+        int out = int(tbb::flow::get<0>(v)) / 2;
         source_node_helper<N,join_node_type>::only_check_value(out,v);
         ++output_count;
         return out;
@@ -552,9 +550,9 @@ template<typename JType>
 class tag_recirculation_test {
 public:
     typedef typename JType::output_type TType;
-    typedef typename std::tuple<int, tbb::flow::continue_msg> input_tuple_type;
+    typedef typename tbb::flow::tuple<int, tbb::flow::continue_msg> input_tuple_type;
     typedef tbb::flow::join_node<input_tuple_type,tbb::flow::reserving> input_join_type;
-    static const int N = std::tuple_size<TType>::value;
+    static const int N = tbb::flow::tuple_size<TType>::value;
     static void test() {
         source_node_helper<N,JType>::print_remark("Recirculation test of tag-matching join");
         REMARK(" >\n");
@@ -569,7 +567,7 @@ public:
             // reserving join that matches recirculating tags with continue messages.
             input_join_type * my_input_join = makeJoin<2,input_join_type,tbb::flow::reserving>::create(g);
             // tbb::flow::make_edge(snode, tbb::flow::input_port<1>(*my_input_join));
-            tbb::flow::make_edge(snode, std::get<1>(my_input_join->input_ports()));
+            tbb::flow::make_edge(snode, tbb::flow::get<1>(my_input_join->input_ports()));
             // queue to hold the tags
             tbb::flow::queue_node<int> tag_queue(g);
             tbb::flow::make_edge(tag_queue, tbb::flow::input_port<0>(*my_input_join));
@@ -620,7 +618,7 @@ template<typename JType, tbb::flow::graph_buffer_policy JP>
 class parallel_test {
 public:
     typedef typename JType::output_type TType;
-    static const int SIZE = std::tuple_size<TType>::value;
+    static const int SIZE = tbb::flow::tuple_size<TType>::value;
     static const tbb::flow::graph_buffer_policy jp = JP;
     static void test() {
         TType v;
@@ -677,7 +675,7 @@ template<int ELEM, typename JType>
 class serial_queue_helper {
 public:
     typedef typename JType::output_type TT;
-    typedef typename std::tuple_element<ELEM-1,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<ELEM-1,TT>::type IT;
     typedef typename tbb::flow::queue_node<IT> my_queue_node_type;
     static void print_remark() {
         serial_queue_helper<ELEM-1,JType>::print_remark();
@@ -686,7 +684,7 @@ public:
     static void add_queue_nodes(tbb::flow::graph &g, JType &my_join) {
         serial_queue_helper<ELEM-1,JType>::add_queue_nodes(g, my_join);
         my_queue_node_type *new_node = new my_queue_node_type(g);
-        tbb::flow::make_edge( *new_node, std::get<ELEM-1>(my_join.input_ports()) );
+        tbb::flow::make_edge( *new_node, tbb::flow::get<ELEM-1>(my_join.input_ports()) );
         all_source_nodes[ELEM-1][0] = (void *)new_node;
     }
     static void fill_one_queue(int maxVal) {
@@ -705,11 +703,11 @@ public:
     }
     static void check_queue_value(int i, TT &v) {
         serial_queue_helper<ELEM-1,JType>::check_queue_value(i, v);
-        ASSERT( std::get<ELEM-1>(v) == (IT)(i * (ELEM+1)), NULL);
+        ASSERT( tbb::flow::get<ELEM-1>(v) == (IT)(i * (ELEM+1)), NULL);
     }
     static void remove_queue_nodes(JType &my_join) {
         my_queue_node_type *vptr = reinterpret_cast<my_queue_node_type *>(all_source_nodes[ELEM-1][0]);
-        tbb::flow::remove_edge( *vptr, std::get<ELEM-1>(my_join.input_ports()) );
+        tbb::flow::remove_edge( *vptr, tbb::flow::get<ELEM-1>(my_join.input_ports()) );
         serial_queue_helper<ELEM-1, JType>::remove_queue_nodes(my_join);
         delete vptr;
     }
@@ -719,7 +717,7 @@ template<typename JType>
 class serial_queue_helper<1, JType> {
 public:
     typedef typename JType::output_type TT;
-    typedef typename std::tuple_element<0,TT>::type IT;
+    typedef typename tbb::flow::tuple_element<0,TT>::type IT;
     typedef typename tbb::flow::queue_node<IT> my_queue_node_type;
     static void print_remark() {
         REMARK("Serial test of join_node< %s", name_of<IT>::name());
@@ -740,11 +738,11 @@ public:
         ASSERT(qptr->try_put((IT)(myVal*2)), NULL);
     }
     static void check_queue_value(int i, TT &v) {
-        ASSERT( std::get<0>(v) == (IT)(i*2), NULL);
+        ASSERT( tbb::flow::get<0>(v) == (IT)(i*2), NULL);
     }
     static void remove_queue_nodes(JType &my_join) {
         my_queue_node_type *vptr = reinterpret_cast<my_queue_node_type *>(all_source_nodes[0][0]);
-        tbb::flow::remove_edge( *vptr, std::get<0>(my_join.input_ports()) );
+        tbb::flow::remove_edge( *vptr, tbb::flow::get<0>(my_join.input_ports()) );
         delete vptr;
     }
 };
@@ -757,7 +755,7 @@ public:
 template<typename JType, tbb::flow::graph_buffer_policy JP>
 void test_one_serial( JType &my_join, tbb::flow::graph &g) {
     typedef typename JType::output_type TType;
-    static const int SIZE = std::tuple_size<TType>::value;
+    static const int SIZE = tbb::flow::tuple_size<TType>::value;
     std::vector<bool> flags;
     serial_queue_helper<SIZE, JType>::add_queue_nodes(g,my_join);
     typedef TType q3_input_type;
@@ -780,7 +778,7 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
         ASSERT(q3.try_get( v ), "Error in try_get()");
         if(jp == tbb::flow::tag_matching) {
             // because we look up tags in the hash table, the output may be out of order.
-            int j = int(std::get<0>(v)) / 2;  // figure what the index should be
+            int j = int(tbb::flow::get<0>(v)) / 2;  // figure what the index should be
             serial_queue_helper<SIZE,JType>::check_queue_value(j, v);
             flags[j] = true;
         }
@@ -805,7 +803,7 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
         g.wait_for_all();
         ASSERT(q3.try_get( v ), "Error in try_get()");
         if(jp == tbb::flow::tag_matching) {
-            int j = int(std::get<0>(v)) / 2;
+            int j = int(tbb::flow::get<0>(v)) / 2;
             serial_queue_helper<SIZE,JType>::check_queue_value(j, v);
             flags[i] = true;
         }
@@ -827,7 +825,7 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
 template<typename JType, tbb::flow::graph_buffer_policy JP>
 class serial_test {
     typedef typename JType::output_type TType;
-    static const int SIZE = std::tuple_size<TType>::value;
+    static const int SIZE = tbb::flow::tuple_size<TType>::value;
     static const int ELEMS = 3;
 public:
 static void test() {
@@ -893,7 +891,7 @@ void test_input_port_policies();
 template<>
 void test_input_port_policies<tbb::flow::reserving>() {
     tbb::flow::graph g;
-    typedef tbb::flow::join_node<std::tuple<int, int>, tbb::flow::reserving > JType; // two-phase is the default policy
+    typedef tbb::flow::join_node<tbb::flow::tuple<int, int>, tbb::flow::reserving > JType; // two-phase is the default policy
     // create join_node<type0,type1> jn
     JType jn(g);
     // create output_queue oq0, oq1
@@ -912,8 +910,8 @@ void test_input_port_policies<tbb::flow::reserving>() {
     tbb::flow::make_edge( jn, oq0 );
     tbb::flow::make_edge( jn, oq1 );
     // attach iq0, iq1 to jn
-    tbb::flow::make_edge( iq0, std::get<0>(jn.input_ports()) );
-    tbb::flow::make_edge( iq1, std::get<1>(jn.input_ports()) );
+    tbb::flow::make_edge( iq0, tbb::flow::get<0>(jn.input_ports()) );
+    tbb::flow::make_edge( iq1, tbb::flow::get<1>(jn.input_ports()) );
     for(int loop = 0; loop < 3; ++loop) {
         // place one item in iq0
         ASSERT(iq0.try_put(1), "Error putting to iq1");
@@ -942,8 +940,8 @@ void test_input_port_policies<tbb::flow::reserving>() {
         {
             OQType t0;
             OQType t1;
-            ASSERT(oq0.try_get(t0) && std::get<0>(t0) == 3 && std::get<1>(t0) == 2, "Error in oq0 output");
-            ASSERT(oq1.try_get(t1) && std::get<0>(t1) == 3 && std::get<1>(t1) == 2, "Error in oq1 output");
+            ASSERT(oq0.try_get(t0) && tbb::flow::get<0>(t0) == 3 && tbb::flow::get<1>(t0) == 2, "Error in oq0 output");
+            ASSERT(oq1.try_get(t1) && tbb::flow::get<0>(t1) == 3 && tbb::flow::get<1>(t1) == 2, "Error in oq1 output");
         }
         // attach qnp to iq0, qnq to iq1
         // qnp and qnq should be empty
@@ -976,7 +974,7 @@ void test_input_port_policies<tbb::flow::reserving>() {
 template<>
 void test_input_port_policies<tbb::flow::queueing>() {
     tbb::flow::graph g;
-    typedef tbb::flow::join_node<std::tuple<int, int>, tbb::flow::queueing > JType;
+    typedef tbb::flow::join_node<tbb::flow::tuple<int, int>, tbb::flow::queueing > JType;
     // create join_node<type0,type1> jn
     JType jn(g);
     // create output_queue oq0, oq1
@@ -995,8 +993,8 @@ void test_input_port_policies<tbb::flow::queueing>() {
     tbb::flow::make_edge( jn, oq0 );
     tbb::flow::make_edge( jn, oq1 );
     // attach iq0, iq1 to jn
-    tbb::flow::make_edge( iq0, std::get<0>(jn.input_ports()) );
-    tbb::flow::make_edge( iq1, std::get<1>(jn.input_ports()) );
+    tbb::flow::make_edge( iq0, tbb::flow::get<0>(jn.input_ports()) );
+    tbb::flow::make_edge( iq1, tbb::flow::get<1>(jn.input_ports()) );
     for(int loop = 0; loop < 3; ++loop) {
         // place one item in iq0
         ASSERT(iq0.try_put(1), "Error putting to iq1");
@@ -1015,8 +1013,8 @@ void test_input_port_policies<tbb::flow::queueing>() {
         {
             OQType t0;
             OQType t1;
-            ASSERT(oq0.try_get(t0) && std::get<0>(t0) == 1 && std::get<1>(t0) == 2, "Error in oq0 output");
-            ASSERT(oq1.try_get(t1) && std::get<0>(t1) == 1 && std::get<1>(t1) == 2, "Error in oq1 output");
+            ASSERT(oq0.try_get(t0) && tbb::flow::get<0>(t0) == 1 && tbb::flow::get<1>(t0) == 2, "Error in oq0 output");
+            ASSERT(oq1.try_get(t1) && tbb::flow::get<0>(t1) == 1 && tbb::flow::get<1>(t1) == 2, "Error in oq1 output");
         }
         // attach qnq to iq1
         // qnp and qnq should be empty
@@ -1058,7 +1056,7 @@ tbb::flow::tag_value myTagValue(int i) { return tbb::flow::tag_value(i); }
 template<>
 void test_input_port_policies<tbb::flow::tag_matching>() {
     tbb::flow::graph g;
-    typedef tbb::flow::join_node<std::tuple<int, int>, tbb::flow::tag_matching > JType;
+    typedef tbb::flow::join_node<tbb::flow::tuple<int, int>, tbb::flow::tag_matching > JType;
     JType jn(g, myTagValue, myTagValue);
     // create output_queue oq0, oq1
     typedef JType::output_type OQType;
@@ -1100,8 +1098,8 @@ void test_input_port_policies<tbb::flow::tag_matching>() {
         {
             OQType t0;
             OQType t1;
-            ASSERT(oq0.try_get(t0) && std::get<0>(t0) == loop && std::get<1>(t0) == loop, "Error in oq0 output");
-            ASSERT(oq1.try_get(t1) && std::get<0>(t1) == loop && std::get<1>(t1) == loop, "Error in oq1 output");
+            ASSERT(oq0.try_get(t0) && tbb::flow::get<0>(t0) == loop && tbb::flow::get<1>(t0) == loop, "Error in oq0 output");
+            ASSERT(oq1.try_get(t1) && tbb::flow::get<0>(t1) == loop && tbb::flow::get<1>(t1) == loop, "Error in oq1 output");
             ASSERT(!oq0.try_get(t0), "extra object in output queue oq0");
             ASSERT(!oq1.try_get(t0), "extra object in output queue oq1");
         }
@@ -1145,8 +1143,8 @@ void test_input_port_policies<tbb::flow::tag_matching>() {
         {
             OQType t0;
             OQType t1;
-            ASSERT(oq0.try_get(t0) && std::get<0>(t0) == lp1 && std::get<1>(t0) == lp1, "Error in oq0 output");
-            ASSERT(oq1.try_get(t1) && std::get<0>(t1) == lp1 && std::get<1>(t1) == lp1, "Error in oq1 output");
+            ASSERT(oq0.try_get(t0) && tbb::flow::get<0>(t0) == lp1 && tbb::flow::get<1>(t0) == lp1, "Error in oq0 output");
+            ASSERT(oq1.try_get(t1) && tbb::flow::get<0>(t1) == lp1 && tbb::flow::get<1>(t1) == lp1, "Error in oq1 output");
             ASSERT(!oq0.try_get(t0), "extra object in output queue oq0");
             ASSERT(!oq1.try_get(t0), "extra object in output queue oq1");
         }
@@ -1165,90 +1163,83 @@ int TestMain() {
 
    for (int p = 0; p < 2; ++p) {
        REMARK("reserving\n");
-       generate_test<serial_test, std::tuple<float, double>, tbb::flow::reserving >::do_test();
-       generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::reserving >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::reserving >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::reserving >::do_test();
 #if __TBB_VARIADIC_MAX >= 6
-       generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::reserving >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::reserving >::do_test();
 #endif
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 8
-       generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::reserving >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::reserving >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 10
-       generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::reserving >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::reserving >::do_test();
 #endif
 #endif
-       generate_test<parallel_test, std::tuple<float, double>, tbb::flow::reserving >::do_test();
-       generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::reserving >::do_test();
-       generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::reserving >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::reserving >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::reserving >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::reserving >::do_test();
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 7
-       generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::reserving >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::reserving >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 9
-       generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::reserving >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::reserving >::do_test();
 #endif
 #endif
        REMARK("queueing\n");
-       generate_test<serial_test, std::tuple<float, double>, tbb::flow::queueing >::do_test();
-       generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::queueing >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::queueing >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::queueing >::do_test();
 #if __TBB_VARIADIC_MAX >= 6
-       generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::queueing >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::queueing >::do_test();
 #endif
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 8
-       generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::queueing >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::queueing >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 10
-       generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::queueing >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::queueing >::do_test();
 #endif
 #endif
-       generate_test<parallel_test, std::tuple<float, double>, tbb::flow::queueing >::do_test();
-       generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::queueing >::do_test();
-       generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::queueing >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::queueing >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::queueing >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::queueing >::do_test();
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 7
-       generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::queueing >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::queueing >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 9
-       generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::queueing >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::queueing >::do_test();
 #endif
 #endif
        REMARK("tag_matching\n");
-       generate_test<serial_test, std::tuple<float, double>, tbb::flow::tag_matching >::do_test();
-       generate_test<serial_test, std::tuple<float, double, int, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::tag_matching >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::tag_matching >::do_test();
 #if __TBB_VARIADIC_MAX >= 6
-       generate_test<serial_test, std::tuple<double, double, int, long, int, short>, tbb::flow::tag_matching >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::tag_matching >::do_test();
 #endif
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 8
-       generate_test<serial_test, std::tuple<float, double, double, double, float, int, float, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 10
-       generate_test<serial_test, std::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
 #endif
-       generate_test<parallel_test, std::tuple<float, double>, tbb::flow::tag_matching >::do_test();
-       generate_test<parallel_test, std::tuple<float, int, long>, tbb::flow::tag_matching >::do_test();
-       generate_test<parallel_test, std::tuple<double, double, int, int, short>, tbb::flow::tag_matching >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::tag_matching >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::tag_matching >::do_test();
 #if COMPREHENSIVE_TEST
 #if __TBB_VARIADIC_MAX >= 7
-       generate_test<parallel_test, std::tuple<float, int, double, float, long, float, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
 #if __TBB_VARIADIC_MAX >= 9
-       generate_test<parallel_test, std::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::tag_matching >::do_test();
+       generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
 #endif
 
-       generate_recirc_test<std::tuple<float,double> >::do_test();
-       generate_recirc_test<std::tuple<double, double, int, int, short> >::do_test();
+       generate_recirc_test<tbb::flow::tuple<float,double> >::do_test();
+       generate_recirc_test<tbb::flow::tuple<double, double, int, int, short> >::do_test();
    }
    return Harness::Done;
 }
-#else  // __SUNPRO_CC
-
-int TestMain() {
-    return Harness::Skipped;
-}
-
-#endif  // SUNPRO_CC

@@ -40,6 +40,9 @@
 #endif
 #endif
 
+// Does the operating system have a system call to pin a thread to a set of OS processors?
+#define __TBB_OS_AFFINITY_SYSCALL_PRESENT ((__linux__ && !__ANDROID__) || (__FreeBSD_version >= 701000))
+
 namespace tbb {
 namespace internal {
 
@@ -210,12 +213,7 @@ inline void run_initializer( bool (*f)(), atomic<do_once_state>& state ) {
     state = f() ? do_once_executed : do_once_uninitialized;
 }
 
-#ifdef __TBB_HardwareConcurrency
-    class affinity_helper {
-    public:
-        void protect_affinity_mask() {}
-    };
-#elif __linux__ || __FreeBSD_version >= 701000
+#if __TBB_OS_AFFINITY_SYSCALL_PRESENT
   #if __linux__
     typedef cpu_set_t basic_mask_t;
   #elif __FreeBSD_version >= 701000
@@ -231,19 +229,12 @@ inline void run_initializer( bool (*f)(), atomic<do_once_state>& state ) {
         ~affinity_helper();
         void protect_affinity_mask();
     };
-#elif defined(_SC_NPROCESSORS_ONLN)
-    class affinity_helper {
-    public:
-        void protect_affinity_mask() {}
-    };
-#elif _WIN32||_WIN64
-    class affinity_helper {
-    public:
-        void protect_affinity_mask() {}
-    };
 #else
-    #error affinity_helper is not implemented in this OS
-#endif /* __TBB_HardwareConcurrency */
+    class affinity_helper {
+    public:
+        void protect_affinity_mask() {}
+    };
+#endif /* __TBB_OS_AFFINITY_SYSCALL_PRESENT */
 
 } // namespace internal
 } // namespace tbb

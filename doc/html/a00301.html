@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::missing_wait Class Reference</title>
+<title>tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,27 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00301.html">missing_wait</a></div>
-<h1>tbb::missing_wait Class Reference</h1><!-- doxytag: class="tbb::missing_wait" -->Exception for missing wait on structured_task_group.  
-<a href="#_details">More...</a>
+<a class="el" href="a00423.html">tbb</a>::<b>internal</b>::<a class="el" href="a00301.html">machine_load_store_seq_cst&lt; T, 8 &gt;</a></div>
+<h1>tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;" --><code>#include &lt;<a class="el" href="a00656.html">tbb_machine.h</a>&gt;</code>
 <p>
-<code>#include &lt;<a class="el" href="a00650.html">tbb_exception.h</a>&gt;</code>
-<p>
-<a href="a00157.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00171.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fe3f8527f9013266dc845a4ff22dd2cf"></a><!-- doxytag: member="tbb::missing_wait::what" ref="fe3f8527f9013266dc845a4ff22dd2cf" args="() const " -->
-const char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const   throw ()</td></tr>
+<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2d79ef463e6d85203ff29895ce7af212"></a><!-- doxytag: member="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;::load" ref="2d79ef463e6d85203ff29895ce7af212" args="(const volatile T &amp;location)" -->
+static T&nbsp;</td><td class="memItemRight" valign="bottom"><b>load</b> (const volatile T &amp;location)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9ae4ceb6c49ba7d077a6a4fe67f7b44a"></a><!-- doxytag: member="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;::store" ref="9ae4ceb6c49ba7d077a6a4fe67f7b44a" args="(volatile T &amp;location, T value)" -->
+static void&nbsp;</td><td class="memItemRight" valign="bottom"><b>store</b> (volatile T &amp;location, T value)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Exception for missing wait on structured_task_group. 
+<h3>template&lt;typename T&gt;<br>
+ struct tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;</h3>
+
+The implementation does not use functions __TBB_machine_load8/store8 as they are not required to be sequentially consistent. 
 <p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00650.html">tbb_exception.h</a></ul>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li><a class="el" href="a00656.html">tbb_machine.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

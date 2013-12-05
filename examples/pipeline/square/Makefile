@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=square
 ARGS=0 input.txt output.txt
 PERF_RUN_ARGS=auto input.txt output.txt silent
@@ -38,7 +39,12 @@ endif # icc
 SQUARE = square.cpp
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -59,10 +65,10 @@ input.txt: $(GEN)
 	./$(GEN)  >input.txt
 
 test: input.txt
-	./$(PROG) $(ARGS)
-	
+	$(run_cmd) ./$(PROG) $(ARGS)
+
 perf_build: $(SQUARE) input.txt
 	$(CXX) -O2 -msse2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $(SQUARE) -ltbb $(LIBS)
-	
+
 perf_run: input.txt
 	./$(PROG) $(PERF_RUN_ARGS)

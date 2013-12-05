@@ -58,7 +58,7 @@ public:
 
     critical_section_v4() { 
 #if _WIN32||_WIN64
-        InitializeCriticalSection(&my_impl);
+        InitializeCriticalSectionEx( &my_impl, 4000, 0 );
 #else
         pthread_mutex_init(&my_impl, NULL);
 #endif

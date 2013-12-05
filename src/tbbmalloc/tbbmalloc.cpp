@@ -97,10 +97,10 @@ extern "C" void MallocInitializeITT() {
 #define MALLOCLIB_NAME "tbbmalloc" DEBUG_SUFFIX ".dll"
 #elif __APPLE__
 #define MALLOCLIB_NAME "libtbbmalloc" DEBUG_SUFFIX ".dylib"
+#elif __FreeBSD__ || __NetBSD__ || __sun || _AIX || __ANDROID__
+#define MALLOCLIB_NAME "libtbbmalloc" DEBUG_SUFFIX ".so"
 #elif __linux__
 #define MALLOCLIB_NAME "libtbbmalloc" DEBUG_SUFFIX  __TBB_STRING(.so.TBB_COMPATIBLE_INTERFACE_VERSION)
-#elif __FreeBSD__ || __NetBSD__ || __sun || _AIX
-#define MALLOCLIB_NAME "libtbbmalloc" DEBUG_SUFFIX ".so"
 #else
 #error Unknown OS
 #endif
@@ -158,19 +158,22 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hInst, DWORD callReason, LPVOID )
     }
     return TRUE;
 }
-#else
+#else /* !USE_WINTHREAD */
 struct RegisterProcessShutdownNotification {
+// Work around non-reentrancy in dlopen() on Android
+#if !__TBB_USE_DLOPEN_REENTRANCY_WORKAROUND
     RegisterProcessShutdownNotification() {
         // prevents unloading, POSIX case
         dlopen(MALLOCLIB_NAME, RTLD_NOW);
     }
+#endif /* !__ANDROID__ */
     ~RegisterProcessShutdownNotification() {
         __TBB_mallocProcessShutdownNotification();
     }
 };
 
 static RegisterProcessShutdownNotification reg;
-#endif /* USE_WINTHREAD */
+#endif /* !USE_WINTHREAD */
 #endif /* !__TBB_SOURCE_DIRECTLY_INCLUDED */
 
 #if MALLOC_CHECK_RECURSION

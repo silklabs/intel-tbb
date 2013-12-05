@@ -56,10 +56,10 @@
 tbb::enumerable_thread_specific<std::size_t> ets;
 
 int TestMain () {
-#if _WIN32||_WIN64 || __linux__ || __FreeBSD_version >= 701000
+#if _WIN32||_WIN64 || (__linux__ && !__ANDROID__) || __FreeBSD_version >= 701000
 #if _WIN32||_WIN64
     SYSTEM_INFO si;
-    GetSystemInfo(&si);
+    GetNativeSystemInfo(&si);
     if ( si.dwNumberOfProcessors < 2 )
         return Harness::Skipped;
     int availableProcs = (int)si.dwNumberOfProcessors / 2;
@@ -98,7 +98,7 @@ int TestMain () {
     ASSERT( tbb::task_scheduler_init::default_num_threads() == availableProcs, NULL );
     ASSERT( (int)tbb::tbb_thread::hardware_concurrency() == availableProcs, NULL );
     return Harness::Done;
-#else /* !(WIN || LIN || BSD) */
+#else /* !(WIN || (LIN && !ANDR) || BSD) */
     return Harness::Skipped;
-#endif /* !(WIN || LIN || BSD) */
+#endif /* !(WIN || (LIN && !ANDR) || BSD) */
 }

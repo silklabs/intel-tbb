@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor Class Reference</title>
+<title>tbb::combinable&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,58 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00272.html">concurrent_hash_map</a>::<a class="el" href="a00274.html">bucket_accessor</a></div>
-<h1>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor Class Reference</h1><!-- doxytag: class="tbb::interface5::concurrent_hash_map::bucket_accessor" -->bucket accessor is to find, rehash, acquire a lock, and access a bucket  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00274.html">combinable</a></div>
+<h1>tbb::combinable&lt; T &gt; Class Template Reference<br>
+<small>
+[<a class="el" href="a00437.html">Containers</a>]</small>
+</h1><!-- doxytag: class="tbb::combinable" -->Thread-local storage with optional reduction.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00461.html">concurrent_hash_map.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00464.html">combinable.h</a>&gt;</code>
 <p>
-<a href="a00021.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00017.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b1dcb174ab54b8612b25b6126d18d6c3"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::bucket_accessor" ref="b1dcb174ab54b8612b25b6126d18d6c3" args="(concurrent_hash_map *base, const hashcode_t h, bool writer=false)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>bucket_accessor</b> (<a class="el" href="a00272.html">concurrent_hash_map</a> *base, const hashcode_t h, bool writer=false)</td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="48b5a22b57b03d5e0b951b601fbd1993"></a><!-- doxytag: member="tbb::combinable::combinable" ref="48b5a22b57b03d5e0b951b601fbd1993" args="(finit _finit)" -->
+template&lt;typename finit&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combinable</b> (finit _finit)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d11c77f4d70a94d4fb344492bbf18007"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::acquire" ref="d11c77f4d70a94d4fb344492bbf18007" args="(concurrent_hash_map *base, const hashcode_t h, bool writer=false)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00274.html#d11c77f4d70a94d4fb344492bbf18007">acquire</a> (<a class="el" href="a00272.html">concurrent_hash_map</a> *base, const hashcode_t h, bool writer=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="52f00cf262d768048db72ab73c8f3ca4"></a><!-- doxytag: member="tbb::combinable::~combinable" ref="52f00cf262d768048db72ab73c8f3ca4" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00274.html#52f00cf262d768048db72ab73c8f3ca4">~combinable</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">find a bucket by masked hashcode, optionally rehash, and acquire the lock <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="07d958f151a0eaa92f50fd56ad6440e2"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::is_writer" ref="07d958f151a0eaa92f50fd56ad6440e2" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00274.html#07d958f151a0eaa92f50fd56ad6440e2">is_writer</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="376f44cba71450fc18ccddaad61b76cc"></a><!-- doxytag: member="tbb::combinable::combinable" ref="376f44cba71450fc18ccddaad61b76cc" args="(const combinable &amp;other)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>combinable</b> (const <a class="el" href="a00274.html">combinable</a> &amp;other)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">check whether bucket is locked for write <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa6314b861c574f86ed189b124cf5853"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::operator()" ref="fa6314b861c574f86ed189b124cf5853" args="()" -->
-bucket *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00274.html#fa6314b861c574f86ed189b124cf5853">operator()</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b011fbe2f0600900b6e1b9760d82aead"></a><!-- doxytag: member="tbb::combinable::operator=" ref="b011fbe2f0600900b6e1b9760d82aead" args="(const combinable &amp;other)" -->
+<a class="el" href="a00274.html">combinable</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00274.html">combinable</a> &amp;other)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get bucket pointer <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8ecfe80161a59f04ffd9676e79701de6"></a><!-- doxytag: member="tbb::combinable::clear" ref="8ecfe80161a59f04ffd9676e79701de6" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e47f982dbd396d225f0f546e60690d42"></a><!-- doxytag: member="tbb::combinable::local" ref="e47f982dbd396d225f0f546e60690d42" args="()" -->
+T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>local</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2433d2b3b53b9979d0b3bb2a175abc9b"></a><!-- doxytag: member="tbb::combinable::local" ref="2433d2b3b53b9979d0b3bb2a175abc9b" args="(bool &amp;exists)" -->
+T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>local</b> (bool &amp;exists)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="3a21bc03b6c1f6382dc1b50932508074"></a><!-- doxytag: member="tbb::combinable::combine" ref="3a21bc03b6c1f6382dc1b50932508074" args="(combine_func_t f_combine)" -->
+template&lt;typename combine_func_t&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">T&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine</b> (combine_func_t f_combine)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="fe4ec18789a16ea40fd5148f30992115"></a><!-- doxytag: member="tbb::combinable::combine_each" ref="fe4ec18789a16ea40fd5148f30992115" args="(combine_func_t f_combine)" -->
+template&lt;typename combine_func_t&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine_each</b> (combine_func_t f_combine)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Key, typename T, typename HashCompare, typename Allocator&gt;<br>
- class tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor</h3>
+<h3>template&lt;typename T&gt;<br>
+ class tbb::combinable&lt; T &gt;</h3>
 
-bucket accessor is to find, rehash, acquire a lock, and access a bucket 
+Thread-local storage with optional reduction. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00461.html">concurrent_hash_map.h</a></ul>
+<li><a class="el" href="a00464.html">combinable.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::zero_allocator&lt; void, Allocator &gt; Class Template Reference</title>
+<title>tbb::tick_count::interval_t Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,42 +21,57 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00358.html">zero_allocator&lt; void, Allocator &gt;</a></div>
-<h1>tbb::zero_allocator&lt; void, Allocator &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00434.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::zero_allocator&lt; void, Allocator &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00357.html">tick_count</a>::<a class="el" href="a00358.html">interval_t</a></div>
+<h1>tbb::tick_count::interval_t Class Reference</h1><!-- doxytag: class="tbb::tick_count::interval_t" -->Relative time interval.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00645.html">tbb_allocator.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00681.html">tick_count.h</a>&gt;</code>
 <p>
-<a href="a00152.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00186.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ce4f3bf06e8aaf8020fa443297eff5f7"></a><!-- doxytag: member="tbb::zero_allocator&lt; void, Allocator &gt;::base_allocator_type" ref="ce4f3bf06e8aaf8020fa443297eff5f7" args="" -->
-typedef Allocator&lt; void &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>base_allocator_type</b></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95e3e14750bebafe719856176e2737db"></a><!-- doxytag: member="tbb::tick_count::interval_t::interval_t" ref="95e3e14750bebafe719856176e2737db" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#95e3e14750bebafe719856176e2737db">interval_t</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5cd644eeecd6d729c848c8e99ffd4592"></a><!-- doxytag: member="tbb::zero_allocator&lt; void, Allocator &gt;::value_type" ref="5cd644eeecd6d729c848c8e99ffd4592" args="" -->
-typedef base_allocator_type::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct a time interval representing zero time duration. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="73b462297173f6bffa15bc5a86c30ef4"></a><!-- doxytag: member="tbb::tick_count::interval_t::interval_t" ref="73b462297173f6bffa15bc5a86c30ef4" args="(double sec)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#73b462297173f6bffa15bc5a86c30ef4">interval_t</a> (double sec)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8f68aa346a17c94f8c5c7945a2c50858"></a><!-- doxytag: member="tbb::zero_allocator&lt; void, Allocator &gt;::pointer" ref="8f68aa346a17c94f8c5c7945a2c50858" args="" -->
-typedef base_allocator_type::pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct a time interval representing sec seconds time duration. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="be81446bbbb6b6e98d854b91acf47809"></a><!-- doxytag: member="tbb::tick_count::interval_t::seconds" ref="be81446bbbb6b6e98d854b91acf47809" args="() const " -->
+double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#be81446bbbb6b6e98d854b91acf47809">seconds</a> () const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ae95a5761371ee7b61f2c339385684e9"></a><!-- doxytag: member="tbb::zero_allocator&lt; void, Allocator &gt;::const_pointer" ref="ae95a5761371ee7b61f2c339385684e9" args="" -->
-typedef base_allocator_type::const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the length of a time interval in seconds. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="19bf32f4541252daaa6b09fd33fa9177"></a><!-- doxytag: member="tbb::tick_count::interval_t::operator+=" ref="19bf32f4541252daaa6b09fd33fa9177" args="(const interval_t &amp;i)" -->
+<a class="el" href="a00358.html">interval_t</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#19bf32f4541252daaa6b09fd33fa9177">operator+=</a> (const <a class="el" href="a00358.html">interval_t</a> &amp;i)</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Accumulation operator. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3394d9f3678e6a4c3d6e1be840fe2ff2"></a><!-- doxytag: member="tbb::tick_count::interval_t::operator-=" ref="3394d9f3678e6a4c3d6e1be840fe2ff2" args="(const interval_t &amp;i)" -->
+<a class="el" href="a00358.html">interval_t</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#3394d9f3678e6a4c3d6e1be840fe2ff2">operator-=</a> (const <a class="el" href="a00358.html">interval_t</a> &amp;i)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Subtraction operator. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="68e741a8f6e2384027e93d1f654ad100"></a><!-- doxytag: member="tbb::tick_count::interval_t::tbb::tick_count" ref="68e741a8f6e2384027e93d1f654ad100" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#68e741a8f6e2384027e93d1f654ad100">tbb::tick_count</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b5ceaed3ebf5a0d41088a5bc7c8dc653"></a><!-- doxytag: member="tbb::tick_count::interval_t::operator-" ref="b5ceaed3ebf5a0d41088a5bc7c8dc653" args="(const tick_count &amp;t1, const tick_count &amp;t0)" -->
+<a class="el" href="a00358.html">interval_t</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#b5ceaed3ebf5a0d41088a5bc7c8dc653">operator-</a> (const <a class="el" href="a00357.html">tick_count</a> &amp;t1, const <a class="el" href="a00357.html">tick_count</a> &amp;t0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Extract the intervals from the tick_counts and subtract them. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c8910ee3b69f68eb905af787c273e9a8"></a><!-- doxytag: member="tbb::tick_count::interval_t::operator+" ref="c8910ee3b69f68eb905af787c273e9a8" args="(const interval_t &amp;i, const interval_t &amp;j)" -->
+<a class="el" href="a00358.html">interval_t</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#c8910ee3b69f68eb905af787c273e9a8">operator+</a> (const <a class="el" href="a00358.html">interval_t</a> &amp;i, const <a class="el" href="a00358.html">interval_t</a> &amp;j)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add two intervals. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d11133daa9a7d3c903d070293278f8f"></a><!-- doxytag: member="tbb::tick_count::interval_t::operator-" ref="3d11133daa9a7d3c903d070293278f8f" args="(const interval_t &amp;i, const interval_t &amp;j)" -->
+<a class="el" href="a00358.html">interval_t</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00358.html#3d11133daa9a7d3c903d070293278f8f">operator-</a> (const <a class="el" href="a00358.html">interval_t</a> &amp;i, const <a class="el" href="a00358.html">interval_t</a> &amp;j)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Subtract two intervals. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;template&lt; typename T &gt; class Allocator&gt;<br>
- class tbb::zero_allocator&lt; void, Allocator &gt;</h3>
-
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+Relative time interval. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00645.html">tbb_allocator.h</a></ul>
+<li><a class="el" href="a00681.html">tick_count.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

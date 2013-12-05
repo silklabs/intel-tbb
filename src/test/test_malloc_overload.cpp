@@ -221,9 +221,11 @@ int main(int , char *[]) {
 
 #if MALLOC_REPLACEMENT_AVAILABLE == 1
 
+#if __TBB_POSIX_MEMALIGN_PRESENT
     int ret = posix_memalign(&ptr, 1024, 3*minLargeObjectSize);
     ASSERT(0==ret && ptr!=NULL && scalableMallocLargeBlock(ptr, 3*minLargeObjectSize), NULL);
     free(ptr);
+#endif
 
     ptr = memalign(128, 4*minLargeObjectSize);
     ASSERT(ptr!=NULL && scalableMallocLargeBlock(ptr, 4*minLargeObjectSize), NULL);
@@ -233,12 +235,14 @@ int main(int , char *[]) {
     ASSERT(ptr!=NULL && scalableMallocLargeBlock(ptr, minLargeObjectSize), NULL);
     free(ptr);
 
+#if __TBB_PVALLOC_PRESENT
     long memoryPageSize = sysconf(_SC_PAGESIZE);
     int sz = 1024*minLargeObjectSize;
     ptr = pvalloc(sz);
     ASSERT(ptr!=NULL &&                // align size up to the page size
            scalableMallocLargeBlock(ptr, ((sz-1) | (memoryPageSize-1)) + 1), NULL);
     free(ptr);
+#endif
 
     struct mallinfo info = mallinfo();
     // right now mallinfo initialized by zero

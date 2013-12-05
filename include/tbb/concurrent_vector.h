@@ -62,6 +62,10 @@
     #pragma warning( pop )
 #endif
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    #include <initializer_list>
+#endif
+
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && defined(_Wp64)
     // Workaround for overzealous compiler warnings in /Wp64 mode
     #pragma warning (push)
@@ -509,6 +513,23 @@ public:
         vector_allocator_ptr = &internal_allocator;
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Constructor from initializer_list
+    concurrent_vector(std::initializer_list<T> init_list, const allocator_type &a = allocator_type())
+        : internal::allocator_base<T, A>(a), internal::concurrent_vector_base()
+    {
+        vector_allocator_ptr = &internal_allocator;
+        __TBB_TRY {
+            internal_assign_iterators(init_list.begin(), init_list.end());
+        } __TBB_CATCH(...) {
+            segment_t *table = my_segment;
+            internal_free_segments( reinterpret_cast<void**>(table), internal_clear(&destroy_array), my_first_block );
+            __TBB_RETHROW();
+        }
+
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
     //! Copying constructor
     concurrent_vector( const concurrent_vector& vector, const allocator_type& a = allocator_type() )
         : internal::allocator_base<T, A>(a), internal::concurrent_vector_base()
@@ -587,6 +608,8 @@ public:
         return *this;
     }
 
+    //TODO: add an template assignment operator? (i.e. with different element type)
+
     //! Assignment for vector with different allocator type
     template<class M>
     concurrent_vector& operator=( const concurrent_vector<T, M>& vector ) {
@@ -596,9 +619,20 @@ public:
         return *this;
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! Assignment for initializer_list
+    concurrent_vector& operator=( const std::initializer_list<T> & init_list) {
+        internal_clear(&destroy_array);
+        internal_assign_iterators(init_list.begin(), init_list.end());
+        return *this;
+    }
+#endif //#if __TBB_INITIALIZER_LISTS_PRESENT
+
     //------------------------------------------------------------------------
     // Concurrent operations
     //------------------------------------------------------------------------
+    //TODO: consider adding overload of grow_by accepting range of iterators:  grow_by(iterator,iterator)
+    //TODO: consider adding overload of grow_by accepting initializer_list:  grow_by(std::initializer_list<T>), as a analogy to std::vector::insert(initializer_list)
     //! Grow by "delta" elements.
 #if TBB_DEPRECATED
     /** Returns old size. */
@@ -805,6 +839,13 @@ public:
         clear(); internal_assign_range( first, last, static_cast<is_integer_tag<std::numeric_limits<I>::is_integer> *>(0) );
     }
 
+#if __TBB_INITIALIZER_LISTS_PRESENT
+    //! assigns an initializer list
+    void assign(std::initializer_list<T> init_list) {
+        clear(); internal_assign_iterators( init_list.begin(), init_list.end());
+    }
+#endif //# __TBB_INITIALIZER_LISTS_PRESENT
+
     //! swap two instances
     void swap(concurrent_vector &vector) {
         if( this != &vector ) {
@@ -890,6 +931,7 @@ private:
         void init(const void *src) { for(; i < n; ++i) new( &array[i] ) T(*static_cast<const T*>(src)); }
         void copy(const void *src) { for(; i < n; ++i) new( &array[i] ) T(static_cast<const T*>(src)[i]); }
         void assign(const void *src) { for(; i < n; ++i) array[i] = static_cast<const T*>(src)[i]; }
+        //TODO: rename to construct_range
         template<class I> void iterate(I &src) { for(; i < n; ++i, ++src) new( &array[i] ) T( *src ); }
         ~internal_loop_guide() {
             if(i < n) // if exception raised, do zeroing on the rest of items

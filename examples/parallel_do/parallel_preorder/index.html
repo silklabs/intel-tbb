@@ -27,7 +27,12 @@ The algorithm works as follows.
 </P><P>
 The times printed are for the traversal and update, 
 and do not include time for computing the root_set.
+</P><P>
+The example is using custom synchronization via <TT>ref_count</TT> atomic variable.
+Correctness checking tools might not take this into account, and report data races
+between different tasks that are actually synchronized.
 </P>
+
 <B>NOTE: </B>It is important to understand that this example is unlikely to show speedup 
 if the cell values are changed to type "float".  The reason is twofold.
 <UL>

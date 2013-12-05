@@ -277,6 +277,8 @@ class LargeObjectCache {
     public:
         void init() { memset(this, 0, sizeof(CacheBin)); }
         inline bool put(ExtMemoryPool *extMemPool, LargeMemoryBlock* ptr, int idx);
+        LargeMemoryBlock *putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *head, int num,
+                                  int idx);
         inline LargeMemoryBlock *get(ExtMemoryPool *extMemPool, size_t size, int idx);
         void decreaseThreshold() {
             if (ageThreshold)
@@ -309,8 +311,11 @@ class LargeObjectCache {
         // minLargeObjectSize is minimal size of a large object
         return (size-minLargeObjectSize)/largeBlockCacheStep;
     }
+    void addToBin(ExtMemoryPool *extMemPool, LargeMemoryBlock *toCache, int num, int idx);
+    LargeMemoryBlock *sort(ExtMemoryPool *extMemPool, LargeMemoryBlock *list);
 public:
-    bool put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock);
+    void put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock);
+    void putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *head);
     LargeMemoryBlock *get(ExtMemoryPool *extMemPool, size_t size);
 
     void rollbackCacheState(size_t size);
@@ -509,6 +514,13 @@ public:
 #endif
         void reset();
     };
+    // number of OS/pool callback calls for more memory
+    class AskMemFromOSCounter {
+        intptr_t cnt;
+    public:
+        void OSasked() { AtomicIncrement(cnt); }
+        intptr_t get() const { return FencedLoad(cnt); }
+    };
 
 private:
     ExtMemoryPool *extMemPool;
@@ -579,6 +591,8 @@ public:
 
     LargeMemoryBlock *getLargeBlock(size_t size);
     void putLargeBlock(LargeMemoryBlock *lmb);
+
+    AskMemFromOSCounter askMemFromOSCounter;
 private:
     static int sizeToBin(size_t size) {
         if (size >= maxBinned_HugePage)
@@ -620,7 +634,11 @@ public:
 
 struct ExtMemoryPool {
     static size_t     hugePageSize;
-    static bool       useHugePages;
+    static intptr_t   needHugePageStatus; // Should status be reported to stderr?
+    static bool       useHugePages,
+    // Have we got huge pages at all? It's used when large hugepage-aligned
+    // region is releasing, to find can it release some huge pages or not.
+                      seenHugePages;
     Backend           backend;
 
     intptr_t          poolId;
@@ -640,17 +658,20 @@ struct ExtMemoryPool {
     bool init(intptr_t poolId, rawAllocType rawAlloc, rawFreeType rawFree,
               size_t granularity, bool keepAllMemory, bool fixedPool);
     void initTLS();
-    inline TLSData *getTLS();
-    void clearTLS();
 
     // i.e., not system default pool for scalable_malloc/scalable_free
     bool userPool() const { return rawAlloc; }
 
      // true if something has beed released
     bool softCachesCleanup();
-    bool releaseSlabCaches();
+    bool releaseTLCaches();
     // TODO: to release all thread's pools, not just current thread
-    bool hardCachesCleanup() { return loc.cleanAll(this) | releaseSlabCaches(); }
+    bool hardCachesCleanup() {
+        // thread-local caches must be cleaned before LOC,
+        // because object from thread-local cache can be released to LOC
+        bool tlCaches = releaseTLCaches(), locCaches = loc.cleanAll(this);
+        return tlCaches || locCaches;
+    }
     void reset() {
         lmbList.removeAll(&backend);
         loc.reset();
@@ -668,8 +689,12 @@ struct ExtMemoryPool {
     void delayRegionsReleasing(bool mode) { delayRegsReleasing = mode; }
     inline bool regionsAreReleaseable() const;
 
-    void *mallocLargeObject(size_t size, size_t alignment);
-    void freeLargeObject(void *object);
+    LargeMemoryBlock *mallocLargeObject(size_t allocationSize);
+    void freeLargeObject(LargeMemoryBlock *lmb);
+    void freeLargeObjectList(LargeMemoryBlock *head);
+
+    void returnLargeObjectToBackend(LargeMemoryBlock *lmb);
+    static void reportHugePageStatus(bool available);
 };
 
 inline bool Backend::inUserPool() const { return extMemPool->userPool(); }

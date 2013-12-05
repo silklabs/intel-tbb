@@ -74,6 +74,10 @@ void TestStealingIsEnabled () {
 }
 
 int TestMain () {
+#if !__TBB_THREAD_LOCAL_VARIABLES_PRESENT
+    REPORT( "Known issue: Test skipped because no compiler support for __thread keyword.\n" );
+    return Harness::Skipped;
+#endif
     if ( tbb::task_scheduler_init::default_num_threads() == 1 ) {
         REPORT( "Known issue: Test requires at least 2 hardware threads.\n" );
         return Harness::Skipped;

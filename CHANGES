@@ -1,3 +1,35 @@
+TBB 4.1 Update 1
+
+Changes (w.r.t. TBB 4.1):
+
+- concurrent_vector class now supports initialization/assignment
+    via C++11 initializer list feature (std::initializer_list<T>)
+- Added implementation of the platform isolation layer based on 
+    Intel compiler atomic built-ins; it is supposed to work on
+    any platform supported by compiler version 12.1 and newer.
+- Using GetNativeSystemInfo() instead of GetSystemInfo() to support
+    more than 32 processors for 32-bit applications under WOW64.
+- The following form of parallel_for: 
+    parallel_for(first, last, [step,] f[, context]) now accepts an optional 
+    partitioner parameter after the function f.
+
+Backward-incompatible API changes:
+
+- The library no longer injects tuple in to namespace std.  In previous
+    releases, tuple was injected into namespace std by flow_graph.h when
+    std::tuple was not available.  In this release, flow_graph.h now uses
+    tbb::flow::tuple.  On platforms where std::tuple is available,
+    tbb::flow::tuple is typedef'ed to std::tuple.  On all other platforms,
+    tbb::flow::tuple provides a subset of the functionality defined by
+    std::tuple. Users of flow_graph.h may need to change their uses of
+    std::tuple to tbb::flow::tuple to ensure compatibility with non-C++11
+    compliant compilers.
+
+Bugs fixed:
+
+- Fixed local observer to be able to override propagated CPU state and
+    to provide correct value of task_arena::current_slot() in callbacks.
+
 ------------------------------------------------------------------------
 TBB 4.1
 

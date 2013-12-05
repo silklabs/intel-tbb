@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=convex_hull_bench
 ARGS=
 PERF_RUN_ARGS = silent auto 40000000
@@ -36,7 +37,12 @@ CXX=icc
 endif # icc
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -56,9 +62,9 @@ perf_build: release
 
 perf_run:
 	./convex_hull_sample $(PERF_RUN_ARGS)
-	
+
 test:
-	./$(PROG) $(ARGS)
+	$(run_cmd) ./$(PROG) $(ARGS)
 
 light_test:
 	./$(PROG) $(LIGHT_ARGS)

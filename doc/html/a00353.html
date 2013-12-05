@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::tick_count Class Reference</title>
+<title>tbb::tbb_exception Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,42 +21,142 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00353.html">tick_count</a></div>
-<h1>tbb::tick_count Class Reference<br>
-<small>
-[<a class="el" href="a00436.html">Timing</a>]</small>
-</h1><!-- doxytag: class="tbb::tick_count" -->Absolute timestamp.  
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00353.html">tbb_exception</a></div>
+<h1>tbb::tbb_exception Class Reference</h1><!-- doxytag: class="tbb::tbb_exception" -->Interface to be implemented by all exceptions TBB recognizes and propagates across the threads.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00676.html">tick_count.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00655.html">tbb_exception.h</a>&gt;</code>
 <p>
-<a href="a00185.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::tbb_exception:
+<p><center><img src="a00353.png" usemap="#tbb::tbb_exception_map" border="0" alt=""></center>
+<map name="tbb::tbb_exception_map">
+<area href="a00273.html" alt="tbb::captured_exception" shape="rect" coords="0,56,248,80">
+<area href="a00306.html" alt="tbb::movable_exception< ExceptionData >" shape="rect" coords="258,56,506,80">
+</map>
+<a href="a00159.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="34593326ae4191e02a13c7cbdab9de4c"></a><!-- doxytag: member="tbb::tick_count::tick_count" ref="34593326ae4191e02a13c7cbdab9de4c" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#34593326ae4191e02a13c7cbdab9de4c">tick_count</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="a00353.html">tbb_exception</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#4bd4ba0d501021013d1473d21b020b69">move</a> ()=0  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct an absolute timestamp initialized to zero. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fb7f78ca61cf28398645ace66e284473"></a><!-- doxytag: member="tbb::tick_count::now" ref="fb7f78ca61cf28398645ace66e284473" args="()" -->
-static <a class="el" href="a00353.html">tick_count</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#fb7f78ca61cf28398645ace66e284473">now</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates and returns pointer to the deep copy of this exception object.  <a href="#4bd4ba0d501021013d1473d21b020b69"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#d3bc09bf78c33f19a0bcdf882fdf9d41">destroy</a> ()=0  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return current time. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="09dde78a4100800c11bb883d6204b586"></a><!-- doxytag: member="tbb::tick_count::operator-" ref="09dde78a4100800c11bb883d6204b586" args="(const tick_count &amp;t1, const tick_count &amp;t0)" -->
-<a class="el" href="a00354.html">interval_t</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#09dde78a4100800c11bb883d6204b586">operator-</a> (const <a class="el" href="a00353.html">tick_count</a> &amp;t1, const <a class="el" href="a00353.html">tick_count</a> &amp;t0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys objects created by the <a class="el" href="a00353.html#4bd4ba0d501021013d1473d21b020b69">move()</a> method.  <a href="#d3bc09bf78c33f19a0bcdf882fdf9d41"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#e45c08d36c7ec7ae91785da3515a8828">throw_self</a> ()=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Subtract two timestamps to get the time interval between. <br></td></tr>
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00354.html">interval_t</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Throws this exception object.  <a href="#e45c08d36c7ec7ae91785da3515a8828"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="282bb7dce5f157d044d14d50cd6ff35c"></a><!-- doxytag: member="tbb::tbb_exception::name" ref="282bb7dce5f157d044d14d50cd6ff35c" args="() const =0" -->
+virtual const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#282bb7dce5f157d044d14d50cd6ff35c">name</a> () const =0  throw ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Relative time interval.  <a href="a00354.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns RTTI name of the originally intercepted exception. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e0ad81121d4b722ecc466b5d3cc4e919"></a><!-- doxytag: member="tbb::tbb_exception::what" ref="e0ad81121d4b722ecc466b5d3cc4e919" args="() const =0" -->
+virtual const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#e0ad81121d4b722ecc466b5d3cc4e919">what</a> () const =0  throw ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the result of originally intercepted exception's <a class="el" href="a00353.html#e0ad81121d4b722ecc466b5d3cc4e919">what()</a> method. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00353.html#6a973c37078afedf7d457ff4704bf8cd">operator delete</a> (void *p)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Absolute timestamp. 
+Interface to be implemented by all exceptions TBB recognizes and propagates across the threads. 
 <p>
+If an unhandled exception of the type derived from <a class="el" href="a00353.html">tbb::tbb_exception</a> is intercepted by the TBB scheduler in one of the worker threads, it is delivered to and re-thrown in the root thread. The root thread is the thread that has started the outermost algorithm or root task sharing the same <a class="el" href="a00348.html">task_group_context</a> with the guilty algorithm/task (the one that threw the exception first).<p>
+Note: when documentation mentions workers with respect to exception handling, masters are implied as well, because they are completely equivalent in this context. Consequently a root thread can be master or worker thread.<p>
+NOTE: In case of nested algorithms or complex task hierarchies when the nested levels share (explicitly or by means of implicit inheritance) the task group context of the outermost level, the exception may be (re-)thrown multiple times (ultimately - in each worker on each nesting level) before reaching the root thread at the outermost level. IMPORTANT: if you intercept an exception derived from this class on a nested level, you must re-throw it in the catch block by means of the "throw;" operator.<p>
+TBB provides two implementations of this interface: <a class="el" href="a00273.html">tbb::captured_exception</a> and template class <a class="el" href="a00306.html">tbb::movable_exception</a>. See their declarations for more info. 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="d3bc09bf78c33f19a0bcdf882fdf9d41"></a><!-- doxytag: member="tbb::tbb_exception::destroy" ref="d3bc09bf78c33f19a0bcdf882fdf9d41" args="()=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void tbb::tbb_exception::destroy           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%">  throw ()<code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Destroys objects created by the <a class="el" href="a00353.html#4bd4ba0d501021013d1473d21b020b69">move()</a> method. 
+<p>
+Frees memory and calls destructor for this exception object. Can and must be used only on objects created by the move method. 
+<p>
+Implemented in <a class="el" href="a00273.html#3006b6825dda6c746d28fb748f5675de">tbb::captured_exception</a>, and <a class="el" href="a00306.html#02f0401b465690de797face2432d9421">tbb::movable_exception&lt; ExceptionData &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="4bd4ba0d501021013d1473d21b020b69"></a><!-- doxytag: member="tbb::tbb_exception::move" ref="4bd4ba0d501021013d1473d21b020b69" args="()=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="a00353.html">tbb_exception</a>* tbb::tbb_exception::move           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%">  throw ()<code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Creates and returns pointer to the deep copy of this exception object. 
+<p>
+Move semantics is allowed. 
+<p>
+Implemented in <a class="el" href="a00273.html#bb221485cd260349efdef681f633a6a4">tbb::captured_exception</a>, and <a class="el" href="a00306.html#eb47d3ac90a1f01fe642b572f6ac519d">tbb::movable_exception&lt; ExceptionData &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="6a973c37078afedf7d457ff4704bf8cd"></a><!-- doxytag: member="tbb::tbb_exception::operator delete" ref="6a973c37078afedf7d457ff4704bf8cd" args="(void *p)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::tbb_exception::operator delete           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>p</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Operator delete is provided only to allow using existing smart pointers with TBB exception objects obtained as the result of applying <a class="el" href="a00353.html#4bd4ba0d501021013d1473d21b020b69">move()</a> operation on an exception thrown out of TBB scheduler.<p>
+When overriding method <a class="el" href="a00353.html#4bd4ba0d501021013d1473d21b020b69">move()</a> make sure to override operator delete as well if memory is allocated not by TBB's scalable allocator. 
+</div>
+</div><p>
+<a class="anchor" name="e45c08d36c7ec7ae91785da3515a8828"></a><!-- doxytag: member="tbb::tbb_exception::throw_self" ref="e45c08d36c7ec7ae91785da3515a8828" args="()=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void tbb::tbb_exception::throw_self           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Throws this exception object. 
+<p>
+Make sure that if you have several levels of derivation from this interface you implement or override this method on the most derived level. The implementation is as simple as "throw *this;". Failure to do this will result in exception of a base class type being thrown. 
+<p>
+Implemented in <a class="el" href="a00273.html#c9ae925678fcc0cc02a74df7d06b8d63">tbb::captured_exception</a>, and <a class="el" href="a00306.html#3d1570b53220fbcb45eb81552b57827a">tbb::movable_exception&lt; ExceptionData &gt;</a>.
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00676.html">tick_count.h</a></ul>
+<li><a class="el" href="a00655.html">tbb_exception.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

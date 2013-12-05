@@ -32,8 +32,8 @@
 
 // Check that the target Windows version has all API calls requried for TBB.
 // Do not increase the version in condition beyond 0x0500 without prior discussion!
-#if defined(_WIN32_WINNT) && _WIN32_WINNT<0x0400
-#error TBB is unable to run on old Windows versions; _WIN32_WINNT must be 0x0400 or greater.
+#if defined(_WIN32_WINNT) && _WIN32_WINNT<0x0501
+#error TBB is unable to run on old Windows versions; _WIN32_WINNT must be 0x0501 or greater.
 #endif
 
 #if !defined(_MT)

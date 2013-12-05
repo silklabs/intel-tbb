@@ -71,10 +71,6 @@ void arena::process( generic_scheduler& s ) {
         }
     }
     ITT_NOTIFY(sync_acquired, my_slots + index);
-#if __TBB_SCHEDULER_OBSERVER
-    __TBB_ASSERT( !s.my_last_local_observer, "There cannot be notified local observers when entering arena" );
-    my_observers.notify_entry_observers( s.my_last_local_observer, /*worker=*/true );
-#endif /* __TBB_SCHEDULER_OBSERVER */
     s.my_arena = this;
     s.my_arena_index = index;
     s.my_arena_slot = my_slots + index;
@@ -88,6 +84,11 @@ void arena::process( generic_scheduler& s ) {
     s.my_arena_slot->hint_for_pop  = index; // initial value for round-robin
 
     __TBB_set_cpu_ctl_env(&my_cpu_ctl_env);
+
+#if __TBB_SCHEDULER_OBSERVER
+    __TBB_ASSERT( !s.my_last_local_observer, "There cannot be notified local observers when entering arena" );
+    my_observers.notify_entry_observers( s.my_last_local_observer, /*worker=*/true );
+#endif /* __TBB_SCHEDULER_OBSERVER */
 
     atomic_update( my_limit, index + 1, std::less<unsigned>() );
 
@@ -112,6 +113,7 @@ void arena::process( generic_scheduler& s ) {
         if (((num_workers_active() > my_num_workers_allotted)
 #if __TBB_SCHEDULER_OBSERVER && __TBB_TASK_ARENA
                 && my_num_workers_requested ) || (!my_num_workers_requested && my_observers.ask_permission_to_leave()
+                // TODO: add monitoring of my_pool_state when not allowed to leave
 #endif /* __TBB_SCHEDULER_OBSERVER && __TBB_TASK_ARENA */
                 )) break;
     }

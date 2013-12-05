@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface6::task_arena Class Reference</title>
+<title>tbb::spin_rw_mutex_v3::scoped_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,65 +21,66 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00341.html">task_arena</a></div>
-<h1>tbb::interface6::task_arena Class Reference</h1><!-- doxytag: class="tbb::interface6::task_arena" --><code>#include &lt;<a class="el" href="a00629.html">task_arena.h</a>&gt;</code>
+<a class="el" href="a00423.html">tbb</a>::<a class="el" href="a00340.html">spin_rw_mutex_v3</a>::<a class="el" href="a00341.html">scoped_lock</a></div>
+<h1>tbb::spin_rw_mutex_v3::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::spin_rw_mutex_v3::scoped_lock" -->The scoped locking pattern.  
+<a href="#_details">More...</a>
 <p>
-<a href="a00136.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<code>#include &lt;<a class="el" href="a00623.html">spin_rw_mutex.h</a>&gt;</code>
+<p>
+<a href="a00128.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eee43f4a8b62e4957867cec06b843449"></a><!-- doxytag: member="tbb::interface6::task_arena::task_arena" ref="eee43f4a8b62e4957867cec06b843449" args="(int max_concurrency=automatic)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#eee43f4a8b62e4957867cec06b843449">task_arena</a> (int max_concurrency=<a class="el" href="a00341.html#fa26370c094032900c1ed69d8e92f4e8">automatic</a>)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#285b355121772c874a7ecaaf4d347224">scoped_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates <a class="el" href="a00341.html">task_arena</a> with certain concurrency limit. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27ac2706e3f2a989487ba7944b07cb94"></a><!-- doxytag: member="tbb::interface6::task_arena::task_arena" ref="27ac2706e3f2a989487ba7944b07cb94" args="(const task_arena &amp;s)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#27ac2706e3f2a989487ba7944b07cb94">task_arena</a> (const <a class="el" href="a00341.html">task_arena</a> &amp;s)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct lock that has not acquired a mutex.  <a href="#285b355121772c874a7ecaaf4d347224"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0a2e15358575f7651446bca13a5a2674"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock" ref="0a2e15358575f7651446bca13a5a2674" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#0a2e15358575f7651446bca13a5a2674">scoped_lock</a> (<a class="el" href="a00340.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies settings from another <a class="el" href="a00341.html">task_arena</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#fec24e9b3fa07a6e7b20add7c7e0a660">~task_arena</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5c27ca2e0c9db960a9a7430082ff7edd"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::~scoped_lock" ref="5c27ca2e0c9db960a9a7430082ff7edd" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#5c27ca2e0c9db960a9a7430082ff7edd">~scoped_lock</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00341.html#11e3854e92c842ee7d72a7f83d416896">enqueue</a> (const F &amp;f)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock (if lock is held). <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6d49df365396ab314e78ba07c6b96433"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::acquire" ref="6d49df365396ab314e78ba07c6b96433" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#6d49df365396ab314e78ba07c6b96433">acquire</a> (<a class="el" href="a00340.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00341.html#780277a89e35868abdec843fecaa2237">enqueue</a> (const F &amp;f, priority_t p)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock on given mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#fbe5de57eadc457518df7a1bb0d30c00">upgrade_to_writer</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00341.html#1e013b96178a79c57ec7846ea2cf5e2e">execute</a> (F &amp;f)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Upgrade reader to become a writer.  <a href="#fbe5de57eadc457518df7a1bb0d30c00"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="99e279a995a51abfb87b865e886949f8"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::release" ref="99e279a995a51abfb87b865e886949f8" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#99e279a995a51abfb87b865e886949f8">release</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00341.html#082803bb20347e64fed2c11db8e9670e">execute</a> (const F &amp;f)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a693c05221d977856a98270a255fe5df"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::downgrade_to_reader" ref="a693c05221d977856a98270a255fe5df" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#a693c05221d977856a98270a255fe5df">downgrade_to_reader</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#776e73ba196e5bbb8b8ed489fc2b77d3">wait_until_empty</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Downgrade writer to become a reader. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bf17ada91882fd70f139c503c0220f16"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::try_acquire" ref="bf17ada91882fd70f139c503c0220f16" args="(spin_rw_mutex &amp;m, bool write=true)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#bf17ada91882fd70f139c503c0220f16">try_acquire</a> (<a class="el" href="a00340.html">spin_rw_mutex</a> &amp;m, bool write=true)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8955becaf3d9085a7a27b4033afd7367"></a><!-- doxytag: member="tbb::interface6::task_arena::initialize" ref="8955becaf3d9085a7a27b4033afd7367" args="(int max_concurrency)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#8955becaf3d9085a7a27b4033afd7367">initialize</a> (int max_concurrency)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquire lock on given mutex. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8d70c5a2348e30a6979bfbf677328dc4"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::mutex" ref="8d70c5a2348e30a6979bfbf677328dc4" args="" -->
+<a class="el" href="a00340.html">spin_rw_mutex</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#8d70c5a2348e30a6979bfbf677328dc4">mutex</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets concurrency level and initializes internal representation. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e734de6a5f4a0bd4461c0cbdaa29b6ce"></a><!-- doxytag: member="tbb::interface6::task_arena::current_slot" ref="e734de6a5f4a0bd4461c0cbdaa29b6ce" args="()" -->
-static int __TBB_EXPORTED_FUNC&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#e734de6a5f4a0bd4461c0cbdaa29b6ce">current_slot</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The pointer to the current mutex that is held, or NULL if no mutex is held. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#cfd129dc5106ad1129ba803e67311050">is_writer</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the index, aka slot number, of the calling thread in its current arena. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa26370c094032900c1ed69d8e92f4e8"></a><!-- doxytag: member="tbb::interface6::task_arena::automatic" ref="fa26370c094032900c1ed69d8e92f4e8" args="" -->
-static const int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#fa26370c094032900c1ed69d8e92f4e8">automatic</a> = -1</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Typedef for number of threads that is automatic. <br></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cd0464c9e70fd5fd79f1c8a875ca2849"></a><!-- doxytag: member="tbb::interface6::task_arena::internal::task_scheduler_observer_v3" ref="cd0464c9e70fd5fd79f1c8a875ca2849" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::task_scheduler_observer_v3</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If mutex!=NULL, then is_writer is true if holding a writer lock, false if holding a reader lock.  <a href="#cfd129dc5106ad1129ba803e67311050"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-1-to-1 proxy representation class of scheduler's arena Constructors set up settings only, real construction is deferred till the first method invocation TODO: A side effect of this is that it's impossible to create a const <a class="el" href="a00341.html">task_arena</a> object. Rethink? Destructor only removes one of the references to the inner arena representation. Final destruction happens when all the references (and the work) are gone. 
+The scoped locking pattern. 
+<p>
+It helps to avoid the common problem of forgetting to release lock. It also nicely provides the "node" for queuing locks. 
 <p>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="fec24e9b3fa07a6e7b20add7c7e0a660"></a><!-- doxytag: member="tbb::interface6::task_arena::~task_arena" ref="fec24e9b3fa07a6e7b20add7c7e0a660" args="()" -->
+<a class="anchor" name="285b355121772c874a7ecaaf4d347224"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock" ref="285b355121772c874a7ecaaf4d347224" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">tbb::interface6::task_arena::~task_arena           </td>
+          <td class="memname">tbb::spin_rw_mutex_v3::scoped_lock::scoped_lock           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -90,113 +91,18 @@ class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::task_sched
 <div class="memdoc">
 
 <p>
-Removes the reference to the internal arena representation, and destroys the external object Not thread safe wrt concurrent invocations of other methods 
+Construct lock that has not acquired a mutex. 
+<p>
+Equivalent to zero-initialization of *this. 
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="780277a89e35868abdec843fecaa2237"></a><!-- doxytag: member="tbb::interface6::task_arena::enqueue" ref="780277a89e35868abdec843fecaa2237" args="(const F &amp;f, priority_t p)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename F&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tbb::interface6::task_arena::enqueue           </td>
-          <td>(</td>
-          <td class="paramtype">const F &amp;&nbsp;</td>
-          <td class="paramname"> <em>f</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">priority_t&nbsp;</td>
-          <td class="paramname"> <em>p</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Enqueues a task with priority p into the arena to process a functor f, and immediately returns. Does not require the calling thread to join the arena 
-</div>
-</div><p>
-<a class="anchor" name="11e3854e92c842ee7d72a7f83d416896"></a><!-- doxytag: member="tbb::interface6::task_arena::enqueue" ref="11e3854e92c842ee7d72a7f83d416896" args="(const F &amp;f)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename F&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tbb::interface6::task_arena::enqueue           </td>
-          <td>(</td>
-          <td class="paramtype">const F &amp;&nbsp;</td>
-          <td class="paramname"> <em>f</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Enqueues a task into the arena to process a functor, and immediately returns. Does not require the calling thread to join the arena 
-</div>
-</div><p>
-<a class="anchor" name="082803bb20347e64fed2c11db8e9670e"></a><!-- doxytag: member="tbb::interface6::task_arena::execute" ref="082803bb20347e64fed2c11db8e9670e" args="(const F &amp;f)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename F&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tbb::interface6::task_arena::execute           </td>
-          <td>(</td>
-          <td class="paramtype">const F &amp;&nbsp;</td>
-          <td class="paramname"> <em>f</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread 
-</div>
-</div><p>
-<a class="anchor" name="1e013b96178a79c57ec7846ea2cf5e2e"></a><!-- doxytag: member="tbb::interface6::task_arena::execute" ref="1e013b96178a79c57ec7846ea2cf5e2e" args="(F &amp;f)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename F&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tbb::interface6::task_arena::execute           </td>
-          <td>(</td>
-          <td class="paramtype">F &amp;&nbsp;</td>
-          <td class="paramname"> <em>f</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread 
-</div>
-</div><p>
-<a class="anchor" name="776e73ba196e5bbb8b8ed489fc2b77d3"></a><!-- doxytag: member="tbb::interface6::task_arena::wait_until_empty" ref="776e73ba196e5bbb8b8ed489fc2b77d3" args="()" -->
+<a class="anchor" name="fbe5de57eadc457518df7a1bb0d30c00"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::upgrade_to_writer" ref="fbe5de57eadc457518df7a1bb0d30c00" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void tbb::interface6::task_arena::wait_until_empty           </td>
+          <td class="memname">bool tbb::spin_rw_mutex_v3::scoped_lock::upgrade_to_writer           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -207,11 +113,31 @@ Joins the arena and executes a functor, then returns If not possible to join, wr
 <div class="memdoc">
 
 <p>
-Wait for all work in the arena to be completed Even submitted by other application threads Joins arena if/when possible (in the same way as <a class="el" href="a00341.html#1e013b96178a79c57ec7846ea2cf5e2e">execute()</a>) 
+Upgrade reader to become a writer. 
+<p>
+Returns whether the upgrade happened without releasing and re-acquiring the lock 
+</div>
+</div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="cfd129dc5106ad1129ba803e67311050"></a><!-- doxytag: member="tbb::spin_rw_mutex_v3::scoped_lock::is_writer" ref="cfd129dc5106ad1129ba803e67311050" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00341.html#cfd129dc5106ad1129ba803e67311050">tbb::spin_rw_mutex_v3::scoped_lock::is_writer</a><code> [protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+If mutex!=NULL, then is_writer is true if holding a writer lock, false if holding a reader lock. 
+<p>
+Not defined if not holding a lock. 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00629.html">task_arena.h</a></ul>
+<li><a class="el" href="a00623.html">spin_rw_mutex.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

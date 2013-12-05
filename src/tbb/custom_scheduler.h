@@ -430,7 +430,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
 #endif
                 {
                     GATHER_STATISTIC( ++my_counters.tasks_executed );
-                    GATHER_STATISTIC( my_counters.avg_arena_concurrency += my_arena->my_num_threads_active );
+                    GATHER_STATISTIC( my_counters.avg_arena_concurrency += my_arena->num_workers_active() );
                     GATHER_STATISTIC( my_counters.avg_assigned_workers += my_arena->my_num_workers_allotted );
 #if __TBB_TASK_PRIORITY
                     GATHER_STATISTIC( my_counters.avg_arena_prio += p );
@@ -503,6 +503,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
             if ( parent.prefix().ref_count == quit_point ) {
                 __TBB_ASSERT( quit_point != all_local_work_done, NULL );
                 __TBB_control_consistency_helper(); // on ref_count
+                ITT_NOTIFY(sync_acquired, &parent.prefix().ref_count);
                 goto done;
             }
             if ( in_arena() ) {

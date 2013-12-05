@@ -27,31 +27,29 @@
 */
 
 #include "semaphore.h"
-#if _WIN32||_WIN64
-#if defined(RTL_SRWLOCK_INIT)
+#if __TBB_USE_SRWLOCK
 #include "dynamic_link.h" // Refers to src/tbb, not include/tbb
 #include "tbb_misc.h"
-#endif
 #endif
 
 namespace tbb {
 namespace internal {
 
-#if _WIN32||_WIN64
-#if defined(RTL_SRWLOCK_INIT)
+// TODO: For new win UI port, we can use SRWLock API without dynamic_link etc.
+#if __TBB_USE_SRWLOCK
 
 static atomic<do_once_state> concmon_module_inited;
 
 void WINAPI init_binsem_using_event( SRWLOCK* h_ )
 {
     srwl_or_handle* shptr = (srwl_or_handle*) h_;
-    shptr->h = CreateEvent( NULL, FALSE/*manual reset*/, FALSE/*not signalled initially*/, NULL);
+    shptr->h = CreateEventEx( NULL, NULL, 0, EVENT_ALL_ACCESS|SEMAPHORE_ALL_ACCESS );
 }
 
 void WINAPI acquire_binsem_using_event( SRWLOCK* h_ )
 {
     srwl_or_handle* shptr = (srwl_or_handle*) h_;
-    WaitForSingleObject( shptr->h, INFINITE );
+    WaitForSingleObjectEx( shptr->h, INFINITE, FALSE );
 }
 
 void WINAPI release_binsem_using_event( SRWLOCK* h_ )
@@ -98,8 +96,7 @@ void binary_semaphore::P() { __TBB_acquire_binsem( &my_sem.lock ); }
 
 void binary_semaphore::V() { __TBB_release_binsem( &my_sem.lock ); }
 
-#endif /* defined(RTL_SRWLOCK_INIT) */
-#endif /* _WIN32||_WIN64 */
+#endif /* __TBB_USE_SRWLOCK */
 
 } // namespace internal
 } // namespace tbb

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::atomic_backoff Class Reference</title>
+<title>tbb::interface6::aggregator_ext&lt; handler_type &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,33 +21,87 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>internal</b>::<a class="el" href="a00259.html">atomic_backoff</a></div>
-<h1>tbb::internal::atomic_backoff Class Reference</h1><!-- doxytag: class="tbb::internal::atomic_backoff" -->Class that implements exponential backoff.  
+<a class="el" href="a00423.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00259.html">aggregator_ext</a></div>
+<h1>tbb::interface6::aggregator_ext&lt; handler_type &gt; Class Template Reference</h1><!-- doxytag: class="tbb::interface6::aggregator_ext" -->Aggregator base class and expert interface.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00651.html">tbb_machine.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00442.html">aggregator.h</a>&gt;</code>
 <p>
-<a href="a00167.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::interface6::aggregator_ext&lt; handler_type &gt;:
+<p><center><img src="a00259.png" usemap="#tbb::interface6::aggregator_ext< handler_type >_map" border="0" alt=""></center>
+<map name="tbb::interface6::aggregator_ext< handler_type >_map">
+<area href="a00258.html" alt="tbb::interface6::aggregator" shape="rect" coords="0,56,281,80">
+</map>
+<a href="a00005.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a174ea93e3bd3d5cce82389c2f28d037"></a><!-- doxytag: member="tbb::internal::atomic_backoff::pause" ref="a174ea93e3bd3d5cce82389c2f28d037" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00259.html#a174ea93e3bd3d5cce82389c2f28d037">pause</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8ae120a21264cc1ea0a9cfafaa0634e4"></a><!-- doxytag: member="tbb::interface6::aggregator_ext::aggregator_ext" ref="8ae120a21264cc1ea0a9cfafaa0634e4" args="(const handler_type &amp;h)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>aggregator_ext</b> (const handler_type &amp;h)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pause for a while. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6179b19e2e8dedd73a36d523af2fe12"></a><!-- doxytag: member="tbb::internal::atomic_backoff::bounded_pause" ref="c6179b19e2e8dedd73a36d523af2fe12" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>bounded_pause</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00259.html#e55b16ec6af204aa00d6a716fccec9f7">process</a> (aggregator_operation *op)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45edb535489eb0e76ecc59a19fd952de"></a><!-- doxytag: member="tbb::internal::atomic_backoff::reset" ref="45edb535489eb0e76ecc59a19fd952de" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">EXPERT INTERFACE: Enter a user-made operation into the aggregator's mailbox.  <a href="#e55b16ec6af204aa00d6a716fccec9f7"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00259.html#d376e5c31d10e885f33964592aa629d4">execute_impl</a> (aggregator_operation &amp;op)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Class that implements exponential backoff. 
+<h3>template&lt;typename handler_type&gt;<br>
+ class tbb::interface6::aggregator_ext&lt; handler_type &gt;</h3>
+
+Aggregator base class and expert interface. 
 <p>
-See implementation of spin_wait_while_eq for an example. 
+An aggregator for collecting operations coming from multiple sources and executing them serially on a single thread. 
 <p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="d376e5c31d10e885f33964592aa629d4"></a><!-- doxytag: member="tbb::interface6::aggregator_ext::execute_impl" ref="d376e5c31d10e885f33964592aa629d4" args="(aggregator_operation &amp;op)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename handler_type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00259.html">tbb::interface6::aggregator_ext</a>&lt; handler_type &gt;::execute_impl           </td>
+          <td>(</td>
+          <td class="paramtype">aggregator_operation &amp;&nbsp;</td>
+          <td class="paramname"> <em>op</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Place operation in mailbox, then either handle mailbox or wait for the operation to be completed by a different thread. 
+</div>
+</div><p>
+<a class="anchor" name="e55b16ec6af204aa00d6a716fccec9f7"></a><!-- doxytag: member="tbb::interface6::aggregator_ext::process" ref="e55b16ec6af204aa00d6a716fccec9f7" args="(aggregator_operation *op)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename handler_type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="a00259.html">tbb::interface6::aggregator_ext</a>&lt; handler_type &gt;::process           </td>
+          <td>(</td>
+          <td class="paramtype">aggregator_operation *&nbsp;</td>
+          <td class="paramname"> <em>op</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+EXPERT INTERFACE: Enter a user-made operation into the aggregator's mailbox. 
+<p>
+Details of user-made operations must be handled by user-provided handler 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00651.html">tbb_machine.h</a></ul>
+<li><a class="el" href="a00442.html">aggregator.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

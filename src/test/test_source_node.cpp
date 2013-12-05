@@ -27,6 +27,7 @@
 */
 
 #include "harness_graph.h"
+#include "tbb/task.h"
 
 #include "tbb/task_scheduler_init.h"
 
@@ -49,10 +50,10 @@ public:
        return v;
     }
 
-    bool try_put( const T &v ) {
+    tbb::task *try_put_task( const T &v ) {
        int i = (int)v;
        ++my_counters[i];
-       return true;
+       return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
     }
 
     /*override*/void reset_receiver() {}

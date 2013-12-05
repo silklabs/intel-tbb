@@ -50,7 +50,6 @@ LIB_LINK_FLAGS = $(DYLIB_KEY) -Wl,-soname=$(BUILDING_LIBRARY)
 LIBS = -lpthread -lrt
 C_FLAGS = $(CPLUS_FLAGS)
 
-ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq ($(cfg), release)
         CPLUS_FLAGS = $(ITT_NOTIFY) -O2 -DUSE_PTHREAD
 endif
@@ -74,12 +73,14 @@ ASM_FLAGS=
 TBB_ASM.OBJ=
 
 ifeq (intel64,$(arch))
+    ITT_NOTIFY = -DDO_ITT_NOTIFY
     CPLUS_FLAGS += -q64
     LIB_LINK_FLAGS += -q64
 endif
 
 # TODO: equivalent for -march=pentium4 in CPLUS_FLAGS
 ifeq (ia32,$(arch))
+    ITT_NOTIFY = -DDO_ITT_NOTIFY
     CPLUS_FLAGS += -q32 -qarch=pentium4
     LIB_LINK_FLAGS += -q32
 endif

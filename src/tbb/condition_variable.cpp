@@ -45,8 +45,9 @@ static atomic<do_once_state> condvar_api_state;
 
 void WINAPI init_condvar_using_event( condition_variable_using_event* cv_event )
 {
-    cv_event->event = CreateEvent( NULL, TRUE/*manual reset*/, FALSE/*not signalled initially*/, NULL);
-    InitializeCriticalSection( &cv_event->mutex );
+    // TODO: For Metro port, we can always use the API for condition variables, without dynamic_link etc.
+    cv_event->event = CreateEventEx(NULL, NULL, 0x1 /*CREATE_EVENT_MANUAL_RESET*/, EVENT_ALL_ACCESS );
+    InitializeCriticalSectionEx( &cv_event->mutex, 4000, 0 );
     cv_event->n_waiters = 0;
     cv_event->release_count = 0;
     cv_event->epoch = 0;
@@ -61,7 +62,7 @@ BOOL WINAPI sleep_condition_variable_cs_using_event( condition_variable_using_ev
     LeaveCriticalSection( cs );
     for (;;) {
         // should come here at least once
-        DWORD rc = WaitForSingleObject( cv_event->event, dwMilliseconds );
+        DWORD rc = WaitForSingleObjectEx( cv_event->event, dwMilliseconds, FALSE );
         EnterCriticalSection( &cv_event->mutex );
         if( rc!=WAIT_OBJECT_0 ) {
             --cv_event->n_waiters;
@@ -148,7 +149,7 @@ static const dynamic_link_descriptor CondVarLinkTable[] = {
 void init_condvar_module()
 {
     __TBB_ASSERT( (uintptr_t)__TBB_init_condvar==(uintptr_t)&init_condvar_using_event, NULL );
-    if( dynamic_link( GetModuleHandle( "Kernel32.dll" ), CondVarLinkTable, 4 ) )
+    if( dynamic_link( "Kernel32.dll", CondVarLinkTable, 4 ) )
         __TBB_destroy_condvar = (void (WINAPI *)(PCONDITION_VARIABLE))&destroy_condvar_noop;
 }
 #endif /* _WIN32||_WIN64 */

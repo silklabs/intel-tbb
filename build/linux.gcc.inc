@@ -58,7 +58,6 @@ ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[2-9]|[5-9])"))
     OPENMP_FLAG = -fopenmp
 endif
 
-ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq ($(cfg), release)
         CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
 endif
@@ -74,17 +73,18 @@ TBB_ASM.OBJ=
 MALLOC_ASM.OBJ=
 
 ifeq (ia64,$(arch))
-    ITT_NOTIFY =
 # Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
     CPLUS_FLAGS += $(PIC_KEY)
 endif
 
 ifeq (intel64,$(arch))
+    ITT_NOTIFY = -DDO_ITT_NOTIFY
     CPLUS_FLAGS += -m64
     LIB_LINK_FLAGS += -m64
 endif
 
 ifeq (ia32,$(arch))
+    ITT_NOTIFY = -DDO_ITT_NOTIFY
     CPLUS_FLAGS += -m32 -march=pentium4
     LIB_LINK_FLAGS += -m32
 endif

@@ -58,6 +58,11 @@ struct parallel_put_until_limit : private NoAssign {
     }
 
 };
+
+template<typename IO>
+struct pass_through {
+    IO operator()(const IO& i) { return i; }
+};
      
 template< typename InputType, typename OutputType, typename Body >
 void buffered_levels( size_t concurrency, Body body ) {
@@ -73,9 +78,15 @@ void buffered_levels( size_t concurrency, Body body ) {
 
    // Create the function_node with the appropriate concurreny level, and use default buffering
    tbb::flow::function_node< InputType, OutputType > exe_node( g, lc, body );
+   tbb::flow::function_node<InputType, InputType> pass_thru( g, tbb::flow::unlimited, pass_through<InputType>());
    
-   //Create a vector of identical exe_nodes
+   //Create a vector of identical exe_nodes and pass_thrus
+   // attach each pass_thru to its corresponding exe_node
    std::vector< tbb::flow::function_node< InputType, OutputType > > exe_vec(2, exe_node);
+   std::vector< tbb::flow::function_node< InputType, InputType > > pass_thru_vec(2, pass_thru);
+   for (size_t node_idx=0; node_idx<exe_vec.size(); ++node_idx) {
+       tbb::flow::make_edge(pass_thru_vec[node_idx], exe_vec[node_idx]);
+   }
 
    for (size_t node_idx=0; node_idx<exe_vec.size(); ++node_idx) {
    // For num_receivers = 1 to MAX_NODES
@@ -93,7 +104,8 @@ void buffered_levels( size_t concurrency, Body body ) {
             senders = new harness_counting_sender<InputType>[num_senders];
             for (size_t s = 0; s < num_senders; ++s ) {
                senders[s].my_limit = N;
-               tbb::flow::make_edge( senders[s], exe_vec[node_idx] );
+               // tbb::flow::make_edge( senders[s], exe_vec[node_idx] );
+               tbb::flow::make_edge( senders[s], pass_thru_vec[node_idx] );
             }
 
             // Initialize the receivers so they know how many senders and messages to check for
@@ -109,7 +121,7 @@ void buffered_levels( size_t concurrency, Body body ) {
             for (size_t s = 0; s < num_senders; ++s ) {
                 size_t n = senders[s].my_received;
                 ASSERT( n == N, NULL ); 
-                ASSERT( senders[s].my_receiver == &exe_vec[node_idx], NULL );
+                ASSERT( senders[s].my_receiver == &pass_thru_vec[node_idx], NULL );
             }
             // validate the receivers
             for (size_t r = 0; r < num_receivers; ++r ) {

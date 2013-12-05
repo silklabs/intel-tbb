@@ -40,9 +40,9 @@ struct serial_receiver : public tbb::flow::receiver<T> {
 
    serial_receiver() : next_value(T(0)) {}
 
-   /* override */ bool try_put( const T &v ) {
+   /* override */ tbb::task *try_put_task( const T &v ) {
        ASSERT( next_value++  == v, NULL );
-       return true;
+       return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
    }
 
    /*override*/void reset_receiver() {next_value = T(0);}
@@ -55,10 +55,11 @@ struct parallel_receiver : public tbb::flow::receiver<T> {
 
    parallel_receiver() { my_count = 0; }
 
-   /* override */ bool try_put( const T & ) {
+   /* override */ tbb::task *try_put_task( const T &/*v*/ ) {
        ++my_count;
-       return true;
+       return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
    }
+
    /*override*/void reset_receiver() {my_count = 0;}
 };
 

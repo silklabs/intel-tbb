@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::combinable&lt; T &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::buffer_node&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,58 +21,382 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00270.html">combinable</a></div>
-<h1>tbb::combinable&lt; T &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00433.html">Containers</a>]</small>
-</h1><!-- doxytag: class="tbb::combinable" -->Thread-local storage with optional reduction.  
+<a class="el" href="a00423.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00270.html">buffer_node</a></div>
+<h1>tbb::flow::interface6::buffer_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::buffer_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::receiver,tbb::flow::interface6::sender" -->Forwards messages in arbitrary order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00460.html">combinable.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00521.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00017.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::buffer_node&lt; T, A &gt;:
+<p><center><img src="a00270.png" usemap="#tbb::flow::interface6::buffer_node< T, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::buffer_node< T, A >_map">
+<area href="a00296.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,352,24">
+<area href="a00328.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="362,0,714,24">
+<area href="a00334.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="724,0,1076,24">
+<area href="a00319.html" alt="tbb::flow::interface6::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
+<area href="a00320.html" alt="tbb::flow::interface6::queue_node< T, A >" shape="rect" coords="543,112,895,136">
+<area href="a00335.html" alt="tbb::flow::interface6::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
+</map>
+<a href="a00072.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3b1cc92064c2b6484bfb8151d2b16347"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::input_type" ref="3b1cc92064c2b6484bfb8151d2b16347" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#3b1cc92064c2b6484bfb8151d2b16347">input_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="53a7d3a3b7595f77797e460df40f32cf"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::output_type" ref="53a7d3a3b7595f77797e460df40f32cf" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="242f555cf457fa93bf55beec2785bc40"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::predecessor_type" ref="242f555cf457fa93bf55beec2785bc40" args="" -->
+typedef <a class="el" href="a00334.html">sender</a>&lt; <a class="el" href="a00270.html#3b1cc92064c2b6484bfb8151d2b16347">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#242f555cf457fa93bf55beec2785bc40">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4006bd07fd89d32c73692b055823d5d5"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::successor_type" ref="4006bd07fd89d32c73692b055823d5d5" args="" -->
+typedef <a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#4006bd07fd89d32c73692b055823d5d5">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="42c5301b5a64c07c78b219437c18f2e8"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::my_class" ref="42c5301b5a64c07c78b219437c18f2e8" args="" -->
+typedef <a class="el" href="a00270.html">buffer_node</a>&lt; T, A &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_class</b></td></tr>
+
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="d03619e90e62555aa5634fcc8adadcc9"></a><!-- doxytag: member="tbb::combinable::combinable" ref="d03619e90e62555aa5634fcc8adadcc9" args="(finit _finit)" -->
-template&lt;typename finit&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combinable</b> (finit _finit)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ba68c381057f8d2553074e7b52b54694"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::buffer_node" ref="ba68c381057f8d2553074e7b52b54694" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#ba68c381057f8d2553074e7b52b54694">buffer_node</a> (<a class="el" href="a00295.html">graph</a> &amp;g)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c87e79ae98588a5780f708773388843"></a><!-- doxytag: member="tbb::combinable::~combinable" ref="2c87e79ae98588a5780f708773388843" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#2c87e79ae98588a5780f708773388843">~combinable</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2718f93f11f4201b07047f9f72a7f20d"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::buffer_node" ref="2718f93f11f4201b07047f9f72a7f20d" args="(const buffer_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#2718f93f11f4201b07047f9f72a7f20d">buffer_node</a> (const <a class="el" href="a00270.html">buffer_node</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">destructor <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="57012803b7bc7416452cb930121ff210"></a><!-- doxytag: member="tbb::combinable::combinable" ref="57012803b7bc7416452cb930121ff210" args="(const combinable &amp;other)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>combinable</b> (const <a class="el" href="a00270.html">combinable</a> &amp;other)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#43d44b9dd0a2e8aa667c8f07b07e62b2">register_successor</a> (<a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c9650d59f65b1042afa232ede57dfca9"></a><!-- doxytag: member="tbb::combinable::operator=" ref="c9650d59f65b1042afa232ede57dfca9" args="(const combinable &amp;other)" -->
-<a class="el" href="a00270.html">combinable</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00270.html">combinable</a> &amp;other)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a new successor.  <a href="#43d44b9dd0a2e8aa667c8f07b07e62b2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#c111e0c53dc530860ccb8f94c9eb9ce6">remove_successor</a> (<a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f09233cccb9b5e8a58874e43a703cac2"></a><!-- doxytag: member="tbb::combinable::clear" ref="f09233cccb9b5e8a58874e43a703cac2" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor.  <a href="#c111e0c53dc530860ccb8f94c9eb9ce6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#c256c6e4c94195a7ee877d6ebafd5399">try_get</a> (T &amp;v)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2d7550204bcb88fa8810b5a39e9cad24"></a><!-- doxytag: member="tbb::combinable::local" ref="2d7550204bcb88fa8810b5a39e9cad24" args="()" -->
-T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>local</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request an item from the <a class="el" href="a00270.html">buffer_node</a>.  <a href="#c256c6e4c94195a7ee877d6ebafd5399"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#102d89ae2850c6565170809e57ab38b5">try_reserve</a> (T &amp;v)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="93a42052881ecccdd8ddff16a1b1cca1"></a><!-- doxytag: member="tbb::combinable::local" ref="93a42052881ecccdd8ddff16a1b1cca1" args="(bool &amp;exists)" -->
-T &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>local</b> (bool &amp;exists)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reserves an item.  <a href="#102d89ae2850c6565170809e57ab38b5"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#8b14c1b55d3c91ee5671778fc3ee3d22">try_release</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="9be306b4a073066dcac4043dc189c514"></a><!-- doxytag: member="tbb::combinable::combine" ref="9be306b4a073066dcac4043dc189c514" args="(combine_func_t f_combine)" -->
-template&lt;typename combine_func_t&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">T&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine</b> (combine_func_t f_combine)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release a reserved item.  <a href="#8b14c1b55d3c91ee5671778fc3ee3d22"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#5a5ce69c54f4eee2a218d2e9644b400f">try_consume</a> ()</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="dcd23283834149c87c345c0e476dfee8"></a><!-- doxytag: member="tbb::combinable::combine_each" ref="dcd23283834149c87c345c0e476dfee8" args="(combine_func_t f_combine)" -->
-template&lt;typename combine_func_t&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>combine_each</b> (combine_func_t f_combine)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Consumes a reserved item.  <a href="#5a5ce69c54f4eee2a218d2e9644b400f"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5feb0a5a2a6cc3f20833e03760d4a3de"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::size_type" ref="5feb0a5a2a6cc3f20833e03760d4a3de" args="" -->
+typedef size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c4ef2765351c07d84a55e0c117b07c24"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::my_handler" ref="c4ef2765351c07d84a55e0c117b07c24" args="" -->
+typedef internal::aggregating_functor&lt;<br>
+ <a class="el" href="a00270.html">my_class</a>, buffer_operation &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_handler</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1a98f1ed7d55592c9507c072a365f5982e"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::reg_succ" ref="d86765034038617a6347b4df643baf1a98f1ed7d55592c9507c072a365f5982e" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>reg_succ</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1ab3fdb19b13fb449ae8cf169665561709"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::rem_succ" ref="d86765034038617a6347b4df643baf1ab3fdb19b13fb449ae8cf169665561709" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>rem_succ</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1aadae2ed2bd1f771f66b0afca8f8ef61c"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::req_item" ref="d86765034038617a6347b4df643baf1aadae2ed2bd1f771f66b0afca8f8ef61c" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>req_item</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1a1d54e027429cb69767cd431801ef61a6"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::res_item" ref="d86765034038617a6347b4df643baf1a1d54e027429cb69767cd431801ef61a6" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>res_item</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1aeef2ca14f14ec6a491e1e0d4348a4558"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::rel_res" ref="d86765034038617a6347b4df643baf1aeef2ca14f14ec6a491e1e0d4348a4558" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>rel_res</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1a3a1f81ab59a50d028c2dd953e6db1497"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::con_res" ref="d86765034038617a6347b4df643baf1a3a1f81ab59a50d028c2dd953e6db1497" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>con_res</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1a578279de557ff7a087f22af0c4d8dd62"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::put_item" ref="d86765034038617a6347b4df643baf1a578279de557ff7a087f22af0c4d8dd62" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>put_item</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d86765034038617a6347b4df643baf1a8ae12f4ea7669db7feb0697bce9a1ae3"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_fwd_task" ref="d86765034038617a6347b4df643baf1a8ae12f4ea7669db7feb0697bce9a1ae3" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_fwd_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="44e49757a05febd61d629105fe0612df4aaa8275ea089e2cfdb84d2ae3bf4d34"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::WAIT" ref="44e49757a05febd61d629105fe0612df4aaa8275ea089e2cfdb84d2ae3bf4d34" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="44e49757a05febd61d629105fe0612df524d9579add2f4d23bb1d910d7733c0e"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::SUCCEEDED" ref="44e49757a05febd61d629105fe0612df524d9579add2f4d23bb1d910d7733c0e" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="44e49757a05febd61d629105fe0612df0a2bebd7cfd51214a32cbb10d5f59c86"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::FAILED" ref="44e49757a05febd61d629105fe0612df0a2bebd7cfd51214a32cbb10d5f59c86" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_type</b> { <br>
+&nbsp;&nbsp;<b>reg_succ</b>, 
+<b>rem_succ</b>, 
+<b>req_item</b>, 
+<b>res_item</b>, 
+<br>
+&nbsp;&nbsp;<b>rel_res</b>, 
+<b>con_res</b>, 
+<b>put_item</b>, 
+<b>try_fwd_task</b>
+<br>
+ }</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dc7335c18fc282fb43583ee7e9b6c258"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::handle_operations" ref="dc7335c18fc282fb43583ee7e9b6c258" args="(buffer_operation *op_list)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>handle_operations</b> (buffer_operation *op_list)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8137a2fe56df86d125aa8a360bc1cb0a"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::grab_forwarding_task" ref="8137a2fe56df86d125aa8a360bc1cb0a" args="(buffer_operation &amp;op_data)" -->
+<a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>grab_forwarding_task</b> (buffer_operation &amp;op_data)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ae9813f6b732cf2aad89c4c0804dca12"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::enqueue_forwarding_task" ref="ae9813f6b732cf2aad89c4c0804dca12" args="(buffer_operation &amp;op_data)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>enqueue_forwarding_task</b> (buffer_operation &amp;op_data)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8d8a69e10d3de6751ed7c3b4523e1161"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::forward_task" ref="8d8a69e10d3de6751ed7c3b4523e1161" args="()" -->
+virtual <a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#8d8a69e10d3de6751ed7c3b4523e1161">forward_task</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This is executed by an enqueued task, the "forwarder". <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3358737679c51c43f19cd1354a1c156c"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_reg_succ" ref="3358737679c51c43f19cd1354a1c156c" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#3358737679c51c43f19cd1354a1c156c">internal_reg_succ</a> (buffer_operation *op)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Register successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="80e3745cc4a03b1b4c8bbbffa24b08db"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_rem_succ" ref="80e3745cc4a03b1b4c8bbbffa24b08db" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#80e3745cc4a03b1b4c8bbbffa24b08db">internal_rem_succ</a> (buffer_operation *op)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8438e4182a0013ca6a79d3a1240bc260"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_forward_task" ref="8438e4182a0013ca6a79d3a1240bc260" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#8438e4182a0013ca6a79d3a1240bc260">internal_forward_task</a> (buffer_operation *op)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d42bb4f5dd19166607b524291b36df08"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_push" ref="d42bb4f5dd19166607b524291b36df08" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_push</b> (buffer_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="37b3b1510b928c30a8c334fc5b87e7fa"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_pop" ref="37b3b1510b928c30a8c334fc5b87e7fa" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (buffer_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6ecddac5608e2c6f7c034f04f7bbbad3"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_reserve" ref="6ecddac5608e2c6f7c034f04f7bbbad3" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (buffer_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9879215b1b81b19b62f23c5d9a598b4c"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_consume" ref="9879215b1b81b19b62f23c5d9a598b4c" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (buffer_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4fdf59aa53056b28f2b59340fab922b"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal_release" ref="e4fdf59aa53056b28f2b59340fab922b" args="(buffer_operation *op)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_release</b> (buffer_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="659835b24306e4a547a714c21c8f603f"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_put_task" ref="659835b24306e4a547a714c21c8f603f" args="(const T &amp;t)" -->
+<a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#659835b24306e4a547a714c21c8f603f">try_put_task</a> (const T &amp;t)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">receive an item, return a task *if possible <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ee734190d2fab399541f7a9cc55816a3"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::reset" ref="ee734190d2fab399541f7a9cc55816a3" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ef3a3a92a1d9e27783e4513f46a11027"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::reset_receiver" ref="ef3a3a92a1d9e27783e4513f46a11027" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c24d61b81872ec8da759fc7223250484"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::my_successors" ref="c24d61b81872ec8da759fc7223250484" args="" -->
+internal::round_robin_cache&lt;<br>
+ T, <a class="el" href="a00312.html">null_rw_mutex</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_successors</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1bf947744ddec06868eae6848d51bda5"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::my_parent" ref="1bf947744ddec06868eae6848d51bda5" args="" -->
+<a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_parent</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a93e2980b0d3e8bdf3a57a40cede9abc"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::forwarder_busy" ref="a93e2980b0d3e8bdf3a57a40cede9abc" args="" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>forwarder_busy</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c41776055e2daf2232930c8a60347ee0"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::my_aggregator" ref="c41776055e2daf2232930c8a60347ee0" args="" -->
+internal::aggregator&lt; my_handler,<br>
+ buffer_operation &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_aggregator</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d66dc7488e0c58eef0d3ae292d900c04"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal::forward_task_bypass&lt; buffer_node&lt; T, A &gt; &gt;" ref="d66dc7488e0c58eef0d3ae292d900c04" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::forward_task_bypass&lt; buffer_node&lt; T, A &gt; &gt;</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8fa999cf286dcad00faeece4cbfa35d2"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal::aggregating_functor&lt; my_class, buffer_operation &gt;" ref="8fa999cf286dcad00faeece4cbfa35d2" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::aggregating_functor&lt; my_class, buffer_operation &gt;</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8955395cf98bbc7767c2cdaf2d4589c4"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::run_and_put_task" ref="8955395cf98bbc7767c2cdaf2d4589c4" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00270.html#8955395cf98bbc7767c2cdaf2d4589c4">run_and_put_task</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put item to successor; return task to run the successor if possible. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f25421c4c4f7068e044d20c464491d39"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal::broadcast_cache" ref="f25421c4c4f7068e044d20c464491d39" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29d5ecd73b70aabbe35424df37f36dec"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::internal::round_robin_cache" ref="29d5ecd73b70aabbe35424df37f36dec" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>buffer_operation</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::combinable&lt; T &gt;</h3>
+<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface6::buffer_node&lt; T, A &gt;</h3>
 
-Thread-local storage with optional reduction. 
+Forwards messages in arbitrary order. 
 <p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="43d44b9dd0a2e8aa667c8f07b07e62b2"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::register_successor" ref="43d44b9dd0a2e8aa667c8f07b07e62b2" args="(receiver&lt; output_type &gt; &amp;r)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::register_successor           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Adds a new successor. 
+<p>
+Adds successor r to the list of successors; may forward tasks. 
+<p>
+Implements <a class="el" href="a00334.html#622e5e05cbddfaed5161d955a95c51ce">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="c111e0c53dc530860ccb8f94c9eb9ce6"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::remove_successor" ref="c111e0c53dc530860ccb8f94c9eb9ce6" args="(receiver&lt; output_type &gt; &amp;r)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::remove_successor           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00270.html#53a7d3a3b7595f77797e460df40f32cf">output_type</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes a successor. 
+<p>
+Removes successor r from the list of successors. It also calls r.remove_predecessor(*this) to remove this node as a predecessor. 
+<p>
+Implements <a class="el" href="a00334.html#b713f48eb1634baaf7c960ded85bdfca">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="5a5ce69c54f4eee2a218d2e9644b400f"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_consume" ref="5a5ce69c54f4eee2a218d2e9644b400f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::try_consume           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Consumes a reserved item. 
+<p>
+true = item is removed from sender and reservation removed 
+<p>
+Reimplemented from <a class="el" href="a00334.html#e4f1e435d894f8b9db93425014e830dd">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="c256c6e4c94195a7ee877d6ebafd5399"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_get" ref="c256c6e4c94195a7ee877d6ebafd5399" args="(T &amp;v)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::try_get           </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&nbsp;</td>
+          <td class="paramname"> <em>v</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Request an item from the <a class="el" href="a00270.html">buffer_node</a>. 
+<p>
+true = v contains the returned item<br>
+ false = no item has been returned 
+<p>
+Reimplemented from <a class="el" href="a00334.html#169867495f643e3f77049d856d47781a">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="8b14c1b55d3c91ee5671778fc3ee3d22"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_release" ref="8b14c1b55d3c91ee5671778fc3ee3d22" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::try_release           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Release a reserved item. 
+<p>
+true = item has been released and so remains in sender 
+<p>
+Reimplemented from <a class="el" href="a00334.html#6b01b5052dd152bd0aeca6f4b4155f9a">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<a class="anchor" name="102d89ae2850c6565170809e57ab38b5"></a><!-- doxytag: member="tbb::flow::interface6::buffer_node::try_reserve" ref="102d89ae2850c6565170809e57ab38b5" args="(T &amp;v)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00270.html">tbb::flow::interface6::buffer_node</a>&lt; T, A &gt;::try_reserve           </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&nbsp;</td>
+          <td class="paramname"> <em>v</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Reserves an item. 
+<p>
+false = no item can be reserved<br>
+ true = an item is reserved 
+<p>
+Reimplemented from <a class="el" href="a00334.html#414c637b4a0ffb10502021731376eb31">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00460.html">combinable.h</a></ul>
+<li><a class="el" href="a00521.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

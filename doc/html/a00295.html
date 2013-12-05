@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::limiter_node&lt; T &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::graph Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,124 +21,253 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00295.html">limiter_node</a></div>
-<h1>tbb::flow::interface6::limiter_node&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::limiter_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::receiver,tbb::flow::interface6::sender" -->Forwards messages only if the threshold has not been reached.  
+<a class="el" href="a00423.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00295.html">graph</a></div>
+<h1>tbb::flow::interface6::graph Class Reference</h1><!-- doxytag: class="tbb::flow::interface6::graph" -->The graph class.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00517.html">flow_graph.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00521.html">flow_graph.h</a>&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::limiter_node&lt; T &gt;:
-<p><center><img src="a00295.png" usemap="#tbb::flow::interface6::limiter_node< T >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::limiter_node< T >_map">
-<area href="a00292.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,226,24">
-<area href="a00324.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="236,0,462,24">
-<area href="a00330.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="472,0,698,24">
-</map>
-<a href="a00077.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00057.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="035196d3c9240ef041f528ebcde8baa7"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::input_type" ref="035196d3c9240ef041f528ebcde8baa7" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#035196d3c9240ef041f528ebcde8baa7">input_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ceda4351b74f6e06d34e33b2b668ce28"></a><!-- doxytag: member="tbb::flow::interface6::graph::iterator" ref="ceda4351b74f6e06d34e33b2b668ce28" args="" -->
+typedef graph_iterator&lt; <a class="el" href="a00295.html">graph</a>,<br>
+ <a class="el" href="a00296.html">graph_node</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6e67fc480147c0b88a483b85db6457b0"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::output_type" ref="6e67fc480147c0b88a483b85db6457b0" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#6e67fc480147c0b88a483b85db6457b0">output_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="79ad0d643c9020f146c116a0acbe8ab5"></a><!-- doxytag: member="tbb::flow::interface6::graph::const_iterator" ref="79ad0d643c9020f146c116a0acbe8ab5" args="" -->
+typedef graph_iterator&lt; const <br>
+<a class="el" href="a00295.html">graph</a>, const <a class="el" href="a00296.html">graph_node</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_iterator</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f89fcf44f38eb33f965ee5362d3e68e9"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::predecessor_type" ref="f89fcf44f38eb33f965ee5362d3e68e9" args="" -->
-typedef <a class="el" href="a00330.html">sender</a>&lt; <a class="el" href="a00295.html#035196d3c9240ef041f528ebcde8baa7">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#f89fcf44f38eb33f965ee5362d3e68e9">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e8945e4dd6ea759ff9e4735da13f12ef"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::successor_type" ref="e8945e4dd6ea759ff9e4735da13f12ef" args="" -->
-typedef <a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00295.html#6e67fc480147c0b88a483b85db6457b0">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#e8945e4dd6ea759ff9e4735da13f12ef">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="831b06576f46fe2bf3ed0f86b793c1b2"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::limiter_node" ref="831b06576f46fe2bf3ed0f86b793c1b2" args="(graph &amp;g, size_t threshold, int num_decrement_predecessors=0)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#831b06576f46fe2bf3ed0f86b793c1b2">limiter_node</a> (<a class="el" href="a00291.html">graph</a> &amp;g, size_t threshold, int num_decrement_predecessors=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9bbd0e5687a4defe513dbd6f0f962e41"></a><!-- doxytag: member="tbb::flow::interface6::graph::graph" ref="9bbd0e5687a4defe513dbd6f0f962e41" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#9bbd0e5687a4defe513dbd6f0f962e41">graph</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="83d3ab884543b070ee5b345a87f241fa"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::limiter_node" ref="83d3ab884543b070ee5b345a87f241fa" args="(const limiter_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#83d3ab884543b070ee5b345a87f241fa">limiter_node</a> (const <a class="el" href="a00295.html">limiter_node</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructs a graph with isolated <a class="el" href="a00348.html">task_group_context</a>. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1a9d47666e6430b1b2856161a6e1c362"></a><!-- doxytag: member="tbb::flow::interface6::graph::graph" ref="1a9d47666e6430b1b2856161a6e1c362" args="(task_group_context &amp;use_this_context)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#1a9d47666e6430b1b2856161a6e1c362">graph</a> (<a class="el" href="a00347.html">task_group_context</a> &amp;use_this_context)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c76561d8d871b4769876988a4de12a9b"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::register_successor" ref="c76561d8d871b4769876988a4de12a9b" args="(receiver&lt; output_type &gt; &amp;r)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#c76561d8d871b4769876988a4de12a9b">register_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00295.html#6e67fc480147c0b88a483b85db6457b0">output_type</a> &gt; &amp;r)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructs a graph with use_this_context as context. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#2d695dad6fd58ac0caffc9517396086e">~graph</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Replace the current successor with this new successor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#275e328063c121b3e506ccef2a825d28">remove_successor</a> (<a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00295.html#6e67fc480147c0b88a483b85db6457b0">output_type</a> &gt; &amp;r)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroys the graph.  <a href="#2d695dad6fd58ac0caffc9517396086e"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#0de1eef69b99b662efa0f3a177135492">increment_wait_count</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node.  <a href="#275e328063c121b3e506ccef2a825d28"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="55a02d458a4d8ffa6accd7a70605da2f"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::try_put" ref="55a02d458a4d8ffa6accd7a70605da2f" args="(const T &amp;t)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#55a02d458a4d8ffa6accd7a70605da2f">try_put</a> (const T &amp;t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used to register that an external entity may still interact with the graph.  <a href="#0de1eef69b99b662efa0f3a177135492"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#95df5fefc77b9fcc43465cd22f190881">decrement_wait_count</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Puts an item to this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="de70a0e88ce7655d8c14b6af57f7496f"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::register_predecessor" ref="de70a0e88ce7655d8c14b6af57f7496f" args="(predecessor_type &amp;src)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#de70a0e88ce7655d8c14b6af57f7496f">register_predecessor</a> (<a class="el" href="a00330.html">predecessor_type</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deregisters an external entity that may have interacted with the graph.  <a href="#95df5fefc77b9fcc43465cd22f190881"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Receiver, typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00295.html#a04dabfe76ea8baf3f9a22cb09e1d96c">run</a> (Receiver &amp;r, Body body)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes src from the list of cached predecessors. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c530e7b469454e2340460795f2da3317"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::remove_predecessor" ref="c530e7b469454e2340460795f2da3317" args="(predecessor_type &amp;src)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#c530e7b469454e2340460795f2da3317">remove_predecessor</a> (<a class="el" href="a00330.html">predecessor_type</a> &amp;src)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Spawns a task that runs a body and puts its output to a specific receiver.  <a href="#a04dabfe76ea8baf3f9a22cb09e1d96c"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename Body&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00295.html#e340dff9005fc4c7be8946781948a116">run</a> (Body body)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes src from the list of cached predecessors. <br></td></tr>
-<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a3344b2461966631b6ee34b79fb105c7"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::decrement" ref="a3344b2461966631b6ee34b79fb105c7" args="" -->
-internal::decrementer&lt; <a class="el" href="a00295.html">limiter_node</a>&lt;<br>
- T &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#a3344b2461966631b6ee34b79fb105c7">decrement</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Spawns a task that runs a function object.  <a href="#e340dff9005fc4c7be8946781948a116"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#ac1a6c137917d67b50976c08d817f097">wait_for_all</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The internal receiver&lt; continue_msg &gt; that decrements the count. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8b9c771bcf9137829f0e5b73044f8b7e"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::reset" ref="8b9c771bcf9137829f0e5b73044f8b7e" args="()" -->
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Wait until graph is idle and decrement_wait_count calls equals increment_wait_count calls.  <a href="#ac1a6c137917d67b50976c08d817f097"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a082f0838b84d3043299ef1f4bd22761"></a><!-- doxytag: member="tbb::flow::interface6::graph::root_task" ref="a082f0838b84d3043299ef1f4bd22761" args="()" -->
+<a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#a082f0838b84d3043299ef1f4bd22761">root_task</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the root task of the graph. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fb4a482d5120704c468fc015295fcfd1"></a><!-- doxytag: member="tbb::flow::interface6::graph::begin" ref="fb4a482d5120704c468fc015295fcfd1" args="()" -->
+iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#fb4a482d5120704c468fc015295fcfd1">begin</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">start iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e8bdc85956fc1ce24822e6685db1634b"></a><!-- doxytag: member="tbb::flow::interface6::graph::end" ref="e8bdc85956fc1ce24822e6685db1634b" args="()" -->
+iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#e8bdc85956fc1ce24822e6685db1634b">end</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">end iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="13f9f4a5e0599331caf2ea8416b41a26"></a><!-- doxytag: member="tbb::flow::interface6::graph::begin" ref="13f9f4a5e0599331caf2ea8416b41a26" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#13f9f4a5e0599331caf2ea8416b41a26">begin</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">start const iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="42715cb0123f1ec0e8863c96d02c0827"></a><!-- doxytag: member="tbb::flow::interface6::graph::end" ref="42715cb0123f1ec0e8863c96d02c0827" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#42715cb0123f1ec0e8863c96d02c0827">end</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">end const iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="905f16825b81c7f6100209588a085d33"></a><!-- doxytag: member="tbb::flow::interface6::graph::cbegin" ref="905f16825b81c7f6100209588a085d33" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#905f16825b81c7f6100209588a085d33">cbegin</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">start const iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="afc0e1310b89788f97a251fe9550e738"></a><!-- doxytag: member="tbb::flow::interface6::graph::cend" ref="afc0e1310b89788f97a251fe9550e738" args="() const " -->
+const_iterator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#afc0e1310b89788f97a251fe9550e738">cend</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">end const iterator <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="579077a6bcaa1f4de6c192b48fa56b39"></a><!-- doxytag: member="tbb::flow::interface6::graph::is_cancelled" ref="579077a6bcaa1f4de6c192b48fa56b39" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00295.html#579077a6bcaa1f4de6c192b48fa56b39">is_cancelled</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">return status of graph execution <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4dcbee7e3ec3ed172d9beec4b578a443"></a><!-- doxytag: member="tbb::flow::interface6::graph::exception_thrown" ref="4dcbee7e3ec3ed172d9beec4b578a443" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>exception_thrown</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="687dd0fc4f901e77050fb81747ccd681"></a><!-- doxytag: member="tbb::flow::interface6::graph::reset" ref="687dd0fc4f901e77050fb81747ccd681" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="68591a3690d26ade0610ddd6f3e076c5"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::reset_receiver" ref="68591a3690d26ade0610ddd6f3e076c5" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
-
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ed05e0c262c5a8869bf1395e1fb4bcf9"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::forward_task&lt; limiter_node&lt; T &gt; &gt;" ref="ed05e0c262c5a8869bf1395e1fb4bcf9" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::forward_task&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8bb549de1ad8539cd820379b4a9bc568"></a><!-- doxytag: member="tbb::flow::interface6::graph::graph_node" ref="8bb549de1ad8539cd820379b4a9bc568" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_node</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b43677b60c786d1071a7efd6f195c3be"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::decrementer&lt; limiter_node&lt; T &gt; &gt;" ref="b43677b60c786d1071a7efd6f195c3be" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::decrementer&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bd099833fc3856aab598928bc96f8f2b"></a><!-- doxytag: member="tbb::flow::interface6::graph::graph_iterator" ref="bd099833fc3856aab598928bc96f8f2b" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_iterator</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>run_and_put_task</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>run_task</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::flow::interface6::limiter_node&lt; T &gt;</h3>
-
-Forwards messages only if the threshold has not been reached. 
+The graph class. 
 <p>
-This node forwards items until its threshold is reached. It contains no buffering. If the downstream node rejects, the message is dropped. 
+This class serves as a handle to the graph 
 <p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="275e328063c121b3e506ccef2a825d28"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::remove_successor" ref="275e328063c121b3e506ccef2a825d28" args="(receiver&lt; output_type &gt; &amp;r)" -->
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="2d695dad6fd58ac0caffc9517396086e"></a><!-- doxytag: member="tbb::flow::interface6::graph::~graph" ref="2d695dad6fd58ac0caffc9517396086e" args="()" -->
 <div class="memitem">
 <div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="a00295.html">tbb::flow::interface6::limiter_node</a>&lt; T &gt;::remove_successor           </td>
+          <td class="memname">tbb::flow::interface6::graph::~graph           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="a00324.html">receiver</a>&lt; <a class="el" href="a00295.html#6e67fc480147c0b88a483b85db6457b0">output_type</a> &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>r</em>          </td>
+          <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline, virtual]</code></td>
+          <td width="100%"><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Removes a successor from this node. 
+Destroys the graph. 
 <p>
-r.remove_predecessor(*this) is also called. 
+Calls wait_for_all, then destroys the root task and context. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="95df5fefc77b9fcc43465cd22f190881"></a><!-- doxytag: member="tbb::flow::interface6::graph::decrement_wait_count" ref="95df5fefc77b9fcc43465cd22f190881" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::decrement_wait_count           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
 <p>
-Implements <a class="el" href="a00330.html#82f363bfb1738bb8789e167590b10ef9">tbb::flow::interface6::sender&lt; T &gt;</a>.
+Deregisters an external entity that may have interacted with the graph. 
+<p>
+The graph will not return from wait_for_all until all the number of decrement_wait_count calls matches the number of increment_wait_count calls. 
+</div>
+</div><p>
+<a class="anchor" name="0de1eef69b99b662efa0f3a177135492"></a><!-- doxytag: member="tbb::flow::interface6::graph::increment_wait_count" ref="0de1eef69b99b662efa0f3a177135492" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::increment_wait_count           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Used to register that an external entity may still interact with the graph. 
+<p>
+The graph will not return from wait_for_all until a matching number of decrement_wait_count calls is made. 
+</div>
+</div><p>
+<a class="anchor" name="e340dff9005fc4c7be8946781948a116"></a><!-- doxytag: member="tbb::flow::interface6::graph::run" ref="e340dff9005fc4c7be8946781948a116" args="(Body body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::run           </td>
+          <td>(</td>
+          <td class="paramtype">Body&nbsp;</td>
+          <td class="paramname"> <em>body</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Spawns a task that runs a function object. 
+<p>
+The task is spawned as a child of the graph. This is useful for running tasks that need to block a <a class="el" href="a00295.html#ac1a6c137917d67b50976c08d817f097">wait_for_all()</a> on the graph. For example a one-off source. 
+</div>
+</div><p>
+<a class="anchor" name="a04dabfe76ea8baf3f9a22cb09e1d96c"></a><!-- doxytag: member="tbb::flow::interface6::graph::run" ref="a04dabfe76ea8baf3f9a22cb09e1d96c" args="(Receiver &amp;r, Body body)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Receiver, typename Body&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::run           </td>
+          <td>(</td>
+          <td class="paramtype">Receiver &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Body&nbsp;</td>
+          <td class="paramname"> <em>body</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Spawns a task that runs a body and puts its output to a specific receiver. 
+<p>
+The task is spawned as a child of the graph. This is useful for running tasks that need to block a <a class="el" href="a00295.html#ac1a6c137917d67b50976c08d817f097">wait_for_all()</a> on the graph. For example a one-off source. 
+</div>
+</div><p>
+<a class="anchor" name="ac1a6c137917d67b50976c08d817f097"></a><!-- doxytag: member="tbb::flow::interface6::graph::wait_for_all" ref="ac1a6c137917d67b50976c08d817f097" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::flow::interface6::graph::wait_for_all           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Wait until graph is idle and decrement_wait_count calls equals increment_wait_count calls. 
+<p>
+The waiting thread will go off and steal work while it is block in the wait_for_all. 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00517.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00521.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

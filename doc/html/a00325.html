@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::recursive_mutex Class Reference</title>
+<title>tbb::interface5::reader_writer_lock Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,92 +21,195 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<a class="el" href="a00325.html">recursive_mutex</a></div>
-<h1>tbb::recursive_mutex Class Reference<br>
+<a class="el" href="a00423.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00325.html">reader_writer_lock</a></div>
+<h1>tbb::interface5::reader_writer_lock Class Reference<br>
 <small>
-[<a class="el" href="a00435.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::recursive_mutex" -->Mutex that allows recursive mutex acquisition.  
+[<a class="el" href="a00439.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::interface5::reader_writer_lock" -->Writer-preference reader-writer lock with local-only spinning on readers.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00612.html">recursive_mutex.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00616.html">reader_writer_lock.h</a>&gt;</code>
 <p>
-<a href="a00117.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00114.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="889fa8cc32dd707eef7c0f52dda09c0d"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="889fa8cc32dd707eef7c0f52dda09c0d" args="" -->
-typedef LPCRITICAL_SECTION&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#889fa8cc32dd707eef7c0f52dda09c0d">native_handle_type</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29bbf9ca21c12b313d9fa5326feaf3ed35c855d0b11df79bf642b48cc153f788"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::waiting_nonblocking" ref="29bbf9ca21c12b313d9fa5326feaf3ed35c855d0b11df79bf642b48cc153f788" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>waiting_nonblocking</b></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return native_handle. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="26a40fae42bf6cd9f3f77ee7482d6164"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle_type" ref="26a40fae42bf6cd9f3f77ee7482d6164" args="" -->
-typedef pthread_mutex_t *&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29bbf9ca21c12b313d9fa5326feaf3ed752ddf1944afa2661477540824c034d1"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::waiting" ref="29bbf9ca21c12b313d9fa5326feaf3ed752ddf1944afa2661477540824c034d1" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>waiting</b></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29bbf9ca21c12b313d9fa5326feaf3ed5102ff9780d140f5bffaa90f90dfa5fa"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::active" ref="29bbf9ca21c12b313d9fa5326feaf3ed5102ff9780d140f5bffaa90f90dfa5fa" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>active</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29bbf9ca21c12b313d9fa5326feaf3ed9c5a4011a0ffc3a24f58e8403cac2fbf"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::invalid" ref="29bbf9ca21c12b313d9fa5326feaf3ed9c5a4011a0ffc3a24f58e8403cac2fbf" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>invalid</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#29bbf9ca21c12b313d9fa5326feaf3ed">status_t</a> { <b>waiting_nonblocking</b>, 
+<b>waiting</b>, 
+<b>active</b>, 
+<b>invalid</b>
+ }</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Status type for nodes associated with lock instances.  <a href="a00325.html#29bbf9ca21c12b313d9fa5326feaf3ed">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d2fceb7f95c24a8cd1457d4527e4b8c6"></a><!-- doxytag: member="tbb::recursive_mutex::recursive_mutex" ref="d2fceb7f95c24a8cd1457d4527e4b8c6" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#d2fceb7f95c24a8cd1457d4527e4b8c6">recursive_mutex</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bceda6c50b0c36eacbef51f4682742f3"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::reader_writer_lock" ref="bceda6c50b0c36eacbef51f4682742f3" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#bceda6c50b0c36eacbef51f4682742f3">reader_writer_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired <a class="el" href="a00325.html">recursive_mutex</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4c342c69d47f4bb0b393535dee4015d6"></a><!-- doxytag: member="tbb::recursive_mutex::lock" ref="4c342c69d47f4bb0b393535dee4015d6" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#4c342c69d47f4bb0b393535dee4015d6">lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructs a new <a class="el" href="a00325.html">reader_writer_lock</a>. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eee96b648c7b5ff6126c8a2e13ec7241"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::~reader_writer_lock" ref="eee96b648c7b5ff6126c8a2e13ec7241" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#eee96b648c7b5ff6126c8a2e13ec7241">~reader_writer_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#86e719b0afee25704af11ab97694d240">try_lock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructs a <a class="el" href="a00325.html">reader_writer_lock</a> object. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#f92eb949fc491af8f7e350869ea0a0d1">lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#86e719b0afee25704af11ab97694d240"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0a96e26b7f074588dc31e32524856ae"></a><!-- doxytag: member="tbb::recursive_mutex::unlock" ref="f0a96e26b7f074588dc31e32524856ae" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#f0a96e26b7f074588dc31e32524856ae">unlock</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquires the <a class="el" href="a00325.html">reader_writer_lock</a> for write.  <a href="#f92eb949fc491af8f7e350869ea0a0d1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#1739e842af52925a2d4a7e821b9b3b8d">try_lock</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6baa9ce4b394c39622456fd8a68f8bd8"></a><!-- doxytag: member="tbb::recursive_mutex::native_handle" ref="6baa9ce4b394c39622456fd8a68f8bd8" args="()" -->
-<a class="el" href="a00325.html#889fa8cc32dd707eef7c0f52dda09c0d">native_handle_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to acquire the <a class="el" href="a00325.html">reader_writer_lock</a> for write.  <a href="#1739e842af52925a2d4a7e821b9b3b8d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#6fd4fcdf0e5c0425d1cc736d644f234f">lock_read</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="718cc53f6b33d8c396ccca0e4ebc5606"></a><!-- doxytag: member="tbb::recursive_mutex::is_rw_mutex" ref="718cc53f6b33d8c396ccca0e4ebc5606" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquires the <a class="el" href="a00325.html">reader_writer_lock</a> for read.  <a href="#6fd4fcdf0e5c0425d1cc736d644f234f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#9c7aa04e00202c9a1197cb6d870cabb4">try_lock_read</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f6149d7541063d8b35afd98df6f0f89d"></a><!-- doxytag: member="tbb::recursive_mutex::is_recursive_mutex" ref="f6149d7541063d8b35afd98df6f0f89d" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = true</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to acquire the <a class="el" href="a00325.html">reader_writer_lock</a> for read.  <a href="#9c7aa04e00202c9a1197cb6d870cabb4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4c55c4dbde63e950fdc843c9b01a174f"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::unlock" ref="4c55c4dbde63e950fdc843c9b01a174f" args="()" -->
+void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#4c55c4dbde63e950fdc843c9b01a174f">unlock</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f01aacad6b9b9d51573c0803323182fe"></a><!-- doxytag: member="tbb::recursive_mutex::is_fair_mutex" ref="f01aacad6b9b9d51573c0803323182fe" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Releases the <a class="el" href="a00325.html">reader_writer_lock</a>. <br></td></tr>
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a36f15b770a1bb0b56e33d7fa75ebd1a"></a><!-- doxytag: member="tbb::recursive_mutex::scoped_lock" ref="a36f15b770a1bb0b56e33d7fa75ebd1a" args="" -->
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fcf922650b2fd9d76b7b939d8511bbd8"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock" ref="fcf922650b2fd9d76b7b939d8511bbd8" args="" -->
 class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="578ccbc6ecbc6d32cb45ccfdc0ed4ee6"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read" ref="578ccbc6ecbc6d32cb45ccfdc0ed4ee6" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock_read</b></td></tr>
 
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00326.html">scoped_lock</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00326.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped lock pattern for write locks.  <a href="a00326.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00327.html">scoped_lock_read</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped lock pattern for read locks.  <a href="a00327.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Mutex that allows recursive mutex acquisition. 
+Writer-preference reader-writer lock with local-only spinning on readers. 
 <p>
-Mutex that allows recursive mutex acquisition. 
+Loosely adapted from Mellor-Crummey and Scott pseudocode at <a href="http://www.cs.rochester.edu/research/synchronization/pseudocode/rw.html#s_wp">http://www.cs.rochester.edu/research/synchronization/pseudocode/rw.html#s_wp</a> 
 <p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="86e719b0afee25704af11ab97694d240"></a><!-- doxytag: member="tbb::recursive_mutex::try_lock" ref="86e719b0afee25704af11ab97694d240" args="()" -->
+<hr><h2>Member Enumeration Documentation</h2>
+<a class="anchor" name="29bbf9ca21c12b313d9fa5326feaf3ed"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::status_t" ref="29bbf9ca21c12b313d9fa5326feaf3ed" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool tbb::recursive_mutex::try_lock           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline]</code></td>
+          <td class="memname">enum <a class="el" href="a00325.html#29bbf9ca21c12b313d9fa5326feaf3ed">tbb::interface5::reader_writer_lock::status_t</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Try acquiring lock (non-blocking). 
+Status type for nodes associated with lock instances. 
 <p>
-Return true if lock acquired; false otherwise. 
+waiting_nonblocking: the wait state for nonblocking lock instances; for writes, these transition straight to active states; for reads, these are unused.<p>
+waiting: the start and spin state for all lock instances; these will transition to active state when appropriate. Non-blocking write locks transition from this state to waiting_nonblocking immediately.<p>
+active: the active state means that the lock instance holds the lock; it will transition to invalid state during node deletion<p>
+invalid: the end state for all nodes; this is set in the destructor so if we encounter this state, we are looking at memory that has already been freed<p>
+The state diagrams below describe the status transitions. Single arrows indicate that the thread that owns the node is responsible for the transition; double arrows indicate that any thread could make the transition.<p>
+State diagram for <a class="el" href="a00326.html">scoped_lock</a> status:<p>
+waiting ----------&gt; waiting_nonblocking | _____________/ | V V V active -----------------&gt; invalid<p>
+State diagram for <a class="el" href="a00327.html">scoped_lock_read</a> status:<p>
+waiting | V active -----------------&gt;invalid 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="f92eb949fc491af8f7e350869ea0a0d1"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::lock" ref="f92eb949fc491af8f7e350869ea0a0d1" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Acquires the <a class="el" href="a00325.html">reader_writer_lock</a> for write. 
+<p>
+If the lock is currently held in write mode by another context, the writer will block by spinning on a local variable. Exceptions thrown: <a class="el" href="a00297.html">improper_lock</a> The context tries to acquire a <a class="el" href="a00325.html">reader_writer_lock</a> that it already has write ownership of. 
+</div>
+</div><p>
+<a class="anchor" name="6fd4fcdf0e5c0425d1cc736d644f234f"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::lock_read" ref="6fd4fcdf0e5c0425d1cc736d644f234f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::lock_read           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Acquires the <a class="el" href="a00325.html">reader_writer_lock</a> for read. 
+<p>
+If the lock is currently held by a writer, this reader will block and wait until the writers are done. Exceptions thrown: <a class="el" href="a00297.html">improper_lock</a> The context tries to acquire a <a class="el" href="a00325.html">reader_writer_lock</a> that it already has write ownership of. 
+</div>
+</div><p>
+<a class="anchor" name="1739e842af52925a2d4a7e821b9b3b8d"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::try_lock" ref="1739e842af52925a2d4a7e821b9b3b8d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::try_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Tries to acquire the <a class="el" href="a00325.html">reader_writer_lock</a> for write. 
+<p>
+This function does not block. Return Value: True or false, depending on whether the lock is acquired or not. If the lock is already held by this acquiring context, <a class="el" href="a00325.html#1739e842af52925a2d4a7e821b9b3b8d">try_lock()</a> returns false. 
+</div>
+</div><p>
+<a class="anchor" name="9c7aa04e00202c9a1197cb6d870cabb4"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::try_lock_read" ref="9c7aa04e00202c9a1197cb6d870cabb4" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __TBB_EXPORTED_METHOD tbb::interface5::reader_writer_lock::try_lock_read           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Tries to acquire the <a class="el" href="a00325.html">reader_writer_lock</a> for read. 
+<p>
+This function does not block. Return Value: True or false, depending on whether the lock is acquired or not. 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00612.html">recursive_mutex.h</a></ul>
+<li><a class="el" href="a00616.html">reader_writer_lock.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

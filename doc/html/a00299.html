@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface6::memory_pool_allocator&lt; T, P &gt; Class Template Reference</title>
+<title>tbb::flow::interface6::limiter_node&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,106 +21,134 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00419.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00299.html">memory_pool_allocator</a></div>
-<h1>tbb::interface6::memory_pool_allocator&lt; T, P &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00434.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::interface6::memory_pool_allocator" -->Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5.  
+<a class="el" href="a00423.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00299.html">limiter_node</a></div>
+<h1>tbb::flow::interface6::limiter_node&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::limiter_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node,tbb::flow::interface6::receiver,tbb::flow::interface6::sender" -->Forwards messages only if the threshold has not been reached.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;<a class="el" href="a00530.html">memory_pool.h</a>&gt;</code>
+<code>#include &lt;<a class="el" href="a00521.html">flow_graph.h</a>&gt;</code>
 <p>
-<a href="a00082.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface6::limiter_node&lt; T &gt;:
+<p><center><img src="a00299.png" usemap="#tbb::flow::interface6::limiter_node< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface6::limiter_node< T >_map">
+<area href="a00296.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,226,24">
+<area href="a00328.html" alt="tbb::flow::interface6::receiver< T >" shape="rect" coords="236,0,462,24">
+<area href="a00334.html" alt="tbb::flow::interface6::sender< T >" shape="rect" coords="472,0,698,24">
+</map>
+<a href="a00077.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="364d1a4b2174091802a0c1a7177fd037"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::value_type" ref="364d1a4b2174091802a0c1a7177fd037" args="" -->
-typedef tbb::internal::allocator_type&lt;<br>
- T &gt;::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6dc6ceb6b1f491c2b6837b3bb67baef"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::input_type" ref="a6dc6ceb6b1f491c2b6837b3bb67baef" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#a6dc6ceb6b1f491c2b6837b3bb67baef">input_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="841174744c7bebbe9a8ec4cd35b7e8c8"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::pointer" ref="841174744c7bebbe9a8ec4cd35b7e8c8" args="" -->
-typedef value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4f00571ff25954574ee922dfb630b8a9"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::output_type" ref="4f00571ff25954574ee922dfb630b8a9" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#4f00571ff25954574ee922dfb630b8a9">output_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8867631698ca08b5b8c849693f45cef4"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::const_pointer" ref="8867631698ca08b5b8c849693f45cef4" args="" -->
-typedef const value_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e04ce56a2755b80fccc4d428e4bd3060"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::predecessor_type" ref="e04ce56a2755b80fccc4d428e4bd3060" args="" -->
+typedef <a class="el" href="a00334.html">sender</a>&lt; <a class="el" href="a00299.html#a6dc6ceb6b1f491c2b6837b3bb67baef">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#e04ce56a2755b80fccc4d428e4bd3060">predecessor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4419d14b95793fea5e80c1a7ad85b4b3"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::reference" ref="4419d14b95793fea5e80c1a7ad85b4b3" args="" -->
-typedef value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>reference</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2e97ea60f5fc825bd4acd5e71d0175ab"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::successor_type" ref="2e97ea60f5fc825bd4acd5e71d0175ab" args="" -->
+typedef <a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00299.html#4f00571ff25954574ee922dfb630b8a9">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#2e97ea60f5fc825bd4acd5e71d0175ab">successor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="57a51cd687993c94d486a0ff0b7a783f"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::const_reference" ref="57a51cd687993c94d486a0ff0b7a783f" args="" -->
-typedef const value_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_reference</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fd9f0aaee1039cc64fa4342ee93fd43e"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::size_type" ref="fd9f0aaee1039cc64fa4342ee93fd43e" args="" -->
-typedef size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4340f60415582d0eca834b47b22f5d62"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::difference_type" ref="4340f60415582d0eca834b47b22f5d62" args="" -->
-typedef ptrdiff_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>difference_type</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d06264c6dc8ed178d8c14998f0511b27"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::memory_pool_allocator" ref="d06264c6dc8ed178d8c14998f0511b27" args="(pool_type &amp;pool)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (pool_type &amp;pool)  throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d6ece93dc2ae53174bf6eebc1b55413f"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::limiter_node" ref="d6ece93dc2ae53174bf6eebc1b55413f" args="(graph &amp;g, size_t threshold, int num_decrement_predecessors=0)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#d6ece93dc2ae53174bf6eebc1b55413f">limiter_node</a> (<a class="el" href="a00295.html">graph</a> &amp;g, size_t threshold, int num_decrement_predecessors=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="655f7aef5ba5dbe79f76b493270794af"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::memory_pool_allocator" ref="655f7aef5ba5dbe79f76b493270794af" args="(const memory_pool_allocator &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a> &amp;src)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6139388733798438d2d8f673d24b525f"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::limiter_node" ref="6139388733798438d2d8f673d24b525f" args="(const limiter_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#6139388733798438d2d8f673d24b525f">limiter_node</a> (const <a class="el" href="a00299.html">limiter_node</a> &amp;src)</td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="0d1d98389a82d65a4229db8e28363420"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::memory_pool_allocator" ref="0d1d98389a82d65a4229db8e28363420" args="(const memory_pool_allocator&lt; U, P &gt; &amp;src)" -->
-template&lt;typename U&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>memory_pool_allocator</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, P &gt; &amp;src)  throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6e9cd39468eab7b5cc52d63bfd613638"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::register_successor" ref="6e9cd39468eab7b5cc52d63bfd613638" args="(receiver&lt; output_type &gt; &amp;r)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#6e9cd39468eab7b5cc52d63bfd613638">register_successor</a> (<a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00299.html#4f00571ff25954574ee922dfb630b8a9">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="727129bc029510733b3e95ea10f6bee3"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::address" ref="727129bc029510733b3e95ea10f6bee3" args="(reference x) const " -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Replace the current successor with this new successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#86b072bbd0ed63d1d45a6a0b68d5eb4f">remove_successor</a> (<a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00299.html#4f00571ff25954574ee922dfb630b8a9">output_type</a> &gt; &amp;r)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e250b83998b01dbea88c43085e15139a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::address" ref="e250b83998b01dbea88c43085e15139a" args="(const_reference x) const " -->
-const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><b>address</b> (const_reference x) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node.  <a href="#86b072bbd0ed63d1d45a6a0b68d5eb4f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c2cb07011593add619d3226892ac923"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::register_predecessor" ref="2c2cb07011593add619d3226892ac923" args="(predecessor_type &amp;src)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#2c2cb07011593add619d3226892ac923">register_predecessor</a> (<a class="el" href="a00334.html">predecessor_type</a> &amp;src)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="365bd64d284c80d85bb2149a12681526"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::allocate" ref="365bd64d284c80d85bb2149a12681526" args="(size_type n, const void *=0)" -->
-pointer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#365bd64d284c80d85bb2149a12681526">allocate</a> (size_type n, const void *=0)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes src from the list of cached predecessors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="32cfab5291be87bc459d15a9a2ed758e"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::remove_predecessor" ref="32cfab5291be87bc459d15a9a2ed758e" args="(predecessor_type &amp;src)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#32cfab5291be87bc459d15a9a2ed758e">remove_predecessor</a> (<a class="el" href="a00334.html">predecessor_type</a> &amp;src)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allocate space for n objects. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e24a03de38638af07548383024c54ab"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::deallocate" ref="4e24a03de38638af07548383024c54ab" args="(pointer p, size_type)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#4e24a03de38638af07548383024c54ab">deallocate</a> (pointer p, size_type)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes src from the list of cached predecessors. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38baea54e4f8397106dccc394af9277c"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::decrement" ref="38baea54e4f8397106dccc394af9277c" args="" -->
+internal::decrementer&lt; <a class="el" href="a00299.html">limiter_node</a>&lt;<br>
+ T &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#38baea54e4f8397106dccc394af9277c">decrement</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Free previously allocated block of memory. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="beebdb6144df8ba219fadfad4de866ea"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::max_size" ref="beebdb6144df8ba219fadfad4de866ea" args="() const " -->
-size_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#beebdb6144df8ba219fadfad4de866ea">max_size</a> () const   throw ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The internal receiver&lt; continue_msg &gt; that decrements the count. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ea902d4e62da5ba0c94feb5c812ccc0c"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::try_put_task" ref="ea902d4e62da5ba0c94feb5c812ccc0c" args="(const T &amp;t)" -->
+<a class="el" href="a00344.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#ea902d4e62da5ba0c94feb5c812ccc0c">try_put_task</a> (const T &amp;t)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Largest value for which method allocate might succeed. <br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="3491a81e0597c1696a163e7c8fa8706a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::construct" ref="3491a81e0597c1696a163e7c8fa8706a" args="(pointer p, Args &amp;&amp;...args)" -->
-template&lt;typename... Args&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00299.html#3491a81e0597c1696a163e7c8fa8706a">construct</a> (pointer p, Args &amp;&amp;...args)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Puts an item to this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3784f7462d06d7bf2904ac21ea44a2ba"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::reset" ref="3784f7462d06d7bf2904ac21ea44a2ba" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy-construct value at location pointed to by p. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b9b545d2d31ef4b711ca87ba7aa18976"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::pool_type" ref="b9b545d2d31ef4b711ca87ba7aa18976" args="" -->
-typedef P&nbsp;</td><td class="memItemRight" valign="bottom"><b>pool_type</b></td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f22e947018eb99cde5f44ee3d339499"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::my_pool" ref="9f22e947018eb99cde5f44ee3d339499" args="" -->
-pool_type *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_pool</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1cd7b3fdb6af65c7e3976e8c29bee6a6"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::reset_receiver" ref="1cd7b3fdb6af65c7e3976e8c29bee6a6" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
 
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="193c7eeb6ed852d587b652828f52ca92"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::memory_pool_allocator" ref="193c7eeb6ed852d587b652828f52ca92" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>memory_pool_allocator</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ffe7799181c01bdd203c2ca2117dae7d"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::forward_task_bypass&lt; limiter_node&lt; T &gt; &gt;" ref="ffe7799181c01bdd203c2ca2117dae7d" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::forward_task_bypass&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="f4fe0fa75b911081eff469ddb3e7e52a"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::operator==" ref="f4fe0fa75b911081eff469ddb3e7e52a" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
-template&lt;typename V, typename U, typename R&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="80d4e1a1fa28ce76b1b08e12f93983f2"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::decrementer&lt; limiter_node&lt; T &gt; &gt;" ref="80d4e1a1fa28ce76b1b08e12f93983f2" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::decrementer&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
 
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="4bb06a39de4a5290b4ec03be19d61c36"></a><!-- doxytag: member="tbb::interface6::memory_pool_allocator::operator!=" ref="4bb06a39de4a5290b4ec03be19d61c36" args="(const memory_pool_allocator&lt; V, R &gt; &amp;a, const memory_pool_allocator&lt; U, R &gt; &amp;b)" -->
-template&lt;typename V, typename U, typename R&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; V, R &gt; &amp;a, const <a class="el" href="a00299.html">memory_pool_allocator</a>&lt; U, R &gt; &amp;b)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8955395cf98bbc7767c2cdaf2d4589c4"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::run_and_put_task" ref="8955395cf98bbc7767c2cdaf2d4589c4" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00299.html#8955395cf98bbc7767c2cdaf2d4589c4">run_and_put_task</a></td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put item to successor; return task to run the successor if possible. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f25421c4c4f7068e044d20c464491d39"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::broadcast_cache" ref="f25421c4c4f7068e044d20c464491d39" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="29d5ecd73b70aabbe35424df37f36dec"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::internal::round_robin_cache" ref="29d5ecd73b70aabbe35424df37f36dec" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, typename P = internal::pool_base&gt;<br>
- class tbb::interface6::memory_pool_allocator&lt; T, P &gt;</h3>
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface6::limiter_node&lt; T &gt;</h3>
 
-Meets "allocator" requirements of ISO C++ Standard, Section 20.1.5. 
+Forwards messages only if the threshold has not been reached. 
 <p>
+This node forwards items until its threshold is reached. It contains no buffering. If the downstream node rejects, the message is dropped. 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="86b072bbd0ed63d1d45a6a0b68d5eb4f"></a><!-- doxytag: member="tbb::flow::interface6::limiter_node::remove_successor" ref="86b072bbd0ed63d1d45a6a0b68d5eb4f" args="(receiver&lt; output_type &gt; &amp;r)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00299.html">tbb::flow::interface6::limiter_node</a>&lt; T &gt;::remove_successor           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00328.html">receiver</a>&lt; <a class="el" href="a00299.html#4f00571ff25954574ee922dfb630b8a9">output_type</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes a successor from this node. 
+<p>
+r.remove_predecessor(*this) is also called. 
+<p>
+Implements <a class="el" href="a00334.html#b713f48eb1634baaf7c960ded85bdfca">tbb::flow::interface6::sender&lt; T &gt;</a>.
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00530.html">memory_pool.h</a></ul>
+<li><a class="el" href="a00521.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2012 Intel Corporation.  All Rights Reserved.

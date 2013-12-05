@@ -150,7 +150,7 @@ $(COMMON_TARGETS):: % : $(addsuffix %,$(EXAMPLES_DIRS))
 # proxy rule for calling appropriate example
 $(EXAMPLES_TARGETS)::
 	@echo --------------------------------------------------
-	-$(MAKE) SHELL=$(SHELL) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)" CXXFLAGS="$(CXXFLAGS)"
+	-$(MAKE) target="$(target)" SHELL=$(SHELL) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)" CXXFLAGS="$(CXXFLAGS)"
 
 printenv:
 ifeq ($(tbb_os),windows)

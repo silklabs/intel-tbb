@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=sub_string_finder_extended
 ARGS=
 LIGHT_PROG=sub_string_finder
@@ -47,7 +48,12 @@ TBBLIB_DEBUG = -tbb
 endif
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -70,7 +76,7 @@ clean:
 	$(RM) sub_string_finder sub_string_finder_extended sub_string_finder_pretty *.o *.d
 
 test:
-	./$(PROG) $(ARGS)
+	$(run_cmd) ./$(PROG) $(ARGS)
 
 light_test:
 	./$(LIGHT_PROG) $(ARGS)

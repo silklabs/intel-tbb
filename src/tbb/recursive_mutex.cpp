@@ -103,7 +103,7 @@ bool recursive_mutex::scoped_lock::internal_try_acquire( recursive_mutex& m ) {
 
 void recursive_mutex::internal_construct() {
 #if _WIN32||_WIN64
-    InitializeCriticalSection(&impl);
+    InitializeCriticalSectionEx(&impl, 4000, 0);
     state = INITIALIZED;
 #else
     pthread_mutexattr_t mtx_attr;

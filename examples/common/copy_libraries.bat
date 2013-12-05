@@ -44,10 +44,11 @@ if ("%TBBROOT%") == ("") set TBBROOT=%~d0%~p0..\..\
 if ("%VS80COMNTOOLS%")  NEQ ("") set vc_dir=vc8
 if ("%VS90COMNTOOLS%")  NEQ ("") set vc_dir=vc9
 if ("%VS100COMNTOOLS%") NEQ ("") set vc_dir=vc10
+if ("%VS110COMNTOOLS%") NEQ ("") set vc_dir=vc11
 
 :: Are we standalone/oss or inside compiler?
-if exist "%TBBROOT%\bin\%arch%\vc8\tbb%postfix%.dll" set interim_path=bin\%arch%
-if exist "%TBBROOT%\..\redist\%arch%\tbb\vc8\tbb%postfix%.dll" set interim_path=..\redist\%arch%\tbb
+if exist "%TBBROOT%\bin\%arch%\vc9\tbb%postfix%.dll" set interim_path=bin\%arch%
+if exist "%TBBROOT%\..\redist\%arch%\tbb\vc9\tbb%postfix%.dll" set interim_path=..\redist\%arch%\tbb
 if ("%interim_path%") == ("") goto error
 
 :: Do we provide vc_mt binaries?

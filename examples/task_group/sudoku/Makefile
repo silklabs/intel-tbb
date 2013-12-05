@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=sudoku
 ARGS=4 input1 verbose
 PERF_RUN_ARGS=auto input1 silent
@@ -48,7 +49,12 @@ CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
 endif
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -63,7 +69,7 @@ clean:
 	$(RM) $(PROG) *.o *.d
 
 test:
-	./$(PROG) $(ARGS)
+	$(run_cmd) ./$(PROG) $(ARGS)
 
 perf_build: release
 

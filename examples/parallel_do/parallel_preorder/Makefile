@@ -25,6 +25,7 @@
 # the GNU General Public License.
 
 # GNU Makefile that builds and runs example.
+run_cmd=
 PROG=parallel_preorder
 ARGS=
 PERF_RUN_ARGS=auto silent 500000  100
@@ -35,7 +36,12 @@ CXX=icc
 endif # icc
 
 ifeq ($(shell uname), Linux)
+ifeq ($(target), android)
+LIBS+= --sysroot=$(SYSROOT)
+run_cmd=../../common/android.linux.launcher.sh
+else
 LIBS+= -lrt 
+endif
 endif
 
 all:	release test
@@ -50,8 +56,8 @@ clean:
 	$(RM) $(PROG) *.o *.d
 
 test:
-	./$(PROG) $(ARGS)
-	
+	$(run_cmd) ./$(PROG) $(ARGS)
+
 perf_build:	release
 
 perf_run:

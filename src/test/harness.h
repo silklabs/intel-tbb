@@ -93,6 +93,9 @@ int TestMain ();
     #undef HARNESS_NO_PARSE_COMMAND_LINE
     #define HARNESS_NO_PARSE_COMMAND_LINE 1
 #endif
+#if __TBB_WIN8UI_SUPPORT
+#include <thread>
+#endif
     #include <process.h>
 #else
     #include <pthread.h>
@@ -145,6 +148,23 @@ template<typename T> void suppress_unused_warning( const T& ) {}
 #define ASSERT(p,msg) (suppress_unused_warning(p), (void)0)
 #define ASSERT_WARNING(p,msg) (suppress_unused_warning(p), (void)0)
 #endif /* !HARNESS_NO_ASSERT */
+
+template<typename T, size_t N>
+inline size_t array_length(const T(&)[N])
+{
+   return N;
+}
+
+//TODO: remove this #if __TBB_INITIALIZER_LISTS_PRESENT
+//it looks like all other compilers except gcc issue warnings/errors then they see
+//declaration of zero sized array
+#if __TBB_INITIALIZER_LISTS_PRESENT
+template<typename T>
+inline size_t array_length(const T[0])
+{
+   return 0;
+}
+#endif //__TBB_INITIALIZER_LISTS_PRESENT
 
 #if !HARNESS_NO_PARSE_COMMAND_LINE
 
@@ -362,7 +382,7 @@ public:
     //! Wait for task to finish
     void wait_to_finish() {
 #if _WIN32||_WIN64
-        DWORD status = WaitForSingleObject( thread_handle, INFINITE );
+        DWORD status = WaitForSingleObjectEx( thread_handle, INFINITE, FALSE );
         ASSERT( status!=WAIT_FAILED, "WaitForSingleObject failed" );
         CloseHandle( thread_handle );
 #else
@@ -514,7 +534,15 @@ public:
 #endif /* !HARNESS_NO_ASSERT */
 
 #if _WIN32 || _WIN64
-    void Sleep ( int ms ) { ::Sleep(ms); }
+    void Sleep ( int ms ) { 
+#if !__TBB_WIN8UI_SUPPORT
+        ::Sleep(ms); 
+#else
+         std::chrono::milliseconds sleep_time( ms );
+         std::this_thread::sleep_for( sleep_time );
+#endif
+
+    }
 
     typedef DWORD tid_t;
     tid_t CurrentTid () { return GetCurrentThreadId(); }

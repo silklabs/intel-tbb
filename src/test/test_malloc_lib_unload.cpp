@@ -143,10 +143,11 @@ extern "C" size_t safer_scalable_msize (void *, size_t (*)(void*))
 #define PREFIX "lib"
 #if __APPLE__
 #define EXT ".dylib"
-#elif __linux__
-#define EXT __TBB_STRING(.so.TBB_COMPATIBLE_INTERFACE_VERSION)
-#elif __FreeBSD__ || __NetBSD__ || __sun || _AIX
+// Android SDK build system does not support .so file name versioning
+#elif __FreeBSD__ || __NetBSD__ || __sun || _AIX || __ANDROID__
 #define EXT ".so"
+#elif __linux__  // Order of these elif's matters!
+#define EXT __TBB_STRING(.so.TBB_COMPATIBLE_INTERFACE_VERSION)
 #else
 #error Unknown OS
 #endif

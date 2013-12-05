@@ -62,7 +62,7 @@ const size_t shared_size = 0;
 //! Return estimate of number of bytes of memory that this program is currently using.
 /* Returns 0 if not implemented on platform. */
 size_t GetMemoryUsage() { 
-#if _XBOX
+#if _XBOX || __TBB_WIN8UI_SUPPORT
     return 0;
 #elif _WIN32
     PROCESS_MEMORY_COUNTERS mem;

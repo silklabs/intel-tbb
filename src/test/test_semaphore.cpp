@@ -129,7 +129,7 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
 #include "../tbb/dynamic_link.cpp"
 
 void testOSVersion() {
-#ifdef RTL_SRWLOCK_INIT
+#if __TBB_USE_SRWLOCK
      OSVERSIONINFO osvi;
      BOOL bIsWindowsVistaOrLater;
 
@@ -140,11 +140,13 @@ void testOSVersion() {
      bIsWindowsVistaOrLater = (osvi.dwMajorVersion >= 6 );
 
      if( bIsWindowsVistaOrLater ) {
+        REMARK("Checking SRWLock is loaded\n");
+        tbb::internal::binary_semaphore s;
         ASSERT( (uintptr_t)tbb::internal::__TBB_init_binsem!=(uintptr_t)&tbb::internal::init_binsem_using_event, NULL );
         ASSERT( (uintptr_t)tbb::internal::__TBB_acquire_binsem!=(uintptr_t)&tbb::internal::acquire_binsem_using_event, NULL );
         ASSERT( (uintptr_t)tbb::internal::__TBB_release_binsem!=(uintptr_t)&tbb::internal::release_binsem_using_event, NULL );
      }
-#endif /* RTL_SRWLOCK_INIT */
+#endif /* __TBB_USE_SRWLOCK */
 }
 #endif /* _WIN32||_WIN64 */
 
@@ -296,6 +298,9 @@ void testProducerConsumer( unsigned totTokens, unsigned nTokens, unsigned pWait,
 
 int TestMain() {
     REMARK("Started\n");
+#if _WIN32||_WIN64
+    testOSVersion();
+#endif
     if(MaxThread > 0) {
         testBinarySemaphore( MaxThread );
         for(int semSize = 1; semSize <= MaxThread; ++semSize) {
@@ -303,9 +308,6 @@ int TestMain() {
                 testSemaphore( semSize, exThreads );
             }
         }
-#if _WIN32||_WIN64
-        testOSVersion();
-#endif
     }
     // Test producer/consumer with varying execution times and buffer sizes
     // ( total tokens, tokens in buffer, sleep for producer, sleep for consumer )

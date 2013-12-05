@@ -251,7 +251,12 @@ static void cleanObjectCache()
 }
 
 class TestInvalidBackrefs: public SimpleBarrier {
+#if __ANDROID__
+    // Android requires lower iters due to lack of virtual memory.
+    static const int BACKREF_GROWTH_ITERS = 50*1024;
+#else
     static const int BACKREF_GROWTH_ITERS = 200*1024;
+#endif
 
     static tbb::atomic<bool> backrefGrowthDone;
     static void *ptrs[BACKREF_GROWTH_ITERS];
@@ -446,32 +451,56 @@ void TestPools() {
     afterNumBackRef = allocatedBackRefCount();
     ASSERT(beforeNumBackRef==afterNumBackRef, "backreference leak detected");
 
-    // test usedSize/cachedSize and LOC bitmask correctness
-    void *p[5];
-    pool_create_v1(0, &pol, &mallocPool);
-    const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
-    p[3] = pool_malloc(mallocPool, minLargeObjectSize+2*largeBlockCacheStep);
-    for (int i=0; i<10; i++) {
-        p[0] = pool_malloc(mallocPool, minLargeObjectSize);
-        p[1] = pool_malloc(mallocPool, minLargeObjectSize+largeBlockCacheStep);
-        pool_free(mallocPool, p[0]);
-        pool_free(mallocPool, p[1]);
+    {
+        // test usedSize/cachedSize and LOC bitmask correctness
+        void *p[5];
+        pool_create_v1(0, &pol, &mallocPool);
+        const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
+        p[3] = pool_malloc(mallocPool, minLargeObjectSize+2*largeBlockCacheStep);
+        for (int i=0; i<10; i++) {
+            p[0] = pool_malloc(mallocPool, minLargeObjectSize);
+            p[1] = pool_malloc(mallocPool, minLargeObjectSize+largeBlockCacheStep);
+            pool_free(mallocPool, p[0]);
+            pool_free(mallocPool, p[1]);
+        }
+        ASSERT(loc->getUsedSize(), NULL);
+        pool_free(mallocPool, p[3]);
+        ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
+        const size_t maxLocalLOCSize = LocalLOC<3,30>::getMaxSize();
+        ASSERT(loc->getUsedSize() <= maxLocalLOCSize, NULL);
+        for (int i=0; i<3; i++)
+            p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+        size_t currUser = loc->getUsedSize();
+        ASSERT(!loc->getLOCSize() && currUser >= 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
+        p[4] = pool_malloc(mallocPool, minLargeObjectSize+3*largeBlockCacheStep);
+        ASSERT(loc->getUsedSize() - currUser >= minLargeObjectSize+3*largeBlockCacheStep, NULL);
+        pool_free(mallocPool, p[4]);
+        ASSERT(loc->getUsedSize() <= currUser+maxLocalLOCSize, NULL);
+        pool_reset(mallocPool);
+        ASSERT(!loc->getLOCSize() && !loc->getUsedSize(), NULL);
+        pool_destroy(mallocPool);
     }
-    ASSERT(loc->getUsedSize(), NULL);
-    pool_free(mallocPool, p[3]);
-    ASSERT(loc->getLOCSize() < 3*(minLargeObjectSize+largeBlockCacheStep)
-           && !loc->getUsedSize(), NULL);
-    for (int i=0; i<3; i++)
-        p[i] = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
-    size_t currUser = loc->getUsedSize();
-    ASSERT(!loc->getLOCSize() && currUser >= 3*(minLargeObjectSize+largeBlockCacheStep), NULL);
-    p[4] = pool_malloc(mallocPool, minLargeObjectSize+3*largeBlockCacheStep);
-    ASSERT(loc->getUsedSize() - currUser >= minLargeObjectSize+3*largeBlockCacheStep, NULL);
-    pool_free(mallocPool, p[4]);
-    ASSERT(loc->getUsedSize() == currUser, NULL);
-    pool_reset(mallocPool);
-    ASSERT(!loc->getLOCSize() && !loc->getUsedSize(), NULL);
-    pool_destroy(mallocPool);
+    // To test LOC we need bigger lists than released by current LocalLOC
+    //   in production code. Create special LocalLOC.
+    {
+        LocalLOC<2, 20> lLOC;
+        pool_create_v1(0, &pol, &mallocPool);
+        rml::internal::ExtMemoryPool *mPool = &((rml::internal::MemoryPool*)mallocPool)->extMemPool;
+        const LargeObjectCache *loc = &((rml::internal::MemoryPool*)mallocPool)->extMemPool.loc;
+        for (int i=0; i<22; i++) {
+            void *o = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+            bool ret = lLOC.put(((LargeObjectHdr*)o - 1)->memoryBlock, mPool);
+            ASSERT(ret, NULL);
+
+            o = pool_malloc(mallocPool, minLargeObjectSize+i*largeBlockCacheStep);
+            ret = lLOC.put(((LargeObjectHdr*)o - 1)->memoryBlock, mPool);
+            ASSERT(ret, NULL);
+        }
+        lLOC.clean(mPool);
+        ASSERT(!loc->getUsedSize(), NULL);
+
+        pool_destroy(mallocPool);
+    }
 }
 
 void TestObjectRecognition() {

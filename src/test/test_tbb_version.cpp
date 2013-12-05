@@ -28,6 +28,15 @@
 
 #include "tbb/tbb_stddef.h"
 
+#if __TBB_WIN8UI_SUPPORT
+// TODO: figure out how the test can be enabled for Metro
+#define HARNESS_NO_PARSE_COMMAND_LINE 1
+#include "harness.h"
+int TestMain() {
+    return Harness::Skipped;
+}
+#else
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -237,7 +246,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.1", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6100", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6101", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));
@@ -255,10 +264,19 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: BUILD_SUNCC", required));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
 #else // We use version_info_linux.sh for unsupported OSes
+#if __ANDROID__
+    vector->push_back(string_pair("TBB: BUILD_TARGET_OS", required));
+    vector->push_back(string_pair("TBB: BUILD_TARGET_KERNEL", required));
+#else
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
+#endif // !__ANDROID__
     vector->push_back(string_pair("TBB: BUILD_GCC", required));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
+#if __ANDROID__
+    vector->push_back(string_pair("TBB: BUILD_NDK", optional));
+#else
     vector->push_back(string_pair("TBB: BUILD_LIBC", required));
+#endif // !__ANDROID__
     vector->push_back(string_pair("TBB: BUILD_LD", required));
 #endif // OS
     vector->push_back(string_pair("TBB: BUILD_TARGET", required));
@@ -281,3 +299,4 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: Tools support", required));
     return;
 }
+#endif /* __TBB_WIN8UI_SUPPORT */

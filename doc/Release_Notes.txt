@@ -28,12 +28,14 @@ Hardware - Recommended
     Linux* Systems
 	Intel(R) Core(TM) 2 Duo processor or Intel(R) Xeon(R) processor
 	    or higher
-    Mac OS* X Systems
+	Intel(R) Xeon Phi(TM) coprocessor
+    OS X* Systems
 	Intel(R) Core(TM) 2 Duo processor or higher
 
 Hardware - Supported
 
     Intel(R) Pentium(R) 4 processor family and higher
+    Intel(R) Xeon Phi(TM) coprocessor
     Non Intel(R) processors compatible with the above processors
 
 Software - Minimum Requirements
@@ -49,23 +51,28 @@ Software - Recommended
 Software - Supported Operating Systems
 
     Microsoft* Windows* Systems
+	Microsoft* Windows* 8 (desktop apps only)
 	Microsoft* Windows* 7 SP1 
+	Microsoft* Windows* Server 2012
 	Microsoft* Windows* Server 2008 SP2
 	Microsoft* Windows* Server 2008 R2 SP1
 	Microsoft* Windows* XP Professional SP3
     Linux* Systems
 	Red Hat* Enterprise Linux* 6, 5
 	Fedora* 17
-	Debian* GNU/Linux* 6.0
+	Debian* 6.0
 	Ubuntu* 11.10, 12.04
 	SuSE* Linux* Enterprise Server 10, 11SP2
-    Mac OS* X Systems
-	Mac OS* X 10.7.4 or higher
+	Pardus* 2011.2 (x64 only)
+	Intel(R) Cluster Ready
+    OS X* Systems
+	OS X* 10.7.4 or higher
 
 Software - Supported Compilers
 
-    Intel(R) C++ Composer XE 2011 and higher
-    Intel(R) C++ Compiler 11.1
+    Intel(R) C++ Composer XE 2011 SP1 and higher
+    Microsoft* Visual C++ 11.0 (Microsoft* Visual Studio* 2012,
+	Windows* systems, Desktop UI & Desktop Apps only)
     Microsoft* Visual C++ 10.0 (Microsoft* Visual Studio* 2010,
 	Windows* systems only)
     Microsoft* Visual C++ 9.0 (Microsoft* Visual Studio* 2008,
@@ -73,9 +80,8 @@ Software - Supported Compilers
     For each supported Linux* operating system, the standard gcc
 	version provided with that operating system is supported,
 	including gcc 4.1 through 4.7
-    For each supported Mac OS* X operating system, the standard gcc
-	version provided with that operating system is supported,
-	including: 4.2 or higher (Xcode* tool suite 4.3 or higher)
+    Xcode* 4.3 and higher and command line tools (OS X* systems 
+        only)
 
 
 Known Issues
