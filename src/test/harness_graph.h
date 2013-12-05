@@ -272,7 +272,7 @@ struct harness_counting_receiver : public tbb::flow::receiver<T>, NoCopy {
 
     /* override */ tbb::task *try_put_task( const T & ) {
       ++my_count;
-      return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
+      return const_cast<tbb::task *>(tbb::flow::interface7::SUCCESSFULLY_ENQUEUED);
     }
 
     void validate() {
@@ -322,7 +322,7 @@ struct harness_mapped_receiver : public tbb::flow::receiver<T>, NoCopy {
       } else {
           ++my_count;
       }
-      return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
+      return const_cast<tbb::task *>(tbb::flow::interface7::SUCCESSFULLY_ENQUEUED);
     }
 
     void validate() {

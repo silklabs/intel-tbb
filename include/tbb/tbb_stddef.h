@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 2
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 7000
+#define TBB_INTERFACE_VERSION 7001
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -293,15 +293,16 @@ void __TBB_EXPORTED_FUNC runtime_warning( const char* format, ... );
 static void* const poisoned_ptr = reinterpret_cast<void*>(-1);
 
 //! Set p to invalid pointer value.
+//  Also works for regular (non-__TBB_atomic) pointers.
 template<typename T>
-inline void poison_pointer( T*& p ) { p = reinterpret_cast<T*>(poisoned_ptr); }
+inline void poison_pointer( T* __TBB_atomic & p ) { p = reinterpret_cast<T*>(poisoned_ptr); }
 
 /** Expected to be used in assertions only, thus no empty form is defined. **/
 template<typename T>
 inline bool is_poisoned( T* p ) { return p == reinterpret_cast<T*>(poisoned_ptr); }
 #else
 template<typename T>
-inline void poison_pointer( T* ) {/*do nothing*/}
+inline void poison_pointer( T* __TBB_atomic & ) {/*do nothing*/}
 #endif /* !TBB_USE_ASSERT */
 
 //! Cast between unrelated pointer types.

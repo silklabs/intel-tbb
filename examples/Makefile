@@ -114,7 +114,7 @@ else
     else
         export LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
         ifeq ($(offload),mic)
-            mic_path=$(tbb_build_dir)$(SLASH)$(tbb_mic_build_prefix)
+            mic_path=$(tbb_build_dir)$(SLASH)$(mic_build_prefix)
             export MIC_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LIBRARY_PATH)
             export MIC_LD_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LD_LIBRARY_PATH)
         else

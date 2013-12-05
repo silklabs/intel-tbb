@@ -71,7 +71,7 @@ namespace internal {
         
         //! Constructor for function_input_base
         function_input_base( graph &g, size_t max_concurrency, function_input_queue<input_type,A> *q = NULL )
-            : my_root_task(g.root_task()), my_max_concurrency(max_concurrency), my_concurrency(0),
+            : my_graph(g), my_max_concurrency(max_concurrency), my_concurrency(0),
               my_queue(q), forwarder_busy(false) {
             my_predecessors.set_owner(this);
             my_aggregator.initialize_handler(my_handler(this));
@@ -80,7 +80,7 @@ namespace internal {
         //! Copy constructor
         function_input_base( const function_input_base& src, function_input_queue<input_type,A> *q = NULL ) :
             receiver<Input>(), tbb::internal::no_assign(),
-            my_root_task( src.my_root_task), my_max_concurrency(src.my_max_concurrency),
+            my_graph(src.my_graph), my_max_concurrency(src.my_max_concurrency),
             my_concurrency(0), my_queue(q), forwarder_busy(false)
         {
             my_predecessors.set_owner(this);
@@ -133,7 +133,7 @@ namespace internal {
             forwarder_busy = false;
         }
 
-        task *my_root_task;
+        graph& my_graph;
         const size_t my_max_concurrency;
         size_t my_concurrency;
         function_input_queue<input_type, A> *my_queue;
@@ -288,15 +288,23 @@ namespace internal {
             return new_task;
         }
         
-       //! allocates a task to call apply_body( input )
-       inline task * create_body_task( const input_type &input ) {
-           return new(task::allocate_additional_child_of(*my_root_task))
-               apply_body_task_bypass < my_class, input_type >(*this, input);
-       }
+        //! allocates a task to call apply_body( input )
+        inline task * create_body_task( const input_type &input ) {
+            
+            task* tp = my_graph.root_task();
+            return (tp) ?
+                new(task::allocate_additional_child_of(*tp))
+                    apply_body_task_bypass < my_class, input_type >(*this, input) :
+                NULL;
+        }
 
        //! Spawns a task that calls apply_body( input )
        inline void spawn_body_task( const input_type &input ) {
-           FLOW_SPAWN(*create_body_task(input));
+           task* tp = create_body_task(input);
+           // tp == NULL => g.reset(), which shouldn't occur in concurrent context
+           if(tp) {
+               FLOW_SPAWN(*tp);
+           }
        }
         
        //! This is executed by an enqueued task, the "forwarder"
@@ -315,13 +323,18 @@ namespace internal {
        }
         
        inline task *create_forward_task() {
-           task *rval = new(task::allocate_additional_child_of(*my_root_task)) forward_task_bypass< my_class >(*this);
-           return rval;
+           task* tp = my_graph.root_task();
+           return (tp) ?
+               new(task::allocate_additional_child_of(*tp)) forward_task_bypass< my_class >(*this) :
+               NULL;
        }
 
        //! Spawns a task that calls forward()
        inline void spawn_forward_task() {
-           FLOW_SPAWN(*create_forward_task());
+           task* tp = create_forward_task();
+           if(tp) {
+               FLOW_SPAWN(*tp);
+           }
        }
     };  // function_input_base
 
@@ -374,7 +387,7 @@ namespace internal {
         function_body<input_type, output_type> *my_body;
         virtual broadcast_cache<output_type > &successors() = 0;
 
-    };
+    };  // function_input
 
     //! Implements methods for a function node that takes a type Input as input
     //  and has a tuple of output ports specified.  
@@ -434,7 +447,7 @@ namespace internal {
         multifunction_body<input_type, output_ports_type> *my_body;
         output_ports_type my_output_ports;
 
-    };
+    };  // multifunction_input
 
     // template to refer to an output port of a multifunction_node
     template<size_t N, typename MOP>
@@ -473,16 +486,16 @@ namespace internal {
         
         template< typename Body >
         continue_input( graph &g, Body& body )
-            : my_root_task(g.root_task()), 
+            : my_graph_ptr(&g), 
              my_body( new internal::function_body_leaf< input_type, output_type, Body>(body) ) { }
         
         template< typename Body >
         continue_input( graph &g, int number_of_predecessors, Body& body )
-            : continue_receiver( number_of_predecessors ), my_root_task(g.root_task()), 
+            : continue_receiver( number_of_predecessors ), my_graph_ptr(&g), 
              my_body( new internal::function_body_leaf< input_type, output_type, Body>(body) ) { }
 
         continue_input( const continue_input& src ) : continue_receiver(src), 
-            my_root_task(src.my_root_task), my_body( src.my_body->clone() ) {}
+            my_graph_ptr(src.my_graph_ptr), my_body( src.my_body->clone() ) {}
 
         ~continue_input() {
             delete my_body;
@@ -496,7 +509,7 @@ namespace internal {
 
     protected:
         
-        task *my_root_task;
+        graph* my_graph_ptr;
         function_body<input_type, output_type> *my_body;
         
         virtual broadcast_cache<output_type > &successors() = 0; 
@@ -510,12 +523,14 @@ namespace internal {
         
         //! Spawns a task that applies the body
         /* override */ task *execute( ) {
-            task *res = new ( task::allocate_additional_child_of( *my_root_task ) ) 
-                apply_body_task_bypass< continue_input< Output >, continue_msg >( *this, continue_msg() ); 
-            return res;
+            task* tp = my_graph_ptr->root_task();
+            return (tp) ?
+                new ( task::allocate_additional_child_of( *tp ) ) 
+                    apply_body_task_bypass< continue_input< Output >, continue_msg >( *this, continue_msg() ) :
+                NULL;
         }
 
-    };
+    };  // continue_input
         
     //! Implements methods for both executable and function nodes that puts Output to its successors
     template< typename Output >
@@ -554,7 +569,7 @@ namespace internal {
         broadcast_cache<output_type> my_successors;
         broadcast_cache<output_type > &successors() { return my_successors; } 
         
-    };
+    };  // function_output
 
     template< typename Output >
     class multifunction_output : public function_output<Output> {
@@ -572,7 +587,7 @@ namespace internal {
             if(res != SUCCESSFULLY_ENQUEUED) FLOW_SPAWN(*res);
             return true;
         }
-    };
+    };  // multifunction_output
 
 }  // internal
 

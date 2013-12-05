@@ -43,6 +43,10 @@
 #endif // _WIN32 || _WIN64
 
 #define HARNESS_NO_PARSE_COMMAND_LINE 1
+// LD_PRELOAD mechanism is broken in offload
+#if __TBB_MIC_OFFLOAD
+#define HARNESS_SKIP_TEST 1
+#endif
 #include "harness.h"
 
 #if __linux__

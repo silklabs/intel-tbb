@@ -324,9 +324,17 @@ int main(int argc, char* argv[]) {
     for (int i=1; i< argc; i++) {
         if (strcmp((char*)*(argv+i),"-s")==0)
         {
+#if __INTEL_COMPILER == 1400 && __linux__
+            // Workaround for Intel(R) Compiler XE, version 14.0.0.080:
+            // unable to call setSystemAllocs() in such configuration.
+            REPORT("Known issue: Standard allocator testing is not supported.\n");
+            REPORT( "skip\n" );
+            return 0;
+#else
             setSystemAllocs();
             argC--;
             break;
+#endif
         }
     }
 
@@ -378,10 +386,17 @@ int main(int argc, char* argv[]) {
 
     for( int p=MaxThread; p>=MinThread; --p ) {
         REMARK("testing with %d threads\n", p );
-        Harness::SpinBarrier *barrier = new Harness::SpinBarrier(p);
-        NativeParallelFor( p, RoundRobin(p, barrier, Verbose) );
-        delete barrier;
+        for (int limit=0; limit<2; limit++) {
+            int ret = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT,
+                                               16*1024*limit);
+            ASSERT(ret==TBBMALLOC_OK, NULL);
+            Harness::SpinBarrier *barrier = new Harness::SpinBarrier(p);
+            NativeParallelFor( p, RoundRobin(p, barrier, Verbose) );
+            delete barrier;
+        }
     }
+    int ret = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, 0);
+    ASSERT(ret==TBBMALLOC_OK, NULL);
     if( !error_occurred )
         REPORT("done\n");
     return 0;
@@ -1031,4 +1046,3 @@ void CMemTest::RunAllTests(int total_threads)
 }
 
 #endif /* __TBB_WIN8UI_SUPPORT	 */
-

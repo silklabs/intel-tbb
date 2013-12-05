@@ -88,6 +88,4 @@ LINK_MALLOC.LIB = $(MALLOC.LIB)
 
 MALLOCPROXY.DLL = libtbbmalloc_proxy$(DEBUG_SUFFIX).$(DLL)
 
-TBB_NOSTRICT=1
-
 TEST_LAUNCHER=sh $(tbb_root)/build/test_launcher.sh $(largs)

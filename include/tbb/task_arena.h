@@ -31,6 +31,9 @@
 
 #include "task.h"
 #include "tbb_exception.h"
+#if TBB_USE_THREADING_TOOLS
+#include "atomic.h" // for as_atomic
+#endif
 
 #if __TBB_TASK_ARENA
 
@@ -45,21 +48,10 @@ namespace internal {
 } // namespace internal
 //! @endcond
 
-namespace interface6 {
+namespace interface7 {
 //! @cond INTERNAL
 namespace internal {
-using namespace tbb::internal;
-
-template<typename F>
-class enqueued_function_task : public task { // TODO: reuse from task_group?
-    F my_func;
-    /*override*/ task* execute() {
-        my_func();
-        return NULL;
-    }
-public:
-    enqueued_function_task ( const F& f ) : my_func(f) {}
-};
+using namespace tbb::internal; //e.g. function_task from task.h
 
 class delegate_base : no_assign {
 public:
@@ -76,75 +68,99 @@ class delegated_function : public delegate_base {
 public:
     delegated_function ( F& f ) : my_func(f) {}
 };
-} // namespace internal
-//! @endcond
 
-/** 1-to-1 proxy representation class of scheduler's arena
- * Constructors set up settings only, real construction is deferred till the first method invocation
- * TODO: A side effect of this is that it's impossible to create a const task_arena object. Rethink?
- * Destructor only removes one of the references to the inner arena representation.
- * Final destruction happens when all the references (and the work) are gone.
- */
-class task_arena {
-    friend class internal::task_scheduler_observer_v3;
+class task_arena_base {
+protected:
+    //! NULL if not currently initialized.
+    internal::arena* my_arena;
+
+#if __TBB_TASK_GROUP_CONTEXT
+    //! default context of the arena
+    task_group_context *my_context;
+#endif
+
     //! Concurrency level for deferred initialization
     int my_max_concurrency;
 
     //! Reserved master slots
     unsigned my_master_slots;
 
-    //! NULL if not currently initialized.
-    internal::arena* my_arena;
+    //! Reserved for future use
+    intptr_t my_reserved;
 
-    // Initialization flag enabling compiler to throw excessive lazy initialization checks
-    bool my_initialized;
+    task_arena_base(int max_concurrency, unsigned reserved_for_masters)
+        : my_arena(0)
+#if __TBB_TASK_GROUP_CONTEXT
+        , my_context(0)
+#endif
+        , my_max_concurrency(max_concurrency)
+        , my_master_slots(reserved_for_masters)
+        , my_reserved(0)
+        {}
 
-    // const methods help to optimize the !my_arena check TODO: check, IDEA: move to base-class?
     void __TBB_EXPORTED_METHOD internal_initialize( );
     void __TBB_EXPORTED_METHOD internal_terminate( );
     void __TBB_EXPORTED_METHOD internal_enqueue( task&, intptr_t ) const;
-    void __TBB_EXPORTED_METHOD internal_execute( internal::delegate_base& ) const;
+    void __TBB_EXPORTED_METHOD internal_execute( delegate_base& ) const;
     void __TBB_EXPORTED_METHOD internal_wait() const;
-
+    static int __TBB_EXPORTED_FUNC internal_current_slot();
 public:
     //! Typedef for number of threads that is automatic.
     static const int automatic = -1; // any value < 1 means 'automatic'
 
+};
+
+} // namespace internal
+//! @endcond
+
+/** 1-to-1 proxy representation class of scheduler's arena
+ * Constructors set up settings only, real construction is deferred till the first method invocation
+ * Destructor only removes one of the references to the inner arena representation.
+ * Final destruction happens when all the references (and the work) are gone.
+ */
+class task_arena : public internal::task_arena_base {
+    friend class tbb::internal::task_scheduler_observer_v3;
+    bool my_initialized;
+
+public:
     //! Creates task_arena with certain concurrency limits
-    /** @arg max_concurrency specifies total number of slots in arena where threads work
+    /** Sets up settings only, real construction is deferred till the first method invocation
+     *  @arg max_concurrency specifies total number of slots in arena where threads work
      *  @arg reserved_for_masters specifies number of slots to be used by master threads only.
      *       Value of 1 is default and reflects behavior of implicit arenas.
      **/
     task_arena(int max_concurrency = automatic, unsigned reserved_for_masters = 1)
-        : my_max_concurrency(max_concurrency)
-        , my_master_slots(reserved_for_masters)
-        , my_arena(0)
+        : task_arena_base(max_concurrency, reserved_for_masters)
         , my_initialized(false)
     {}
 
     //! Copies settings from another task_arena
-    task_arena(const task_arena &s)
-        : my_max_concurrency(s.my_max_concurrency) // copy settings
-        , my_master_slots(s.my_master_slots)
-        , my_arena(0) // but not the reference or instance
+    task_arena(const task_arena &s) // copy settings but not the reference or instance
+        : task_arena_base(s.my_max_concurrency, s.my_master_slots)
         , my_initialized(false)
     {}
 
+    //! Forces allocation of the resources for the task_arena as specified in constructor arguments
     inline void initialize() {
         if( !my_initialized ) {
             internal_initialize();
+#if TBB_USE_THREADING_TOOLS
+            // Threading tools respect lock prefix but report false-positive data-race via plain store
+            internal::as_atomic(my_initialized).fetch_and_store<release>(true);
+#else
             my_initialized = true;
+#endif //TBB_USE_THREADING_TOOLS
         }
     }
 
     //! Overrides concurrency level and forces initialization of internal representation
     inline void initialize(int max_concurrency, unsigned reserved_for_masters = 1) {
-        __TBB_ASSERT( !my_arena, "task_arena was initialized already");
+        __TBB_ASSERT( !my_arena, "Impossible to modify settings of an already initialized task_arena");
         if( !my_initialized ) {
             my_max_concurrency = max_concurrency;
             my_master_slots = reserved_for_masters;
             initialize();
-        } // TODO: else throw?
+        }
     }
 
     //! Removes the reference to the internal arena representation.
@@ -171,7 +187,11 @@ public:
     template<typename F>
     void enqueue( const F& f ) {
         initialize();
-        internal_enqueue( *new( task::allocate_root() ) internal::enqueued_function_task<F>(f), 0 );
+#if __TBB_TASK_GROUP_CONTEXT
+        internal_enqueue( *new( task::allocate_root(*my_context) ) internal::function_task<F>(f), 0 );
+#else
+        internal_enqueue( *new( task::allocate_root() ) internal::function_task<F>(f), 0 );
+#endif
     }
 
 #if __TBB_TASK_PRIORITY
@@ -181,7 +201,11 @@ public:
     void enqueue( const F& f, priority_t p ) {
         __TBB_ASSERT( p == priority_low || p == priority_normal || p == priority_high, "Invalid priority level value" );
         initialize();
-        internal_enqueue( *new( task::allocate_root() ) internal::enqueued_function_task<F>(f), (intptr_t)p );
+#if __TBB_TASK_GROUP_CONTEXT
+        internal_enqueue( *new( task::allocate_root(*my_context) ) internal::function_task<F>(f), (intptr_t)p );
+#else
+        internal_enqueue( *new( task::allocate_root() ) internal::function_task<F>(f), (intptr_t)p );
+#endif
     }
 #endif// __TBB_TASK_PRIORITY
 
@@ -205,21 +229,25 @@ public:
         internal_execute( d );
     }
 
+#if __TBB_EXTRA_DEBUG
     //! Wait for all work in the arena to be completed
     //! Even submitted by other application threads
     //! Joins arena if/when possible (in the same way as execute())
-    void wait_until_empty() {
+    void debug_wait_until_empty() {
         initialize();
         internal_wait();
     }
+#endif //__TBB_EXTRA_DEBUG
 
     //! Returns the index, aka slot number, of the calling thread in its current arena
-    static int __TBB_EXPORTED_FUNC current_slot();
+    inline static int current_slot() {
+        return internal_current_slot();
+    }
 };
 
 } // namespace interfaceX
 
-using interface6::task_arena;
+using interface7::task_arena;
 
 } // namespace tbb
 

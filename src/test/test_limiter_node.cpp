@@ -42,7 +42,7 @@ struct serial_receiver : public tbb::flow::receiver<T> {
 
    /* override */ tbb::task *try_put_task( const T &v ) {
        ASSERT( next_value++  == v, NULL );
-       return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
+       return const_cast<tbb::task *>(tbb::flow::interface7::SUCCESSFULLY_ENQUEUED);
    }
 
    /*override*/void reset_receiver() {next_value = T(0);}
@@ -57,7 +57,7 @@ struct parallel_receiver : public tbb::flow::receiver<T> {
 
    /* override */ tbb::task *try_put_task( const T &/*v*/ ) {
        ++my_count;
-       return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
+       return const_cast<tbb::task *>(tbb::flow::interface7::SUCCESSFULLY_ENQUEUED);
    }
 
    /*override*/void reset_receiver() {my_count = 0;}
@@ -206,11 +206,113 @@ int test_serial() {
    return 0;
 }
 
+// reported bug in limiter (http://software.intel.com/en-us/comment/1752355)
+#define DECREMENT_OUTPUT 1  // the port number of the decrement output of the multifunction_node
+#define LIMITER_OUTPUT 0    // port number of the integer output
+
+typedef tbb::flow::multifunction_node<int, tbb::flow::tuple<int,tbb::flow::continue_msg> > mfnode_type;
+
+tbb::atomic<size_t> emit_count;
+tbb::atomic<size_t> emit_sum;
+tbb::atomic<size_t> receive_count;
+tbb::atomic<size_t> receive_sum;
+
+struct mfnode_body {
+    int max_cnt;
+    tbb::atomic<int>* my_cnt;
+    mfnode_body(const int& _max, tbb::atomic<int> &_my) : max_cnt(_max), my_cnt(&_my)  { }
+    void operator()(const int &/*in*/, mfnode_type::output_ports_type &out) {
+        int lcnt = ++(*my_cnt);
+        if(lcnt > max_cnt) {
+            return;
+        }
+        // put one continue_msg to the decrement of the limiter.
+        if(!tbb::flow::get<DECREMENT_OUTPUT>(out).try_put(tbb::flow::continue_msg())) {
+            ASSERT(false,"Unexpected rejection of decrement");
+        }
+        {
+            // put messages to the input of the limiter_node until it rejects.
+            while( tbb::flow::get<LIMITER_OUTPUT>(out).try_put(lcnt) ) {
+                emit_sum += lcnt;
+                ++emit_count;
+            }
+        }
+    }
+};
+
+struct fn_body {
+    int operator()(const int &in) {
+        receive_sum += in;
+        ++receive_count;
+        return in;
+    }
+};
+
+//                   +------------+
+//    +---------+    |            v
+//    | mf_node |0---+       +----------+          +----------+
+// +->|         |1---------->| lim_node |--------->| fn_node  |--+
+// |  +---------+            +----------+          +----------+  |
+// |                                                             |
+// |                                                             |
+// +-------------------------------------------------------------+
+//
+void
+test_multifunction_to_limiter(int _max, int _nparallel) {
+    tbb::flow::graph g;
+    emit_count = 0;
+    emit_sum = 0;
+    receive_count = 0;
+    receive_sum = 0;
+    tbb::atomic<int> local_cnt;
+    local_cnt = 0;
+    mfnode_type mf_node(g, tbb::flow::unlimited, mfnode_body(_max, local_cnt));
+    tbb::flow::function_node<int, int> fn_node(g, tbb::flow::unlimited, fn_body());
+    tbb::flow::limiter_node<int> lim_node(g, _nparallel);
+    tbb::flow::make_edge(tbb::flow::output_port<LIMITER_OUTPUT>(mf_node), lim_node);
+    tbb::flow::make_edge(tbb::flow::output_port<DECREMENT_OUTPUT>(mf_node), lim_node.decrement);
+    tbb::flow::make_edge(lim_node, fn_node);
+    tbb::flow::make_edge(fn_node, mf_node);
+    mf_node.try_put(1);
+    g.wait_for_all();
+    ASSERT(emit_count == receive_count, "counts do not match");
+    ASSERT(emit_sum == receive_sum, "sums do not match");
+
+    // reset, test again
+    g.reset();
+    emit_count = 0;
+    emit_sum = 0;
+    receive_count = 0;
+    receive_sum = 0;
+    local_cnt = 0;;
+    mf_node.try_put(1);
+    g.wait_for_all();
+    ASSERT(emit_count == receive_count, "counts do not match");
+    ASSERT(emit_sum == receive_sum, "sums do not match");
+}
+
+void
+test_continue_msg_reception() {
+    tbb::flow::graph g;
+    tbb::flow::limiter_node<int> ln(g,2);
+    tbb::flow::queue_node<int>   qn(g);
+    tbb::flow::make_edge(ln, qn);
+    ln.decrement.try_put(tbb::flow::continue_msg());
+    ln.try_put(42);
+    g.wait_for_all();
+    int outint;
+    ASSERT(qn.try_get(outint) && outint == 42, "initial put to decrement stops node");
+}
+
 int TestMain() { 
     for (int i = 1; i <= 8; ++i) {
         tbb::task_scheduler_init init(i);
         test_serial<int>();
         test_parallel<int>(i);
     }
+    test_continue_msg_reception();
+    test_multifunction_to_limiter(30,3);
+    test_multifunction_to_limiter(300,13);
+    test_multifunction_to_limiter(3000,1);
    return Harness::Done;
 }

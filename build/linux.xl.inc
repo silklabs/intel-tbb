@@ -42,8 +42,6 @@ DYLIB_KEY = -qmkshrobj
 EXPORT_KEY = -Wl,--version-script,
 LIBDL = -ldl
 
-TBB_NOSTRICT = 1
-
 CPLUS = xlc++_r
 CONLY = xlc_r
 LIB_LINK_FLAGS = $(DYLIB_KEY) -Wl,-soname=$(BUILDING_LIBRARY)
@@ -95,7 +93,7 @@ ifeq (ppc32,$(arch))
     LIB_LINK_FLAGS += -q32
 endif
 
-ifeq (bgp,$(arch))
+ifeq (bg,$(arch))
     CPLUS = bgxlC_r
     CONLY = bgxlc_r
 endif

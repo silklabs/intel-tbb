@@ -236,7 +236,9 @@ class AllLocalCaches {
 public:
     void registerThread(TLSRemote *tls);
     void unregisterThread(TLSRemote *tls);
-    bool cleanup(ExtMemoryPool *extPool);
+    bool cleanup(ExtMemoryPool *extPool, bool cleanOnlyUnused);
+    void markUnused();
+    void reset() { head = NULL; }
 };
 
 /* cache blocks in range [MinSize; MaxSize) in bins with CacheStep
@@ -352,7 +354,7 @@ public:
 
     void rollbackCacheState(size_t size);
     uintptr_t cleanupCacheIfNeeded(ExtMemoryPool *extMemPool, uintptr_t currTime);
-    bool regularCleanup(Backend *backend, uintptr_t currAge);
+    bool regularCleanup(Backend *backend, uintptr_t currAge, bool doThreshDecr);
     bool cleanAll(Backend *backend);
     void reset() {
         tooLargeLOC = 0;
@@ -396,19 +398,22 @@ private:
     */
     uintptr_t cacheCurrTime;
 
+                     // memory pool that owns this LargeObjectCache,
+    ExtMemoryPool *extMemPool; // strict 1:1 relation, never changed
+
     static int sizeToIdx(size_t size);
-    bool doRegularCleanup(Backend *backend, uintptr_t currTime);
+    bool doCleanup(uintptr_t currTime, bool doThreshDecr);
 public:
-    void put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock);
-    void putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *head);
-    LargeMemoryBlock *get(Backend *backend, size_t size);
+    void init(ExtMemoryPool *memPool) { extMemPool = memPool; }
+    void put(LargeMemoryBlock *largeBlock);
+    void putList(LargeMemoryBlock *head);
+    LargeMemoryBlock *get(size_t size);
 
     void rollbackCacheState(size_t size);
-    void cleanupCacheIfNeeded(Backend *backend, uintptr_t currTime);
-    void cleanupCacheIfNeededOnRange(Backend *backend, uintptr_t range, uintptr_t currTime);
-    bool regularCleanup(Backend *backend) {
-        return doRegularCleanup(backend, FencedLoad((intptr_t&)cacheCurrTime));
-    }
+    void cleanupCacheIfNeeded(uintptr_t currTime);
+    void cleanupCacheIfNeededOnRange(uintptr_t range, uintptr_t currTime);
+    bool decreasingCleanup();
+    bool regularCleanup();
     bool cleanAll(Backend *backend);
     void reset() {
         largeCache.reset();
@@ -556,6 +561,9 @@ private:
         // TODO: support other page sizes
         maxBinned_HugePage = 4*1024*1024UL
     };
+    enum {
+        VALID_BLOCK_IN_BIN = 1 // valid block added to bin, not returned as result
+    };
 public:
     static const int freeBinsNum =
         (maxBinned_HugePage-minBinnedSize)/LargeObjectCache::largeBlockCacheStep + 1;
@@ -580,18 +588,22 @@ public:
         void reset() { head = tail = 0; }
 #if __TBB_MALLOC_BACKEND_STAT
         size_t countFreeBlocks();
+        void reportStat(FILE *f);
 #endif
         bool empty() const { return !head; }
     };
 
-    // array of bins accomplished bitmask for fast finding of non-empty bins
+    // array of bins supplemented with bitmask for fast finding of non-empty bins
     class IndexedBins {
         BitMaskMin<Backend::freeBinsNum> bitMask;
         Bin                           freeBins[Backend::freeBinsNum];
+        FreeBlock *getFromBin(int binIdx, BackendSync *sync, size_t size,
+                              bool resSlabAligned, bool alignedBin, bool wait,
+                              int *resLocked);
     public:
-        FreeBlock *getBlock(int binIdx, BackendSync *sync, size_t size,
-                            bool resSlabAligned, bool alignedBin, bool wait,
-                            int *resLocked);
+        FreeBlock *findBlock(int nativeBin, BackendSync *sync, size_t size,
+                             bool resSlabAligned, bool alignedBin, int *numOfLockedBins);
+        bool tryReleaseRegions(int binIdx, Backend *backend);
         void lockRemoveBlock(int binIdx, FreeBlock *fBlock);
         void addBlock(int binIdx, FreeBlock *fBlock, size_t blockSz, bool addToTail);
         bool tryAddBlock(int binIdx, FreeBlock *fBlock, bool addToTail);
@@ -605,13 +617,6 @@ public:
 #endif
         void reset();
     };
-    // number of OS/pool callback calls for more memory
-    class AskMemFromOSCounter {
-        intptr_t cnt;
-    public:
-        void OSasked() { AtomicIncrement(cnt); }
-        intptr_t get() const { return FencedLoad(cnt); }
-    };
 
 private:
     ExtMemoryPool *extMemPool;
@@ -623,6 +628,8 @@ private:
     BackendSync    bkndSync;
     // semaphore protecting adding more more memory from OS
     MemExtendingSema memExtendingSema;
+    size_t         totalMemSize,
+                   memSoftLimit;
 
     // Using of maximal observed requested size allows descrease
     // memory consumption for small requests and descrease fragmentation
@@ -631,21 +638,22 @@ private:
     size_t         maxRequestedSize;
     void correctMaxRequestSize(size_t requestSize);
 
-    size_t addNewRegion(size_t rawSize, bool exact);
-    FreeBlock *findBlockInRegion(MemRegion *region);
-    void startUseBlock(MemRegion *region, FreeBlock *fBlock);
+    FreeBlock *addNewRegion(size_t rawSize, bool exact, bool addToBin);
+    FreeBlock *findBlockInRegion(MemRegion *region, size_t exactBlockSize);
+    void startUseBlock(MemRegion *region, FreeBlock *fBlock, bool addToBin);
     void releaseRegion(MemRegion *region);
 
-    bool askMemFromOS(size_t totalReqSize, intptr_t startModifiedCnt,
-                      int *lockedBinsThreshold,
-                      int numOfLockedBins, bool *largeBinsUpdated);
+    FreeBlock *askMemFromOS(size_t totalReqSize, intptr_t startModifiedCnt,
+                            int *lockedBinsThreshold, int numOfLockedBins);
     FreeBlock *genericGetBlock(int num, size_t size, bool resSlabAligned);
     void genericPutBlock(FreeBlock *fBlock, size_t blockSz);
-    FreeBlock *getFromAlignedSpace(int binIdx, int num, size_t size, bool resSlabAligned, bool wait, int *locked);
-    FreeBlock *getFromBin(int binIdx, int num, size_t size, bool resSlabAligned, int *locked);
+    FreeBlock *splitUnalignedBlock(FreeBlock *fBlock, int num, size_t size,
+                              bool needAlignedRes);
+    FreeBlock *splitAlignedBlock(FreeBlock *fBlock, int num, size_t size,
+                            bool needAlignedRes);
 
     FreeBlock *doCoalesc(FreeBlock *fBlock, MemRegion **memRegion);
-    void coalescAndPutList(FreeBlock *head, bool forceCoalescQDrop);
+    bool coalescAndPutList(FreeBlock *head, bool forceCoalescQDrop);
     bool scanCoalescQ(bool forceCoalescQDrop);
     void coalescAndPut(FreeBlock *fBlock, size_t blockSz);
 
@@ -655,6 +663,7 @@ private:
     void freeRawMem(void *object, size_t size) const;
 
     void putLargeBlock(LargeMemoryBlock *lmb);
+    void releaseCachesToLimit();
 public:
     void verify();
 #if __TBB_MALLOC_BACKEND_STAT
@@ -662,10 +671,11 @@ public:
 #endif
     bool bootstrap(ExtMemoryPool *extMemoryPool) {
         extMemPool = extMemoryPool;
-        return addNewRegion(2*1024*1024, /*exact=*/false);
+        return addNewRegion(2*1024*1024, /*exact=*/false, /*addToBin=*/true);
     }
     void reset();
     bool destroy();
+    bool clean(); // clean on caches cleanup
 
     BlockI *getSlabBlock(int num) {
         BlockI *b = (BlockI*)
@@ -684,7 +694,14 @@ public:
     LargeMemoryBlock *getLargeBlock(size_t size);
     void returnLargeObject(LargeMemoryBlock *lmb);
 
-    AskMemFromOSCounter askMemFromOSCounter;
+    void setRecommendedMaxSize(size_t softLimit) {
+        memSoftLimit = softLimit;
+        releaseCachesToLimit();
+    }
+
+#if __TBB_MALLOC_WHITEBOX_TEST
+    size_t getTotalMemSize() const { return totalMemSize; }
+#endif
 private:
     static int sizeToBin(size_t size) {
         if (size >= maxBinned_HugePage)
@@ -699,9 +716,9 @@ private:
     }
 #if __TBB_MALLOC_BACKEND_STAT
     static size_t binToSize(int bin) {
-        MALLOC_ASSERT(bin < HUGE_BIN, "Invalid bin.");
+        MALLOC_ASSERT(bin <= HUGE_BIN, "Invalid bin.");
 
-        return bin*largeBlockCacheStep + minBinnedSize;
+        return bin*LargeObjectCache::largeBlockCacheStep + minBinnedSize;
     }
 #endif
     static bool toAlignedBin(FreeBlock *block, size_t size) {
@@ -755,6 +772,7 @@ struct ExtMemoryPool {
     bool hardCachesCleanup();
     void reset() {
         loc.reset();
+        allLocalCaches.reset();
         tlsPointerKey.~TLSKey();
         backend.reset();
     }

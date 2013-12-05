@@ -40,8 +40,6 @@ DYLIB_KEY = -shared
 EXPORT_KEY = -Wl,--version-script,
 LIBDL = -ldl
 
-TBB_NOSTRICT = 1
-
 CPLUS = g++
 CONLY = gcc
 LIB_LINK_FLAGS = $(DYLIB_KEY) -Wl,-soname=$(BUILDING_LIBRARY)
@@ -104,7 +102,7 @@ ifeq (ppc32,$(arch))
     LIB_LINK_FLAGS += -m32
 endif
 
-ifeq (bgp,$(arch))
+ifeq (bg,$(arch))
     CPLUS = mpicxx
     CONLY = mpicc
 endif

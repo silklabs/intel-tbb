@@ -106,6 +106,7 @@ function doWork() {
 			var vc90=/MSVCR90\.DLL/mgi;
 			var vc100=/MSVCR100\.DLL/mgi;
 			var vc110=/MSVCR110\.DLL/mgi;
+			var vc120=/MSVCR120\.DLL/mgi;
 			var psdk=/MSVCRT\.DLL/mgi;
 			if ( mapContext.match(vc71) ) {
 				WScript.Echo( "vc7.1" );
@@ -117,6 +118,8 @@ function doWork() {
 				WScript.Echo( "vc10" );
 			} else if ( mapContext.match(vc110) ) {
 				WScript.Echo( "vc11" );
+			} else if ( mapContext.match(vc120) ) {
+				WScript.Echo( "vc12" );
 			} else {
 				WScript.Echo( "unknown" );
 			}

@@ -139,16 +139,16 @@ public:
     }
 #endif //__TBB_TASK_ARENA
 
+    //! Destructor additionally protects concurrent on_scheduler_leaving notification
+    // It is recommended to disable observation before destructor of a derived class starts,
+    // otherwise it can lead to concurrent notification callback on partly destroyed object
+    virtual ~task_scheduler_observer() { if(my_proxy) observe(false); }
+
     //! The callback can be invoked in a worker thread before it leaves an arena.
     /** If it returns false, the thread remains in the arena. Will not be called for masters
         or if the worker leaves arena due to rebalancing or priority changes, etc.
         NOTE: The preview library must be linked for this method to take effect **/
     virtual bool on_scheduler_leaving() { return true; }
-
-    //! Destructor additionally protects concurrent on_scheduler_leaving notification
-    // It is recommended to disable observation before destructor of a derived class starts,
-    // otherwise it can lead to concurrent notification callback on partly destroyed object
-    virtual ~task_scheduler_observer() { if(my_proxy) observe(false); }
 };
 
 } //namespace interface6

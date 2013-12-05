@@ -45,22 +45,20 @@
 #include "../rml/include/rml_tbb.h"
 #include "mailbox.h"
 #include "observer_proxy.h"
+#include "market.h"
+#include "governor.h"
 #if __TBB_TASK_ARENA
 #include "concurrent_monitor.h"
 #endif
 
 namespace tbb {
 
-namespace interface6 {
-class task_arena;
-}
 class task_group_context;
 class allocate_root_with_context_proxy;
 
 namespace internal {
 
 class task_scheduler_observer_v3;
-class governor;
 class arena;
 template<typename SchedulerTraits> class custom_scheduler;
 
@@ -192,12 +190,10 @@ private:
     friend class tbb::task_group_context;
     friend class allocate_root_with_context_proxy;
     friend class intrusive_list<arena>;
-#if __TBB_TASK_ARENA
-    friend class tbb::interface6::task_arena; // included through in scheduler_common.h
-    friend class interface6::delegated_task;
-    friend class interface6::wait_task;
-    friend struct interface6::wait_body;
-#endif //__TBB_TASK_ARENA
+    friend class interface7::internal::task_arena_base; // declared in scheduler_common.h
+    friend class interface7::internal::delegated_task;
+    friend class interface7::internal::wait_task;
+    friend struct interface7::internal::wait_body;
 
     typedef padded<arena_base> base_type;
 
@@ -289,15 +285,6 @@ private:
     arena_slot my_slots[1];
 }; // class arena
 
-} // namespace internal
-} // namespace tbb
-
-#include "market.h"
-#include "scheduler_common.h"
-#include "governor.h"
-
-namespace tbb {
-namespace internal {
 
 template<bool is_master>
 inline void arena::on_thread_leaving ( ) {

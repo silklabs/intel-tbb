@@ -146,6 +146,11 @@ extern "C" void threadDtor(void*) {
     scalable_free(scalable_malloc(8));
 }
 
+inline bool intersectingObjects(const void *p1, const void *p2, size_t n)
+{
+    return (size_t)labs((uintptr_t)p1 - (uintptr_t)p2) < n;
+}
+
 struct TestThread: NoAssign {
     TestThread(int ) {}
 
@@ -155,7 +160,8 @@ struct TestThread: NoAssign {
         currSmall = scalable_malloc(8);
         ASSERT(!prevSmall || currSmall==prevSmall, "Possible memory leak");
         currLarge = scalable_malloc(32*1024);
-        ASSERT(!prevLarge || currLarge==prevLarge, "Possible memory leak");
+        // intersectingObjects takes into account object shuffle
+        ASSERT(!prevLarge || intersectingObjects(currLarge, prevLarge, 32*1024), "Possible memory leak");
         pthread_key_create( &key, &threadDtor );
         pthread_setspecific(key, (const void*)42);
     }

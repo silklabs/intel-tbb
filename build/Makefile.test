@@ -34,6 +34,7 @@ default: test_tbb_plain test_tbb_openmp test_tbb_cilk test_tbb_old
 tbb_root ?= $(TBBROOT)
 BUILDING_PHASE=1
 TEST_RESOURCE = $(TBB.RES)
+TESTFILE=test
 include $(tbb_root)/build/common.inc
 DEBUG_SUFFIX=$(findstring _debug,$(call cross_cfg,_$(cfg)))
 
@@ -45,6 +46,9 @@ VPATH = $(tbb_root)/src/tbb/$(ASSEMBLY_SOURCE) $(tbb_root)/src/tbb $(tbb_root)/s
 TEST_USES_TBB=1 # it can be set to 0 for individual tests that do not depend on TBB
 CPLUS_FLAGS += $(if $(crosstest),$(DEFINE_KEY)__TBB_NO_IMPLICIT_LINKAGE=1) $(DEFINE_KEY)TEST_USES_TBB=$(TEST_USES_TBB)
 
+TEST_PREREQUISITE+=$(TBB.LIB)
+LINK_FILES+=$(LINK_TBB.LIB)
+
 ifdef use_proxy
     USE_PROXY_FLAG = $(DEFINE_KEY)HARNESS_USE_RUNTIME_LOADER
     CPLUS_FLAGS += $(USE_PROXY_FLAG)
@@ -52,25 +56,8 @@ ifdef use_proxy
     LIBS += $(LIBDL)
 endif
 
+TEST_SUFFIXES=secondary compiler_builtins pic deprecated
 include $(tbb_root)/build/common_rules.inc
-
-#$(1) - is the binary name
-#$(2) - is the input obj files 
-#$(3) - extra libs to link with
-define make-test-binary 
-	$(CPLUS) $(OUTPUT_KEY)$(strip $1) $(CPLUS_FLAGS) $(2) $(LINK_TBB.LIB) $(LIBS) $(3) $(LINK_FLAGS)
-endef 
-
-# Rule for generating executable test
-%.$(TEST_EXT): %.$(OBJ) $(TBB.LIB) $(if $(use_proxy),$(LINK_TBB.LIB))
-	$(call make-test-binary,$@,$<,$(AUX_LIBS)) 
-
-# Rules for generating a test DLL
-%_dll.$(DLL): LINK_FLAGS += $(DYLIB_KEY)
-%_dll.$(DLL): CPLUS_FLAGS += $(PIC_KEY)
-%_dll.$(DLL): %_dll.$(OBJ) $(TBB.LIB)
-	$(call make-test-binary,$@,$<,)
-.PRECIOUS: %_dll.$(OBJ) %_dll.$(DLL)
 
 # Rules for the tests, which use TBB in a dynamically loadable library
 test_model_plugin.$(TEST_EXT): CPLUS_FLAGS := $(CPLUS_FLAGS:$(USE_PROXY_FLAG)=)
@@ -92,8 +79,8 @@ $(SCHEDULER_DIRECTLY_INCLUDED): WARNING_KEY += $(WARNING_SUPPRESS)
 $(SCHEDULER_DIRECTLY_INCLUDED): LIBS += $(LIBDL)
 #tbb.lib must not be linked to scheduler white box tests in order to not violate ODR 
 $(SCHEDULER_DIRECTLY_INCLUDED): LINK_TBB.LIB = 
-$(SCHEDULER_DIRECTLY_INCLUDED): %.$(TEST_EXT) : %.$(OBJ) $(SCHEDULER_DEPENDENCIES)
-	$(call make-test-binary,$@,$^,)
+$(SCHEDULER_DIRECTLY_INCLUDED): LINK_FILES += $(SCHEDULER_DEPENDENCIES)
+$(SCHEDULER_DIRECTLY_INCLUDED): $(SCHEDULER_DEPENDENCIES)
 
 # Tests that use some features of C++11
 TEST_TBB_CPP11 = test_lambda.$(TEST_EXT) test_cache_aligned_allocator_STL.$(TEST_EXT)
@@ -101,7 +88,6 @@ TEST_TBB_CPP11 = test_lambda.$(TEST_EXT) test_cache_aligned_allocator_STL.$(TEST
 ifneq (0,$(cpp0x))
 # Made CPP11 tests use NOSTRICT flags because -strict-ansi combined with
 # -std=c++0x on ICC 13.0 results in a compile error when stdlib is included
-$(TEST_TBB_CPP11):  CPLUS_FLAGS += $(CPP11_FLAGS)
 $(TEST_TBB_CPP11):  CPLUS_FLAGS := $(CPLUS_FLAGS_NOSTRICT)
 endif
 
@@ -110,24 +96,17 @@ TWICE_LINKED_TESTS = test_tbb_header.$(TEST_EXT) \
                      test_concurrent_unordered.$(TEST_EXT)
 
 %_secondary.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_SECONDARY=1
-#todo unify all the rules that change name of the obj file
-%_secondary.$(OBJ): %.cpp
-	$(call make-cxx-obj,$@,$<,)
 
 # Detecting "multiple definition" linker error using the test that covers the whole library
-$(TWICE_LINKED_TESTS): %.$(TEST_EXT): %.$(OBJ) %_secondary.$(OBJ) $(TBB.LIB)
-	$(call make-test-binary,$@, $*.$(OBJ) $*_secondary.$(OBJ),$(AUX_LIBS))	
+$(TWICE_LINKED_TESTS): %.$(TEST_EXT): %.$(OBJ) %_secondary.$(OBJ)
+$(TWICE_LINKED_TESTS): LINK_FILES+=$(@:.$(TEST_EXT)=_secondary.$(OBJ))
 
-# Checks that TBB atomics work correctly in position independent code
-test_atomic_pic.$(OBJ): CPLUS_FLAGS+=$(PIC_KEY)
-test_atomic_pic.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_PIC=1
-test_atomic_pic.$(OBJ): test_atomic.cpp
-	$(call make-cxx-obj,$@,$<,)
+# Checks that TBB works correctly in position independent code
+%_pic.$(OBJ): CPLUS_FLAGS+=$(PIC_KEY)
+%_pic.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_PIC=1
 
 # Test of generic gcc port and icc intrinsics port
 %_compiler_builtins.$(OBJ): CPLUS_FLAGS+=$(DEFINE_KEY)__TBB_TEST_BUILTINS=1
-%_compiler_builtins.$(OBJ): %.cpp
-	$(call make-cxx-obj,$@,$<,)
 
 # The test_dynamic_link test doesn't depend on the TBB library
 test_dynamic_link.$(TEST_EXT): LINK_TBB.LIB =
@@ -349,21 +328,13 @@ test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_P
 	$(run_cmd) ./test_aggregator.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_concurrent_lru_cache.$(TEST_EXT) $(args)
 
-CPLUS_FLAGS_DEPRECATED = $(DEFINE_KEY)TBB_DEPRECATED=1 $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(WARNING_SUPPRESS) $(INCLUDE_KEY)$(tbb_root)/src/test
-
-TEST_TBB_OLD.OBJ = test_concurrent_vector_v2.$(OBJ) test_concurrent_queue_v2.$(OBJ) test_mutex_v2.$(OBJ) test_task_scheduler_observer_v3.$(OBJ) 
-
-TEST_TBB_DEPRECATED.OBJ = test_concurrent_queue_deprecated.$(OBJ) \
-	test_concurrent_vector_deprecated.$(OBJ) \
-
-
 # For deprecated files, we don't mind warnings etc., thus compilation rules are most relaxed
-$(TEST_TBB_OLD.OBJ): CPLUS_FLAGS := $(CPLUS_FLAGS_DEPRECATED)
+CPLUS_FLAGS_DEPRECATED = $(DEFINE_KEY)TBB_DEPRECATED=1 $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(WARNING_SUPPRESS) $(INCLUDE_KEY)$(tbb_root)/src/test
+TEST_TBB_OLD.OBJ = test_concurrent_vector_v2.$(OBJ) test_concurrent_queue_v2.$(OBJ) test_mutex_v2.$(OBJ) test_task_scheduler_observer_v3.$(OBJ) 
+TEST_TBB_DEPRECATED.OBJ = test_concurrent_queue_deprecated.$(OBJ) test_concurrent_vector_deprecated.$(OBJ)
 
+$(TEST_TBB_OLD.OBJ): CPLUS_FLAGS := $(CPLUS_FLAGS_DEPRECATED)
 %_deprecated.$(OBJ): CPLUS_FLAGS := $(CPLUS_FLAGS_DEPRECATED)
-%_deprecated.$(OBJ): %.cpp
-	$(call make-cxx-obj,$@, $<,)
-.PRECIOUS: %_deprecated.$(OBJ)
 
 TEST_TBB_OLD.EXE = $(subst .$(OBJ),.$(TEST_EXT),$(TEST_TBB_OLD.OBJ) $(TEST_TBB_DEPRECATED.OBJ))
 
@@ -392,9 +363,11 @@ time_%: time_%.$(TEST_EXT) $(TEST_PREREQUISITE)
 	$(run_cmd) ./$< $(args)
 
 
-perf_%: AUX_LIBS = perf_dll.$(LIBEXT)
-perf_%: perf_dll.$(DLL) perf_%.$(TEST_EXT)
-	$(run_cmd) ./$@.$(TEST_EXT) $(args)
+# for some reason, "perf_%.$(TEST_EXT): perf_dll.$(DLL)" does not work TODO: find out how to apply pattern here
+perf_sched.$(TEST_EXT): perf_dll.$(DLL)
+perf_%.$(TEST_EXT): TEST_LIBS = perf_dll.$(LIBEXT)
+perf_%: perf_%.$(TEST_EXT) $(TEST_PREREQUISITE)
+	$(run_cmd) ./$< $(args)
 
 clean_%:
 	$(RM) $*.$(OBJ) $*.exe $*.$(DLL) $*.$(LIBEXT) $*.res $*.map $*.ilk $*.pdb $*.exp $*.*manifest $*.tmp $*.d *.ver

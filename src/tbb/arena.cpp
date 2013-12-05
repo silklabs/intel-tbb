@@ -26,9 +26,9 @@
     the GNU General Public License.
 */
 
-#include "arena.h"
-#include "governor.h"
 #include "scheduler.h"
+#include "governor.h"
+#include "arena.h"
 #include "itt_notify.h"
 #include "semaphore.h"
 
@@ -112,7 +112,7 @@ void arena::process( generic_scheduler& s ) {
         // of the non-atomicity of the decision making procedure
         unsigned allotted = my_num_workers_allotted;
         if (((num_workers_active() > allotted)
-#if __TBB_SCHEDULER_OBSERVER && __TBB_TASK_ARENA
+#if __TBB_SCHEDULER_OBSERVER && __TBB_CPF_BUILD
                 && allotted > 0) || (allotted == 0 && my_observers.ask_permission_to_leave()
                 // TODO: my_num_workers_allotted > 0 makes bug 1967 even worse, rework with accounting of demand by other arenas
                 // TODO: add monitoring of my_pool_state when not allowed to leave
@@ -580,12 +580,10 @@ void generic_scheduler::nested_arena_execute(arena* arena, task* t, bool needs_a
 #include "scheduler_utility.h"
 
 namespace tbb {
-namespace interface6 {
-using namespace tbb::internal;
+namespace interface7 {
+namespace internal {
 
-void task_arena::internal_initialize( ) {
-    __TBB_ASSERT(!my_initialized, NULL);
-    __TBB_ASSERT(!my_arena, NULL);
+void task_arena_base::internal_initialize( ) {
     __TBB_ASSERT( my_master_slots <= 1, "Number of slots reserved for master can be only [0,1]");
     if( my_master_slots > 1 ) my_master_slots = 1; // TODO: make more masters
     if( my_max_concurrency < 1 )
@@ -599,23 +597,35 @@ void task_arena::internal_initialize( ) {
     if( !governor::local_scheduler_if_initialized() )
         governor::init_scheduler( (unsigned)my_max_concurrency - my_master_slots + 1/*TODO: address in market instead*/, 0, true );
     // TODO: we will need to introduce a mechanism for global settings, including stack size, used by all arenas
-    my_arena = &market::create_arena( my_max_concurrency - my_master_slots/*it's +1 slot for num_masters=0*/, ThreadStackSize );
+    arena* new_arena = &market::create_arena( my_max_concurrency - my_master_slots/*it's +1 slot for num_masters=0*/, ThreadStackSize );
+    if(as_atomic(my_arena).compare_and_swap(new_arena, NULL) != NULL) { // there is a race possible on my_initialized
+        __TBB_ASSERT(my_arena, NULL);                             // other thread was the first
+        new_arena->on_thread_leaving</*is_master*/true>(); // deallocate new arena
+    }
+#if __TBB_TASK_GROUP_CONTEXT
+    else my_context = new_arena->my_default_ctx;
+#endif
 }
 
-void task_arena::internal_terminate( ) {
+void task_arena_base::internal_terminate( ) {
     if( my_arena ) {// task_arena was initialized
+#if __TBB_STATISTICS_EARLY_DUMP
+        GATHER_STATISTIC( my_arena->dump_arena_statistics() );
+#endif
         my_arena->on_thread_leaving</*is_master*/true>();
         my_arena = 0;
+#if __TBB_TASK_GROUP_CONTEXT
+        my_context = 0;
+#endif
     }
 }
 
-void task_arena::internal_enqueue( task& t, intptr_t prio ) const {
+void task_arena_base::internal_enqueue( task& t, intptr_t prio ) const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler_if_initialized();
     __TBB_ASSERT(s, "Scheduler is not initialized"); // we allocated a task so can expect the scheduler
 #if __TBB_TASK_GROUP_CONTEXT
-    __TBB_ASSERT(s->my_innermost_running_task->prefix().context == t.prefix().context, "using non-default context? consider reimplement code below");
-    t.prefix().context = my_arena->my_default_ctx;
+    __TBB_ASSERT(my_arena->my_default_ctx == t.prefix().context, NULL);
     ITT_STACK_CREATE(my_arena->my_default_ctx->itt_caller);
 #endif
     my_arena->enqueue_task( t, prio, s->hint_for_push );
@@ -662,8 +672,8 @@ struct arena_join_body : internal::delegate_base {
         my_scheduler->local_wait_for_all(*my_root, NULL);
     }
 };
-// TODO: consider replacing of delegate_base by scoped_task
-void task_arena::internal_execute( internal::delegate_base& d) const {
+
+void task_arena_base::internal_execute( internal::delegate_base& d) const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT(s, "Scheduler is not initialized");
@@ -676,7 +686,7 @@ void task_arena::internal_execute( internal::delegate_base& d) const {
         concurrent_monitor::thread_context waiter;
         auto_empty_task root(__TBB_CONTEXT_ARG(s, s->my_dummy_task->prefix().context));
         root.prefix().ref_count = 2;
-        internal_enqueue( *new( task::allocate_root() ) delegated_task(d, my_arena->my_exit_monitors, &root), 0 ); // TODO: priority?
+        internal_enqueue( *new( task::allocate_root(__TBB_CONTEXT_ARG1(*my_context)) ) delegated_task(d, my_arena->my_exit_monitors, &root), 0 ); // TODO: priority?
         do {
             my_arena->my_exit_monitors.prepare_wait(waiter, (uintptr_t)&d);
             if( __TBB_load_with_acquire(root.prefix().ref_count) < 2 ) {
@@ -701,8 +711,9 @@ class wait_task : public task {
     binary_semaphore & my_signal;
     /*override*/ task* execute() {
         generic_scheduler& s = *governor::local_scheduler_if_initialized();
-        if( s.my_arena_index && s.worker_outermost_level() ) // on outermost level of workers only
+        if( s.my_arena_index && s.worker_outermost_level() ) {// on outermost level of workers only
             s.local_wait_for_all( *s.my_dummy_task, NULL ); // run remaining tasks
+        }
         else s.my_arena->is_out_of_work(); // avoids starvation of internal_wait: issuing this task makes arena full
         my_signal.V();
         return NULL;
@@ -723,38 +734,41 @@ struct wait_body : internal::delegate_base {
 };
 
 // todo: merge with internal_execute()
-void task_arena::internal_wait() const {
+void task_arena_base::internal_wait() const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT(s, "Scheduler is not initialized");
     __TBB_ASSERT(s->my_arena != my_arena || s->my_arena_index == 0, "task_arena::wait_until_empty() is not supported within a worker context" );
-    for(;;) {
+    if( s->my_arena == my_arena ) {
+        //unsupported, but try do something for outermost master
+        __TBB_ASSERT(s->master_outermost_level(), "unsupported");
+        if( !s->my_arena_index )
+            while( my_arena->num_workers_active() )
+                (wait_body(s))();
+    } else for(;;) {
         while( my_arena->my_pool_state != arena::SNAPSHOT_EMPTY ) {
-            if( s->my_arena == my_arena )
-                while( my_arena->my_pool_state != arena::SNAPSHOT_EMPTY )
-                    s->local_wait_for_all( *s->my_dummy_task, NULL ); //TODO: check dummy_task logic inside
-            else if( !__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler) // TODO TEMP: one master, make more masters
+            if( !__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler) // TODO TEMP: one master, make more masters
                 && as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap(s, NULL) == NULL ) {
                 s->nested_arena_execute<const internal::delegate_base>(my_arena, NULL, !my_master_slots, wait_body(s));
             } else {
                 binary_semaphore waiter; // TODO: replace by a single event notification from is_out_of_work
-                internal_enqueue( *new( task::allocate_root() ) wait_task(waiter), 0 ); // TODO: priority?
+                internal_enqueue( *new( task::allocate_root(__TBB_CONTEXT_ARG1(*my_context)) ) wait_task(waiter), 0 ); // TODO: priority?
                 waiter.P(); // TODO: concurrent_monitor
             }
         }
-        if( (!my_arena->num_workers_active() && !my_arena->my_slots[0].my_scheduler) // no activity
-            || (s->my_arena == my_arena && s->my_arena_index ) ) // or improper worker context
+        if( !my_arena->num_workers_active() && !my_arena->my_slots[0].my_scheduler) // no activity
             break; // spin until workers active but avoid spinning in a worker
         __TBB_Yield(); // wait until workers and master leave
     }
 }
 
-/*static*/ int task_arena::current_slot() {
-    generic_scheduler* s = governor::local_scheduler(); // TODO: return a special value if the thread has no slot
-    return s->my_arena_index;
+/*static*/ int task_arena_base::internal_current_slot() {
+    generic_scheduler* s = governor::local_scheduler_if_initialized();
+    return s? int(s->my_arena_index) : -1;
 }
 
 
+} // tbb::interfaceX::internal
 } // tbb::interfaceX
 } // tbb
 #endif /* __TBB_TASK_ARENA */

@@ -42,7 +42,7 @@
 #undef DO_ITT_NOTIFY
 #endif
 
-#define __TBB_MALLOC_WHITEBOX_TEST 1 // to get access to LOC internals
+#define __TBB_MALLOC_WHITEBOX_TEST 1 // to get access to allocator internals
 // help trigger rare race condition
 #define WhiteboxTestingYield() (__TBB_Yield(), __TBB_Yield(), __TBB_Yield(), __TBB_Yield())
 
@@ -663,6 +663,82 @@ void TestBitMask()
     ASSERT(mask.getMinTrue(201) == -1, NULL);
 }
 
+size_t getMemSize()
+{
+    return defaultMemPool->extMemPool.backend.getTotalMemSize();
+}
+
+class CheckNotCached {
+    size_t memSize;
+public:
+    CheckNotCached(size_t memSize) : memSize(memSize) {}
+    void operator() () const {
+        int res = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, 1);
+        ASSERT(res == TBBMALLOC_OK, NULL);
+        ASSERT(getMemSize() == memSize, NULL);
+    }
+};
+
+class RunTestHeapLimit: public SimpleBarrier {
+    size_t memSize;
+public:
+    RunTestHeapLimit(size_t memSize) : memSize(memSize) {}
+
+    void operator()( int /*mynum*/ ) const {
+        CheckNotCached checkNotCached(memSize);
+
+        for (size_t n = minLargeObjectSize; n < 5*1024*1024; n += 128*1024)
+            scalable_free(scalable_malloc(n));
+        barrier.wait(checkNotCached);
+    }
+};
+
+void TestHeapLimit()
+{
+    if(!isMallocInitialized()) doInitialization();
+    // tiny limit to stop caching
+    int res = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, 1);
+    ASSERT(res == TBBMALLOC_OK, NULL);
+     // provoke bootstrap heap initialization before recording memory size
+    scalable_free(scalable_malloc(8));
+    size_t n, sizeBefore = getMemSize();
+
+    // Try to provoke call to OS for memory to check that
+    // requests are not fulfilled from caches.
+    // Single call is not enough here because of backend fragmentation.
+    for (n = minLargeObjectSize; n < 10*1024*1024; n += 16*1024) {
+        void *p = scalable_malloc(n);
+        bool leave = (sizeBefore != getMemSize());
+        scalable_free(p);
+        if (leave)
+            break;
+        ASSERT(sizeBefore == getMemSize(), "No caching expected");
+    }
+    ASSERT(n < 10*1024*1024, "scalable_malloc doesn't provoke OS request for memory, "
+           "is some internal cache still used?");
+    // estimate number of objects in single bootstrap block
+    int objInBootstrapHeapBlock = (slabSize-2*estimatedCacheLineSize)/sizeof(TLSData);
+    // When we have more threads than objects in bootstrap heap block,
+    // additional block can be allocated from a region that is different
+    // from the original region. Thus even after all caches cleaned,
+    // we unable to reach sizeBefore.
+    ASSERT_WARNING(MaxThread<=objInBootstrapHeapBlock,
+        "The test might fail for larger thread number, "
+        "as bootstrap heap is not released till size checking.");
+    for( int p=MaxThread; p>=MinThread; --p ) {
+        RunTestHeapLimit::initBarrier( p );
+        NativeParallelFor( p, RunTestHeapLimit(sizeBefore) );
+    }
+    // it's try to match limit as well as set limit, so call here
+    res = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, 1);
+    ASSERT(res == TBBMALLOC_OK, NULL);
+    size_t m = getMemSize();
+    ASSERT(sizeBefore == m, NULL);
+    // restore default
+    res = scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, 0);
+    ASSERT(res == TBBMALLOC_OK, NULL);
+}
+
 void checkNoHugePages()
 {
     ASSERT(!hugePages.enabled, "scalable_allocation_mode "
@@ -694,5 +770,6 @@ int TestMain () {
     TestLargeObjectCache();
     TestObjectRecognition();
     TestBitMask();
+    TestHeapLimit();
     return Harness::Done;
 }

@@ -38,8 +38,6 @@ WARNING_SUPPRESS = -Wno-parentheses -Wno-non-virtual-dtor
 DYLIB_KEY = -shared
 LIBDL = -ldl
 
-TBB_NOSTRICT = 1
-
 CPLUS = g++ 
 CONLY = gcc
 LIB_LINK_FLAGS = -shared

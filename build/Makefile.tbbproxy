@@ -67,7 +67,7 @@ $(PROXY.LIB): $(PROXY.OBJ)
 
 .PRECIOUS : %.$(ASMEXT)
 tbbproxy-asm.$(ASMEXT) : tbbproxy-$(tbb_os).$(ASMEXT) $(TBB.LST) $(TBB-OBJECTS.LST)
-	$(CPLUS) $(PREPROC_ONLY) $< $(INCLUDES) $(CPLUS_FLAGS) > $@
+	$(CPLUS) $(PREPROC_ONLY) $< $(INCLUDES) $(CPLUS_FLAGS) $(DEFINE_KEY)__TBB_BUILD=1 > $@
 
 .PHONY: tbbproxy
 ifeq (windows,$(tbb_os))

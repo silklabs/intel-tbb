@@ -50,9 +50,6 @@
 
 #include "tbb/task.h"
 #include "tbb/tbb_exception.h"
-#if __TBB_TASK_ARENA
-#include "tbb/task_arena.h" // for sake of private friends club :( of class arena ):
-#endif //__TBB_TASK_ARENA
 
 #ifdef undef_private
     #undef private
@@ -68,8 +65,10 @@
 // It drops the second argument depending on whether the controlling macro is defined.
 // The first argument is just a convenience allowing to keep comma before the macro usage.
 #if __TBB_TASK_GROUP_CONTEXT
+    #define __TBB_CONTEXT_ARG1(context) context
     #define __TBB_CONTEXT_ARG(arg1, context) arg1, context
 #else /* !__TBB_TASK_GROUP_CONTEXT */
+    #define __TBB_CONTEXT_ARG1(context)
     #define __TBB_CONTEXT_ARG(arg1, context) arg1
 #endif /* !__TBB_TASK_GROUP_CONTEXT */
 
@@ -88,14 +87,15 @@
 #endif
 
 namespace tbb {
-#if __TBB_TASK_ARENA
-namespace interface6 {
+namespace interface7 {
+namespace internal {
+class task_arena_base;
 class delegated_task;
 class wait_task;
 struct wait_body;
-}
-#endif //__TBB_TASK_ARENA
+}}
 namespace internal {
+using namespace interface7::internal;
 
 class generic_scheduler;
 

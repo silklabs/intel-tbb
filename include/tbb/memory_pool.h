@@ -240,9 +240,9 @@ void *memory_pool<Alloc>::allocate_request(intptr_t pool_id, size_t & bytes) {
     __TBB_CATCH(...) { return 0; }
     return ptr;
 }
-#if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
+#if __TBB_MSVC_UNREACHABLE_CODE_IGNORED
     // Workaround for erroneous "unreachable code" warning in the template below.
-    // Specific for VC++ 17 compiler
+    // Specific for VC++ 17-18 compiler
     #pragma warning (push)
     #pragma warning (disable: 4702)
 #endif
@@ -254,7 +254,7 @@ int memory_pool<Alloc>::deallocate_request(intptr_t pool_id, void* raw_ptr, size
     self.my_alloc.deallocate( static_cast<typename Alloc::value_type*>(raw_ptr), raw_bytes/unit_size );
     return 0;
 }
-#if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
+#if __TBB_MSVC_UNREACHABLE_CODE_IGNORED
     #pragma warning (pop)
 #endif
 inline fixed_pool::fixed_pool(void *buf, size_t size) : my_buffer(buf), my_size(size) {

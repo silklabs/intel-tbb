@@ -80,12 +80,12 @@ __TBB_SYMBOL( ?observe@task_scheduler_observer_v3@internal@tbb@@QAEX_N@Z )
 
 #if __TBB_TASK_ARENA
 /* arena.cpp */
-__TBB_SYMBOL( ?internal_initialize@task_arena@interface6@tbb@@AAEXXZ )
-__TBB_SYMBOL( ?internal_enqueue@task_arena@interface6@tbb@@ABEXAAVtask@3@H@Z )
-__TBB_SYMBOL( ?internal_execute@task_arena@interface6@tbb@@ABEXAAVdelegate_base@internal@23@@Z )
-__TBB_SYMBOL( ?internal_terminate@task_arena@interface6@tbb@@AAEXXZ )
-__TBB_SYMBOL( ?current_slot@task_arena@interface6@tbb@@SAHXZ )
-__TBB_SYMBOL( ?internal_wait@task_arena@interface6@tbb@@ABEXXZ )
+__TBB_SYMBOL( ?internal_current_slot@task_arena_base@internal@interface7@tbb@@KAHXZ )
+__TBB_SYMBOL( ?internal_initialize@task_arena_base@internal@interface7@tbb@@IAEXXZ )
+__TBB_SYMBOL( ?internal_terminate@task_arena_base@internal@interface7@tbb@@IAEXXZ )
+__TBB_SYMBOL( ?internal_enqueue@task_arena_base@internal@interface7@tbb@@IBEXAAVtask@4@H@Z )
+__TBB_SYMBOL( ?internal_execute@task_arena_base@internal@interface7@tbb@@IBEXAAVdelegate_base@234@@Z )
+__TBB_SYMBOL( ?internal_wait@task_arena_base@internal@interface7@tbb@@IBEXXZ )
 #endif /* __TBB_TASK_ARENA */
 
 #if !TBB_NO_LEGACY

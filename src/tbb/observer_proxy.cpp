@@ -294,7 +294,7 @@ void observer_list::do_notify_exit_observers( observer_proxy* last, bool worker 
     }
 }
 
-#if __TBB_TASK_ARENA
+#if __TBB_CPF_BUILD
 // TODO: merge with do_notify_.. methods
 bool observer_list::ask_permission_to_leave() {
     __TBB_ASSERT( this != &the_global_observer_list, "This method cannot be used on the list of global observers" );
@@ -350,7 +350,7 @@ bool observer_list::ask_permission_to_leave() {
         remove_ref(prev);
     return result;
 }
-#endif //__TBB_TASK_ARENA
+#endif //CPF
 
 void task_scheduler_observer_v3::observe( bool enable ) {
     if( enable ) {

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt; Class Template Reference</title>
+<title>tbb::mutex Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,49 +21,110 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface6</b>::<a class="el" href="a00312.html">multifunction_node</a></div>
-<h1>tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface6::multifunction_node" --><!-- doxytag: inherits="tbb::flow::interface6::graph_node" -->implements a function node that supports Input -&gt; (set of outputs)  
+<a class="el" href="a00427.html">tbb</a>::<a class="el" href="a00312.html">mutex</a></div>
+<h1>tbb::mutex Class Reference<br>
+<small>
+[<a class="el" href="a00444.html">Synchronization</a>]</small>
+</h1><!-- doxytag: class="tbb::mutex" -->Wrapper around the platform's native reader-writer lock.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;flow_graph.h&gt;</code>
+<code>#include &lt;mutex.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt;:
-<p><center><img src="a00312.png" usemap="#tbb::flow::interface6::multifunction_node< Input, Output,, Allocator >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface6::multifunction_node< Input, Output,, Allocator >_map">
-<area href="a00301.html" alt="tbb::flow::interface6::graph_node" shape="rect" coords="0,0,393,24">
-</map>
-<a href="a00066.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00090.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f8f076085598fc5687fdc00d7756ad4"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::input_type" ref="9f8f076085598fc5687fdc00d7756ad4" args="" -->
-typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f1ec84d5815263ceae853f06ddb4cac"></a><!-- doxytag: member="tbb::mutex::native_handle_type" ref="9f1ec84d5815263ceae853f06ddb4cac" args="" -->
+typedef LPCRITICAL_SECTION&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#9f1ec84d5815263ceae853f06ddb4cac">native_handle_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c812b3b65869982413f783ce7c699564"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::output_ports_type" ref="c812b3b65869982413f783ce7c699564" args="" -->
-typedef internal::wrap_tuple_elements&lt;<br>
- N, internal::multifunction_output,<br>
- Output &gt;::type&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_ports_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return native_handle. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a1f4d4b88a03eb3e95c76569b91a0792"></a><!-- doxytag: member="tbb::mutex::native_handle_type" ref="a1f4d4b88a03eb3e95c76569b91a0792" args="" -->
+typedef pthread_mutex_t *&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab196034e5963fe9e27d7c4d0a2d4ffa24a50a7"></a><!-- doxytag: member="tbb::mutex::INITIALIZED" ref="c907aa5ae5274da759c4188c8ab196034e5963fe9e27d7c4d0a2d4ffa24a50a7" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>INITIALIZED</b> = 0x1234</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab19603646f4766864612448d6f9b21ff61abcd"></a><!-- doxytag: member="tbb::mutex::DESTROYED" ref="c907aa5ae5274da759c4188c8ab19603646f4766864612448d6f9b21ff61abcd" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>DESTROYED</b> = 0x789A</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c907aa5ae5274da759c4188c8ab196031de5796ebbbaa1e30d19e5d54f0f6555"></a><!-- doxytag: member="tbb::mutex::HELD" ref="c907aa5ae5274da759c4188c8ab196031de5796ebbbaa1e30d19e5d54f0f6555" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>HELD</b> = 0x56CD</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>state_t</b> { <b>INITIALIZED</b> = 0x1234, 
+<b>DESTROYED</b> = 0x789A, 
+<b>HELD</b> = 0x56CD
+ }</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="5112769f6063d733734c1631ab105911"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::multifunction_node" ref="5112769f6063d733734c1631ab105911" args="(graph &amp;g, size_t concurrency, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>multifunction_node</b> (<a class="el" href="a00300.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05313cb77d4f85213103d4dab74ed454"></a><!-- doxytag: member="tbb::mutex::mutex" ref="05313cb77d4f85213103d4dab74ed454" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#05313cb77d4f85213103d4dab74ed454">mutex</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4aa18bfb6faef08ddf94364013ef0f28"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::multifunction_node" ref="4aa18bfb6faef08ddf94364013ef0f28" args="(const multifunction_node &amp;other)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>multifunction_node</b> (const <a class="el" href="a00312.html">multifunction_node</a> &amp;other)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired mutex. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4470e61c24c129a0299ca6c17240adbb"></a><!-- doxytag: member="tbb::mutex::lock" ref="4470e61c24c129a0299ca6c17240adbb" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#4470e61c24c129a0299ca6c17240adbb">lock</a> ()</td></tr>
 
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0dae0f7e38a5ddbf9eda318f366568da"></a><!-- doxytag: member="tbb::flow::interface6::multifunction_node::reset" ref="0dae0f7e38a5ddbf9eda318f366568da" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Acquire lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#4331652c79dea1c1131bd59ab161b234">try_lock</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try acquiring lock (non-blocking).  <a href="#4331652c79dea1c1131bd59ab161b234"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5fc9ef443ae75d966695546be399cc6b"></a><!-- doxytag: member="tbb::mutex::unlock" ref="5fc9ef443ae75d966695546be399cc6b" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#5fc9ef443ae75d966695546be399cc6b">unlock</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="caf34349c0fbe7b44f1a2ca0a3150dd0"></a><!-- doxytag: member="tbb::mutex::native_handle" ref="caf34349c0fbe7b44f1a2ca0a3150dd0" args="()" -->
+<a class="el" href="a00312.html#9f1ec84d5815263ceae853f06ddb4cac">native_handle_type</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>native_handle</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="795649a185b0d6af6dc81c5f378616dd"></a><!-- doxytag: member="tbb::mutex::set_state" ref="795649a185b0d6af6dc81c5f378616dd" args="(state_t to)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00312.html#795649a185b0d6af6dc81c5f378616dd">set_state</a> (state_t to)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the internal state. <br></td></tr>
+<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="17b78176054e2bac1ff35b9535d1ea0c"></a><!-- doxytag: member="tbb::mutex::is_rw_mutex" ref="17b78176054e2bac1ff35b9535d1ea0c" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d4558e5a7c5b8d8e158ec7a1079669bd"></a><!-- doxytag: member="tbb::mutex::is_recursive_mutex" ref="d4558e5a7c5b8d8e158ec7a1079669bd" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f023a29c61451d02359095cbff0f3d45"></a><!-- doxytag: member="tbb::mutex::is_fair_mutex" ref="f023a29c61451d02359095cbff0f3d45" args="" -->
+static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = false</td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a36f15b770a1bb0b56e33d7fa75ebd1a"></a><!-- doxytag: member="tbb::mutex::scoped_lock" ref="a36f15b770a1bb0b56e33d7fa75ebd1a" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00313.html">scoped_lock</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00313.html#_details">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Input, typename Output, graph_buffer_policy = queueing, typename Allocator = cache_aligned_allocator&lt;Input&gt;&gt;<br>
- class tbb::flow::interface6::multifunction_node&lt; Input, Output,, Allocator &gt;</h3>
-
-implements a function node that supports Input -&gt; (set of outputs) 
+Wrapper around the platform's native reader-writer lock. 
 <p>
+For testing purposes only. 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="4331652c79dea1c1131bd59ab161b234"></a><!-- doxytag: member="tbb::mutex::try_lock" ref="4331652c79dea1c1131bd59ab161b234" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::mutex::try_lock           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try acquiring lock (non-blocking). 
+<p>
+Return true if lock acquired; false otherwise. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
+<li>mutex.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

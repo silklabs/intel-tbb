@@ -66,7 +66,7 @@ public:
 
     /* override */ tbb::task * try_put_task( const T &v ) {
         ++my_counters[(int)v];
-        return const_cast<tbb::task *>(tbb::flow::interface6::SUCCESSFULLY_ENQUEUED);
+        return const_cast<tbb::task *>(tbb::flow::interface7::SUCCESSFULLY_ENQUEUED);
     }
 
     /*override*/void reset_receiver() { }

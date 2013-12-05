@@ -26,16 +26,19 @@
     the GNU General Public License.
 */
 
+#include "harness_defs.h"
+
 #if _MSC_VER
     #pragma warning (disable: 4503) // Suppress "decorated name length exceeded, name was truncated" warning
     #if !TBB_USE_EXCEPTIONS
         // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers
         #pragma warning (disable: 4530)
     #endif
-    #if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
-        // Suppress "unreachable code" warning by VC++ 17.0 (VS 2012)
-        #pragma warning (disable: 4702)
-    #endif
+#endif
+
+#if __TBB_MSVC_UNREACHABLE_CODE_IGNORED
+    // Suppress "unreachable code" warning by VC++ 17.0-18.0 (VS 2012 or newer)
+    #pragma warning (disable: 4702)
 #endif
 
 #include "harness.h"

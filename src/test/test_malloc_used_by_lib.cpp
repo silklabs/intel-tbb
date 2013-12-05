@@ -103,8 +103,8 @@ public:
 void LoadThreadsUnload()
 {
     Harness::LIBRARY_HANDLE lib =
-        Harness::OpenLibrary(TEST_LIBRARY_NAME("test_malloc_used_by_lib"));
-    ASSERT(lib, "Can't load " TEST_LIBRARY_NAME("test_malloc_used_by_lib"));
+        Harness::OpenLibrary(TEST_LIBRARY_NAME("test_malloc_used_by_lib_dll"));
+    ASSERT(lib, "Can't load " TEST_LIBRARY_NAME("test_malloc_used_by_lib_dll"));
     NativeParallelFor( 4, UseDll( Harness::GetAddress(lib, "callDll") ) );
     Harness::CloseLibrary(lib);
 }
@@ -125,8 +125,8 @@ struct RunWithLoad : NoAssign {
     void operator()(int id) const {
         if (!id) {
             Harness::LIBRARY_HANDLE lib =
-                Harness::OpenLibrary(TEST_LIBRARY_NAME("test_malloc_used_by_lib"));
-            ASSERT(lib, "Can't load "TEST_LIBRARY_NAME("test_malloc_used_by_lib"));
+                Harness::OpenLibrary(TEST_LIBRARY_NAME("test_malloc_used_by_lib_dll"));
+            ASSERT(lib, "Can't load " TEST_LIBRARY_NAME("test_malloc_used_by_lib_dll"));
             runPtr = Harness::GetAddress(lib, "callDll");
             unloadCallback.lib = lib;
         }

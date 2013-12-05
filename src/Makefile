@@ -45,7 +45,7 @@ tbbproxy: tbbproxy_release tbbproxy_debug
 rml: rml_release rml_debug
 
 test: tbbmalloc_test_release $(if $(use_proxy),tbbproxy_test_release) tbb_test_release tbbmalloc_test_debug $(if $(use_proxy),tbbproxy_test_debug) tbb_test_debug
-ifneq (android,$(target))
+ifeq (,$(findstring skip,$(target:android=skip) $(offload:mic=skip)))
 test: rml_test_debug rml_test_release
 endif
 

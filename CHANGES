@@ -3,6 +3,44 @@ The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.2 Update 1
+TBB_INTERFACE_VERSION == 7001
+
+Changes (w.r.t. TBB 4.2):
+
+- Added project files for Microsoft* Visual Studio* 2010.
+- Initial support of Microsoft* Visual Studio* 2013 Preview.
+- Enable C++11 features available in Intel(R) C++ Compiler 14.0.
+- scalable_allocation_mode(TBBMALLOC_SET_SOFT_HEAP_LIMIT, <size>) can be
+    used to urge releasing memory from tbbmalloc internal buffers when
+    the given limit is exceeded.
+
+Community Preview Features:
+
+- Class task_arena no longer requires linking with a preview library,
+    though still remains a community preview feature.
+- The method task_arena::wait_until_empty() is removed.
+- The method task_arena::current_slot() now returns -1 if the task scheduler
+    is not initialized in the thread.
+
+Changes affecting backward compatibility:
+
+- Because of changes in internal layout of graph nodes, the namespace
+    interface number of flow::graph has been incremented from 6 to 7.
+
+Bugs fixed:
+
+- Fixed a race in lazy initialization of task_arena.
+- Fixed flow::graph::reset() to prevent situations where tasks would be
+    spawned in the process of resetting the graph to its initial state.
+- Fixed decrement bug in limiter_node.
+- Fixed a race in arc deletion in the flow graph.
+
+Open-source contributions integrated:
+
+- Improved support for IBM* Blue Gene* by Raf Schietekat.
+
+------------------------------------------------------------------------
 Intel TBB 4.2
 TBB_INTERFACE_VERSION == 7000
 
@@ -471,7 +509,7 @@ Changes (w.r.t. Intel TBB 3.0 Update 4 commercial-aligned release):
 - Added Community Preview feature: graph.
 - Added automatic propagation of master thread FPU settings to
     TBB worker threads.
-- Added a public function to perform a sequentially consistent full 
+- Added a public function to perform a sequentially consistent full
     memory fence: tbb::atomic_fence() in tbb/atomic.h.
 
 Bugs fixed:
@@ -495,7 +533,7 @@ Changes (w.r.t. Intel TBB 3.0 Update 3 commercial-aligned release):
 - Added Community Preview feature: concurrent_priority_queue.
 - Fixed library loading to avoid possibility for remote code execution,
     see http://www.microsoft.com/technet/security/advisory/2269637.mspx.
-- Added support of more than 64 cores for appropriate Microsoft* 
+- Added support of more than 64 cores for appropriate Microsoft*
     Windows* versions. For more details, see 
     http://msdn.microsoft.com/en-us/library/dd405503.aspx.
 - Default number of worker threads is adjusted in accordance with 
@@ -503,13 +541,13 @@ Changes (w.r.t. Intel TBB 3.0 Update 3 commercial-aligned release):
 
 Bugs fixed:
 
-- Calls of scalable_* functions from inside the allocator library 
+- Calls of scalable_* functions from inside the allocator library
     caused issues if the functions were overridden by another module.
 - A crash occurred if methods run() and wait() were called concurrently
     for an empty tbb::task_group (1736).
-- The tachyon example exhibited build problems associated with 
+- The tachyon example exhibited build problems associated with
     bug 554339 on Microsoft* Visual Studio* 2010. Project files were
-    modified as a partial workaround to overcome the problem. See 
+    modified as a partial workaround to overcome the problem. See
     http://connect.microsoft.com/VisualStudio/feedback/details/554339.
 
 ------------------------------------------------------------------------

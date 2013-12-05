@@ -107,8 +107,9 @@ int main(int argc, char *argv[] ) {
     // Run the test in 'true' native mode (because 'system()' works in 'true' native mode).
     (argc, argv);
     REPORT("skip\n");
-#else //__TBB_MIC_OFFLOAD
-#if __TBB_MPI_INTEROP
+#elif __TBB_MPI_INTEROP || __bg__
+    (void) argc; // unused
+    (void) argv; // unused
     REPORT("skip\n");
 #else
     __TBB_TRY {
@@ -236,8 +237,7 @@ int main(int argc, char *argv[] ) {
         ASSERT( 0,"unexpected exception" );
     }
     REPORT("done\n");
-#endif //__TBB_MPI_INTEROP
-#endif //__TBB_MIC_OFFLOAD
+#endif //__TBB_MIC_OFFLOAD, __TBB_MPI_INTEROP etc
     return 0;
 }
 
@@ -246,7 +246,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.2", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t7000", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t7001", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));

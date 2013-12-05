@@ -206,18 +206,13 @@ void generic_scheduler::init_stack_info () {
     // is that the main thread's stack size is not less than that of other threads.
     // See also comment 3 at the end of this file
     void    *stack_base = &stack_size;
+#if __linux__ && !__bg__
 #if __TBB_ipf
     void    *rsb_base = __TBB_get_bsp();
 #endif
-#if __linux__
     size_t  np_stack_size = 0;
     void    *stack_limit = NULL;
     pthread_attr_t  np_attr_stack;
-#if __bgp__
-    // Workaround pthread_attr_init() before pthread_getattr_np() prevents subsequent abort() in pthread_attr_destroy() when
-    // freeing an erroneously invalid pointer value for cpuset (refers to the implementation of opaque type pthread_attr_t).
-    if( 0 == pthread_attr_init(&np_attr_stack) )
-#endif
     if( 0 == pthread_getattr_np(pthread_self(), &np_attr_stack) ) {
         if ( 0 == pthread_attr_getstack(&np_attr_stack, &stack_limit, &np_stack_size) ) {
 #if __TBB_ipf
@@ -277,12 +272,11 @@ void generic_scheduler::cleanup_local_context_list () {
         context_list_node_t *node = my_context_list_head.my_next;
         while ( node != &my_context_list_head ) {
             task_group_context &ctx = __TBB_get_object_ref(task_group_context, my_node, node);
-            __TBB_ASSERT( ctx.my_kind != task_group_context::binding_required, "Only a context bound to a root task can be detached" );
+            __TBB_ASSERT( __TBB_load_relaxed(ctx.my_kind) != task_group_context::binding_required, "Only a context bound to a root task can be detached" );
             node = node->my_next;
             __TBB_ASSERT( is_alive(ctx.my_version_and_traits), "Walked into a destroyed context while detaching contexts from the local list" );
-            // On 64-bit systems my_kind can be a 32-bit value padded with 32 uninitialized bits.
-            // So the cast below is necessary to throw off the higher bytes containing garbage
-            if ( (task_group_context::kind_type)(uintptr_t)__TBB_FetchAndStoreW(&ctx.my_kind, task_group_context::detached) == task_group_context::dying )
+            // Synchronizes with ~task_group_context(). TODO: evaluate and perhaps relax
+            if ( internal::as_atomic(ctx.my_kind).fetch_and_store(task_group_context::detached) == task_group_context::dying )
                 wait_for_concurrent_destroyers_to_leave = true;
         }
     }

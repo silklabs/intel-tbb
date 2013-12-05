@@ -348,7 +348,8 @@ private:
 
     union {
         //! Flavor of this context: bound or isolated.
-        kind_type my_kind;
+        // TODO: describe asynchronous use, and whether any memory semantics are needed
+        __TBB_atomic kind_type my_kind;
         uintptr_t _my_kind_aligner;
     };
 
@@ -868,6 +869,21 @@ class empty_task: public task {
         return NULL;
     }
 };
+
+//! @cond INTERNAL
+namespace internal {
+    template<typename F>
+    class function_task : public task {
+        F my_func;
+        /*override*/ task* execute() {
+            my_func();
+            return NULL;
+        }
+    public:
+        function_task( const F& f ) : my_func(f) {}
+    };
+} // namespace internal
+//! @endcond
 
 //! A list of children.
 /** Used for method task::spawn_children

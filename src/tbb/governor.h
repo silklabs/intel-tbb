@@ -101,9 +101,6 @@ public:
     //! Processes scheduler termination request (possibly nested) in a master thread
     static void terminate_scheduler( generic_scheduler* s, const task_scheduler_init *tsi_ptr );
 
-    //! Returns number of worker threads in the currently active arena.
-    inline static unsigned max_number_of_workers ();
-
     //! Register TBB scheduler instance in thread-local storage.
     static void sign_on(generic_scheduler* s);
 
@@ -149,11 +146,5 @@ public:
 
 } // namespace internal
 } // namespace tbb
-
-#include "scheduler.h"
-
-inline unsigned tbb::internal::governor::max_number_of_workers () {
-    return local_scheduler()->number_of_workers_in_my_arena();
-}
 
 #endif /* _TBB_governor_H */

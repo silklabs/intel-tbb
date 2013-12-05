@@ -30,10 +30,11 @@
 
 // Enable testing of serial subset.
 #define TBB_PREVIEW_SERIAL_SUBSET 1
+#include "harness_defs.h"
 
 #if _MSC_VER
 #pragma warning (push)
-#if !defined(__INTEL_COMPILER)
+#if __TBB_MSVC_UNREACHABLE_CODE_IGNORED
     // Suppress pointless "unreachable code" warning.
     #pragma warning (disable: 4702)
 #endif

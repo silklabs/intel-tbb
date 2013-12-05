@@ -111,7 +111,7 @@ endif
 C_FLAGS = $(CPLUS_FLAGS)
 
 ifneq (00,$(lambdas)$(cpp0x))
-    CPLUS_FLAGS += $(CPP11_FLAGS)
+    CXX_ONLY_FLAGS += $(CPP11_FLAGS)
 endif
 
 VCVERSION:=$(runtime)
@@ -130,6 +130,9 @@ ifeq ($(VCCOMPAT_FLAG),)
 endif
 ifeq ($(VCCOMPAT_FLAG),)
         VCCOMPAT_FLAG := $(if $(findstring vc11, $(VCVERSION)),/Qvc11)
+endif
+ifeq ($(VCCOMPAT_FLAG),)
+        VCCOMPAT_FLAG := $(if $(findstring vc12, $(VCVERSION)),/Qvc12)
 endif
 ifeq ($(VCCOMPAT_FLAG),)
         $(error VC version not detected correctly: $(VCVERSION) )

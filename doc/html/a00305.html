@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::machine_load_store_relaxed&lt; T, S &gt; Struct Template Reference</title>
+<title>tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,24 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00428.html">tbb</a>::<b>internal</b>::<a class="el" href="a00305.html">machine_load_store_relaxed</a></div>
-<h1>tbb::internal::machine_load_store_relaxed&lt; T, S &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::machine_load_store_relaxed" --><code>#include &lt;tbb_machine.h&gt;</code>
+<a class="el" href="a00427.html">tbb</a>::<b>internal</b>::<a class="el" href="a00305.html">machine_load_store_seq_cst&lt; T, 8 &gt;</a></div>
+<h1>tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;" --><code>#include &lt;tbb_machine.h&gt;</code>
 <p>
-<a href="a00174.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00172.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="de10ed2fe8788773adb55f265db38587"></a><!-- doxytag: member="tbb::internal::machine_load_store_relaxed::load" ref="de10ed2fe8788773adb55f265db38587" args="(const volatile T &amp;location)" -->
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e765439a2cd7ddd871b20dc72148d600"></a><!-- doxytag: member="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;::load" ref="e765439a2cd7ddd871b20dc72148d600" args="(const volatile T &amp;location)" -->
 static T&nbsp;</td><td class="memItemRight" valign="bottom"><b>load</b> (const volatile T &amp;location)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1d72090653905a4c94aa6836bc190044"></a><!-- doxytag: member="tbb::internal::machine_load_store_relaxed::store" ref="1d72090653905a4c94aa6836bc190044" args="(volatile T &amp;location, T value)" -->
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="05fcfe2752cabb32ff9db4fbef59bb8b"></a><!-- doxytag: member="tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;::store" ref="05fcfe2752cabb32ff9db4fbef59bb8b" args="(volatile T &amp;location, T value)" -->
 static void&nbsp;</td><td class="memItemRight" valign="bottom"><b>store</b> (volatile T &amp;location, T value)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, size_t S&gt;<br>
- struct tbb::internal::machine_load_store_relaxed&lt; T, S &gt;</h3>
+<h3>template&lt;typename T&gt;<br>
+ struct tbb::internal::machine_load_store_seq_cst&lt; T, 8 &gt;</h3>
 
-Volatile should not incur any additional cost on IA32, Intel64, and Sparc TSO architectures. However on architectures with weak memory ordering compiler may generate code with acquire/release semantics for operations on volatile data. 
+The implementation does not use functions __TBB_machine_load8/store8 as they are not required to be sequentially consistent. 
 <p>
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>tbb_machine.h</ul>

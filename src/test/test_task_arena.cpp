@@ -26,11 +26,12 @@
     the GNU General Public License.
 */
 
-#if __TBB_CPF_BUILD
 // undefine __TBB_CPF_BUILD to simulate user's setup
 #undef __TBB_CPF_BUILD
 
 #define TBB_PREVIEW_TASK_ARENA 1
+#define TBB_PREVIEW_LOCAL_OBSERVER 1
+#define __TBB_EXTRA_DEBUG 1
 
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
     // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers
@@ -203,24 +204,31 @@ void TestConcurrentArenas(int p) {
     barrier.timed_wait(10);
     a2.enqueue(work); // another work
     a2.execute(work); // my_barrier.timed_wait(10) inside
-    a1.wait_until_empty();
-    a2.wait_until_empty();
+    a1.debug_wait_until_empty();
+    a2.debug_wait_until_empty();
 }
 
 class MultipleMastersBody : NoAssign {
-    int mode;
+    tbb::task_arena &my_a;
+    Harness::SpinBarrier &my_b1, &my_b2;
+public:
+    MultipleMastersBody( tbb::task_arena &a, Harness::SpinBarrier &b1, Harness::SpinBarrier &b2)
+        : my_a(a), my_b1(b1), my_b2(b2) {}
+    void operator()(int) const {
+        my_a.execute(AsynchronousWork(my_b2, /*blocking=*/false));
+        my_b1.timed_wait(10);
+        // A regression test for bugs 1954 & 1971
+        my_a.enqueue(AsynchronousWork(my_b2, /*blocking=*/false));
+    }
+};
+
+class MultipleMastersPart2 : NoAssign {
     tbb::task_arena &my_a;
     Harness::SpinBarrier &my_b;
 public:
-    MultipleMastersBody(int m, tbb::task_arena &a, Harness::SpinBarrier &b)
-    : mode(m), my_a(a), my_b(b) {}
+    MultipleMastersPart2( tbb::task_arena &a, Harness::SpinBarrier &b) : my_a(a), my_b(b) {}
     void operator()(int) const {
         my_a.execute(AsynchronousWork(my_b, /*blocking=*/false));
-        if( mode == 0 ) {
-            my_a.wait_until_empty();
-            // A regression test for bugs 1954 & 1971
-            my_a.enqueue(AsynchronousWork(my_b, /*blocking=*/false));
-        }
     }
 };
 
@@ -262,26 +270,25 @@ public:
     }
 };
 
-
 void TestMultipleMasters(int p) {
     {
         REMARK("multiple masters, part 1\n");
         tbb::task_arena a(1,0);
         a.initialize();
         ArenaObserver o(a, 1);
-        Harness::SpinBarrier barrier(2*p+1); // each of p threads will submit two tasks signaling the barrier
-        NativeParallelFor( p, MultipleMastersBody(0, a, barrier) );
-        barrier.timed_wait(10);
-        a.wait_until_empty();
+        Harness::SpinBarrier barrier1(p), barrier2(2*p+1); // each of p threads will submit two tasks signaling the barrier
+        NativeParallelFor( p, MultipleMastersBody(a, barrier1, barrier2) );
+        barrier2.timed_wait(10);
+        a.debug_wait_until_empty();
     } {
         REMARK("multiple masters, part 2\n");
         tbb::task_arena a(2,1);
         ArenaObserver o(a, 2);
         Harness::SpinBarrier barrier(p+2);
         a.enqueue(AsynchronousWork(barrier, /*blocking=*/true)); // occupy the worker, a regression test for bug 1981
-        NativeParallelFor( p, MultipleMastersBody(1, a, barrier) );
+        NativeParallelFor( p, MultipleMastersPart2(a, barrier) );
         barrier.timed_wait(10);
-        a.wait_until_empty();
+        a.debug_wait_until_empty();
     } {
         // Regression test for the bug 1981 part 2 (task_arena::execute() with wait_for_all for an enqueued task)
         REMARK("multiple masters, part 3: wait_for_all() in execute()\n");
@@ -289,7 +296,7 @@ void TestMultipleMasters(int p) {
         Harness::SpinBarrier barrier(p+1); // for masters to avoid endless waiting at least in some runs
         // "Oversubscribe" the arena by 1 master thread
         NativeParallelFor( p+1, MultipleMastersPart3(a, barrier) );
-        a.wait_until_empty();
+        a.debug_wait_until_empty();
     }
 }
 
@@ -307,9 +314,3 @@ int TestMain () {
     }
     return Harness::Done;
 }
-#else // __TBB_CPF_BUILD
-#include "harness.h"
-int TestMain () {
-    return Harness::Skipped;
-}
-#endif

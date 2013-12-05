@@ -925,11 +925,11 @@ void TestInitList(){
     using namespace initializer_list_support_tests;
     REMARK("testing initializer_list methods \n");
 
-    typedef tbb::concurrent_hash_map<int,int>::value_type value_type;
-    std::initializer_list<value_type > pairs_il = {{1,1},{2,2},{3,3},{4,4},{5,5}};
+    typedef tbb::concurrent_hash_map<int,int> ch_map_type;
+    std::initializer_list<ch_map_type::value_type > pairs_il = {{1,1},{2,2},{3,3},{4,4},{5,5}};
 
-    TestInitListSupportWithoutAssign<tbb::concurrent_hash_map<int,int> >(pairs_il);
-    TestInitListSupportWithoutAssign<tbb::concurrent_hash_map<int,int> >({});
+    TestInitListSupportWithoutAssign<ch_map_type>(pairs_il);
+    TestInitListSupportWithoutAssign<ch_map_type>({});
 }
 #endif //if __TBB_INITIALIZER_LISTS_PRESENT
 //------------------------------------------------------------------------

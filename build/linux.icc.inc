@@ -38,8 +38,6 @@ EXPORT_KEY = -Wl,--version-script,
 NOINTRINSIC_KEY = -fno-builtin
 LIBDL = -ldl
 
-TBB_NOSTRICT = 1
-
 CPLUS = icpc
 CONLY = icc
 
@@ -88,7 +86,7 @@ ifneq (,$(codecov))
 endif
 
 ifneq (00,$(lambdas)$(cpp0x))
-	CPLUS_FLAGS += $(CPP11_FLAGS)
+	CXX_ONLY_FLAGS += $(CPP11_FLAGS)
 endif
 
 #------------------------------------------------------------------------------

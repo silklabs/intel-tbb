@@ -226,17 +226,6 @@ namespace Harness {
     {
        return N;
     }
-
-    //TODO: remove this #if __TBB_INITIALIZER_LISTS_PRESENT
-    //it looks like all other compilers except gcc issue warnings/errors then they see
-    //declaration of zero sized array
-    #if __TBB_INITIALIZER_LISTS_PRESENT
-        template<typename T>
-        inline size_t array_length(const T[0])
-        {
-           return 0;
-        }
-    #endif //__TBB_INITIALIZER_LISTS_PRESENT
 } //namespace Harness
 
 #if TEST_USES_TBB
@@ -341,6 +330,10 @@ int main(int argc, char* argv[]) {
     MPI_Init(&argc,&argv);
 #endif
 #endif
+#if HARNESS_SKIP_TEST
+    REPORT( "skip\n" );
+    return 0;
+#else
 #if __TBB_MPI_INTEROP
     // Simple TBB/MPI interoperability harness for most of tests
     // Worker processes send blocking messages to the master process about their rank and group size
@@ -389,6 +382,7 @@ int main(int argc, char* argv[]) {
     REPORT( res==Harness::Done ? "done\n" : "skip\n" );
 #endif
     return 0;
+#endif /* HARNESS_SKIP_TEST */
 }
 
 #endif /* !HARNESS_CUSTOM_MAIN */

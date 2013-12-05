@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::scalable_allocator&lt; void &gt; Class Template Reference</title>
+<title>tbb::flow::interface7::sender&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,67 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00338.html">scalable_allocator&lt; void &gt;</a></div>
-<h1>tbb::scalable_allocator&lt; void &gt; Class Template Reference<br>
-<small>
-[<a class="el" href="a00443.html">Memory Allocation</a>]</small>
-</h1><!-- doxytag: class="tbb::scalable_allocator&lt; void &gt;" -->Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1.  
+<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00338.html">sender</a></div>
+<h1>tbb::flow::interface7::sender&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::sender" -->Pure virtual template class that defines a sender of messages of type T.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;scalable_allocator.h&gt;</code>
+<code>#include &lt;flow_graph.h&gt;</code>
 <p>
-<a href="a00125.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface7::sender&lt; T &gt;:
+<p><center><img src="a00338.png" usemap="#tbb::flow::interface7::sender< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface7::sender< T >_map">
+<area href="a00273.html" alt="tbb::flow::interface7::broadcast_node< T >" shape="rect" coords="0,56,352,80">
+<area href="a00274.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
+<area href="a00303.html" alt="tbb::flow::interface7::limiter_node< T >" shape="rect" coords="724,56,1076,80">
+<area href="a00323.html" alt="tbb::flow::interface7::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
+<area href="a00324.html" alt="tbb::flow::interface7::queue_node< T, A >" shape="rect" coords="543,112,895,136">
+<area href="a00339.html" alt="tbb::flow::interface7::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
+</map>
+<a href="a00055.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2046816029c2c7856f7684aed2af9cff"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::pointer" ref="2046816029c2c7856f7684aed2af9cff" args="" -->
-typedef void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>pointer</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7b8865f5b31bd88eec9fa143a9ccf1cf"></a><!-- doxytag: member="tbb::flow::interface7::sender::output_type" ref="7b8865f5b31bd88eec9fa143a9ccf1cf" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#7b8865f5b31bd88eec9fa143a9ccf1cf">output_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="591c568d23f8aadf6ea8d1dc939c4e75"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::const_pointer" ref="591c568d23f8aadf6ea8d1dc939c4e75" args="" -->
-typedef const void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>const_pointer</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="58504fa06a8950ed4bbc9f6b9619aa27"></a><!-- doxytag: member="tbb::flow::interface7::sender::successor_type" ref="58504fa06a8950ed4bbc9f6b9619aa27" args="" -->
+typedef <a class="el" href="a00332.html">receiver</a>&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#58504fa06a8950ed4bbc9f6b9619aa27">successor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="64dbab666af0740c30b77edac9f157ce"></a><!-- doxytag: member="tbb::scalable_allocator&lt; void &gt;::value_type" ref="64dbab666af0740c30b77edac9f157ce" args="" -->
-typedef void&nbsp;</td><td class="memItemRight" valign="bottom"><b>value_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a7446e02f5faa475a0ab08cb6fe40172"></a><!-- doxytag: member="tbb::flow::interface7::sender::register_successor" ref="a7446e02f5faa475a0ab08cb6fe40172" args="(successor_type &amp;r)=0" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#a7446e02f5faa475a0ab08cb6fe40172">register_successor</a> (<a class="el" href="a00332.html">successor_type</a> &amp;r)=0</td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>rebind</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a new successor to this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1d4dbf1f3f96dbab6e2ce0e7e7198af8"></a><!-- doxytag: member="tbb::flow::interface7::sender::remove_successor" ref="1d4dbf1f3f96dbab6e2ce0e7e7198af8" args="(successor_type &amp;r)=0" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#1d4dbf1f3f96dbab6e2ce0e7e7198af8">remove_successor</a> (<a class="el" href="a00332.html">successor_type</a> &amp;r)=0</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1889e4b9b1bfb7072263dbd8d5a2a7b4"></a><!-- doxytag: member="tbb::flow::interface7::sender::try_get" ref="1889e4b9b1bfb7072263dbd8d5a2a7b4" args="(T &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#1889e4b9b1bfb7072263dbd8d5a2a7b4">try_get</a> (T &amp;)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request an item from the sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eb11a94a22e1287b3e64b994ddff73ec"></a><!-- doxytag: member="tbb::flow::interface7::sender::try_reserve" ref="eb11a94a22e1287b3e64b994ddff73ec" args="(T &amp;)" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#eb11a94a22e1287b3e64b994ddff73ec">try_reserve</a> (T &amp;)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reserves an item in the sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9dcf950995f4b5796fb1012ec057006b"></a><!-- doxytag: member="tbb::flow::interface7::sender::try_release" ref="9dcf950995f4b5796fb1012ec057006b" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#9dcf950995f4b5796fb1012ec057006b">try_release</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Releases the reserved item. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ccbb72b51fc7e735e5e2bb6104d23b9e"></a><!-- doxytag: member="tbb::flow::interface7::sender::try_consume" ref="ccbb72b51fc7e735e5e2bb6104d23b9e" args="()" -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00338.html#ccbb72b51fc7e735e5e2bb6104d23b9e">try_consume</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Consumes the reserved item. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;&gt;<br>
- class tbb::scalable_allocator&lt; void &gt;</h3>
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface7::sender&lt; T &gt;</h3>
 
-Analogous to std::allocator&lt;void&gt;, as defined in ISO C++ Standard, Section 20.4.1. 
+Pure virtual template class that defines a sender of messages of type T. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00405.html">scalable_allocator.h</a></ul>
+<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

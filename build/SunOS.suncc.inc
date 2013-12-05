@@ -39,8 +39,6 @@ WARNING_AS_ERROR_KEY = Warning as error
 WARNING_SUPPRESS = -erroff=unassigned,attrskipunsup,badargtype2w,badbinaryopw,wbadasg,wvarhidemem,inlasmpnu
 tbb_strict=0
 
-TBB_NOSTRICT = 1
-
 CPLUS = CC
 CONLY = cc
 LIB_LINK_FLAGS = -G -R . -M$(tbb_root)/build/suncc.map.pause

@@ -128,7 +128,8 @@ rml: $(RML.DLL) $(RML_TBB_CLIENT.OBJ) $(RML_OMP_CLIENT.OBJ)
 add_debug=$(basename $(1))_debug$(suffix $(1))
 cross_suffix=$(if $(crosstest),$(if $(DEBUG_SUFFIX),$(subst _debug,,$(1)),$(call add_debug,$(1))),$(1))
 
-RML_TESTS = test_job_automaton.$(TEST_EXT) test_thread_monitor.$(TEST_EXT) test_rml_tbb.$(TEST_EXT) test_rml_omp.$(TEST_EXT) test_rml_mixed.$(TEST_EXT) test_rml_omp_c_linkage.$(TEST_EXT)
+RML_TESTS = test_job_automaton.$(TEST_EXT) test_thread_monitor.$(TEST_EXT)
+RML_CUSTOM_TESTS = test_rml_tbb.$(TEST_EXT) test_rml_omp.$(TEST_EXT) test_rml_mixed.$(TEST_EXT) test_rml_omp_c_linkage.$(TEST_EXT)
 
 test_rml_tbb.$(TEST_EXT): test_rml_tbb.$(OBJ) $(RML_TBB_CLIENT.OBJ) $(TBB_DEP_RML_TEST)
 	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) test_rml_tbb.$(OBJ) $(RML_TBB_CLIENT.OBJ) $(TBB_DEP_RML_TEST) $(LIBS) $(LINK_FLAGS)
@@ -145,11 +146,11 @@ rml_omp_stub.$(OBJ): rml_omp_stub.cpp
 test_rml_omp_c_linkage.$(TEST_EXT): test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ) omp_dynamic_link.$(OBJ)
 	$(CONLY) $(C_FLAGS) $(OUTPUT_KEY)$@ test_rml_omp_c_linkage.$(OBJ) rml_omp_stub.$(OBJ) omp_dynamic_link.$(OBJ) $(LIBS) $(LINK_FLAGS)
 
-test_%.$(TEST_EXT): test_%.$(OBJ) $(TBB_DEP_NON_RML_TEST)
+$(RML_TESTS): %.$(TEST_EXT): %.$(OBJ) $(TBB_DEP_NON_RML_TEST)
 	$(CPLUS) $(OUTPUT_KEY)$@ $(CPLUS_FLAGS) $< $(TBB_DEP_NON_RML_TEST) $(LIBS) $(LINK_FLAGS)
 
 ### run_cmd is usually empty
-rml_test: $(call cross_suffix,$(RML.DLL)) $(TEST_PREREQUISITE) $(RML_TESTS)
+rml_test: $(call cross_suffix,$(RML.DLL)) $(TEST_PREREQUISITE) $(RML_TESTS) $(RML_CUSTOM_TESTS)
 	$(run_cmd) ./test_job_automaton.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_thread_monitor.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_rml_tbb.$(TEST_EXT) $(args)

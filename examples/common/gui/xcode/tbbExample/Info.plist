@@ -9,7 +9,7 @@
 	<key>CFBundleDisplayName</key>
 	<string></string>
 	<key>CFBundleExecutable</key>
-	<string>tbbExample</string>
+	<string>launcher.sh</string>
 	<key>CFBundleIdentifier</key>
 	<string>Intel.tbbExample</string>
 	<key>CFBundleInfoDictionaryVersion</key>

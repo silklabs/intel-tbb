@@ -131,13 +131,17 @@ Library Issues
 	debug libraries; not doing so may cause run-time failures.  See
 	the Tutorial in the product "doc" sub-directory for more details
 	on debug vs. release libraries.
-    
+
     - If open source verion installed to the system folders like /usr/lib64
 	on Linux OS examples may fail to link because sometimes gcc
 	searches for folders in the different order than expected.
 	-L command line	linker option needs to be used to set the right
 	location. This does not affect a program execution.
-    
+
+    - Running applications linked with Intel(R) Threading Building Blocks
+        version 4.0 U5 or higher under Intel(R) Graphics Performance
+        Analyzers is not supported.
+
 ------------------------------------------------------------------------
 Copyright (C) 2005-2013 Intel Corporation.  All Rights Reserved.
 

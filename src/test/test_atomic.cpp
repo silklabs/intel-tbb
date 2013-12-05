@@ -455,7 +455,7 @@ namespace TestConstExprInitializationOfGlobalObjectsHelper{
 
         template <typename T>
         struct registration{
-            registration(){const_expr_tests.push_back(TestStaticInit<T>);}
+            registration(){const_expr_tests.push_back(&TestStaticInit<T>);}
         };
     }
     //according to ISO C++11 [basic.start.init], static data fields of class template have unordered

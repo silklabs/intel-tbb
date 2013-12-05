@@ -29,6 +29,7 @@
 #include "tbb/tbb_config.h"
 #include "tbb_main.h"
 #include "governor.h"
+#include "market.h"
 #include "tbb_misc.h"
 #include "itt_notify.h"
 

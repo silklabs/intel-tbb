@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::user_abort Class Reference</title>
+<title>tbb::internal::work_around_alignment_bug&lt; Size, T &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,29 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00364.html">user_abort</a></div>
-<h1>tbb::user_abort Class Reference</h1><!-- doxytag: class="tbb::user_abort" -->Exception for user-initiated abort.  
+<a class="el" href="a00427.html">tbb</a>::<b>internal</b>::<a class="el" href="a00364.html">work_around_alignment_bug</a></div>
+<h1>tbb::internal::work_around_alignment_bug&lt; Size, T &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::work_around_alignment_bug" -->Work around for bug in GNU 3.2 and MSVC compilers.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;tbb_exception.h&gt;</code>
+<code>#include &lt;tbb_machine.h&gt;</code>
 <p>
-<a href="a00158.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00182.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="989461aff2934fede08b969ed4bf4e16"></a><!-- doxytag: member="tbb::user_abort::what" ref="989461aff2934fede08b969ed4bf4e16" args="() const " -->
-const char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const   throw ()</td></tr>
+<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="14283941aefd819871be2f5e24f5cb37"></a><!-- doxytag: member="tbb::internal::work_around_alignment_bug::alignment" ref="14283941aefd819871be2f5e24f5cb37" args="" -->
+static const size_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>alignment</b> = __TBB_alignof(T)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Exception for user-initiated abort. 
+<h3>template&lt;size_t Size, typename T&gt;<br>
+ struct tbb::internal::work_around_alignment_bug&lt; Size, T &gt;</h3>
+
+Work around for bug in GNU 3.2 and MSVC compilers. 
 <p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li>tbb_exception.h</ul>
+Bug is that compiler sometimes returns 0 for __alignof(T) when T has not yet been instantiated. The work-around forces instantiation by forcing computation of sizeof(T) before __alignof(T). 
+<p>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li>tbb_machine.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

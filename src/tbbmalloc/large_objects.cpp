@@ -108,7 +108,7 @@ LargeMemoryBlock *LargeObjectCacheImpl<Props>::CacheBin::
         if (!usedSize && !first)
             bitMask->set(idx, false);
     }
-    extMemPool->loc.cleanupCacheIfNeededOnRange(&extMemPool->backend, totalNum, currTime);
+    extMemPool->loc.cleanupCacheIfNeededOnRange(totalNum, currTime);
     if (toRelease)
         toRelease->prev = toRelease->next = NULL;
     return toRelease;
@@ -267,9 +267,9 @@ size_t LargeObjectCacheImpl<Props>::CacheBin::reportStat(int num, FILE *f)
 {
 #if __TBB_MALLOC_LOCACHE_STAT
     if (first)
-        printf("%d(%lu): total %lu KB thr %ld lastCln %lu lastHit %lu oldest %lu\n",
+        printf("%d(%lu): total %lu KB thr %ld lastCln %lu oldest %lu\n",
                num, num*Props::CacheStep+Props::MinSize,
-               cachedSize/1024, ageThreshold, lastCleanedAge, lastHit, oldest);
+               cachedSize/1024, ageThreshold, lastCleanedAge, oldest);
 #else
     suppress_unused_warning(num);
     suppress_unused_warning(f);
@@ -279,9 +279,9 @@ size_t LargeObjectCacheImpl<Props>::CacheBin::reportStat(int num, FILE *f)
 
 // release from cache blocks that are older than ageThreshold
 template<typename Props>
-bool LargeObjectCacheImpl<Props>::regularCleanup(Backend *backend, uintptr_t currTime)
+bool LargeObjectCacheImpl<Props>::regularCleanup(Backend *backend, uintptr_t currTime, bool doThreshDecr)
 {
-    bool released = false, doThreshDecr = false;
+    bool released = false;
     BinsSummary binsSummary;
 
     for (int i = bitMask.getMaxTrue(numBins-1); i >= 0;
@@ -364,26 +364,38 @@ uintptr_t LargeObjectCache::getCurrTimeRange(uintptr_t range)
     return (uintptr_t)AtomicAdd((intptr_t&)cacheCurrTime, range)+1;
 }
 
-void LargeObjectCache::cleanupCacheIfNeeded(Backend *backend, uintptr_t currTime)
+void LargeObjectCache::cleanupCacheIfNeeded(uintptr_t currTime)
 {
     if ( 0 == currTime % cacheCleanupFreq )
-        doRegularCleanup(backend, currTime);
+        doCleanup(currTime, /*doThreshDecr=*/false);
 }
 
 void LargeObjectCache::
-    cleanupCacheIfNeededOnRange(Backend *backend, uintptr_t range, uintptr_t currTime)
+    cleanupCacheIfNeededOnRange(uintptr_t range, uintptr_t currTime)
 {
     if (range >= cacheCleanupFreq
         || currTime+range < currTime-1 // overflow, 0 is power of 2, do cleanup
         // (prev;prev+range] contains n*cacheCleanupFreq
         || alignUp(currTime, cacheCleanupFreq)<=currTime+range)
-        doRegularCleanup(backend, currTime);
+        doCleanup(currTime, /*doThreshDecr=*/false);
 }
 
-bool LargeObjectCache::doRegularCleanup(Backend *backend, uintptr_t currTime)
+bool LargeObjectCache::doCleanup(uintptr_t currTime, bool doThreshDecr)
 {
-    return largeCache.regularCleanup(backend, currTime)
-        | hugeCache.regularCleanup(backend, currTime);
+    if (!doThreshDecr)
+        extMemPool->allLocalCaches.markUnused();
+    return largeCache.regularCleanup(&extMemPool->backend, currTime, doThreshDecr)
+        | hugeCache.regularCleanup(&extMemPool->backend, currTime, doThreshDecr);
+}
+
+bool LargeObjectCache::decreasingCleanup()
+{
+    return doCleanup(FencedLoad((intptr_t&)cacheCurrTime), /*doThreshDecr=*/true);
+}
+
+bool LargeObjectCache::regularCleanup()
+{
+    return doCleanup(FencedLoad((intptr_t&)cacheCurrTime), /*doThreshDecr=*/false);
 }
 
 bool LargeObjectCache::cleanAll(Backend *backend)
@@ -463,7 +475,7 @@ int LargeObjectCache::sizeToIdx(size_t size)
         LargeCacheType::getNumBins()+HugeCacheType::sizeToIdx(size);
 }
 
-void LargeObjectCache::putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *list)
+void LargeObjectCache::putList(LargeMemoryBlock *list)
 {
     LargeMemoryBlock *toProcess, *n;
 
@@ -501,7 +513,7 @@ void LargeObjectCache::putList(ExtMemoryPool *extMemPool, LargeMemoryBlock *list
     }
 }
 
-void LargeObjectCache::put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlock)
+void LargeObjectCache::put(LargeMemoryBlock *largeBlock)
 {
     if (largeBlock->unalignedSize < maxHugeSize) {
         largeBlock->next = NULL;
@@ -513,14 +525,14 @@ void LargeObjectCache::put(ExtMemoryPool *extMemPool, LargeMemoryBlock *largeBlo
         extMemPool->backend.returnLargeObject(largeBlock);
 }
 
-LargeMemoryBlock *LargeObjectCache::get(Backend *backend, size_t size)
+LargeMemoryBlock *LargeObjectCache::get(size_t size)
 {
     MALLOC_ASSERT( size%largeBlockCacheStep==0, ASSERT_TEXT );
     MALLOC_ASSERT( size>=minLargeSize, ASSERT_TEXT );
 
     if ( size < maxHugeSize) {
         uintptr_t currTime = getCurrTime();
-        cleanupCacheIfNeeded(backend, currTime);
+        cleanupCacheIfNeeded(currTime);
         return size < maxLargeSize?
             largeCache.get(currTime, size) : hugeCache.get(currTime, size);
     }
@@ -534,7 +546,7 @@ LargeMemoryBlock *ExtMemoryPool::mallocLargeObject(size_t allocationSize)
     AtomicIncrement(mallocCalls);
     AtomicAdd(memAllocKB, allocationSize/1024);
 #endif
-    LargeMemoryBlock* lmb = loc.get(&backend, allocationSize);
+    LargeMemoryBlock* lmb = loc.get(allocationSize);
     if (!lmb) {
         BackRefIdx backRefIdx = BackRefIdx::newBackRef(/*largeObj=*/true);
         if (backRefIdx.isInvalid())
@@ -560,17 +572,17 @@ LargeMemoryBlock *ExtMemoryPool::mallocLargeObject(size_t allocationSize)
 
 void ExtMemoryPool::freeLargeObject(LargeMemoryBlock *mBlock)
 {
-    loc.put(this, mBlock);
+    loc.put(mBlock);
 }
 
 void ExtMemoryPool::freeLargeObjectList(LargeMemoryBlock *head)
 {
-    loc.putList(this, head);
+    loc.putList(head);
 }
 
 bool ExtMemoryPool::softCachesCleanup()
 {
-    return loc.regularCleanup(&backend);
+    return loc.regularCleanup();
 }
 
 bool ExtMemoryPool::hardCachesCleanup()
@@ -579,6 +591,7 @@ bool ExtMemoryPool::hardCachesCleanup()
     // because object from thread-local cache can be released to LOC
     bool ret = releaseAllLocalCaches();
     ret |= loc.cleanAll(&backend);
+    ret |= backend.clean();
     return ret;
 }
 

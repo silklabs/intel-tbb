@@ -30,14 +30,15 @@
 // The intent is to find dependencies on the C++ run-time.
 
 #include <stdlib.h>
+#include "harness_defs.h"
 #define RML_PURE_VIRTUAL_HANDLER abort
 
 #if _MSC_VER==1500 && !defined(__INTEL_COMPILER)
 // VS2008/VC9 seems to have an issue; 
 #pragma warning( push )
 #pragma warning( disable: 4100 ) 
-#elif _MSC_VER==1700 && !defined(__INTEL_COMPILER)
-// VS2012 issues "warning C4702: unreachable code" for the code which really
+#elif __TBB_MSVC_UNREACHABLE_CODE_IGNORED
+// VS2012-2013 issues "warning C4702: unreachable code" for the code which really
 // shouldn't be reached according to the test logic: rml::client has the
 // implementation for the "pure" virtual methods to be aborted if they are
 // called.
@@ -45,7 +46,7 @@
 #pragma warning( disable: 4702 )
 #endif
 #include "rml_omp.h"
-#if ( _MSC_VER==1500 || _MSC_VER==1700 ) && !defined(__INTEL_COMPILER)
+#if ( _MSC_VER==1500 && !defined(__INTEL_COMPILER)) || __TBB_MSVC_UNREACHABLE_CODE_IGNORED
 #pragma warning( pop )
 #endif
 

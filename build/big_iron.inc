@@ -50,6 +50,9 @@
     LIB_LINK_LIBS =
     LIB_OUTPUT_KEY =
     ifeq ($(tbb_os),linux)
+        ifeq ($(compiler),clang)
+            LIBS = -pthread -ldl -lrt
+        endif
         ifeq ($(compiler),gcc)
             LIBS = -pthread -ldl -lrt
         endif

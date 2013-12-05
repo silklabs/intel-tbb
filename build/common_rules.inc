@@ -24,6 +24,7 @@
 # invalidate any other reasons why the executable file might be covered by
 # the GNU General Public License.
 
+
 ifeq ($(tbb_strict),1)
   ifeq ($(WARNING_AS_ERROR_KEY),)
     $(error WARNING_AS_ERROR_KEY is empty)
@@ -50,8 +51,6 @@ ifndef TEST_EXT
     TEST_EXT = exe
 endif
 
-.PRECIOUS: %.$(OBJ) %.$(TEST_EXT) %.res
-
 INCLUDES += $(INCLUDE_KEY)$(tbb_root)/src $(INCLUDE_KEY)$(tbb_root)/src/rml/include $(INCLUDE_KEY)$(tbb_root)/include
 
 CPLUS_FLAGS += $(WARNING_KEY) $(CXXFLAGS)
@@ -72,23 +71,46 @@ endif
 
 CONLY ?= $(CPLUS)
 
-#$(1) - is the obj name
-#$(2) - is the input cpp files 
-#$(3) - extra flags to compile with
-define make-cxx-obj 
-	$(CPLUS) $(OUTPUTOBJ_KEY)$(strip $1) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $3 $2
+# The most generic rules
+#$(1) - is the target pattern
+define make-cxx-obj
+$1: %.cpp
+	$$(CPLUS) $$(OUTPUTOBJ_KEY)$$@ $$(COMPILE_ONLY) $$(CPLUS_FLAGS) $$(CXX_ONLY_FLAGS) $$(CXX_WARN_SUPPRESS) $$(INCLUDES) $$<
 endef
 
-# The most generic rules
-%.$(OBJ): %.cpp
-	$(call make-cxx-obj,$@, $<, )
+TEST_AFFIXES_OBJS=$(addsuffix .$(OBJ),$(addprefix %_,$(TEST_SUFFIXES)) $(addsuffix _%,$(TEST_PREFIXES)))
+
+# Make will not process the same recipe for each test pattern (since the dependency on the same %.cpp)
+# thus the separated recipes should be provided
+$(foreach t,%.$(OBJ) $(TEST_AFFIXES_OBJS),$(eval $(call make-cxx-obj,$(t))))
+
+.PRECIOUS: %.$(OBJ) %.$(TEST_EXT) %.res $(TEST_AFFIXES_OBJS)
 
 # Rules for generating a test DLL
 %_dll.$(OBJ): %.cpp
 	$(CPLUS) $(COMPILE_ONLY) $(OUTPUTOBJ_KEY)$@ $(CPLUS_FLAGS) $(PIC_KEY) $(DEFINE_KEY)_USRDLL $(INCLUDES) $<
 
+#$(1) - is the binary name
+#$(2) - is the input obj files and libraries
+define make-test-binary
+	$(CPLUS) $(OUTPUT_KEY)$(strip $1) $(CPLUS_FLAGS) $(2) $(LIBS) $(LINK_FLAGS)
+endef 
+
+# LINK_FILES the list of options to link test specific files (libraries and object files)
+LINK_FILES+=$(TEST_LIBS)
+# Rule for generating executable test
+%.$(TEST_EXT): %.$(OBJ) $(TEST_LIBS) $(TEST_PREREQUISITE) $(if $(use_proxy),$(PROXY.LIB))
+	$(call make-test-binary,$@,$< $(LINK_FILES))
+
+# Rules for generating a test DLL
+%_dll.$(DLL): LINK_FLAGS += $(PIC_KEY) $(DYLIB_KEY)
+%_dll.$(DLL): TEST_LIBS := $(subst %_dll.$(DLL),,$(TEST_LIBS))
+%_dll.$(DLL): %_dll.$(OBJ)
+	$(call make-test-binary,$@,$< $(subst %_dll.$(DLL),,$(LINK_FILES)))
+.PRECIOUS: %_dll.$(OBJ) %_dll.$(DLL)
+
 %.$(OBJ): %.c
-	$(CONLY) $(COMPILE_ONLY) $(C_FLAGS) $(INCLUDES) $<
+	$(CONLY) $(COMPILE_ONLY) $(OUTPUTOBJ_KEY)$@ $(C_FLAGS) $(INCLUDES) $<
 
 %.$(OBJ): %.asm
 	$(ASM) $(ASM_FLAGS) $<
@@ -111,21 +133,11 @@ endef
 	$(CPLUS) -S $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(INCLUDES) $<
 
 # Customizations
-
-ifeq (1,$(TBB_NOSTRICT))
-# GNU 3.2.3 headers have a ISO syntax that is rejected by Intel compiler in -strict-ansi mode.
-# The OS X* uses gcc, so the list is empty for that platform.
-# The files below need the -strict-ansi flag downgraded to -ansi to compile
-
-$(KNOWN_NOSTRICT): %.$(OBJ): %.cpp
-	$(CPLUS) $(COMPILE_ONLY) $(CPLUS_FLAGS_NOSTRICT) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $<
-endif
-
 $(KNOWN_WARNINGS): %.$(OBJ): %.cpp
 	$(CPLUS) $(COMPILE_ONLY) $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $<
 
-tbb_misc.$(OBJ): tbb_misc.cpp version_string.ver
-	$(CPLUS) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDE_KEY). $(INCLUDES) $<
+tbb_misc.$(OBJ): version_string.ver
+tbb_misc.$(OBJ): INCLUDES+=$(INCLUDE_KEY).
 
 tbb_misc.E: tbb_misc.cpp version_string.ver
 	$(CPLUS) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(INCLUDE_KEY). $(INCLUDES) $(PREPROC_ONLY) $< >$@

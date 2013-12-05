@@ -149,7 +149,7 @@ void tbb_exception_ptr::destroy () throw() {
 //------------------------------------------------------------------------
 
 task_group_context::~task_group_context () {
-    if ( my_kind == binding_completed ) {
+    if ( __TBB_load_relaxed(my_kind) == binding_completed ) {
         if ( governor::is_set(my_owner) ) {
             // Local update of the context list 
             uintptr_t local_count_snapshot = my_owner->my_context_state_propagation_epoch;
@@ -181,8 +181,9 @@ task_group_context::~task_group_context () {
         }
         else {
             // Nonlocal update of the context list
-            // Synchronizes with generic_scheduler::free_scheduler()
-            if ( __TBB_FetchAndStoreW(&my_kind, dying) == detached ) {
+            // Synchronizes with generic_scheduler::cleanup_local_context_list()
+            // TODO: evaluate and perhaps relax, or add some lock instead
+            if ( internal::as_atomic(my_kind).fetch_and_store(dying) == detached ) {
                 my_node.my_prev->my_next = my_node.my_next;
                 my_node.my_next->my_prev = my_node.my_prev;
             }
@@ -210,7 +211,7 @@ void task_group_context::init () {
     __TBB_ASSERT ( sizeof(uintptr_t) < 32, "Layout of my_version_and_traits must be reconsidered on this platform" );
     __TBB_ASSERT ( sizeof(task_group_context) == 2 * NFS_MaxLineSize, "Context class has wrong size - check padding and members alignment" );
     __TBB_ASSERT ( (uintptr_t(this) & (sizeof(my_cancellation_requested) - 1)) == 0, "Context is improperly aligned" );
-    __TBB_ASSERT ( my_kind == isolated || my_kind == bound, "Context can be created only as isolated or bound" );
+    __TBB_ASSERT ( __TBB_load_relaxed(my_kind) == isolated || __TBB_load_relaxed(my_kind) == bound, "Context can be created only as isolated or bound" );
     my_parent = NULL;
     my_cancellation_requested = 0;
     my_exception = NULL;
@@ -255,7 +256,7 @@ void task_group_context::register_with ( generic_scheduler *local_sched ) {
 }
 
 void task_group_context::bind_to ( generic_scheduler *local_sched ) {
-    __TBB_ASSERT ( my_kind == binding_required, "Already bound or isolated?" );
+    __TBB_ASSERT ( __TBB_load_relaxed(my_kind) == binding_required, "Already bound or isolated?" );
     __TBB_ASSERT ( !my_parent, "Parent is set before initial binding" );
     my_parent = local_sched->my_innermost_running_task->prefix().context;
 
@@ -306,7 +307,7 @@ void task_group_context::bind_to ( generic_scheduler *local_sched ) {
         my_priority = my_parent->my_priority;
 #endif /* __TBB_TASK_PRIORITY */
     }
-    my_kind = binding_completed;
+    __TBB_store_relaxed(my_kind, binding_completed);
 }
 
 #if __TBB_TASK_GROUP_CONTEXT
@@ -314,9 +315,7 @@ template <typename T>
 void task_group_context::propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state ) {
     if (this->*mptr_state == new_state) {
         // Nothing to do, whether descending from "src" or not, so no need to scan.
-        // Hopefully this happens often thanks to earlier invocations,
-        // and it is more relevant for set_priority() than for cancel_group_execution()
-        // because the latter will also stop at an already cancelled ancestor.
+        // Hopefully this happens often thanks to earlier invocations.
         // This optimisation is enabled by LIFO order in the context lists:
         // - new contexts are bound to the beginning of lists;
         // - descendants are newer than ancestors;

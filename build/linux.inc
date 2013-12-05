@@ -143,6 +143,4 @@ RML.DEF = $(RML_SERVER_ROOT)/lin-rml-export.def
 RML.DLL = $(RML_NO_VERSION.DLL).1
 RML.LIB = $(RML_NO_VERSION.DLL)
 
-TBB_NOSTRICT=1
-
 TEST_LAUNCHER=sh $(tbb_root)/build/test_launcher.sh $(largs)

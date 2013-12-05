@@ -101,7 +101,8 @@ int main(void) {
     /* expect all caches cleaned before, so got nothing from CLEAN_THREAD_BUFFERS */
     assert(res == TBBMALLOC_NO_EFFECT);
     /* check that invalid param argument give expected result*/
-    res = scalable_allocation_command(TBBMALLOC_CLEAN_THREAD_BUFFERS, (void*)1);
+    res = scalable_allocation_command(TBBMALLOC_CLEAN_THREAD_BUFFERS,
+                                      (void*)(intptr_t)1);
     assert(res == TBBMALLOC_INVALID_PARAM);
     printf("done\n");
     return 0;

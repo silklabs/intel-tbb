@@ -35,8 +35,6 @@ WARNING_AS_ERROR_KEY = -Werror
 WARNING_KEY = -Wall
 DYLIB_KEY = -shared
 
-TBB_NOSTRICT = 1
-
 CPLUS = g++ 
 CONLY = gcc
 LIB_LINK_FLAGS = -shared

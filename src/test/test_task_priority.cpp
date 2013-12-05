@@ -26,11 +26,7 @@
     the GNU General Public License.
 */
 
-#if __TBB_CPF_BUILD
-    #define TBB_PREVIEW_TASK_ARENA 1
-#endif
 #include "harness.h"
-
 
 #if __TBB_TASK_GROUP_CONTEXT
 

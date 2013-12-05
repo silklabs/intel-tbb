@@ -67,7 +67,7 @@ ifneq (,$(codecov))
 endif
 
 ifneq (00,$(lambdas)$(cpp0x))
-	CPLUS_FLAGS += $(CPP11_FLAGS)
+	CXX_ONLY_FLAGS += $(CPP11_FLAGS)
 endif
 
 # ICC 14.0 and higher support clang environment

@@ -64,7 +64,7 @@ namespace initializer_list_support_tests{
     template <typename container_type, typename do_test_assign_t>
     void TestInitListSupport(std::initializer_list<typename container_type::value_type> const& il, do_test_assign_t do_test_assign_p){
         typedef typename container_type::value_type element_type;
-        std::vector<element_type> test_seq = il;
+        std::vector<element_type> test_seq(il.begin(),il.end());
         container_type expected(test_seq.begin(), test_seq.end());
 
         test_constructor<container_type,element_type>(il, expected);
@@ -93,7 +93,7 @@ namespace initializer_list_support_tests{
         container_type expected(test_seq,test_seq + Harness::array_length(test_seq));                                                                          \
                                                                                                                                                       \
         /*test for explicit contructor call*/                                                                                                         \
-        container_type vd (INIT_SEQ);                                                                                                                 \
+        container_type vd INIT_SEQ;                                                                                                                 \
         ASSERT(vd == expected,"initialization via explicit constructor call with init list failed");                                                  \
         /*test for explicit contructor call with std::initializer_list*/                                                                              \
                                                                                                                                                       \

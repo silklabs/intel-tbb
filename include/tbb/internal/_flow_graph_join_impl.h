@@ -41,7 +41,7 @@ namespace internal {
     static const tag_value NO_TAG = tag_value(-1);
 
     struct forwarding_base {
-        forwarding_base(task *rt) : my_root_task(rt), current_tag(NO_TAG) {}
+        forwarding_base(graph &g) : my_graph_ptr(&g), current_tag(NO_TAG) {}
         virtual ~forwarding_base() {}
         // decrement_port_count may create a forwarding task.  If we cannot handle the task
         // ourselves, ask decrement_port_count to deal with it.
@@ -49,7 +49,7 @@ namespace internal {
         virtual void increment_port_count() = 0;
         virtual task * increment_tag_count(tag_value /*t*/, bool /*handle_task*/) {return NULL;}
         // moved here so input ports can queue tasks
-        task* my_root_task;
+        graph* my_graph_ptr;
         tag_value current_tag; // so ports can refer to FE's desired items
     };
 
@@ -666,12 +666,12 @@ namespace internal {
         typedef InputTuple input_type;
         typedef join_node_base<reserving, InputTuple, OutputTuple> my_node_type; // for forwarding
 
-        join_node_FE(graph &g) : forwarding_base(g.root_task()), my_node(NULL) {
+        join_node_FE(graph &g) : forwarding_base(g), my_node(NULL) {
             ports_with_no_inputs = N;
             join_helper<N>::set_join_node_pointer(my_inputs, this);
         }
 
-        join_node_FE(const join_node_FE& other) : forwarding_base(other.my_root_task), my_node(NULL) {
+        join_node_FE(const join_node_FE& other) : forwarding_base(*(other.forwarding_base::my_graph_ptr)), my_node(NULL) {
             ports_with_no_inputs = N;
             join_helper<N>::set_join_node_pointer(my_inputs, this);
         }
@@ -685,11 +685,13 @@ namespace internal {
         // if all input_ports have predecessors, spawn forward to try and consume tuples
         task * decrement_port_count(bool handle_task) {
             if(ports_with_no_inputs.fetch_and_decrement() == 1) {
-                task *rtask = new ( task::allocate_additional_child_of( *(this->my_root_task) ) )
-                    forward_task_bypass
-                    <my_node_type>(*my_node);
-                if(!handle_task) return rtask;
-                FLOW_SPAWN(*rtask);
+                task* tp = this->my_graph_ptr->root_task();
+                if(tp) {
+                    task *rtask = new ( task::allocate_additional_child_of( *tp ) )
+                        forward_task_bypass<my_node_type>(*my_node);
+                    if(!handle_task) return rtask;
+                    FLOW_SPAWN(*rtask);
+                }
             }
             return NULL;
         }
@@ -735,12 +737,12 @@ namespace internal {
         typedef InputTuple input_type;
         typedef join_node_base<queueing, InputTuple, OutputTuple> my_node_type; // for forwarding
 
-        join_node_FE(graph &g) : forwarding_base(g.root_task()), my_node(NULL) {
+        join_node_FE(graph &g) : forwarding_base(g), my_node(NULL) {
             ports_with_no_items = N;
             join_helper<N>::set_join_node_pointer(my_inputs, this);
         }
 
-        join_node_FE(const join_node_FE& other) : forwarding_base(other.my_root_task), my_node(NULL) {
+        join_node_FE(const join_node_FE& other) : forwarding_base(*(other.forwarding_base::my_graph_ptr)), my_node(NULL) {
             ports_with_no_items = N;
             join_helper<N>::set_join_node_pointer(my_inputs, this);
         }
@@ -756,11 +758,13 @@ namespace internal {
         task * decrement_port_count(bool handle_task)
         {
             if(ports_with_no_items.fetch_and_decrement() == 1) {
-                task *rtask = new ( task::allocate_additional_child_of( *(this->my_root_task) ) )
-                    forward_task_bypass
-                    <my_node_type>(*my_node);
-                if(!handle_task) return rtask;
-                FLOW_SPAWN( *rtask);
+                task* tp = this->my_graph_ptr->root_task();
+                if(tp) {
+                    task *rtask = new ( task::allocate_additional_child_of( *tp ) )
+                        forward_task_bypass <my_node_type>(*my_node);
+                    if(!handle_task) return rtask;
+                    FLOW_SPAWN( *rtask);
+                }
             }
             return NULL;
         }
@@ -850,13 +854,14 @@ namespace internal {
         task * fill_output_buffer(bool should_enqueue, bool handle_task) {
             output_type l_out;
             task *rtask = NULL;
-            bool do_fwd = should_enqueue && this->buffer_empty();
+            task* tp = this->my_graph_ptr->root_task();
+            bool do_fwd = should_enqueue && this->buffer_empty() && tp;
             while(find_value_tag(this->current_tag,N)) {  // while there are completed items
                 this->tagged_delete(this->current_tag);   // remove the tag
                 if(join_helper<N>::get_items(my_inputs, l_out)) {  //  <== call back
                     this->push_back(l_out);
                     if(do_fwd) {  // we enqueue if receiving an item from predecessor, not if successor asks for item
-                        rtask = new ( task::allocate_additional_child_of( *(this->my_root_task) ) )
+                        rtask = new ( task::allocate_additional_child_of( *tp ) )
                             forward_task_bypass<my_node_type>(*my_node);
                         if(handle_task) {
                             FLOW_SPAWN(*rtask);
@@ -928,13 +933,13 @@ namespace internal {
 
     public:
         template<typename FunctionTuple>
-        join_node_FE(graph &g, FunctionTuple tag_funcs) : forwarding_base(g.root_task()), my_node(NULL) {
+        join_node_FE(graph &g, FunctionTuple tag_funcs) : forwarding_base(g), my_node(NULL) {
             join_helper<N>::set_join_node_pointer(my_inputs, this);
             join_helper<N>::set_tag_func(my_inputs, tag_funcs);
             my_aggregator.initialize_handler(my_handler(this));
         }
 
-        join_node_FE(const join_node_FE& other) : forwarding_base(other.my_root_task), my_tag_buffer(),
+        join_node_FE(const join_node_FE& other) : forwarding_base(*(other.forwarding_base::my_graph_ptr)), my_tag_buffer(),
         output_buffer_type() {
             my_node = NULL;
             join_helper<N>::set_join_node_pointer(my_inputs, this);
@@ -1052,16 +1057,18 @@ namespace internal {
                 current = op_list;
                 op_list = op_list->next;
                 switch(current->type) {
-                case reg_succ:
-                    my_successors.register_successor(*(current->my_succ));
-                    if(tuple_build_may_succeed() && !forwarder_busy) {
-                        task *rtask = new ( task::allocate_additional_child_of(*(this->my_root_task)) )
-                                forward_task_bypass
-                                <join_node_base<JP,InputTuple,OutputTuple> >(*this);
-                        FLOW_SPAWN(*rtask);
-                        forwarder_busy = true;
+                case reg_succ: {
+                        my_successors.register_successor(*(current->my_succ));
+                        task* tp = this->graph_node::my_graph.root_task();
+                        if(tuple_build_may_succeed() && !forwarder_busy && tp) {
+                            task *rtask = new ( task::allocate_additional_child_of(*tp) )
+                                    forward_task_bypass
+                                    <join_node_base<JP,InputTuple,OutputTuple> >(*this);
+                            FLOW_SPAWN(*rtask);
+                            forwarder_busy = true;
+                        }
+                        __TBB_store_with_release(current->status, SUCCEEDED);
                     }
-                    __TBB_store_with_release(current->status, SUCCEEDED);
                     break;
                 case rem_succ:
                     my_successors.remove_successor(*(current->my_succ));
@@ -1114,7 +1121,7 @@ namespace internal {
         }
 
         join_node_base(const join_node_base& other) :
-            graph_node(other.my_graph), input_ports_type(other),
+            graph_node(other.graph_node::my_graph), input_ports_type(other),
             sender<OutputTuple>(), forwarder_busy(false), my_successors() {
             my_successors.set_owner(this);
             input_ports_type::set_my_node(this);

@@ -69,20 +69,6 @@ enum task_group_status {
 
 namespace internal {
 
-// Suppress gratuitous warnings from icc 11.0 when lambda expressions are used in instances of function_task.
-//#pragma warning(disable: 588)
-
-template<typename F>
-class function_task : public task {
-    F my_func;
-    /*override*/ task* execute() {
-        my_func();
-        return NULL;
-    }
-public:
-    function_task( const F& f ) : my_func(f) {}
-};
-
 template<typename F>
 class task_handle_task : public task {
     task_handle<F>& my_handle;

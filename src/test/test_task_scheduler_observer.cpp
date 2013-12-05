@@ -26,11 +26,8 @@
     the GNU General Public License.
 */
 
-// TODO: rework as non-CPF or make two tests out of it
 #define TBB_PREVIEW_LOCAL_OBSERVER 1
-#if __TBB_CPF_BUILD
-    #define TBB_PREVIEW_TASK_ARENA 1
-#endif
+#define TBB_PREVIEW_TASK_ARENA 1
 
 #include "tbb/tbb_config.h"
 #include "harness.h"
@@ -374,7 +371,7 @@ int TestMain () {
         CleanLocalState();
         TestObserver(M, T, tmSynchronized);
         TestObserver(M, T, tmSynchronized | tmLocalObservation
-#if __TBB_TASK_ARENA
+#if __TBB_CPF_BUILD
                      | ( T==P? tmLeavingControl : 0)
 #endif
                      );

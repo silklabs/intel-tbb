@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::null_rw_mutex::scoped_lock Class Reference</title>
+<title>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,39 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00317.html">null_rw_mutex</a>::<a class="el" href="a00318.html">scoped_lock</a></div>
-<h1>tbb::null_rw_mutex::scoped_lock Class Reference</h1><!-- doxytag: class="tbb::null_rw_mutex::scoped_lock" -->Represents acquisition of a mutex.  
+<a class="el" href="a00427.html">tbb</a>::<a class="el" href="a00318.html">parallel_do_feeder</a></div>
+<h1>tbb::parallel_do_feeder&lt; Item &gt; Class Template Reference</h1><!-- doxytag: class="tbb::parallel_do_feeder" -->Class the user supplied algorithm body uses to add new tasks.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;null_rw_mutex.h&gt;</code>
+<code>#include &lt;parallel_do.h&gt;</code>
 <p>
-<a href="a00095.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00096.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e11281a13a7b6243c6c9ab243c5ad5a8"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::scoped_lock" ref="e11281a13a7b6243c6c9ab243c5ad5a8" args="(null_rw_mutex &amp;, bool=true)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>scoped_lock</b> (<a class="el" href="a00317.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="40baaf0f6856f4491dd0adf896c93516"></a><!-- doxytag: member="tbb::parallel_do_feeder::add" ref="40baaf0f6856f4491dd0adf896c93516" args="(const Item &amp;item)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00318.html#40baaf0f6856f4491dd0adf896c93516">add</a> (const Item &amp;item)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="72c4c302fdfc20187a650348e432b0a7"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::acquire" ref="72c4c302fdfc20187a650348e432b0a7" args="(null_rw_mutex &amp;, bool=true)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>acquire</b> (<a class="el" href="a00317.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa1e2a5592ee2672470ea44d98f1c498"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::upgrade_to_writer" ref="fa1e2a5592ee2672470ea44d98f1c498" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>upgrade_to_writer</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="efcb7948649e1652d59aaff9c8ea40f1"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::downgrade_to_reader" ref="efcb7948649e1652d59aaff9c8ea40f1" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>downgrade_to_reader</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="56686c4dfe4a32a1d9bd8e7e729130e6"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::try_acquire" ref="56686c4dfe4a32a1d9bd8e7e729130e6" args="(null_rw_mutex &amp;, bool=true)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_acquire</b> (<a class="el" href="a00317.html">null_rw_mutex</a> &amp;, bool=true)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6146c803a4ad2f14263fdc019a72b5a9"></a><!-- doxytag: member="tbb::null_rw_mutex::scoped_lock::release" ref="6146c803a4ad2f14263fdc019a72b5a9" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>release</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a work item to a running parallel_do. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b381179b22f5f5e8511470c73d64b37f"></a><!-- doxytag: member="tbb::parallel_do_feeder::internal::parallel_do_feeder_impl" ref="b381179b22f5f5e8511470c73d64b37f" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::parallel_do_feeder_impl</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Represents acquisition of a mutex. 
+<h3>template&lt;typename Item&gt;<br>
+ class tbb::parallel_do_feeder&lt; Item &gt;</h3>
+
+Class the user supplied algorithm body uses to add new tasks. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Item</em>&nbsp;</td><td>Work item type </td></tr>
+  </table>
+</dl>
+
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>null_rw_mutex.h</ul>
+<li>parallel_do.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

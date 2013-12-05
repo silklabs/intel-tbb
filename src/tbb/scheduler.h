@@ -118,12 +118,10 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     friend class tbb::task;
     friend class market;
     friend class arena;
-#if __TBB_TASK_ARENA
-    friend class interface6::task_arena;
-    friend class interface6::delegated_task;
-    friend class interface6::wait_task;
-    friend struct interface6::wait_body;
-#endif //__TBB_TASK_ARENA
+    friend class interface7::internal::task_arena_base;
+    friend class interface7::internal::delegated_task;
+    friend class interface7::internal::wait_task;
+    friend struct interface7::internal::wait_body;
     friend class allocate_root_proxy;
     friend class governor;
 #if __TBB_TASK_GROUP_CONTEXT

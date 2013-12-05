@@ -39,7 +39,7 @@
 #include "concurrent_vector.h"
 #include "internal/_aggregator_impl.h"
 
-#if TBB_DEPRECATED_FLOW_ENQUEUE 
+#if TBB_DEPRECATED_FLOW_ENQUEUE
 #define FLOW_SPAWN(a) tbb::task::enqueue((a))
 #else
 #define FLOW_SPAWN(a) tbb::task::spawn((a))
@@ -79,7 +79,7 @@ namespace flow {
 //! An enumeration the provides the two most common concurrency levels: unlimited and serial
 enum concurrency { unlimited = 0, serial = 1 };
 
-namespace interface6 {
+namespace interface7 {
 
 namespace internal {
     template<typename T, typename M> class successor_cache;
@@ -377,7 +377,7 @@ class graph : tbb::internal::no_copy {
     };
 
 public:
-    //! Constructs a graph with isolated task_group_context 
+    //! Constructs a graph with isolated task_group_context
     explicit graph() : my_nodes(NULL), my_nodes_last(NULL)
     {
         own_context = true;
@@ -427,7 +427,7 @@ public:
         that need to block a wait_for_all() on the graph.  For example a one-off source. */
     template< typename Receiver, typename Body >
         void run( Receiver &r, Body body ) {
-       FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *my_root_task ) ) 
+       FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *my_root_task ) )
                    run_and_put_task< Receiver, Body >( r, body )) );
     }
 
@@ -509,10 +509,10 @@ private:
     graph_node *my_nodes, *my_nodes_last;
 
     spin_mutex nodelist_mutex;
-    void register_node(graph_node *n); 
+    void register_node(graph_node *n);
     void remove_node(graph_node *n);
 
-};
+};  // class graph
 
 template <typename C, typename N>
 graph_iterator<C,N>::graph_iterator(C *g, bool begin) : my_graph(g), current_node(NULL)
@@ -528,7 +528,7 @@ typename graph_iterator<C,N>::reference graph_iterator<C,N>::operator*() const {
 }
 
 template <typename C, typename N>
-typename graph_iterator<C,N>::pointer graph_iterator<C,N>::operator->() const { 
+typename graph_iterator<C,N>::pointer graph_iterator<C,N>::operator->() const {
     return current_node;
 }
 
@@ -583,6 +583,8 @@ inline void graph::remove_node(graph_node *n) {
 
 inline void graph::reset() {
     // reset context
+    task *saved_my_root_task = my_root_task;
+    my_root_task = NULL;
     if(my_context) my_context->reset();
     cancelled = false;
     caught_exception = false;
@@ -591,6 +593,7 @@ inline void graph::reset() {
         graph_node *my_p = &(*ii);
         my_p->reset();
     }
+    my_root_task = saved_my_root_task;
 }
 
 
@@ -611,7 +614,7 @@ public:
     //! Constructor for a node with a successor
     template< typename Body >
     source_node( graph &g, Body body, bool is_active = true )
-        : graph_node(g), my_root_task(g.root_task()), my_active(is_active), init_my_active(is_active),
+        : graph_node(g), my_active(is_active), init_my_active(is_active),
         my_body( new internal::source_body_leaf< output_type, Body>(body) ),
         my_reserved(false), my_has_cached_item(false)
     {
@@ -621,7 +624,7 @@ public:
     //! Copy constructor
     source_node( const source_node& src ) :
         graph_node(src.my_graph), sender<Output>(),
-        my_root_task( src.my_root_task), my_active(src.init_my_active),
+        my_active(src.init_my_active),
         init_my_active(src.init_my_active), my_body( src.my_body->clone() ),
         my_reserved(false), my_has_cached_item(false)
     {
@@ -712,9 +715,9 @@ public:
     }
 
     template<typename Body>
-    Body copy_function_object() { 
+    Body copy_function_object() {
         internal::source_body<output_type> &body_ref = *this->my_body;
-        return dynamic_cast< internal::source_body_leaf<output_type, Body> & >(body_ref).get_body(); 
+        return dynamic_cast< internal::source_body_leaf<output_type, Body> & >(body_ref).get_body();
     }
 
 protected:
@@ -729,7 +732,6 @@ protected:
     }
 
 private:
-    task *my_root_task;
     spin_mutex my_mutex;
     bool my_active;
     bool init_my_active;
@@ -758,8 +760,11 @@ private:
 
     //! Spawns a task that applies the body
     /* override */ void spawn_put( ) {
-        FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *my_root_task ) ) 
-                    internal:: source_task_bypass < source_node< output_type > >( *this ) ) );
+        task* tp = this->my_graph.root_task();
+        if(tp) {
+            FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *tp ) )
+                        internal:: source_task_bypass < source_node< output_type > >( *this ) ) );
+        }
     }
 
     friend class internal::source_task_bypass< source_node< output_type > >;
@@ -837,7 +842,7 @@ public:
 
     //! Copy constructor
     function_node( const function_node& src ) :
-        graph_node(src.my_graph), fInput_type( src, new queue_type() ), fOutput_type()
+        graph_node(src.graph_node::my_graph), fInput_type( src, new queue_type() ), fOutput_type()
     {}
 
 protected:
@@ -884,7 +889,7 @@ public:
         graph_node(g), base_type(g,concurrency, body)
     {}
     multifunction_node( const multifunction_node &other) :
-        graph_node(other.my_graph), base_type(other)
+        graph_node(other.graph_node::my_graph), base_type(other)
     {}
     // all the guts are in multifunction_input...
 protected:
@@ -909,7 +914,7 @@ public:
         graph_node(g), base_type(g,concurrency, body, new queue_type())
     {}
     multifunction_node( const multifunction_node &other) :
-        graph_node(other.my_graph), base_type(other, new queue_type())
+        graph_node(other.graph_node::my_graph), base_type(other, new queue_type())
     {}
     // all the guts are in multifunction_input...
 protected:
@@ -965,7 +970,7 @@ public:
 
     //! Copy constructor
     continue_node( const continue_node& src ) :
-        graph_node(src.my_graph), internal::continue_input<output_type>(src),
+        graph_node(src.graph_node::my_graph), internal::continue_input<output_type>(src),
         internal::function_output<Output>()
     {}
 
@@ -978,7 +983,7 @@ protected:
     /*override*/void reset() { internal::continue_input<Output>::reset_receiver(); }
 
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }
-};
+};  // continue_node
 
 template< typename T >
 class overwrite_node : public graph_node, public receiver<T>, public sender<T> {
@@ -1170,8 +1175,6 @@ protected:
     typedef size_t size_type;
     internal::round_robin_cache< T, null_rw_mutex > my_successors;
 
-    task *my_parent;
-
     friend class internal::forward_task_bypass< buffer_node< T, A > >;
 
     enum op_type {reg_succ, rem_succ, req_item, res_item, rel_res, con_res, put_item, try_fwd_task };
@@ -1212,13 +1215,16 @@ protected:
         }
         if (try_forwarding && !forwarder_busy) {
             forwarder_busy = true;
-            task *new_task = new(task::allocate_additional_child_of(*my_parent)) internal::
-                    forward_task_bypass
-                    < buffer_node<input_type, A> >(*this);
-            // tmp should point to the last item handled by the aggregator.  This is the operation
-            // the handling thread enqueued.  So modifying that record will be okay.
-            tbb::task *z = tmp->ltask;
-            tmp->ltask = combine_tasks(z, new_task);  // in case the op generated a task
+            task* tp = this->my_graph.root_task();
+            if(tp) {
+                task *new_task = new(task::allocate_additional_child_of(*tp)) internal::
+                        forward_task_bypass
+                        < buffer_node<input_type, A> >(*this);
+                // tmp should point to the last item handled by the aggregator.  This is the operation
+                // the handling thread enqueued.  So modifying that record will be okay.
+                tbb::task *z = tmp->ltask;
+                tmp->ltask = combine_tasks(z, new_task);  // in case the op generated a task
+            }
         }
     }
 
@@ -1328,15 +1334,14 @@ protected:
 public:
     //! Constructor
     buffer_node( graph &g ) : graph_node(g), reservable_item_buffer<T>(),
-        my_parent( g.root_task() ), forwarder_busy(false) {
+        forwarder_busy(false) {
         my_successors.set_owner(this);
         my_aggregator.initialize_handler(my_handler(this));
     }
 
     //! Copy constructor
     buffer_node( const buffer_node& src ) : graph_node(src.my_graph),
-        reservable_item_buffer<T>(), receiver<T>(), sender<T>(),
-        my_parent( src.my_parent ) {
+        reservable_item_buffer<T>(), receiver<T>(), sender<T>() {
         forwarder_busy = false;
         my_successors.set_owner(this);
         my_aggregator.initialize_handler(my_handler(this));
@@ -1606,13 +1611,16 @@ protected:
         if (mark<this->my_tail) heapify();
         if (try_forwarding && !this->forwarder_busy) {
             this->forwarder_busy = true;
-            task *new_task = new(task::allocate_additional_child_of(*(this->my_parent))) internal::
-                    forward_task_bypass
-                    < buffer_node<input_type, A> >(*this);
-            // tmp should point to the last item handled by the aggregator.  This is the operation
-            // the handling thread enqueued.  So modifying that record will be okay.
-            tbb::task *tmp1 = tmp->ltask;
-            tmp->ltask = combine_tasks(tmp1, new_task);
+            task* tp = this->my_graph.root_task();
+            if(tp) {
+                task *new_task = new(task::allocate_additional_child_of(*tp)) internal::
+                        forward_task_bypass
+                        < buffer_node<input_type, A> >(*this);
+                // tmp should point to the last item handled by the aggregator.  This is the operation
+                // the handling thread enqueued.  So modifying that record will be okay.
+                tbb::task *tmp1 = tmp->ltask;
+                tmp->ltask = combine_tasks(tmp1, new_task);
+            }
         }
     }
 
@@ -1767,7 +1775,6 @@ public:
     typedef receiver< output_type > successor_type;
 
 private:
-    task *my_root_task;
     size_t my_threshold;
     size_t my_count;
     internal::predecessor_cache< T > my_predecessors;
@@ -1789,9 +1796,10 @@ private:
         if ( my_predecessors.get_item( v ) == false
              || (rval = my_successors.try_put_task(v)) == NULL ) {
             spin_mutex::scoped_lock lock(my_mutex);
-            --my_count;
-            if ( !my_predecessors.empty() ) {
-                task *rtask = new ( task::allocate_additional_child_of( *my_root_task ) )
+            if(my_count) --my_count;
+            task* tp = this->my_graph.root_task();
+            if ( !my_predecessors.empty() && tp ) {
+                task *rtask = new ( task::allocate_additional_child_of( *tp ) )
                     internal::forward_task_bypass< limiter_node<T> >( *this );
                 __TBB_ASSERT(!rval, "Have two tasks to handle");
                 return rtask;
@@ -1813,10 +1821,12 @@ private:
     }
 
     task *forward_task() {
-        spin_mutex::scoped_lock lock(my_mutex);
-        if ( my_count >= my_threshold )
-            return NULL;
-        ++my_count;
+        {
+            spin_mutex::scoped_lock lock(my_mutex);
+            if ( my_count >= my_threshold )
+                return NULL;
+            ++my_count;
+        }
         task * rtask = decrement_counter();
         return rtask;
     }
@@ -1827,7 +1837,7 @@ public:
 
     //! Constructor
     limiter_node(graph &g, size_t threshold, int num_decrement_predecessors=0) :
-        graph_node(g), my_root_task(g.root_task()), my_threshold(threshold), my_count(0),
+        graph_node(g), my_threshold(threshold), my_count(0),
         init_decrement_predecessors(num_decrement_predecessors),
         decrement(num_decrement_predecessors)
     {
@@ -1839,7 +1849,7 @@ public:
     //! Copy constructor
     limiter_node( const limiter_node& src ) :
         graph_node(src.my_graph), receiver<T>(), sender<T>(),
-        my_root_task(src.my_root_task), my_threshold(src.my_threshold), my_count(0),
+        my_threshold(src.my_threshold), my_count(0),
         init_decrement_predecessors(src.init_decrement_predecessors),
         decrement(src.init_decrement_predecessors)
     {
@@ -1866,8 +1876,9 @@ public:
     /* override */ bool register_predecessor( predecessor_type &src ) {
         spin_mutex::scoped_lock lock(my_mutex);
         my_predecessors.add( src );
-        if ( my_count < my_threshold && !my_successors.empty() ) {
-            FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *my_root_task ) ) 
+        task* tp = this->my_graph.root_task();
+        if ( my_count < my_threshold && !my_successors.empty() && tp ) {
+            FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *tp ) )
                         internal::forward_task_bypass < limiter_node<T> >( *this ) ) );
         }
         return true;
@@ -1899,8 +1910,9 @@ protected:
         if ( !rtask ) {  // try_put_task failed.
             spin_mutex::scoped_lock lock(my_mutex);
             --my_count;
-            if ( !my_predecessors.empty() ) {
-                rtask = new ( task::allocate_additional_child_of( *my_root_task ) )
+            task* tp = this->my_graph.root_task();
+            if ( !my_predecessors.empty() && tp ) {
+                rtask = new ( task::allocate_additional_child_of( *tp ) )
                     internal::forward_task_bypass< limiter_node<T> >( *this );
             }
         }
@@ -2038,40 +2050,40 @@ Body copy_body( Node &n ) {
     return n.template copy_function_object<Body>();
 }
 
-} // interface6
+} // interface7
 
-    using interface6::graph;
-    using interface6::graph_node;
-    using interface6::continue_msg;
-    using interface6::sender;
-    using interface6::receiver;
-    using interface6::continue_receiver;
+    using interface7::graph;
+    using interface7::graph_node;
+    using interface7::continue_msg;
+    using interface7::sender;
+    using interface7::receiver;
+    using interface7::continue_receiver;
 
-    using interface6::source_node;
-    using interface6::function_node;
-    using interface6::multifunction_node;
-    using interface6::split_node;
-    using interface6::internal::output_port;
+    using interface7::source_node;
+    using interface7::function_node;
+    using interface7::multifunction_node;
+    using interface7::split_node;
+    using interface7::internal::output_port;
 #if TBB_PREVIEW_GRAPH_NODES
-    using interface6::or_node;
+    using interface7::or_node;
 #endif
-    using interface6::continue_node;
-    using interface6::overwrite_node;
-    using interface6::write_once_node;
-    using interface6::broadcast_node;
-    using interface6::buffer_node;
-    using interface6::queue_node;
-    using interface6::sequencer_node;
-    using interface6::priority_queue_node;
-    using interface6::limiter_node;
-    using namespace interface6::internal::graph_policy_namespace;
-    using interface6::join_node;
-    using interface6::input_port;
-    using interface6::copy_body; 
-    using interface6::make_edge; 
-    using interface6::remove_edge; 
-    using interface6::internal::NO_TAG;
-    using interface6::internal::tag_value;
+    using interface7::continue_node;
+    using interface7::overwrite_node;
+    using interface7::write_once_node;
+    using interface7::broadcast_node;
+    using interface7::buffer_node;
+    using interface7::queue_node;
+    using interface7::sequencer_node;
+    using interface7::priority_queue_node;
+    using interface7::limiter_node;
+    using namespace interface7::internal::graph_policy_namespace;
+    using interface7::join_node;
+    using interface7::input_port;
+    using interface7::copy_body;
+    using interface7::make_edge;
+    using interface7::remove_edge;
+    using interface7::internal::NO_TAG;
+    using interface7::internal::tag_value;
 
 } // flow
 } // tbb

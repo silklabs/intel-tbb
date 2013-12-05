@@ -128,12 +128,13 @@ ifndef BUILDING_PHASE
   work_dir:=$(work_dir)
   # assign new value for tbb_root if path is not absolute (the filter keeps only /* paths)
   ifeq ($(filter /% $(SLASH)%, $(subst :, ,$(tbb_root)) ),)
+   full_tbb_root:=$(CURDIR)/$(tbb_root)
    ifeq ($(origin_build_dir),undefined)
    #relative path are needed here as a workaround to support whitespaces in path
     override tbb_root:=../..
    else
-    override tbb_root:=$(CURDIR)/$(tbb_root)
-  endif
+    override tbb_root:=$(full_tbb_root)
+   endif
   export tbb_root
   endif
  endif # !BUILDING_PHASE
