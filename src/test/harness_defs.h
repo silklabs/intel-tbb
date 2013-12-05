@@ -55,6 +55,9 @@
   #define TBB_USE_ICC_BUILTINS         ( __TBB_TEST_BUILTINS && __TBB_ICC_BUILTIN_ATOMICS_PRESENT )
 #endif
 
+//ICC has a bug in assumptions of the modifications made via atomic pointer
+#define __TBB_ICC_BUILTIN_ATOMICS_POINTER_ALIASING_BROKEN (TBB_USE_ICC_BUILTINS &&  __INTEL_COMPILER < 1400 && __INTEL_COMPILER > 1200)
+
 #if (_WIN32 && !__TBB_WIN8UI_SUPPORT) || (__linux__ && !__ANDROID__) || __FreeBSD_version >= 701000
 #define __TBB_TEST_SKIP_AFFINITY 0
 #else
@@ -88,12 +91,13 @@
   #define __TBB_PVALLOC_PRESENT 1
 #endif
 
+//Implementation of C++11 std::placeholders in libstdc++ coming with gcc prior to 4.5 reveals bug in Intel Compiler 13 causing "multiple definition" link errors.
+#define __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN ((__INTEL_COMPILER == 1300 || __INTEL_COMPILER == 1310 )&& __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION < 40500)
+
 #if __GNUC__ && __ANDROID__
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( __TBB_GCC_VERSION < 40600 )
 #elif _MSC_VER
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( _MSC_VER < 1400 )
-#elif  __clang__ //TODO: recheck on different clang versions
-  #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 1
 #else
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN 0
 #endif
@@ -102,9 +106,41 @@
 #define __TBB_FUNC_PTR_AS_TEMPL_PARAM_BROKEN ( ((__linux__ || __APPLE__) && __INTEL_COMPILER && __INTEL_COMPILER < 1100) || __SUNPRO_CC )
 #define __TBB_UNQUALIFIED_CALL_OF_DTOR_BROKEN (__GNUC__==3 && __GNUC_MINOR__<=3)
 
+#define __TBB_CAS_8_CODEGEN_BROKEN (__TBB_x86_32 && __PIC__ && __TBB_GCC_VERSION == 40102 && !__INTEL_COMPILER)
+
 #if __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN
   #define _EXCEPTION_PTR_H /* prevents exception_ptr.h inclusion */
   #define _GLIBCXX_NESTED_EXCEPTION_H /* prevents nested_exception.h inclusion */
 #endif
+
+// The tuple-based tests with more inputs take a long time to compile.  If changes
+// are made to the tuple implementation or any switch that controls it, or if testing
+// with a new platform implementation of std::tuple, the test should be compiled with
+// MAX_TUPLE_TEST_SIZE >= 10 (or the largest number of elements supported) to ensure
+// all tuple sizes are tested.  Expect a very long compile time.
+#ifndef MAX_TUPLE_TEST_SIZE
+    #if TBB_USE_DEBUG
+        #define MAX_TUPLE_TEST_SIZE 3
+    #else
+        #define MAX_TUPLE_TEST_SIZE 5
+    #endif
+#else
+    #if _MSC_VER
+// test sizes <= 8 don't get "decorated name length exceeded" errors. (disable : 4503)
+        #if MAX_TUPLE_TEST_SIZE > 8
+            #undef MAX_TUPLE_TEST_SIZE
+            #define MAX_TUPLE_TEST_SIZE 8
+        #endif
+    #endif
+    #if MAX_TUPLE_TEST_SIZE > __TBB_VARIADIC_MAX
+        #undef MAX_TUPLE_TEST_SIZE
+        #define MAX_TUPLE_TEST_SIZE __TBB_VARIADIC_MAX
+    #endif
+#endif
+
+namespace Harness {
+    //! Utility template function to prevent "unused" warnings by various compilers.
+    template<typename T> void suppress_unused_warning( const T& ) {}
+}
 
 #endif /* __TBB_harness_defs_H */

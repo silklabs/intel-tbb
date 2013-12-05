@@ -32,6 +32,8 @@
 
     Most of the checks happen at the compilation or link phases.
 **/
+#include "harness_defs.h"
+#if !(__TBB_TEST_SECONDARY && __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN)
 
 #if _MSC_VER
 #pragma warning (disable : 4503)      // decorated name length exceeded, name was truncated
@@ -50,9 +52,6 @@ static volatile size_t g_sink;
 #define TestTypeDefinitionPresence( Type ) g_sink = sizeof(tbb::Type);
 #define TestTypeDefinitionPresence2(TypeStart, TypeEnd) g_sink = sizeof(tbb::TypeStart,TypeEnd);
 #define TestFuncDefinitionPresence(Fn, Args, ReturnType) { ReturnType (*pfn)Args = &tbb::Fn; (void)pfn; }
-
-//! Utility template function to prevent "unused" warnings by various compilers.
-template<typename T> void squelch_unused_warning( const T& ) {}
 
 struct Body {
     void operator() () const {}
@@ -144,6 +143,9 @@ void secondary()
 int TestMain ()
 #endif
 {
+    #if __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN
+        REPORT("Known issue: \"multiple definition\" linker error detection test skipped.\n");
+    #endif
     TestTypeDefinitionPresence2(aligned_space<int, 1> );
     TestTypeDefinitionPresence( atomic<int> );
     TestTypeDefinitionPresence( cache_aligned_allocator<int> );
@@ -171,10 +173,8 @@ int TestMain ()
     TestTypeDefinitionPresence( flow::sequencer_node<int> );
     TestTypeDefinitionPresence( flow::priority_queue_node<int> );
     TestTypeDefinitionPresence( flow::limiter_node<int> );
-    typedef tbb::flow::interface6::internal::graph_policy_namespace::graph_buffer_policy join_policy;
-    const join_policy a = tbb::flow::interface6::internal::graph_policy_namespace::queueing;
-    TestTypeDefinitionPresence2( flow::join_node< intpair, a > );
-    squelch_unused_warning(a);
+    using tbb::flow::queueing;
+    TestTypeDefinitionPresence2( flow::join_node< intpair, queueing > );
     TestTypeDefinitionPresence( mutex );
     TestTypeDefinitionPresence( null_mutex );
     TestTypeDefinitionPresence( null_rw_mutex );
@@ -222,3 +222,4 @@ int TestMain ()
     return Harness::Done;
 #endif
 }
+#endif //!(__TBB_TEST_SECONDARY && __TBB_CPP11_STD_PLACEHOLDERS_LINKING_BROKEN)

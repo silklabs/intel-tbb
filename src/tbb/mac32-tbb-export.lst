@@ -29,7 +29,7 @@
 #include "tbb/tbb_config.h"
 
 /*
-    Sometimes Mac OS X requires leading underscore (e. g. in export list file), but sometimes not
+    Sometimes OS X* requires leading underscore (e. g. in export list file), but sometimes not
     (e. g. when searching symbol in a dynamic library via dlsym()). Symbols in this file SHOULD
     be listed WITHOUT one leading underscore. __TBB_SYMBOL macro should add underscore when
     necessary, depending on the indended usage.
@@ -182,7 +182,7 @@ __TBB_SYMBOL( _ZN3tbb17assertion_failureEPKciS1_S1_ )
 __TBB_SYMBOL( _ZN3tbb21set_assertion_handlerEPFvPKciS1_S1_E )
 __TBB_SYMBOL( _ZN3tbb8internal13handle_perrorEiPKc )
 __TBB_SYMBOL( _ZN3tbb8internal15runtime_warningEPKcz )
-#ifndef __POWERPC__
+#if __TBB_x86_32
 __TBB_SYMBOL( __TBB_machine_store8_slow_perf_warning )
 __TBB_SYMBOL( __TBB_machine_store8_slow )
 #endif

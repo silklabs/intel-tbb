@@ -113,6 +113,13 @@ class custom_scheduler: private generic_scheduler {
         p.extra_state &= ~es_ref_count_active;
 #endif /* TBB_USE_ASSERT */
 
+#if __TBB_RECYCLE_TO_ENQUEUE
+        if (p.state==task::to_enqueue) {
+            // related to __TBB_TASK_ARENA TODO: try keep priority of the task
+            // e.g. rework task_prefix to remember priority of received task and use here
+            my_arena->enqueue_task(s, 0, hint_for_push );
+        } else
+#endif /*__TBB_RECYCLE_TO_ENQUEUE*/
         if( bypass_slot==NULL )
             bypass_slot = &s;
         else
@@ -121,7 +128,7 @@ class custom_scheduler: private generic_scheduler {
 
 public:
     static generic_scheduler* allocate_scheduler( arena* a, size_t index ) {
-        scheduler_type* s = (scheduler_type*)NFS_Allocate(sizeof(scheduler_type),1,NULL);
+        scheduler_type* s = (scheduler_type*)NFS_Allocate(1,sizeof(scheduler_type),NULL);
         new( s ) scheduler_type( a, index );
         s->assert_task_pool_valid();
         ITT_SYNC_CREATE(s, SyncType_Scheduler, SyncObj_TaskPoolSpinning);
@@ -363,8 +370,8 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
     task* old_dispatching_task = my_dispatching_task;
     my_dispatching_task = my_innermost_running_task;
     if( master_outermost_level() ) {
-        // We are in the outermost task dispatch loop of a master thread,
-        __TBB_ASSERT( !is_worker(), NULL );
+        // We are in the outermost task dispatch loop of a master thread or a worker which mimics master
+        __TBB_ASSERT( !is_worker() || my_dispatching_task != old_dispatching_task, NULL );
         quit_point = &parent == my_dummy_task ? all_local_work_done : parents_work_done;
     } else {
         quit_point = parents_work_done;
@@ -474,6 +481,9 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
 
                     case task::recycle: // set by recycle_as_safe_continuation()
                         t->prefix().state = task::allocated;
+#if __TBB_RECYCLE_TO_ENQUEUE
+                    case task::to_enqueue: // set by recycle_to_enqueue()
+#endif
                         __TBB_ASSERT( t_next != t, "a task returned from method execute() can not be recycled in another way" );
                         reset_extra_state(t);
                         // for safe continuation, need atomically decrement ref_count;
@@ -552,7 +562,7 @@ stealing_ground:
         // Dispatching task pointer is NULL *iff* this is a worker thread in its outermost
         // dispatch loop (i.e. its execution stack is empty). In this case it should exit it
         // either when there is no more work in the current arena, or when revoked by the market.
-        t = receive_or_steal_task( parent.prefix().ref_count, !my_dispatching_task );
+        t = receive_or_steal_task( parent.prefix().ref_count, worker_outermost_level() );
         if ( !t )
             goto done;
         __TBB_ASSERT(!is_proxy(*t),"unexpected proxy");
@@ -562,10 +572,14 @@ stealing_ground:
     } // end of try-block
     TbbCatchAll( t->prefix().context );
     // Complete post-processing ...
-    if( t->state() == task::recycle ) {
-        // ... for tasks recycled with recycle_as_safe_continuation
+    if( t->state() == task::recycle
+#if __TBB_RECYCLE_TO_ENQUEUE
+        // TODO: the enqueue semantics gets lost below, consider reimplementing
+        ||  t->state() == task::to_enqueue
+#endif
+      ) {
+        // ... for recycled tasks to atomically decrement ref_count
         t->prefix().state = task::allocated;
-        // for safe continuation, need to atomically decrement ref_count;
         if( SchedulerTraits::itt_possible )
             ITT_NOTIFY(sync_releasing, &t->prefix().ref_count);
         if( __TBB_FetchAndDecrementWrelease(&t->prefix().ref_count)==1 ) {
@@ -589,10 +603,10 @@ done:
         if ( parent.prefix().ref_count != parents_work_done ) {
             // This is a worker that was revoked by the market.
 #if __TBB_TASK_ARENA
-            __TBB_ASSERT( !my_dispatching_task,
+            __TBB_ASSERT( worker_outermost_level(),
                 "Worker thread exits nested dispatch loop prematurely" );
 #else
-            __TBB_ASSERT( is_worker() && !my_dispatching_task,
+            __TBB_ASSERT( is_worker() && worker_outermost_level(),
                 "Worker thread exits nested dispatch loop prematurely" );
 #endif
             return;

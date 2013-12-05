@@ -56,9 +56,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293ecc67ca92bd6f1ce9738a1e9e7206b735">freed</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">task object is on free list, or is going to be put there, or was just taken off.  <a href="#4a3c415562d17905390ea5b49d12293ecc67ca92bd6f1ce9738a1e9e7206b735"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e58debec6ab130290640d0cc2eedba35d">recycle</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e2a3f84c7721f6c0b859a91a5ecc660c4">__TBB_RECYCLE_TO_ENQUEUE</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">task to be recycled as continuation  <a href="#4a3c415562d17905390ea5b49d12293e58debec6ab130290640d0cc2eedba35d"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">task to be scheduled for starvation-resistant execution  <a href="#4a3c415562d17905390ea5b49d12293e2a3f84c7721f6c0b859a91a5ecc660c4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4a3c415562d17905390ea5b49d12293e72b15f1b9cdfa1f2381435f20b05007c"></a><!-- doxytag: member="tbb::task::endif" ref="4a3c415562d17905390ea5b49d12293e72b15f1b9cdfa1f2381435f20b05007c" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>endif</b></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e">state_type</a> { <br>
 &nbsp;&nbsp;<a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293ead0fe2302ccc360923f738c2ed7ec1b9">executing</a>, 
 <a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e3bf499aa6e6487cd1ace883a63100513">reexecute</a>, 
@@ -66,7 +69,8 @@
 <a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293ebe94d3348dd038e41107819f00c1884c">allocated</a>, 
 <br>
 &nbsp;&nbsp;<a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293ecc67ca92bd6f1ce9738a1e9e7206b735">freed</a>, 
-<a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e58debec6ab130290640d0cc2eedba35d">recycle</a>
+<a class="el" href="a00349.html#4a3c415562d17905390ea5b49d12293e2a3f84c7721f6c0b859a91a5ecc660c4">__TBB_RECYCLE_TO_ENQUEUE</a>, 
+<b>endif</b>
 <br>
  }</td></tr>
 
@@ -103,6 +107,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a003
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#4f1be9bbcdb487830dbe298b68d85144">recycle_to_reexecute</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Schedule this for reexecution after current <a class="el" href="a00349.html#22c298cd40937a431a06777423f002f6">execute()</a> returns.  <a href="#4f1be9bbcdb487830dbe298b68d85144"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00349.html#076120a15237d1ee63060c992e878b29">recycle_to_enqueue</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Schedule this to enqueue after descendant tasks complete.  <a href="#076120a15237d1ee63060c992e878b29"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7653ceef53a188d05b5c779e1104b698"></a><!-- doxytag: member="tbb::task::depth" ref="7653ceef53a188d05b5c779e1104b698" args="() const " -->
 intptr_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>depth</b> () const </td></tr>
 
@@ -302,8 +309,8 @@ task is in ready pool, or is going to be put there, or was just taken off. </td>
 task object is freshly allocated or recycled. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="4a3c415562d17905390ea5b49d12293ecc67ca92bd6f1ce9738a1e9e7206b735"></a><!-- doxytag: member="freed" ref="4a3c415562d17905390ea5b49d12293ecc67ca92bd6f1ce9738a1e9e7206b735" args="" -->freed</em>&nbsp;</td><td>
 task object is on free list, or is going to be put there, or was just taken off. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="4a3c415562d17905390ea5b49d12293e58debec6ab130290640d0cc2eedba35d"></a><!-- doxytag: member="recycle" ref="4a3c415562d17905390ea5b49d12293e58debec6ab130290640d0cc2eedba35d" args="" -->recycle</em>&nbsp;</td><td>
-task to be recycled as continuation </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="4a3c415562d17905390ea5b49d12293e2a3f84c7721f6c0b859a91a5ecc660c4"></a><!-- doxytag: member="__TBB_RECYCLE_TO_ENQUEUE" ref="4a3c415562d17905390ea5b49d12293e2a3f84c7721f6c0b859a91a5ecc660c4" args="" -->__TBB_RECYCLE_TO_ENQUEUE</em>&nbsp;</td><td>
+task to be scheduled for starvation-resistant execution </td></tr>
 </table>
 </dl>
 
@@ -549,6 +556,27 @@ Because of the hazard, this method may be deprecated in the future.
 Recommended to use, safe variant of recycle_as_continuation. 
 <p>
 For safety, it requires additional increment of ref_count. With no descendants and ref_count of 1, it has the semantics of recycle_to_reexecute. 
+</div>
+</div><p>
+<a class="anchor" name="076120a15237d1ee63060c992e878b29"></a><!-- doxytag: member="tbb::task::recycle_to_enqueue" ref="076120a15237d1ee63060c992e878b29" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::task::recycle_to_enqueue           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Schedule this to enqueue after descendant tasks complete. 
+<p>
+Save enqueue/spawn difference, it has the semantics of recycle_as_safe_continuation. 
 </div>
 </div><p>
 <a class="anchor" name="4f1be9bbcdb487830dbe298b68d85144"></a><!-- doxytag: member="tbb::task::recycle_to_reexecute" ref="4f1be9bbcdb487830dbe298b68d85144" args="()" -->

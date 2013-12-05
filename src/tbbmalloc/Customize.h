@@ -62,29 +62,25 @@
     in a strict block-scoped locking pattern.  Omitting these methods permitted
     further simplification. */
 class MallocMutex : tbb::internal::no_copy {
-    __TBB_atomic_flag value;
+    __TBB_atomic_flag flag;
 
 public:
     class scoped_lock : tbb::internal::no_copy {
-        __TBB_Flag unlock_value;
         MallocMutex& mutex;
+        bool taken;
     public:
-        scoped_lock( MallocMutex& m ) : unlock_value(__TBB_LockByte(m.value)), mutex(m) {}
-        scoped_lock( MallocMutex& m, bool block, bool *locked ) : mutex(m) {
-            unlock_value = 1;
+        scoped_lock( MallocMutex& m ) : mutex(m), taken(true) { __TBB_LockByte(m.flag); }
+        scoped_lock( MallocMutex& m, bool block, bool *locked ) : mutex(m), taken(false) {
             if (block) {
-                unlock_value = __TBB_LockByte(m.value);
-                if (locked) *locked = true;
+                __TBB_LockByte(m.flag);
+                taken = true;
             } else {
-                if (__TBB_TryLockByte(m.value)) {
-                    unlock_value = 0;
-                    if (locked) *locked = true;
-                } else
-                    if (locked) *locked = false;
+                taken = __TBB_TryLockByte(m.flag);
             }
+            if (locked) *locked = taken;
         }
         ~scoped_lock() {
-            if (!unlock_value) __TBB_UnlockByte(mutex.value, unlock_value);
+            if (taken) __TBB_UnlockByte(mutex.flag);
         }
     };
     friend class scoped_lock;

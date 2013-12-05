@@ -42,7 +42,7 @@
 
 const int N = 500000;
 
-#if ( __TBB_x86_32 || __TBB_x86_64 ) && __TBB_CPU_CTL_ENV_PRESENT
+#if ( __TBB_x86_32 || __TBB_x86_64 ) && __TBB_CPU_CTL_ENV_PRESENT && !defined(__TBB_WIN32_USE_CL_BUILTINS)
 
 const int FE_TONEAREST = 0x0000,
           FE_DOWNWARD = 0x0400,
@@ -102,6 +102,28 @@ inline void SetSseMode ( int mode ) {
     __TBB_set_cpu_ctl_env(&ctl);
 }
 
+
+#elif defined(_M_ARM) || defined(__TBB_WIN32_USE_CL_BUILTINS)
+const int NumSseModes = 1;
+const int SseModes[NumSseModes] = { 0 };
+
+inline int GetSseMode () { return 0; }
+inline void SetSseMode ( int ) {}
+
+const int FE_TONEAREST = _RC_NEAR,
+          FE_DOWNWARD = _RC_DOWN,
+          FE_UPWARD = _RC_UP,
+          FE_TOWARDZERO = _RC_CHOP;
+
+inline int GetRoundingMode ( bool = true ) { 
+    __TBB_cpu_ctl_env_t ctl = 0;
+    __TBB_get_cpu_ctl_env(&ctl);
+    return ctl;
+}
+inline void SetRoundingMode ( int mode ) { 
+    __TBB_cpu_ctl_env_t ctl = mode;
+    __TBB_set_cpu_ctl_env(&ctl);
+}
 
 #else /* Other archs */
 

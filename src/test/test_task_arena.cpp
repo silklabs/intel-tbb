@@ -224,6 +224,44 @@ public:
     }
 };
 
+class MultipleMastersPart3 : NoAssign {
+    tbb::task_arena &my_a;
+    Harness::SpinBarrier &my_b;
+
+    struct Runner : NoAssign {
+        tbb::task* const a_task;
+        Runner(tbb::task* const t) : a_task(t) {}
+        void operator()() const {
+            for ( volatile int i = 0; i < 10000; ++i )
+                ;
+            a_task->decrement_ref_count();
+        }
+    };
+
+    struct Waiter : NoAssign {
+        tbb::task* const a_task;
+        Waiter(tbb::task* const t) : a_task(t) {}
+        void operator()() const {
+            a_task->wait_for_all();
+        }
+    };
+
+public:
+    MultipleMastersPart3(tbb::task_arena &a, Harness::SpinBarrier &b)
+        : my_a(a), my_b(b) {}
+    void operator()(int idx) const {
+        tbb::empty_task* root_task = new(tbb::task::allocate_root()) tbb::empty_task;
+        for( int i=0; i<100; ++i) {
+            root_task->set_ref_count(2);
+            my_a.enqueue(Runner(root_task));
+            my_a.execute(Waiter(root_task));
+        }
+        tbb::task::destroy(*root_task);
+        REMARK("Master #%d: job completed, wait for others\n", idx);
+        my_b.timed_wait(10);
+    }
+};
+
 
 void TestMultipleMasters(int p) {
     {
@@ -243,6 +281,14 @@ void TestMultipleMasters(int p) {
         a.enqueue(AsynchronousWork(barrier, /*blocking=*/true)); // occupy the worker, a regression test for bug 1981
         NativeParallelFor( p, MultipleMastersBody(1, a, barrier) );
         barrier.timed_wait(10);
+        a.wait_until_empty();
+    } {
+        // Regression test for the bug 1981 part 2 (task_arena::execute() with wait_for_all for an enqueued task)
+        REMARK("multiple masters, part 3: wait_for_all() in execute()\n");
+        tbb::task_arena a(p,1);
+        Harness::SpinBarrier barrier(p+1); // for masters to avoid endless waiting at least in some runs
+        // "Oversubscribe" the arena by 1 master thread
+        NativeParallelFor( p+1, MultipleMastersPart3(a, barrier) );
         a.wait_until_empty();
     }
 }

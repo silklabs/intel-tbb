@@ -28,7 +28,7 @@
 
 #include "harness_defs.h"
 
-//Concurency scheduler is not support by Windows* new UI apps
+//Concurrency scheduler is not supported by Windows* new UI apps
 //TODO: check whether we can test anything here
 #include "tbb/tbb_config.h"
 #if !__TBB_WIN8UI_SUPPORT
@@ -78,6 +78,7 @@
 #if __TBB_TASK_GROUP_CONTEXT
 
 #include "tbb/atomic.h"
+#include "tbb/aligned_space.h"
 #include "harness_concurrency_tracker.h"
 
 unsigned g_MaxConcurrency = 0;
@@ -433,7 +434,7 @@ void TestTaskHandle2 () {
     char *handles = new char [numRepeats * hSize];
     handle_type *h = NULL;
     for( unsigned i = 0; ; ++i ) {
-        h = (handle_type*)(handles + i * hSize);
+        h = tbb::internal::punned_cast<handle_type*,char>(handles + i * hSize);
 #if __TBB_FUNC_PTR_AS_TEMPL_PARAM_BROKEN
         new ( h ) handle_type((void(*)())RunFib4<task_group_type>);
 #else
@@ -460,9 +461,9 @@ void TestTaskHandle2 () {
     rg.run_and_wait( *h );
     for( unsigned i = 0; i < numRepeats; ++i )
 #if __TBB_UNQUALIFIED_CALL_OF_DTOR_BROKEN
-        ((handle_type*)(handles + i * hSize))->Concurrency::task_handle<void(*)()>::~task_handle();
+        tbb::internal::punned_cast<handle_type*,char>(handles + i * hSize)->Concurrency::task_handle<void(*)()>::~task_handle();
 #else
-        ((handle_type*)(handles + i * hSize))->~handle_type();
+        tbb::internal::punned_cast<handle_type*,char>(handles + i * hSize)->~handle_type();
 #endif
     delete []handles;
     FIB_TEST_EPILOGUE(g_Sum);
@@ -688,10 +689,9 @@ void StructuredLaunchChildren () {
     Concurrency::structured_task_group g;
     bool exceptionCaught = false;
     typedef Concurrency::task_handle<ThrowingTask> throwing_handle_type;
-    static const unsigned hSize = sizeof(throwing_handle_type);
-    char handles[NUM_CHORES * hSize];
+    tbb::aligned_space<throwing_handle_type,NUM_CHORES> handles;
     for( unsigned i = 0; i < NUM_CHORES; ++i ) {
-        throwing_handle_type *h = (throwing_handle_type*)(handles + i * hSize);
+        throwing_handle_type *h = handles.begin()+i;
         new ( h ) throwing_handle_type( ThrowingTask(count) );
         g.run( *h );
     }
@@ -712,7 +712,7 @@ void StructuredLaunchChildren () {
     } CATCH_ANY();
     ASSERT( !g_Throw || exceptionCaught, "No exception in the child task group" );
     for( unsigned i = 0; i < NUM_CHORES; ++i )
-        ((throwing_handle_type*)(handles + i * hSize))->~throwing_handle_type();
+        (handles.begin()+i)->~throwing_handle_type();
     if ( g_Rethrow && g_ExceptionCount > SKIP_GROUPS ) {
 #if __TBB_SILENT_CANCELLATION_BROKEN
         g_CancellationPropagationInProgress = true;
@@ -722,14 +722,13 @@ void StructuredLaunchChildren () {
 }
 
 class StructuredCancellationTestDriver {
-    static const unsigned hSize = sizeof(handle_type);
-    char m_handles[NUM_CHORES * hSize];
+    tbb::aligned_space<handle_type,NUM_CHORES> m_handles;
 
 public:
     void Launch ( Concurrency::structured_task_group& rg ) {
         ResetGlobals( false, false );
         for( unsigned i = 0; i < NUM_GROUPS; ++i ) {
-            handle_type *h = (handle_type*)(m_handles + i * hSize);
+            handle_type *h = m_handles.begin()+i;
             new ( h ) handle_type( StructuredLaunchChildren );
             rg.run( *h );
         }
@@ -744,7 +743,7 @@ public:
 
     void Finish () {
         for( unsigned i = 0; i < NUM_GROUPS; ++i )
-            ((handle_type*)(m_handles + i * hSize))->~handle_type();
+            (m_handles.begin()+i)->~handle_type();
         ASSERT( g_TaskCount <= NUM_GROUPS * NUM_CHORES, "Too many tasks reported. The test is broken" );
         ASSERT( g_TaskCount < NUM_GROUPS * NUM_CHORES, "No tasks were cancelled. Cancellation model changed?" );
         ASSERT( g_TaskCount <= g_ExecutedAtCancellation + g_MaxConcurrency, "Too many tasks survived cancellation" );
@@ -843,7 +842,15 @@ int TestMain () {
         TestEh2();
         TestStructuredWait();
         TestStructuredCancellation2<true>();
+        //this condition can not be moved harness_defs.h as the only way to detect std C++ library is to include something from it.
+        //TODO: recheck the condition with newer versions of clang/libc++
+#if (__clang__ && _LIBCPP_VERSION && __GXX_EXPERIMENTAL_CXX0X__)
+        //TODO:it seems that clang with libc++ in C++11 mode does not expect exception
+        //coming from destructor in the following test as it does not generate correct code for stack unwinding.
+        REPORT("Known issue: TestStructuredCancellation2<false> test is skipped.\n");
+#else
         TestStructuredCancellation2<false>();
+#endif
 #endif /* TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN */
 #if !TBBTEST_USE_TBB
         s->Release();

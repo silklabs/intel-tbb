@@ -33,26 +33,13 @@
     by no more than AcceptableDeviation percent.
 **/
 
-#if HARNESS_USE_PROXY
-
-// The test includes injects scheduler directly, so skip it when proxy tested.
-
-#undef HARNESS_USE_PROXY
-#include "harness.h"
-
-int TestMain () {
-    return Harness::Skipped;
-}
-
-#else // HARNESS_USE_PROXY
+#define HARNESS_DEFAULT_MIN_THREADS 2
+#define HARNESS_DEFAULT_MAX_THREADS 32
 
 #include <algorithm> // include it first to avoid error on define below
 #define private public
 #include "harness_inject_scheduler.h"
 #undef private
-
-#define HARNESS_DEFAULT_MIN_THREADS 2
-#define HARNESS_DEFAULT_MAX_THREADS 32
 
 #define TEST_TOTAL_SEQUENCE 0
 
@@ -221,4 +208,3 @@ int TestMain () {
     }
     return Harness::Done;
 }
-#endif // HARNESS_USE_PROXY

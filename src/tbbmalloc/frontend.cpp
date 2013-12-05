@@ -308,7 +308,7 @@ MallocMutex  MemoryPool::memPoolListLock;
 // TODO: move huge page status to default pool, because that's its states
 HugePagesStatus hugePages;
 
-// Slab block is 16KB-aligned. To prvent false sharing, separate locally-accessed
+// Slab block is 16KB-aligned. To prevent false sharing, separate locally-accessed
 // fields and fields commonly accessed by not owner threads.
 class GlobalBlockFields : public BlockI {
 protected:
@@ -831,6 +831,25 @@ done:
 
 /********* Thread and block related code      *************/
 
+ template<bool poolDestroy> void AllLargeBlocksList::releaseAll(Backend *backend) {
+     LargeMemoryBlock *next, *lmb = loHead;
+     loHead = NULL;
+
+     for (; lmb; lmb = next) {
+         next = lmb->gNext;
+         if (poolDestroy) {
+             // as it's pool destruction, no need to return object to backend,
+             // only remove backrefs, as they are global
+             removeBackRef(lmb->backRefIdx);
+         } else {
+             // clean g(Next|Prev) to prevent removing lmb
+             // from AllLargeBlocksList inside returnLargeObject
+             lmb->gNext = lmb->gPrev = NULL;
+             backend->returnLargeObject(lmb);
+         }
+     }
+}
+
 TLSData* MemoryPool::getTLS(bool create)
 {
     TLSData* tls = extMemPool.tlsPointerKey.getThreadMallocTLS();
@@ -955,12 +974,14 @@ bool MemoryPool::init(intptr_t poolId, const MemPoolPolicy *policy)
 
 void MemoryPool::reset()
 {
+    MALLOC_ASSERT(extMemPool.userPool(), "No reset for the system pool.");
     // memory is not releasing during pool reset
     // TODO: mark regions to release unused on next reset()
     extMemPool.delayRegionsReleasing(true);
 
     bootStrapBlocks.reset();
     orphanedBlocks.reset();
+    extMemPool.lmbList.releaseAll</*poolDestroy=*/false>(&extMemPool.backend);
     extMemPool.reset();
 
     extMemPool.initTLS();
@@ -979,12 +1000,8 @@ void MemoryPool::destroy()
     }
     // slab blocks in non-default pool do not have backreferencies,
     // only large objects do
-    for (LargeMemoryBlock *lmb = extMemPool.lmbList.getHead(); lmb; ) {
-        LargeMemoryBlock *next = lmb->gNext;
-        if (extMemPool.userPool())
-            removeBackRef(lmb->backRefIdx);
-        lmb = next;
-    }
+    if (extMemPool.userPool())
+        extMemPool.lmbList.releaseAll</*poolDestroy=*/true>(&extMemPool.backend);
     extMemPool.destroy();
 }
 

@@ -15,7 +15,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -35,7 +35,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MDd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -55,7 +55,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -75,7 +75,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="2" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MD /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="2" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -95,7 +95,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="1" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -115,7 +115,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="1" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MTd /Od /Ob0 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /DTBB_USE_DEBUG /D__TBB_LIB_NAME=tbb_debug.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" Optimization="0" AdditionalIncludeDirectories="." PreprocessorDefinitions="" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="1" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3" ShowIncludes="false"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -135,7 +135,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="0" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -155,7 +155,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool" TargetEnvironment="3"/>
-			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="0" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" AdditionalOptions=" /c /MT /O2 /Zi /EHsc /GR /Zc:forScope /Zc:wchar_t /D__TBB_LIB_NAME=tbb.lib /DDO_ITT_NOTIFY /GS /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE /D_WIN32_WINNT=0x0501 /D__TBB_BUILD=1 /W4 /WX /I../../src /I../../src/rml/include /I../../include" AdditionalIncludeDirectories="." PreprocessorDefinitions="" RuntimeLibrary="0" BufferSecurityCheck="false" UsePrecompiledHeader="0" WarningLevel="4" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>

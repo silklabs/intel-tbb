@@ -83,15 +83,15 @@ const char stdout_stream[] = "version_test.out";
 
 HARNESS_EXPORT
 int main(int argc, char *argv[] ) {
-    char psBuffer[512];
+    const size_t psBuffer_len = 512;
+    char psBuffer[psBuffer_len];
 /* We first introduced runtime version identification in 3014 */
 #if TBB_INTERFACE_VERSION>=3014
     // For now, just test that run-time TBB version matches the compile-time version,
     // since otherwise the subsequent test of "TBB: INTERFACE VERSION" string will fail anyway.
     // We need something more clever in future.
     if ( tbb::TBB_runtime_interface_version()!=TBB_INTERFACE_VERSION ){
-        snprintf( psBuffer,
-                  512,
+        snprintf( psBuffer, psBuffer_len,
                   "%s %s %d %s %d.",
                   "Running with the library of different version than the test was compiled against.",
                   "Expected",
@@ -148,7 +148,7 @@ int main(int argc, char *argv[] ) {
                 exit( 1 );
             }
             while( !feof( stream_err ) ) {
-                if( fgets( psBuffer, 512, stream_err ) != NULL ){
+                if( fgets( psBuffer, psBuffer_len, stream_err ) != NULL ){
                     REPORT( "Error (step 1): stderr should be empty\n" );
                     exit( 1 );
                 }
@@ -160,7 +160,7 @@ int main(int argc, char *argv[] ) {
                 exit( 1 );
             }
             while( !feof( stream_out ) ) {
-                if( fgets( psBuffer, 512, stream_out ) != NULL ){
+                if( fgets( psBuffer, psBuffer_len, stream_out ) != NULL ){
                     REPORT( "Error (step 1): stdout should be empty\n" );
                     exit( 1 );
                 }
@@ -190,7 +190,7 @@ int main(int argc, char *argv[] ) {
             exit( 1 );
         }
         while( !feof( stream_out ) ) {
-            if( fgets( psBuffer, 512, stream_out ) != NULL ){
+            if( fgets( psBuffer, psBuffer_len, stream_out ) != NULL ){
                 REPORT( "Error (step 2): stdout should be empty\n" );
                 exit( 1 );
             }
@@ -204,7 +204,7 @@ int main(int argc, char *argv[] ) {
         }
         
         while( !feof( stream_err ) ) {
-            if( fgets( psBuffer, 512, stream_err ) != NULL ){
+            if( fgets( psBuffer, psBuffer_len, stream_err ) != NULL ){
                 if (strstr( psBuffer, "TBBmalloc: " )) {
                     // TBB allocator might or might not be here, ignore it
                     continue;
@@ -246,7 +246,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.1", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6103", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t6105", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));

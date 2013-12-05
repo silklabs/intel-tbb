@@ -26,10 +26,6 @@
     the GNU General Public License.
 */
 
-#if _MSC_VER
-#pragma warning (disable : 4503)      // decorated name length exceeded, name was truncated
-#endif
-
 #include "harness.h"
 #define TBB_PREVIEW_GRAPH_NODES 1
 #include "tbb/flow_graph.h"
@@ -268,8 +264,8 @@ public:
 template<typename SType>
 void test_one_serial( SType &my_split, tbb::flow::graph &g) {
     typedef typename SType::input_type TType;
-    static const int SIZE = tbb::flow::tuple_size<TType>::value;
-    sink_node_helper<SIZE, SType>::add_sink_nodes(my_split,g);
+    static const int TUPLE_SIZE = tbb::flow::tuple_size<TType>::value;
+    sink_node_helper<TUPLE_SIZE, SType>::add_sink_nodes(my_split,g);
     typedef TType q3_input_type;
     tbb::flow::queue_node< q3_input_type >  q3(g);
 
@@ -279,36 +275,36 @@ void test_one_serial( SType &my_split, tbb::flow::graph &g) {
     flags.clear();
     for (int i = 0; i < Count; ++i ) {
         TType v;
-        tuple_helper<SIZE>::set_element(v, i);
+        tuple_helper<TUPLE_SIZE>::set_element(v, i);
         ASSERT(my_split.try_put(v), NULL);
         flags.push_back(false);
     }
 
     g.wait_for_all();
 
-    sink_node_helper<SIZE,SType>::check_sink_values();
+    sink_node_helper<TUPLE_SIZE,SType>::check_sink_values();
 
-    sink_node_helper<SIZE, SType>::remove_sink_nodes(my_split);
+    sink_node_helper<TUPLE_SIZE, SType>::remove_sink_nodes(my_split);
 
 }
 
 template<typename SType>
 class serial_test {
     typedef typename SType::input_type TType;
-    static const int SIZE = tbb::flow::tuple_size<TType>::value;
+    static const int TUPLE_SIZE = tbb::flow::tuple_size<TType>::value;
     static const int ELEMS = 3;
 public:
 static void test() {
     tbb::flow::graph g;
     flags.reserve(Count);
-    SType* my_split = makeSplit<SIZE,SType>::create(g);
-    sink_node_helper<SIZE, SType>::print_serial_remark(); REMARK(" >\n");
+    SType* my_split = makeSplit<TUPLE_SIZE,SType>::create(g);
+    sink_node_helper<TUPLE_SIZE, SType>::print_serial_remark(); REMARK(" >\n");
 
     test_one_serial<SType>( *my_split, g);
     // build the vector with copy construction from the used split node.
     std::vector<SType>split_vector(ELEMS, *my_split);
     // destroy the tired old split_node in case we're accidentally reusing pieces of it.
-    makeSplit<SIZE,SType>::destroy(my_split);
+    makeSplit<TUPLE_SIZE,SType>::destroy(my_split);
 
 
     for(int e = 0; e < ELEMS; ++e) {  // exercise each of the vector elements
@@ -336,28 +332,30 @@ int TestMain() {
 #endif
    for (int p = 0; p < 2; ++p) {
        generate_test<serial_test, tbb::flow::tuple<float, double> >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 4
        generate_test<serial_test, tbb::flow::tuple<float, double, int, long> >::do_test();
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
        generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short> >::do_test();
 #endif
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
        generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long> >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
        generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long> >::do_test();
 #endif
-#endif
        generate_test<parallel_test, tbb::flow::tuple<float, double> >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 3
        generate_test<parallel_test, tbb::flow::tuple<float, int, long> >::do_test();
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short> >::do_test();
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 7
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 7
        generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long> >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
        generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long> >::do_test();
-#endif
 #endif
    }
    return Harness::Done;

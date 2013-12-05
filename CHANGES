@@ -3,6 +3,33 @@ The list of most significant changes made over time in
 Intel(R) Threading Bulding Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.1 Update 4
+TBB_INTERFACE_VERSION == 6105
+
+Changes (w.r.t. Intel TBB 4.1 Update 3):
+
+- Use /volatile:iso option with VS 2012 to disable extended
+    semantics for volatile variables.
+- Various improvements in affinity_partitioner, scheduler,
+    tests, examples, makefiles.
+- Concurrent_priority_queue class now supports initialization/assignment
+    via C++11 initializer list feature (std::initializer_list<T>).
+
+Bugs fixed:
+
+- Fixed more possible stalls in concurrent invocations of
+    task_arena::execute(), especially waiting for enqueued tasks.
+- Fixed requested number of workers for task_arena(P,0).
+- Fixed interoperability with Intel(R) VTune(TM) Amplifier XE in
+    case of using task_arena::enqueue() from a terminating thread.
+
+Open-source contributions integrated:
+
+- Type fixes, cleanups, and code beautification by Raf Schietekat.
+- Improvements in atomic operations for big endian platforms
+    by Raf Schietekat.
+
+------------------------------------------------------------------------
 Intel TBB 4.1 Update 3
 TBB_INTERFACE_VERSION == 6103
 
@@ -34,6 +61,9 @@ Bugs fixed:
 - Fixed possible stalls in concurrent invocations of
     task_arena::execute() when no worker thread is available to make
     progress.
+- Fixed incorrect calculation of hardware concurrency in the presence
+    of inactive processor groups, particularly on systems running
+    Windows* 8 and Windows* Server 2012.
 
 Open-source contributions integrated:
 

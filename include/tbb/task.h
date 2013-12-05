@@ -371,14 +371,14 @@ private:
                           - 2 * sizeof(uintptr_t)- sizeof(void*) - sizeof(internal::context_list_node_t)
                           - sizeof(__itt_caller)];
 
-    //! Specifies whether cancellation was request for this task group.
+    //! Specifies whether cancellation was requested for this task group.
     uintptr_t my_cancellation_requested;
 
     //! Version for run-time checks and behavioral traits of the context.
     /** Version occupies low 16 bits, and traits (zero or more ORed enumerators
         from the traits_type enumerations) take the next 16 bits.
         Original (zeroth) version of the context did not support any traits. **/
-    uintptr_t  my_version_and_traits;
+    uintptr_t my_version_and_traits;
 
     //! Pointer to the container storing exception being propagated across this task group.
     exception_container_type *my_exception;
@@ -550,6 +550,10 @@ public:
         freed,
         //! task to be recycled as continuation
         recycle
+#if __TBB_RECYCLE_TO_ENQUEUE
+        //! task to be scheduled for starvation-resistant execution
+        ,to_enqueue
+#endif
     };
 
     //------------------------------------------------------------------------
@@ -640,6 +644,15 @@ public:
         __TBB_ASSERT( prefix().ref_count==0, "no child tasks allowed when recycled for reexecution" );
         prefix().state = reexecute;
     }
+
+#if __TBB_RECYCLE_TO_ENQUEUE
+    //! Schedule this to enqueue after descendant tasks complete.
+    /** Save enqueue/spawn difference, it has the semantics of recycle_as_safe_continuation. */
+    void recycle_to_enqueue() {
+        __TBB_ASSERT( prefix().state==executing, "execute not running, or already recycled" );
+        prefix().state = to_enqueue;
+    }
+#endif /* __TBB_RECYCLE_TO_ENQUEUE */
 
     // All depth-related methods are obsolete, and are retained for the sake
     // of backward source compatibility only

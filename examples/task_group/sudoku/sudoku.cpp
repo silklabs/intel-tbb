@@ -30,19 +30,19 @@
 #pragma offload_attribute (push,target(mic))
 #endif // __TBB_MIC_OFFLOAD
 
+// This header should come before any other one.
+// For details, see Known Issues in the Release Notes.
+#include "tbb/tbb_stddef.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+
 #include "tbb/atomic.h"
 #include "tbb/tick_count.h"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/task_group.h"
 
-#if __INTEL_COMPILER
-// Suppress "std::auto_prt<> is deprecated" warning
-// TODO: replace auto_ptr with unique_ptr for compilers supporting C++11
-#pragma warning(disable: 1478)
-#endif
 #include "../../common/utility/utility.h"
 
 #pragma warning(disable: 4996)
@@ -307,7 +307,7 @@ int main(int argc, char *argv[]) {
 
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
-            //"-h" option for for displaying help is present implicitly
+            //"-h" option for displaying help is present implicitly
             .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(filename,"filename","input filename")
 

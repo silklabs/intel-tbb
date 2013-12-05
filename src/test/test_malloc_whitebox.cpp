@@ -43,6 +43,8 @@
 #endif
 
 #define __TBB_MALLOC_WHITEBOX_TEST 1 // to get access to LOC internals
+// help trigger rare race condition
+#define WhiteboxTestingYield() (__TBB_Yield(), __TBB_Yield(), __TBB_Yield(), __TBB_Yield())
 
 #define protected public
 #define private public
@@ -580,7 +582,7 @@ class TestBackendWork: public SimpleBarrier {
         intptr_t   data;
         BackRefIdx idx;
     };
-    static const int ITERS = 100;
+    static const int ITERS = 20;
 
     rml::internal::Backend *backend;
 public:
@@ -591,7 +593,7 @@ public:
         for (int i=0; i<ITERS; i++) {
             BlockI *slabBlock = backend->getSlabBlock(1);
             ASSERT(slabBlock, "Memory was not allocated");
-            LargeMemoryBlock *lmb = backend->getLargeBlock(16*1024);
+            LargeMemoryBlock *lmb = backend->getLargeBlock(8*1024);
             backend->putSlabBlock(slabBlock);
             backend->putLargeBlock(lmb);
         }
@@ -603,13 +605,17 @@ void TestBackend()
     rml::MemPoolPolicy pol(getMallocMem, putMallocMem);
     rml::MemoryPool *mPool;
     pool_create_v1(0, &pol, &mPool);
-    rml::internal::ExtMemoryPool *ePool = 
+    rml::internal::ExtMemoryPool *ePool =
         &((rml::internal::MemoryPool*)mPool)->extMemPool;
     rml::internal::Backend *backend = &ePool->backend;
 
     for( int p=MaxThread; p>=MinThread; --p ) {
-        TestBackendWork::initBarrier(p);
-        NativeParallelFor( p, TestBackendWork(backend) );
+        // regression test against an race condition in backend synchronization,
+        // triggered only when WhiteboxTestingYield() call yields
+        for (int i=0; i<100; i++) {
+            TestBackendWork::initBarrier(p);
+            NativeParallelFor( p, TestBackendWork(backend) );
+        }
     }
 
     BlockI *block = backend->getSlabBlock(1);

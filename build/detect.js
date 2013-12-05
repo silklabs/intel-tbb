@@ -80,14 +80,14 @@ function doWork() {
 		if ( WScript.Arguments(0) == "/arch" ) {
 			//detect target architecture
 			var intel64=/AMD64|EM64T|x64/mgi;
-			var ia64=/IA-64|Itanium/mgi;
 			var ia32=/[80|\s]x86/mgi;
+			var arm=/ARM/mgi;
 			if ( clVersion.match(intel64) ) {
 				WScript.Echo( "intel64" );
-			} else if ( clVersion.match(ia64) ) {
-				WScript.Echo( "ia64" );
 			} else if ( clVersion.match(ia32) ) {
 				WScript.Echo( "ia32" );
+			} else if ( clVersion.match(arm) ) {
+				WScript.Echo( "armv7" );
 			} else {
 				WScript.Echo( "unknown" );
 			}

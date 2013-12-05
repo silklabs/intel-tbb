@@ -36,7 +36,7 @@
 #include "gcc_ia32_common.h"
 
 #define __TBB_WORDSIZE 4
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 #define __TBB_compiler_fence() __asm__ __volatile__("": : :"memory")
 #define __TBB_control_consistency_helper() __TBB_compiler_fence()
@@ -93,7 +93,8 @@ __TBB_MACHINE_DEFINE_ATOMICS(4,int32_t,"l","=r")
 #endif
 
 static inline int64_t __TBB_machine_cmpswp8 (volatile void *ptr, int64_t value, int64_t comparand ) {
-#if __TBB_GCC_BUILTIN_ATOMICS_PRESENT
+//TODO: remove the extra part of condition once __TBB_GCC_BUILTIN_ATOMICS_PRESENT is lowered to gcc version 4.1.2
+#if __TBB_GCC_BUILTIN_ATOMICS_PRESENT || __TBB_GCC_VERSION >= 40304
     return __sync_val_compare_and_swap( reinterpret_cast<volatile int64_t*>(ptr), comparand, value );
 #else /* !__TBB_GCC_BUILTIN_ATOMICS_PRESENT */
     //TODO: look like ICC 13.0 has some issues with this code, investigate it more deeply
@@ -157,7 +158,7 @@ static inline void __TBB_machine_and( volatile void *ptr, uint32_t addend ) {
     __asm__ __volatile__("lock\nandl %1,%0" : "=m"(*(__TBB_VOLATILE uint32_t *)ptr) : "r"(addend), "m"(*(__TBB_VOLATILE uint32_t *)ptr) : "memory");
 }
 
-//TODO: Check if it possible and profitable for IA-32 on (Linux and Windows)
+//TODO: Check if it possible and profitable for IA-32 architecture on (Linux* and Windows*)
 //to use of 64-bit load/store via floating point registers together with full fence
 //for sequentially consistent load/store, instead of CAS.
 

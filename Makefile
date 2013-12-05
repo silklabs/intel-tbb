@@ -29,7 +29,7 @@ include $(tbb_root)/build/common.inc
 .PHONY: default all tbb tbbmalloc tbbproxy test examples
 
 #workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
-#According to documentation submakes should run in parallel
+#According to documentation, recursively invoked make commands can process their targets in parallel
 .NOTPARALLEL: tbb tbbmalloc tbbproxy
 
 default: tbb tbbmalloc $(if $(use_proxy),tbbproxy)

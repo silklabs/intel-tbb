@@ -148,7 +148,7 @@ public:
     //! Destructor additionally protects concurrent on_scheduler_leaving notification
     // It is recommended to disable observation before destructor of a derived class starts,
     // otherwise it can lead to concurrent notification callback on partly destroyed object
-    virtual ~task_scheduler_observer() { if(my_proxy) observe(false);}
+    virtual ~task_scheduler_observer() { if(my_proxy) observe(false); }
 };
 
 } //namespace interface6

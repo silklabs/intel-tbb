@@ -236,14 +236,11 @@ concurrent_queue_base::~concurrent_queue_base() {
 void concurrent_queue_base::internal_push( const void* src ) {
     concurrent_queue_rep& r = *my_rep;
     concurrent_queue_rep::ticket k  = r.tail_counter++;
-    ptrdiff_t e = my_capacity;
-    if( e<concurrent_queue_rep::infinite_capacity ) {
+    if( my_capacity<concurrent_queue_rep::infinite_capacity ) {
+        // Capacity is limited, wait to not exceed it
         atomic_backoff backoff;
-        for(;;) {
-            if( (ptrdiff_t)(k-r.head_counter)<e ) break;
+        while( (ptrdiff_t)(k-r.head_counter)>=const_cast<volatile ptrdiff_t&>(my_capacity) )
             backoff.pause();
-            e = const_cast<volatile ptrdiff_t&>(my_capacity);
-        }
     }
     r.choose(k).push(src,k,*this);
 }
@@ -260,7 +257,7 @@ bool concurrent_queue_base::internal_pop_if_present( void* dst ) {
     concurrent_queue_rep& r = *my_rep;
     concurrent_queue_rep::ticket k;
     do {
-        for( atomic_backoff backoff;;backoff.pause() ) {
+        for( atomic_backoff b;;b.pause() ) {
             k = r.head_counter;
             if( r.tail_counter<=k ) {
                 // Queue is empty
@@ -279,7 +276,7 @@ bool concurrent_queue_base::internal_pop_if_present( void* dst ) {
 bool concurrent_queue_base::internal_push_if_not_full( const void* src ) {
     concurrent_queue_rep& r = *my_rep;
     concurrent_queue_rep::ticket k;
-    for( atomic_backoff backoff;;backoff.pause() ) {
+    for( atomic_backoff b;;b.pause() ) {
         k = r.tail_counter;
         if( (ptrdiff_t)(k-r.head_counter)>=my_capacity ) {
             // Queue is full

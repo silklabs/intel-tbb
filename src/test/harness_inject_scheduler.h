@@ -67,4 +67,16 @@
 #endif
 #include "../rml/client/rml_tbb.cpp"
 
+#if HARNESS_USE_RUNTIME_LOADER
+#undef HARNESS_USE_RUNTIME_LOADER
+#include "harness.h"
+
+int TestMain () {
+    // Tests that directly include sources make no sense in runtime loader testing mode.
+    return Harness::Skipped;
+}
+// Renaming the TestMain function avoids conditional compilation around same function in the test file
+#define TestMain TestMainSkipped
+#endif
+
 #endif /* harness_inject_scheduler_H */

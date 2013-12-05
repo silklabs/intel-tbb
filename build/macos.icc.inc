@@ -49,7 +49,7 @@ ifneq (,$(shell icc -dumpversion | egrep  "^1[1-9]\."))
     CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
 endif
 
-# ICC 12.0 and higher provide Intel(R) Cilk Plus
+# ICC 12.0 and higher provide Intel(R) Cilk(TM) Plus
 ifneq (,$(shell icc -dumpversion | egrep  "^1[2-9]\."))
     CILK_AVAILABLE = yes
 endif

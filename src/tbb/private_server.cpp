@@ -126,7 +126,8 @@ static const size_t cache_line_size = tbb::internal::NFS_MaxLineSize;
 class padded_private_worker: public private_worker {
     char pad[cache_line_size - sizeof(private_worker)%cache_line_size];
 public:
-    padded_private_worker( private_server& server, tbb_client& client, const size_t i ) : private_worker(server,client,i) {}
+    padded_private_worker( private_server& server, tbb_client& client, const size_t i )
+    : private_worker(server,client,i) { suppress_unused_warning(pad); }
 };
 #if _MSC_VER && !defined(__INTEL_COMPILER)
     #pragma warning(pop)

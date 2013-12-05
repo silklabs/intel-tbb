@@ -84,9 +84,11 @@ void TestMap(const typename Map::allocator_type &a) {
 template<typename Allocator>
 void TestAllocatorWithSTL(const Allocator &a = Allocator() ) {
     typedef typename Allocator::template rebind<int>::other Ai;
-    typedef typename Allocator::template rebind<const int>::other Aci;
     typedef typename Allocator::template rebind<std::pair<const int, int> >::other Acii;
+#if _MSC_VER
+    typedef typename Allocator::template rebind<const int>::other Aci;
     typedef typename Allocator::template rebind<std::pair<int, int> >::other Aii;
+#endif
 
     // Sequenced containers
     TestSequence<std::deque <int,Ai> >(a);

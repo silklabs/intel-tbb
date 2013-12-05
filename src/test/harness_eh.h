@@ -216,8 +216,8 @@ static void ThrowTestException ( intptr_t threshold ) {
 
 #define ASSERT_EXCEPTION() \
     { \
-        ASSERT (g_ExceptionsThrown ? g_ExceptionCaught : true, "throw without catch"); \
-        ASSERT (!g_ExceptionsThrown ? !g_ExceptionCaught : true, "catch without throw"); \
+        ASSERT (!g_ExceptionsThrown || g_ExceptionCaught, "throw without catch"); \
+        ASSERT (!g_ExceptionCaught || g_ExceptionsThrown, "catch without throw"); \
         ASSERT (g_ExceptionCaught || (g_ExceptionInMaster && !g_MasterExecutedThrow) || (!g_ExceptionInMaster && !g_NonMasterExecutedThrow), "no exception occurred"); \
         ASSERT (__TBB_EXCEPTION_TYPE_INFO_BROKEN || !g_UnknownException, "unknown exception was caught"); \
     }

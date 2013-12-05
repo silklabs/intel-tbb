@@ -58,9 +58,20 @@ endif
 
 CONLY ?= $(CPLUS)
 
+#$(1) - is the obj name
+#$(2) - is the input cpp files 
+#$(3) - extra flags to compile with
+define make-cxx-obj 
+	$(CPLUS) $(OUTPUTOBJ_KEY)$(strip $1) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $3 $2
+endef
+
 # The most generic rules
 %.$(OBJ): %.cpp
-	$(CPLUS) $(COMPILE_ONLY) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(CXX_WARN_SUPPRESS) $(INCLUDES) $<
+	$(call make-cxx-obj,$@, $<, )
+
+# Rules for generating a test DLL
+%_dll.$(OBJ): %.cpp
+	$(CPLUS) $(COMPILE_ONLY) $(OUTPUTOBJ_KEY)$@ $(CPLUS_FLAGS) $(PIC_KEY) $(DEFINE_KEY)_USRDLL $(INCLUDES) $<
 
 %.$(OBJ): %.c
 	$(CONLY) $(COMPILE_ONLY) $(C_FLAGS) $(INCLUDES) $<
@@ -89,7 +100,7 @@ CONLY ?= $(CPLUS)
 
 ifeq (1,$(TBB_NOSTRICT))
 # GNU 3.2.3 headers have a ISO syntax that is rejected by Intel compiler in -strict-ansi mode.
-# The Mac uses gcc, so the list is empty for that platform.
+# The OS X* uses gcc, so the list is empty for that platform.
 # The files below need the -strict-ansi flag downgraded to -ansi to compile
 
 $(KNOWN_NOSTRICT): %.$(OBJ): %.cpp
@@ -123,7 +134,3 @@ version_string.ver:
 	$(MAKE_VERSIONS)
 endif
 
-
-# Rules for generating a test DLL
-%_dll.$(OBJ): %.cpp
-	$(CPLUS) $(COMPILE_ONLY) $(OUTPUTOBJ_KEY)$@ $(CPLUS_FLAGS) $(PIC_KEY) $(DEFINE_KEY)_USRDLL $(INCLUDES) $<

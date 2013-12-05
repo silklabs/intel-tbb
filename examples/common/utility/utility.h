@@ -28,6 +28,7 @@
 
 #ifndef UTILITY_H_
 #define UTILITY_H_
+
 #include <string>
 #include <cstring>
 #include <vector>
@@ -37,19 +38,39 @@
 #include <sstream>
 #include <numeric>
 #include <stdexcept>
-//TODO: for C++11 mode replace usage of auto_ptr with unique_ptr
 #include <memory>
 #include <cassert>
+#include <iostream>
+#include <cstdlib>
+// TBB headers should not be used, as some examples may need to be built without TBB.
 
 namespace utility{
     namespace internal{
+
+#if ((__GNUC__*100+__GNUC_MINOR__>=404 && __GXX_EXPERIMENTAL_CXX0X__) || _MSC_VER >= 1600) && (!__INTEL_COMPILER || __INTEL_COMPILER >= 1200 )
+    // std::unique_ptr is available, and compiler can use it
+    #define smart_ptr std::unique_ptr
+    using std::swap;
+#else
+    #if __INTEL_COMPILER && __GXX_EXPERIMENTAL_CXX0X__
+    // std::unique_ptr is unavailable, so suppress std::auto_prt<> deprecation warning
+    #pragma warning(disable: 1478)
+    #endif
+    #define smart_ptr std::auto_ptr
+    // in some C++ libraries, std::swap does not work with std::auto_ptr
+    template<typename T>
+    void swap( std::auto_ptr<T>& ptr1, std::auto_ptr<T>& ptr2 ) {
+        std::auto_ptr<T> tmp; tmp = ptr2; ptr2 = ptr1; ptr1 = tmp;
+    }
+#endif
+
         //TODO: add tcs
         template<class dest_type>
         dest_type& string_to(std::string const& s, dest_type& result){
             std::stringstream stream(s);
             stream>>result;
             if ((!stream)||(stream.fail())){
-                throw std::invalid_argument("error converting string \""+std::string(s)+"\"");
+                throw std::invalid_argument("error converting string '"+std::string(s)+"'");
             }
             return result;
         }
@@ -60,11 +81,10 @@ namespace utility{
             return string_to(s,result);
         }
 
-
         template<typename>
-        struct is_bool          { bool static value(){return false;}};
+        struct is_bool          { static bool value(){return false;}};
         template<>
-        struct is_bool<bool>    { bool static value(){return true;}};
+        struct is_bool<bool>    { static bool value(){return true;}};
 
         class type_base {
             type_base& operator=(const type_base&);
@@ -72,10 +92,10 @@ namespace utility{
             const std::string name;
             const std::string description;
 
-            type_base (std::string name, std::string description) : name(name), description(description) {}
+            type_base (std::string a_name, std::string a_description) : name(a_name), description(a_description) {}
             virtual void parse_and_store (const std::string & s)=0;
             virtual std::string value() const =0;
-            virtual std::auto_ptr<type_base> clone()const =0;
+            virtual smart_ptr<type_base> clone()const =0;
             virtual ~type_base(){}
         };
         template <typename type>
@@ -87,13 +107,13 @@ namespace utility{
             type & target;
             validating_function_type validating_function;
         public:
-            type_impl(std::string name, std::string description, type & target, validating_function_type validating_function = NULL)
-                : type_base (name,description), target(target),validating_function(validating_function)
+            type_impl(std::string a_name, std::string a_description, type & a_target, validating_function_type a_validating_function = NULL)
+                : type_base (a_name,a_description), target(a_target),validating_function(a_validating_function)
             {};
             void parse_and_store (const std::string & s){
                 try{
                     const bool is_bool = internal::is_bool<type>::value();
-                    if (is_bool &&(s.empty())){
+                    if (is_bool && s.empty()){
                         //to avoid directly assigning true
                         //(as it will impose additional layer of indirection)
                         //so, simply pass it as string
@@ -101,21 +121,16 @@ namespace utility{
                     }else {
                         internal::string_to(s,target);
                     }
-                }catch(std::invalid_argument& ){
+                }catch(std::invalid_argument& e){
                     std::stringstream str;
-                    str
-                        <<"\""<<s<<"\""<<" is incorrect input for argument "
-                        <<"\""<<name<<"\""
-                    ;
+                    str <<"'"<<s<<"' is incorrect input for argument '"<<name<<"'"
+                        <<" ("<<e.what()<<")";
                     throw std::invalid_argument(str.str());
                 }
                 if (validating_function){
                     if (!((validating_function)(target))){
                         std::stringstream str;
-                        str
-                            <<"\""<<target<<"\" is invalid value for argument "
-                            <<"\""<<name<<"\""
-                        ;
+                        str <<"'"<<target<<"' is invalid value for argument '"<<name<<"'";
                         throw std::invalid_argument(str.str());
                     }
                 }
@@ -125,28 +140,31 @@ namespace utility{
                 str<<target;
                 return str.str();
             }
-            virtual std::auto_ptr<type_base> clone()const {
-                return std::auto_ptr<type_base>(new type_impl(*this));
+            virtual smart_ptr<type_base> clone() const {
+                return smart_ptr<type_base>(new type_impl(*this));
             }
         };
 
         class argument{
         private:
-            std::auto_ptr<type_base> p_type;
+            smart_ptr<type_base> p_type;
             bool matched_;
         public:
-            argument(argument const& other): p_type(other.p_type.get() ? other.p_type->clone():std::auto_ptr<type_base>()),matched_(other.matched_){}
+            argument(argument const& other)
+                : p_type(other.p_type.get() ? (other.p_type->clone()).release() : NULL)
+                 ,matched_(other.matched_)
+            {}
             argument& operator=(argument a){
                 this->swap(a);
                 return *this;
             }
             void swap(argument& other){
-                std::auto_ptr<type_base> tmp; tmp=p_type; p_type=other.p_type; other.p_type=tmp;
+                internal::swap(p_type, other.p_type);
                 std::swap(matched_,other.matched_);
             }
             template<class type>
-            argument(std::string name, std::string description, type& dest, bool(*validating_function)(const type&)= NULL)
-                :p_type(new type_impl<type>(name,description,dest,validating_function))
+            argument(std::string a_name, std::string a_description, type& dest, bool(*a_validating_function)(const type&)= NULL)
+                :p_type(new type_impl<type>(a_name,a_description,dest,a_validating_function))
                  ,matched_(false)
             {}
             std::string value()const{
@@ -164,7 +182,8 @@ namespace utility{
             }
             bool is_matched() const{return matched_;}
         };
-    }
+    } // namespace internal
+
     class cli_argument_pack{
         typedef std::map<std::string,internal::argument> args_map_type;
         typedef std::vector<std::string> args_display_order_type;
@@ -178,7 +197,7 @@ namespace utility{
         void add_arg(internal::argument const& a){
             std::pair<args_map_type::iterator, bool> result = args_map.insert(std::make_pair(a.name(),a));
             if (!result.second){
-                throw std::invalid_argument("argument with name: \""+a.name()+"\" already registered");
+                throw std::invalid_argument("argument with name: '"+a.name()+"' already registered");
             }
             args_display_order.push_back(a.name());
         }
@@ -206,10 +225,10 @@ namespace utility{
             return *this;
         }
 
-        void parse(int argc, char const* argv[]){
+        void parse(std::size_t argc, char const* argv[]){
             {
                 std::size_t current_positional_index=0;
-                for (int j=1;j<argc;j++){
+                for (std::size_t j=1;j<argc;j++){
                     internal::argument* pa = NULL;
                     std::string argument_value;
 
@@ -218,8 +237,8 @@ namespace utility{
 
                     const char * const assign_sign = std::find(begin,end,'=');
 
-                    struct throw_unknow_parameter{ static void _(std::string const& location){
-                        throw std::invalid_argument(std::string("unknown parameter starting at:\"")+location+"\"");
+                    struct throw_unknown_parameter{ static void _(std::string const& location){
+                        throw std::invalid_argument(std::string("unknown parameter starting at:'")+location+"'");
                     }};
                     //first try to interpret it like parameter=value string
                     if (assign_sign!=end){
@@ -230,7 +249,7 @@ namespace utility{
                             pa= &((*it).second);
                             argument_value = std::string(assign_sign+1,end);
                         }else {
-                            throw_unknow_parameter::_(argv[j]);
+                            throw_unknown_parameter::_(argv[j]);
                         }
                     }
                     //then see is it a named flag
@@ -243,24 +262,24 @@ namespace utility{
                         //then try it as positional argument without name specified
                         else if (current_positional_index < positional_arg_names.size()){
                             std::stringstream str(argv[j]);
-                            args_map_type::iterator it = args_map.find(positional_arg_names.at(current_positional_index));
+                            args_map_type::iterator found_positional_arg = args_map.find(positional_arg_names.at(current_positional_index));
                             //TODO: probably use of smarter assert would help here
-                            assert(it!=args_map.end()/*&&"positional_arg_names and args_map are out of sync"*/);
-                            if (it==args_map.end()){
+                            assert(found_positional_arg!=args_map.end()/*&&"positional_arg_names and args_map are out of sync"*/);
+                            if (found_positional_arg==args_map.end()){
                                 throw std::logic_error("positional_arg_names and args_map are out of sync");
                             }
-                            pa= &((*it).second);
+                            pa= &((*found_positional_arg).second);
                             argument_value = argv[j];
 
                             current_positional_index++;
                         }else {
                             //TODO: add tc to check
-                            throw_unknow_parameter::_(argv[j]);
+                            throw_unknown_parameter::_(argv[j]);
                         }
                     }
                     assert(pa);
                     if (pa->is_matched()){
-                        throw std::invalid_argument(std::string("several values specified for: \"")+pa->name()+"\" argument");
+                        throw std::invalid_argument(std::string("several values specified for: '")+pa->name()+"' argument");
                     }
                     pa->parse_and_store(argument_value);
                 }
@@ -301,19 +320,44 @@ namespace utility{
             ;
             return str.str();
         }
-    };
-}
-
-namespace utility{
+    }; // class cli_argument_pack
 
     namespace internal {
-        int step_function_plus(int previous,double step){
+        template<typename T>
+        bool is_power_of_2( T val ) {
+            size_t intval = size_t(val);
+            return (intval&(intval-1)) == size_t(0);
+        }
+        int step_function_plus(int previous, double step){
             return static_cast<int>(previous+step);
         }
-        int step_function_multiply(int previous,double multiply){
+        int step_function_multiply(int previous, double multiply){
             return static_cast<int>(previous*multiply);
         }
+        // "Power-of-2 ladder": nsteps is the desired number of steps between any subsequent powers of 2.
+        // The actual step is the quotient of the nearest smaller power of 2 divided by that number (but at least 1).
+        // E.g., '1:32:#4' means 1,2,3,4,5,6,7,8,10,12,14,16,20,24,28,32
+        int step_function_power2_ladder(int previous, double nsteps){
+            int steps = int(nsteps);
+            assert( is_power_of_2(steps) );  // must be a power of 2
+            // The actual step is 1 until the value is twice as big as nsteps
+            if( previous < 2*steps )
+                return previous+1;
+            // calculate the previous power of 2
+            int prev_power2 = previous/2;                 // start with half the given value
+            int rshift = 1;                               // and with the shift of 1;
+            while( int shifted = prev_power2>>rshift ) {  // shift the value right; while the result is non-zero,
+                prev_power2 |= shifted;                   //   add the bits set in 'shifted';
+                rshift <<= 1;                             //   double the shift, as twice as many top bits are set;
+            }                                             // repeat.
+            ++prev_power2; // all low bits set; now it's just one less than the desired power of 2
+            assert( is_power_of_2(prev_power2) );
+            assert( (prev_power2<=previous)&&(2*prev_power2>previous) );
+            // The actual step value is the previous power of 2 divided by steps
+            return previous + (prev_power2/steps);
+        }
         typedef int (* step_function_ptr_type)(int,double);
+
         struct step_function_descriptor  {
             char mnemonic;
             step_function_ptr_type function;
@@ -322,10 +366,10 @@ namespace utility{
         private:
             void operator=(step_function_descriptor  const&);
         };
-
         step_function_descriptor step_function_descriptors[] = {
                 step_function_descriptor('*',step_function_multiply),
-                step_function_descriptor('+',step_function_plus)
+                step_function_descriptor('+',step_function_plus),
+                step_function_descriptor('#',step_function_power2_ladder)
         };
 
         template<typename T, size_t N>
@@ -345,38 +389,47 @@ namespace utility{
                     throw std::invalid_argument("step_function for thread range step should not be NULL");
             }
             int operator()(int previous)const {
-                return step_function(previous,step_function_argument);
+                assert(0<=previous); // test 0<=first and loop discipline
+                const int ret = step_function(previous,step_function_argument);
+                assert(previous<ret);
+                return ret;
             }
             friend std::istream& operator>>(std::istream& input_stream, thread_range_step& step){
                 char function_char;
                 double function_argument;
-                input_stream>>function_char >> function_argument;
+                input_stream >> function_char >> function_argument;
                 size_t i = 0;
-                for ( ;(i < array_length(step_function_descriptors)) && step_function_descriptors[i].mnemonic != function_char; ++i );
+                while ((i<array_length(step_function_descriptors)) && (step_function_descriptors[i].mnemonic!=function_char)) ++i;
                 if (i >= array_length(step_function_descriptors)){
-                    throw std::invalid_argument("step_function for thread range step should be known");
+                    throw std::invalid_argument("unknown step function mnemonic: "+std::string(1,function_char));
+                } else if ((function_char=='#') && !is_power_of_2(function_argument)) {
+                    throw std::invalid_argument("the argument of # should be a power of 2");
                 }
                 step.step_function = step_function_descriptors[i].function;
                 step.step_function_argument = function_argument;
                 return input_stream;
             }
         };
-    }
+    } // namespace internal
+
     struct thread_number_range{
         int (*auto_number_of_threads)();
-        int first;
-        int last;
+        int first; // 0<=first (0 can be used as a special value)
+        int last;  // first<=last
 
         internal::thread_range_step step;
 
         thread_number_range( int (*auto_number_of_threads_)(),int low_=1, int high_=-1
-                , internal::thread_range_step step_ =  internal::thread_range_step(internal::step_function_plus,1)
+                , internal::thread_range_step step_ =  internal::thread_range_step(internal::step_function_power2_ladder,4)
         )
             : auto_number_of_threads(auto_number_of_threads_), first(low_), last((high_>-1) ? high_ : auto_number_of_threads_())
               ,step(step_)
         {
-            if (first>last){
-                throw std::invalid_argument("");
+            if (first<0) {
+                throw std::invalid_argument("negative value not allowed");
+            }
+            if (first>last) {
+                throw std::invalid_argument("decreasing sequence not allowed");
             }
         }
         friend std::istream& operator>>(std::istream& i, thread_number_range& range){
@@ -387,67 +440,54 @@ namespace utility{
                     int auto_value;
                     string_to_number_of_threads(int auto_value_):auto_value(auto_value_){}
                     int operator()(const std::string & value)const{
-                        int result=0;
-                        if (value=="auto"){
-                            result = auto_value;
-                        }
-                        else{
-                            internal::string_to(value,result);
-                        }
-                        return result;
+                        return (value=="auto")? auto_value : internal::string_to<int>(value);
                     }
                 };
                 string_to_number_of_threads string_to_number_of_threads(range.auto_number_of_threads());
-                int low =0;
-                int high=0;
-                std::size_t semicolon = s.find(':');
-                if (semicolon == std::string::npos ){
-                    high= (low = string_to_number_of_threads(s));
-                }else {
+                int low, high;
+                std::size_t colon = s.find(':');
+                if ( colon == std::string::npos ){
+                    low = high = string_to_number_of_threads(s);
+                } else {
                     //it is a range
-                    std::size_t second_semicolon = s.find(':',semicolon+1);
+                    std::size_t second_colon = s.find(':',colon+1);
 
-                    low  = string_to_number_of_threads(std::string(s, 0, semicolon)); //not copying the ':' char
-                    high = string_to_number_of_threads(std::string(s, semicolon+1, second_semicolon - (semicolon+1))); //not copying the ':' chars
-                    if (second_semicolon != std::string::npos){
-                        internal::string_to(std::string(s,second_semicolon + 1),range.step);
+                    low  = string_to_number_of_threads(std::string(s, 0, colon)); //not copying the colon
+                    high = string_to_number_of_threads(std::string(s, colon+1, second_colon - (colon+1))); //not copying the colons
+                    if (second_colon != std::string::npos){
+                        internal::string_to(std::string(s,second_colon + 1),range.step);
                     }
                 }
                 range = thread_number_range(range.auto_number_of_threads,low,high,range.step);
             }catch(std::invalid_argument&){
                 i.setstate(std::ios::failbit);
+                throw;
             }
             return i;
         }
-
         friend std::ostream& operator<<(std::ostream& o, thread_number_range const& range){
             using namespace internal;
             size_t i = 0;
-            for ( ;(i < array_length(step_function_descriptors)) && step_function_descriptors[i].function != range.step.step_function; ++i );
+            for (; i < array_length(step_function_descriptors) && step_function_descriptors[i].function != range.step.step_function; ++i ) {}
             if (i >= array_length(step_function_descriptors)){
-                throw std::invalid_argument("step_function for thread range step should be known");
+                throw std::invalid_argument("unknown step function for thread range");
             }
             o<<range.first<<":"<<range.last<<":"<<step_function_descriptors[i].mnemonic<<range.step.step_function_argument;
             return o;
         }
-
-    };
+    }; // struct thread_number_range
+    //TODO: fix unused warning here
     //TODO: update the thread range description in the .html files
-    static const char* thread_number_range_desc="number of threads to use; a range of the form low[:high[:(+|*)step]]"
-                                                ", where low and optional high are non-negative integers or 'auto' for the TBB default"
-                                                ", and optional step expression specifies how next thread number is chosen."
-                                                " E.g. expression '1:16:*2' means threads from 1 to 16 , where each next thread number"
-                                                " is twice bigger (*2) than previous one."
+    static const char* thread_number_range_desc="number of threads to use; a range of the form low[:high[:(+|*|#)step]],"
+                                                "\n\twhere low and optional high are non-negative integers or 'auto' for the default choice,"
+                                                "\n\tand optional step expression specifies how thread numbers are chosen within the range."
+                                                "\n\tSee examples/common/index.html for detailed description."
    ;
-}
-#include <iostream>
-namespace utility{
+
     inline void report_elapsed_time(double seconds){
         std::cout << "elapsed time : "<<seconds<<" seconds \n";
     }
-}
-#include <cstdlib>
-namespace utility{
+
     inline void parse_cli_arguments(int argc, const char* argv[], utility::cli_argument_pack cli_pack){
         bool show_help = false;
         cli_pack.arg(show_help,"-h","show this message");
@@ -458,7 +498,7 @@ namespace utility{
         }catch(std::exception& e){
             std::cerr
                     <<"error occurred while parsing command line."<<std::endl
-                    <<"error text:\""<<e.what()<<"\""<<std::endl
+                    <<"error text: "<<e.what()<<std::endl
                     <<std::flush;
             invalid_input =true;
         }
@@ -472,4 +512,5 @@ namespace utility{
          parse_cli_arguments(argc, const_cast<const char**>(argv), cli_pack);
     }
 }
+
 #endif /* UTILITY_H_ */

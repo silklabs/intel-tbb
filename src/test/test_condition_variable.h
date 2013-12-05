@@ -68,13 +68,13 @@ void Counter<M>::flog_once_lock_guard(size_t mode)
     if( mode&1 ) {
         // Try acquire and release with implicit lock_guard
         // precondition: if mutex_type is not a recursive mutex, the calling thread does not own the mutex m.
-        // if the prcondition is not met, either dead-lock incorrect 'value' would result in.
+        // if the precondition is not met, either dead-lock incorrect 'value' would result in.
         lock_guard<M> lg(mutex);
         value = value+1;
     } else {
         // Try acquire and release with adopt lock_quard
         // precodition: the calling thread owns the mutex m.
-        // if the prcondition is not met, incorrect 'value' would result in because the thread unlocks
+        // if the precondition is not met, incorrect 'value' would result in because the thread unlocks
         // mutex that it does not own.
         mutex.lock();
         lock_guard<M> lg( mutex, adopt_lock );
@@ -649,7 +649,7 @@ void TestConditionVariable( const char* name, int nthread )
     } while( n_visit_to_waitq<=0 || max_waitq_length<unsigned(nthread/2) );
 }
 
-#if TBB_USE_EXCEPTIONS
+#if TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN
 static tbb::atomic<int> err_count;
 
 #define TRY_AND_CATCH_RUNTIME_ERROR(op,msg) \

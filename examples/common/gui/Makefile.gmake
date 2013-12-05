@@ -37,10 +37,12 @@ EXE = $(NAME)$(SUFFIX).exe
 else
 RM = rm -f
 RD = rmdir -r
-# detecting x64
-ifeq ($(shell uname -m),x86_64)
-x64 ?= 64
-endif
+
+# detecting 64-bit platform
+arch ?= $(shell uname -m)
+# Possible values of interest: intel64 x86_64 amd64 ia64 ppc64 sparc sparc64
+x64 ?= $(findstring 64,$(subst sparc,sparc64,$(arch)))
+
 # detecting UI ("mac", "x" or "con")
 ifeq ($(shell uname),Darwin)
 UI ?= mac
@@ -68,10 +70,13 @@ MACUIOBJS = OpenGLView.o main.o tbbAppDelegate.o
 APPRES = $(NAME)$(SUFFIX).app/Contents/Resources
 EXE = $(NAME)$(SUFFIX).app/Contents/MacOS/$(NAME)$(SUFFIX)
 
-else # ! Mac
+else # ! OS X*
 UI = con
 EXE = $(NAME)$(SUFFIX)
+ifeq (file,$(origin UI))
+$(warning Note: no graphics output capability detected, building for console output.)
+endif
 
-endif # Mac
+endif # OS X*
 endif # X
 endif # Windows vs. other

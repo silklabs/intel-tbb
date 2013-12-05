@@ -51,12 +51,12 @@ endif
 
 
 # ICC 11.0 and higher support -std=c++0x
-ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion icl 11"))
+ifeq (ok,$(call detect_js,/minversion icl 11))
     CPP11_FLAGS = /Qstd=c++0x /D_TBB_CPP0X
 endif
 
-# ICC 12.0 and higher provide Intel(R) Cilk Plus
-ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion icl 12"))
+# ICC 12.0 and higher provide Intel(R) Cilk(TM) Plus
+ifeq (ok,$(call detect_js,/minversion icl 12))
     CILK_AVAILABLE = yes
 endif
 

@@ -28,9 +28,9 @@ REM the GNU General Public License.
 REM
 
 :: Getting parameters
-if ("%1") == ("") goto error
-if ("%2") == ("") goto error
-if ("%3") == ("") goto error
+if ("%1") == ("") goto error0
+if ("%2") == ("") goto error0
+if ("%3") == ("") goto error0
 set arch=%1
 if ("%2") == ("debug") set postfix=_debug
 set output_dir=%3
@@ -41,18 +41,19 @@ if ("%4") NEQ ("") set TBBROOT=%4
 if ("%TBBROOT%") == ("") set TBBROOT=%~d0%~p0..\..\
 
 :: Getting vs folders in case vc_mt binaries are not provided
+:: ordered from oldest to newest, so we end with newest available version
 if ("%VS90COMNTOOLS%")  NEQ ("") set vc_dir=vc9
 if ("%VS100COMNTOOLS%") NEQ ("") set vc_dir=vc10
 if ("%VS110COMNTOOLS%") NEQ ("") set vc_dir=vc11
 
 :: Are we standalone/oss or inside compiler?
-if exist "%TBBROOT%\bin\%arch%\vc9\tbb%postfix%.dll" set interim_path=bin\%arch%
-if exist "%TBBROOT%\..\redist\%arch%\tbb\vc9\tbb%postfix%.dll" set interim_path=..\redist\%arch%\tbb
-if ("%interim_path%") == ("") goto error
+if exist "%TBBROOT%\bin\%arch%\%vc_dir%\tbb%postfix%.dll" set interim_path=bin\%arch%
+if exist "%TBBROOT%\..\redist\%arch%\tbb\%vc_dir%\tbb%postfix%.dll" set interim_path=..\redist\%arch%\tbb
+if ("%interim_path%") == ("") goto error1
 
 :: Do we provide vc_mt binaries?
 if exist "%TBBROOT%\%interim_path%\vc_mt\tbb%postfix%.dll" set vc_dir=vc_mt
-if ("%vc_dir%") == ("") goto error
+if ("%vc_dir%") == ("") goto error2
 
 :: We know everything we wanted and there are no errors
 :: Copying binaries
@@ -65,8 +66,14 @@ if exist "%TBBROOT%\%interim_path%\%vc_dir%\tbb_preview%postfix%.dll" copy "%TBB
 if exist "%TBBROOT%\%interim_path%\%vc_dir%\tbb_preview%postfix%.pdb" copy "%TBBROOT%\%interim_path%\%vc_dir%\tbb_preview%postfix%.pdb" "%output_dir%"
 
 goto end
-:error
-echo Error occurred in libraries copying during post-build step.
+:error0
+echo number of parameters not correct
+exit /B 1
+:error1
+echo Could not determine path to TBB libraries
+exit /B 1
+:error2
+echo Could not determine Visual Studio version
 exit /B 1
 
 :end

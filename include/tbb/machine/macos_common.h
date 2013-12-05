@@ -62,7 +62,7 @@ static inline int __TBB_macos_available_cpu() {
 
 static inline int64_t __TBB_machine_cmpswp8_OsX(volatile void *ptr, int64_t value, int64_t comparand)
 {
-    __TBB_ASSERT( tbb::internal::is_aligned(ptr,8), "address not properly aligned for Mac OS atomics");
+    __TBB_ASSERT( tbb::internal::is_aligned(ptr,8), "address not properly aligned for OS X* atomics");
     int64_t* address = (int64_t*)ptr;
     while( !OSAtomicCompareAndSwap64Barrier(comparand, value, address) ){
 #if __TBB_WORDSIZE==8
@@ -85,14 +85,14 @@ static inline int64_t __TBB_machine_cmpswp8_OsX(volatile void *ptr, int64_t valu
 #define __TBB_WORDSIZE 4
 #endif
 
-#ifdef __TBB_BIG_ENDIAN
+#ifdef __TBB_ENDIANNESS
     // Already determined based on hardware architecture.
 #elif __BIG_ENDIAN__
-    #define __TBB_BIG_ENDIAN 1
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_BIG
 #elif __LITTLE_ENDIAN__
-    #define __TBB_BIG_ENDIAN 0
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 #else
-    #define __TBB_BIG_ENDIAN -1 // not currently supported
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_UNSUPPORTED
 #endif
 
 /** As this generic implementation has absolutely no information about underlying
@@ -107,7 +107,7 @@ static inline int64_t __TBB_machine_cmpswp8_OsX(volatile void *ptr, int64_t valu
 
 static inline int32_t __TBB_machine_cmpswp4(volatile void *ptr, int32_t value, int32_t comparand)
 {
-    __TBB_ASSERT( tbb::internal::is_aligned(ptr,4), "address not properly aligned for Mac OS atomics");
+    __TBB_ASSERT( tbb::internal::is_aligned(ptr,4), "address not properly aligned for OS X* atomics");
     int32_t* address = (int32_t*)ptr;
     while( !OSAtomicCompareAndSwap32Barrier(comparand, value, address) ){
         int32_t snapshot = *address;
@@ -118,13 +118,13 @@ static inline int32_t __TBB_machine_cmpswp4(volatile void *ptr, int32_t value, i
 
 static inline int32_t __TBB_machine_fetchadd4(volatile void *ptr, int32_t addend)
 {
-    __TBB_ASSERT( tbb::internal::is_aligned(ptr,4), "address not properly aligned for Mac OS atomics");
+    __TBB_ASSERT( tbb::internal::is_aligned(ptr,4), "address not properly aligned for OS X* atomics");
     return OSAtomicAdd32Barrier(addend, (int32_t*)ptr) - addend;
 }
 
 static inline int64_t __TBB_machine_fetchadd8(volatile void *ptr, int64_t addend)
 {
-    __TBB_ASSERT( tbb::internal::is_aligned(ptr,8), "address not properly aligned for Mac OS atomics");
+    __TBB_ASSERT( tbb::internal::is_aligned(ptr,8), "address not properly aligned for OS X* atomics");
     return OSAtomicAdd64Barrier(addend, (int64_t*)ptr) - addend;
 }
 

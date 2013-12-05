@@ -204,7 +204,7 @@ int TestMain() {
                     // Check what?
                 }
 
-                // There was a problem on Linux, and still a problem on Mac OS X.
+                // There was a problem on Linux* OS, and still a problem on OS X*.
                 SAY( "Throw an exception." );
                 // Iterate thru all the ids first.
                 for ( int id = 1; id < tbb::internal::eid_max; ++ id ) {

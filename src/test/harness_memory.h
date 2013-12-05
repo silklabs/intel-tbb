@@ -27,7 +27,7 @@
 */
 
 // Declarations for simple estimate of the memory being used by a program.
-// Not yet implemented for Mac.
+// Not yet implemented for OS X*.
 // This header is an optional part of the test harness.
 // It assumes that "harness_assert.h" has already been included.
 

@@ -201,11 +201,9 @@ struct Invariant {
     M mutex;
     const char* mutex_name;
     volatile long value[N];
-    volatile long single_value;
     Invariant( const char* mutex_name_ ) :
         mutex_name(mutex_name_)
     {
-        single_value = 0;
         for( size_t k=0; k<N; ++k )
             value[k] = 0;
         tbb::profiling::set_name(mutex, mutex_name_);

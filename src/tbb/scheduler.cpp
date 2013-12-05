@@ -34,6 +34,7 @@
 #include "mailbox.h"
 #include "observer_proxy.h"
 #include "tbb/tbb_machine.h"
+#include "tbb/atomic.h"
 
 namespace tbb {
 namespace internal {
@@ -225,7 +226,7 @@ void generic_scheduler::init_stack_info () {
                 if ( 0 == pthread_attr_getstacksize(&attr_stack, &stack_size) ) {
                     if ( np_stack_size < stack_size ) {
                         // We are in a secondary thread. Use reliable data.
-                        // IA64 stack is split into RSE backup and memory parts
+                        // IA-64 architecture stack is split into RSE backup and memory parts
                         rsb_base = stack_limit;
                         stack_size = np_stack_size/2;
                         // Limit of the memory part of the stack
@@ -237,7 +238,7 @@ void generic_scheduler::init_stack_info () {
                 }
                 pthread_attr_destroy(&attr_stack);
             }
-            // IA64 stack is split into RSE backup and memory parts
+            // IA-64 architecture stack is split into RSE backup and memory parts
             my_rsb_stealing_threshold = (uintptr_t)((char*)rsb_base + stack_size/2);
 #endif /* __TBB_ipf */
             // Size of the stack free part 
@@ -268,7 +269,7 @@ void generic_scheduler::cleanup_local_context_list () {
         // Full fence prevents reordering of store to my_local_ctx_list_update with
         // load from my_nonlocal_ctx_list_update.
         atomic_fence();
-        // Check for the conflict with concurrent destroyer or cancelation propagator
+        // Check for the conflict with concurrent destroyer or cancellation propagator
         if ( my_nonlocal_ctx_list_update.load<relaxed>() || local_count_snapshot != the_context_state_propagation_epoch )
             lock.acquire(my_context_list_mutex);
         // No acquire fence is necessary for loading my_context_list_head.my_next,
@@ -353,7 +354,7 @@ task& generic_scheduler::allocate_task( size_t number_of_bytes,
             ITT_NOTIFY( sync_acquired, &my_return_list );
             my_free_list = t->prefix().next;
         } else {
-            t = (task*)((char*)NFS_Allocate( task_prefix_reservation_size+quick_task_size, 1, NULL ) + task_prefix_reservation_size );
+            t = (task*)((char*)NFS_Allocate( 1, task_prefix_reservation_size+quick_task_size, NULL ) + task_prefix_reservation_size );
 #if __TBB_COUNT_TASK_NODES
             ++my_task_node_count;
 #endif /* __TBB_COUNT_TASK_NODES */
@@ -379,7 +380,7 @@ task& generic_scheduler::allocate_task( size_t number_of_bytes,
 #endif /* __TBB_PREFETCHING */
     } else {
         GATHER_STATISTIC(++my_counters.big_tasks);
-        t = (task*)((char*)NFS_Allocate( task_prefix_reservation_size+number_of_bytes, 1, NULL ) + task_prefix_reservation_size );
+        t = (task*)((char*)NFS_Allocate( 1, task_prefix_reservation_size+number_of_bytes, NULL ) + task_prefix_reservation_size );
 #if __TBB_COUNT_TASK_NODES
         ++my_task_node_count;
 #endif /* __TBB_COUNT_TASK_NODES */
@@ -414,7 +415,7 @@ void generic_scheduler::free_nonlocal_small_task( task& t ) {
         // Atomically insert t at head of s.my_return_list
         t.prefix().next = old;
         ITT_NOTIFY( sync_releasing, &s.my_return_list );
-        if( __TBB_CompareAndSwapW( &s.my_return_list, (intptr_t)&t, (intptr_t)old )==(intptr_t)old ) {
+        if( as_atomic(s.my_return_list).compare_and_swap(&t, old )==old ) {
 #if __TBB_PREFETCHING
             __TBB_cl_evict(&t.prefix());
             __TBB_cl_evict(&t);
@@ -478,9 +479,8 @@ size_t generic_scheduler::prepare_task_pool ( size_t num_tasks ) {
 inline void generic_scheduler::acquire_task_pool() const {
     if ( !in_arena() )
         return; // we are not in arena - nothing to lock
-    atomic_backoff backoff;
     bool sync_prepare_done = false;
-    for(;;) {
+    for( atomic_backoff b;;b.pause() ) {
 #if TBB_USE_ASSERT
         __TBB_ASSERT( my_arena_slot == my_arena->my_slots + my_arena_index, "invalid arena slot index" );
         // Local copy of the arena slot task pool pointer is necessary for the next
@@ -489,8 +489,7 @@ inline void generic_scheduler::acquire_task_pool() const {
         __TBB_ASSERT( tp == LockedTaskPool || tp == my_arena_slot->task_pool_ptr, "slot ownership corrupt?" );
 #endif
         if( my_arena_slot->task_pool != LockedTaskPool &&
-            __TBB_CompareAndSwapW( &my_arena_slot->task_pool, (intptr_t)LockedTaskPool,
-                                   (intptr_t)my_arena_slot->task_pool_ptr ) == (intptr_t)my_arena_slot->task_pool_ptr )
+            as_atomic(my_arena_slot->task_pool).compare_and_swap(LockedTaskPool, my_arena_slot->task_pool_ptr ) == my_arena_slot->task_pool_ptr )
         {
             // We acquired our own slot
             ITT_NOTIFY(sync_acquired, my_arena_slot);
@@ -502,7 +501,6 @@ inline void generic_scheduler::acquire_task_pool() const {
             sync_prepare_done = true;
         }
         // Someone else acquired a lock, so pause and do exponential backoff.
-        backoff.pause();
     }
     __TBB_ASSERT( my_arena_slot->task_pool == LockedTaskPool, "not really acquired task pool" );
 } // generic_scheduler::acquire_task_pool
@@ -524,9 +522,8 @@ inline void generic_scheduler::release_task_pool() const {
     Thus if any of them is changed, consider changing the counterpart as well **/
 inline task** generic_scheduler::lock_task_pool( arena_slot* victim_arena_slot ) const {
     task** victim_task_pool;
-    atomic_backoff backoff;
     bool sync_prepare_done = false;
-    for(;;) {
+    for( atomic_backoff backoff;; /*backoff pause embedded in the loop*/) {
         victim_task_pool = victim_arena_slot->task_pool;
         // NOTE: Do not use comparison of head and tail indices to check for
         // the presence of work in the victim's task pool, as they may give
@@ -538,8 +535,7 @@ inline task** generic_scheduler::lock_task_pool( arena_slot* victim_arena_slot )
             break;
         }
         if( victim_task_pool != LockedTaskPool &&
-            __TBB_CompareAndSwapW( &victim_arena_slot->task_pool,
-                (intptr_t)LockedTaskPool, (intptr_t)victim_task_pool ) == (intptr_t)victim_task_pool )
+            as_atomic(victim_arena_slot->task_pool).compare_and_swap(LockedTaskPool, victim_task_pool ) == victim_task_pool )
         {
             // We've locked victim's task pool
             ITT_NOTIFY(sync_acquired, victim_arena_slot);
@@ -684,11 +680,7 @@ void tbb::internal::generic_scheduler::enqueue( task& t, void* prio ) {
     generic_scheduler *s = governor::local_scheduler();
     // these redirections are due to bw-compatibility, consider reworking some day
     __TBB_ASSERT( s->my_arena, "thread is not in any arena" );
-    s->my_arena->enqueue_task(t,
-#if __TBB_TASK_PRIORITY
-                               (priority_t)(intptr_t)prio,
-#endif /* __TBB_TASK_PRIORITY */
-                               s->hint_for_push );
+    s->my_arena->enqueue_task(t, (intptr_t)prio, s->hint_for_push );
 }
 
 inline task* generic_scheduler::dequeue_task() {
@@ -1154,7 +1146,7 @@ void generic_scheduler::cleanup_master() {
     __TBB_ASSERT( my_arena_slot->my_scheduler, NULL );
     // Master's scheduler may be locked by a worker taking arena snapshot or by
     // a thread propagating task group state change across the context tree.
-    while ( __TBB_CompareAndSwapW(&my_arena_slot->my_scheduler, 0, (intptr_t)this) != (intptr_t)this )
+    while ( as_atomic(my_arena_slot->my_scheduler).compare_and_swap(NULL, this) != this )
         __TBB_Yield();
     __TBB_ASSERT( !my_arena_slot->my_scheduler, NULL );
 #else /* !__TBB_TASK_PRIORITY */
@@ -1234,23 +1226,21 @@ void generic_scheduler::cleanup_master() {
 
     However this version of the algorithm requires more analysis and verification.
 
-3.  There is no portable way to get stack base address in Posix, however
-    the modern Linux versions provide pthread_attr_np API that can be used
-    to obtain thread's stack size and base address. Unfortunately even this
-    function does not provide enough information for the main thread on IA64
-    (RSE spill area and memory stack are allocated as two separate discontinuous
-    chunks of memory), and there is no portable way to discern the main and
-    the secondary threads.
-    Thus for MacOS and IA64 Linux we use the TBB worker stack size for all
-    threads and use the current stack top as the stack base. This simplified
+3.  There is no portable way to get stack base address in Posix, however the modern
+    Linux versions provide pthread_attr_np API that can be used  to obtain thread's
+    stack size and base address. Unfortunately even this function does not provide
+    enough information for the main thread on IA-64 architecture (RSE spill area
+    and memory stack are allocated as two separate discontinuous chunks of memory),
+    and there is no portable way to discern the main and the secondary threads.
+    Thus for OS X* and IA-64 Linux architecture we use the TBB worker stack size for 
+    all threads and use the current stack top as the stack base. This simplified 
     approach is based on the following assumptions:
-    1) If the default stack size is insufficient for the user app needs,
-       the required amount will be explicitly specified by the user at
-       the point of the TBB scheduler initialization (as an argument to
-       tbb::task_scheduler_init constructor).
-    2) When a master thread initializes the scheduler, it has enough space
-       on its stack. Here "enough" means "at least as much as worker threads
-       have".
-    3) If the user app strives to conserve the memory by cutting stack size,
-       it should do this for TBB workers too (as in the #1).
+    1) If the default stack size is insufficient for the user app needs, the
+    required amount will be explicitly specified by the user at the point of the
+    TBB scheduler initialization (as an argument to tbb::task_scheduler_init
+    constructor).
+    2) When a master thread initializes the scheduler, it has enough space on its
+    stack. Here "enough" means "at least as much as worker threads have".
+    3) If the user app strives to conserve the memory by cutting stack size, it
+    should do this for TBB workers too (as in the #1).
 */

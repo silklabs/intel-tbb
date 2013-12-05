@@ -79,7 +79,7 @@ static RunOptions ParseCommandLine( int argc, const char* argv[] ) {
 
     utility::parse_cli_arguments(argc,argv,
         utility::cli_argument_pack()
-            //"-h" option for for displaying help is present implicitly
+            //"-h" option for displaying help is present implicitly
             .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(number,"number","upper bound of range to search primes in, must be a positive integer")
             .positional_arg(grainSize,"grain-size","must be a positive integer")

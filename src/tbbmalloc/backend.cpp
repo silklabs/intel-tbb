@@ -350,7 +350,7 @@ try_next:
             if (fBlock) {
                 // consume must be called before result of removing from a bin
                 // is visible externally.
-                sync->consume();
+                sync->blockConsumed();
                 if (alignedBin && needAlignedRes &&
                     Backend::sizeToBin(szBlock-size) == Backend::sizeToBin(szBlock)) {
                     // free remainder of fBlock stay in same bin,
@@ -516,7 +516,7 @@ FreeBlock *Backend::getFromBin(int binIdx, int num, size_t size, bool needAligne
                 coalescAndPut(splitB, splitSz);
             }
         }
-        bkndSync.signal();
+        bkndSync.blockReleased();
         FreeBlock::markBlocks(fBlock, num, size);
     }
 
@@ -551,7 +551,7 @@ FreeBlock *Backend::getFromAlignedSpace(int binIdx, int num, size_t size,
             }
             coalescAndPut(newAlgnd, newSz);
         }
-        bkndSync.signal();
+        bkndSync.blockReleased();
         MALLOC_ASSERT(!needAlignedRes || isAligned(fBlock, slabSize), ASSERT_TEXT);
         FreeBlock::markBlocks(fBlock, num, size);
     }
@@ -588,7 +588,7 @@ bool Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
     // Another thread is modifying backend while we can't get the block.
     // Wait while it leaves and re-do the scan
     // before trying other ways to extend the backend.
-    if (bkndSync.waitTillSignalled(startModifiedCnt)
+    if (bkndSync.waitTillBlockReleased(startModifiedCnt)
         // semaphore is protecting adding more more memory from OS
         || memExtendingSema.wait())
         return true;
@@ -636,14 +636,15 @@ bool Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
         if (extMemPool->hardCachesCleanup())
             *largeBinsUpdated = true;
         else {
-            if (bkndSync.waitTillSignalled(startModifiedCnt))
+            // something can be in blocks that are in processing now
+            if (bkndSync.waitTillBlockReleased(startModifiedCnt))
                 return true;
             // OS can't give us more memory, but we have some in locked bins
             if (*lockedBinsThreshold && numOfLockedBins) {
                 *lockedBinsThreshold = 0;
                 return true;
             }
-            return false;
+            return false; // nothing found, give up
         }
     }
     return true;
@@ -765,9 +766,9 @@ void Backend::removeBlockFromBin(FreeBlock *fBlock)
 
 void Backend::genericPutBlock(FreeBlock *fBlock, size_t blockSz)
 {
-    bkndSync.consume();
+    bkndSync.blockConsumed();
     coalescAndPut(fBlock, blockSz);
-    bkndSync.signal();
+    bkndSync.blockReleased();
 }
 
 void AllLargeBlocksList::add(LargeMemoryBlock *lmb)
@@ -789,19 +790,6 @@ void AllLargeBlocksList::remove(LargeMemoryBlock *lmb)
         lmb->gNext->gPrev = lmb->gPrev;
     if (lmb->gPrev)
         lmb->gPrev->gNext = lmb->gNext;
-}
-
-void AllLargeBlocksList::removeAll(Backend *backend)
-{
-    LargeMemoryBlock *next, *lmb = loHead;
-    loHead = NULL;
-
-    for (; lmb; lmb = next) {
-        next = lmb->gNext;
-        // nothing left to AllLargeBlocksList::remove
-        lmb->gNext = lmb->gPrev = NULL;
-        backend->returnLargeObject(lmb);
-    }
 }
 
 void Backend::putLargeBlock(LargeMemoryBlock *lmb)
@@ -1099,7 +1087,7 @@ size_t Backend::addNewRegion(size_t rawSize, bool exact)
     size_t blockSz = region->blockSz;
 
     startUseBlock(region, fBlock);
-    bkndSync.pureSignal();
+    bkndSync.binsModified();
     return blockSz;
 }
 

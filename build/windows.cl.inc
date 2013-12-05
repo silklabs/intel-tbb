@@ -93,6 +93,12 @@ ifeq ($(runtime),vc8)
         CPLUS_FLAGS += /D_USE_RTM_VERSION
 endif
 
+# Since VS2012, VC++ provides /volatile option to control semantics of volatile variables.
+# We want to use strict ISO semantics in the library and tests
+ifeq (ok,$(call detect_js,/minversion cl 17))
+        CPLUS_FLAGS += /volatile:iso
+endif
+
 CPLUS_FLAGS += /DUSE_WINTHREAD /D_CRT_SECURE_NO_DEPRECATE \
         /D_WIN32_WINNT=$(_WIN32_WINNT)
 C_FLAGS = $(CPLUS_FLAGS)
@@ -112,9 +118,14 @@ ifeq (intel64,$(arch))
     TBB_ASM.OBJ = atomic_support.obj intel64_misc.obj
     MALLOC_ASM.OBJ = atomic_support.obj
 else
+ifeq (armv7,$(arch))
+    ASM=
+    TBB_ASM.OBJ= 
+else
     ASM=ml /nologo
     ASM_FLAGS += /c /coff /Zi /safeseh
     TBB_ASM.OBJ = atomic_support.obj lock_byte.obj
+endif
 endif
 #------------------------------------------------------------------------------
 # End of setting assembler data.

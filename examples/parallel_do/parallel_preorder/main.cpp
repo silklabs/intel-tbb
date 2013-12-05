@@ -54,7 +54,7 @@ static void ParseCommandLine( int argc, const char* argv[] ) {
     utility::parse_cli_arguments(
             argc,argv,
             utility::cli_argument_pack()
-                //"-h" option for for displaying help is present implicitly
+                //"-h" option for displaying help is present implicitly
                 .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
                 .positional_arg(nodes,"n-of-nodes","number of nodes in the graph.")
                 .positional_arg(traversals,"n-of-traversals","number of times to evaluate the graph. Reduce it (e.g. to 100) to shorten example run time\n")

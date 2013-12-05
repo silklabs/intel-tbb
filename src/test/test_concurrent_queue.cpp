@@ -48,11 +48,12 @@
 static tbb::atomic<long> FooConstructed;
 static tbb::atomic<long> FooDestroyed;
 
+enum state_t{
+    LIVE=0x1234,
+    DEAD=0xDEAD
+};
+
 class Foo {
-    enum state_t{
-        LIVE=0x1234,
-        DEAD=0xDEAD
-    };
     state_t state;
 public:
     int thread_id;
@@ -70,8 +71,8 @@ public:
         ASSERT( state==LIVE, NULL );
         ++FooDestroyed;
         state=DEAD;
-        thread_id=0xDEAD;
-        serial=0xDEAD;
+        thread_id=DEAD;
+        serial=DEAD;
     }
     void operator=( const Foo& item ) {
         ASSERT( item.state==LIVE, NULL );
@@ -104,10 +105,6 @@ static long MaxFooCount = 0;
 static const long Threshold = 400;
 
 class FooEx {
-    enum state_t{
-        LIVE=0x1234,
-        DEAD=0xDEAD
-    };
     state_t state;
 public:
     int serial;
@@ -126,7 +123,7 @@ public:
         ASSERT( state==LIVE, NULL );
         ++FooExDestroyed;
         state=DEAD;
-        serial=0xDEAD;
+        serial=DEAD;
     }
     void operator=( FooEx& item ) {
         ASSERT( item.state==LIVE, NULL );
@@ -172,8 +169,8 @@ struct Body: NoAssign {
         long sum = 0;
         for( long j=0; j<M; ++j ) {
             T f;
-            f.thread_id = 0xDEAD;
-            f.serial = 0xDEAD;
+            f.thread_id = DEAD;
+            f.serial = DEAD;
             bool prepopped = false;
             if( j&1 ) {
                 prepopped = CALL_TRY_POP(queue,f,j);
@@ -317,10 +314,6 @@ void TestPushPop( size_t prefill, ptrdiff_t capacity, int nthread ) {
 }
 
 class Bar {
-    enum state_t {
-        LIVE=0x1234,
-        DEAD=0xDEAD
-    };
     state_t state;
 public:
     ptrdiff_t my_id;
@@ -344,8 +337,8 @@ public:
 } ;
 
 bool operator==(const Bar& bar1, const Bar& bar2) {
-    ASSERT( bar1.state==Bar::LIVE, NULL );
-    ASSERT( bar2.state==Bar::LIVE, NULL );
+    ASSERT( bar1.state==LIVE, NULL );
+    ASSERT( bar2.state==LIVE, NULL );
     return bar1.my_id == bar2.my_id;
 }
 
@@ -393,10 +386,6 @@ public:
 };
 
 class BarEx {
-    enum state_t {
-        LIVE=0x1234,
-        DEAD=0xDEAD
-    };
     static int count;
 public:
     state_t state;
@@ -437,8 +426,8 @@ int    BarEx::count = 0;
 BarEx::mode_t BarEx::mode = BarEx::PREPARATION;
 
 bool operator==(const BarEx& bar1, const BarEx& bar2) {
-    ASSERT( bar1.state==BarEx::LIVE, NULL );
-    ASSERT( bar2.state==BarEx::LIVE, NULL );
+    ASSERT( bar1.state==LIVE, NULL );
+    ASSERT( bar2.state==LIVE, NULL );
     ASSERT( (bar1.my_id ^ bar1.my_tilda_id) == -1, NULL );
     ASSERT( (bar2.my_id ^ bar2.my_tilda_id) == -1, NULL );
     return bar1.my_id==bar2.my_id && bar1.my_tilda_id==bar2.my_tilda_id;

@@ -27,6 +27,8 @@
 */
 
 /* Some tests in this source file are based on PPL tests provided by Microsoft. */
+#include "harness_defs.h"
+#if !(__TBB_TEST_SECONDARY && __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN)
 
 #define __TBB_EXTRA_DEBUG 1
 #include "tbb/concurrent_unordered_map.h"
@@ -683,7 +685,7 @@ namespace test_select_size_t_constant{
 //    The 64 bit constant should chosen so that it 32 bit halves adds up to the 32 bit one ( first constant used in the test).
 //    % ~0U is used to sum up 32bit halves of the 64 constant.  ("% ~0U" essentially adds the 32-bit "digits", like "%9" adds
 //    the digits (modulo 9) of a number in base 10).
-//    So iff select_size_t_constant is correct result of the calculation bellow will be same on both 32bit and 64bit platforms.
+//    So iff select_size_t_constant is correct result of the calculation below will be same on both 32bit and 64bit platforms.
     __TBB_STATIC_ASSERT((tbb::internal::select_size_t_constant<0x12345678U,0x091A2B3C091A2B3CULL>::value % ~0U == 0x12345678U),
             "select_size_t_constant have chosen the wrong constant");
 
@@ -742,8 +744,13 @@ int TestMain () {
     { Check<MyCheckedMultiMap::value_type> checkit; test_concurrent<MyCheckedMultiMap>("concurrent unordered MultiMap (checked)"); }
 
     test_initialization_time_operations();
-    test_initialization_time_operations_external();
+    #if !__TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN
+        test_initialization_time_operations_external();
+    #else
+        REPORT("Known issue: global objects initialization time tests skipped.\n");
+    #endif //!__TBB_CPP11_STD_PLACEHOLDERS_LINKING_BROKEN
 
     return Harness::Done;
 }
 #endif //#if !__TBB_TEST_SECONDARY
+#endif //!(__TBB_TEST_SECONDARY && __TBB_CPP11_STD_PLACEHOLDERS_LINKING_BROKEN)

@@ -228,7 +228,7 @@ done:;
 
 //! Handle 8-byte store that crosses a cache line.
 extern "C" void __TBB_machine_store8_slow( volatile void *ptr, int64_t value ) {
-    for( tbb::internal::atomic_backoff b;; b.pause() ) {
+    for( tbb::internal::atomic_backoff b;;b.pause() ) {
         int64_t tmp = *(int64_t*)ptr;
         if( __TBB_machine_cmpswp8(ptr,value,tmp)==tmp ) 
             break;
@@ -239,16 +239,12 @@ extern "C" void __TBB_machine_store8_slow( volatile void *ptr, int64_t value ) {
 #endif /* !__TBB_RML_STATIC */
 
 #if __TBB_ipf
-/* It was found that on IPF inlining of __TBB_machine_lockbyte leads
-   to serious performance regression with ICC 10.0. So keep it out-of-line.
+/* It was found that on IA-64 architecture inlining of __TBB_machine_lockbyte leads
+   to serious performance regression with ICC. So keep it out-of-line.
  */
 extern "C" intptr_t __TBB_machine_lockbyte( volatile unsigned char& flag ) {
-    if ( !__TBB_TryLockByte(flag) ) {
-        tbb::internal::atomic_backoff b;
-        do {
-            b.pause();
-        } while ( !__TBB_TryLockByte(flag) );
-    }
+    tbb::internal::atomic_backoff backoff;
+    while( !__TBB_TryLockByte(flag) ) backoff.pause();
     return 0;
 }
 #endif

@@ -484,6 +484,10 @@ namespace internal {
         continue_input( const continue_input& src ) : continue_receiver(src), 
             my_root_task(src.my_root_task), my_body( src.my_body->clone() ) {}
 
+        ~continue_input() {
+            delete my_body;
+        }
+
         template< typename Body >
         Body copy_function_object() {
             internal::function_body<input_type, output_type> &body_ref = *my_body;

@@ -55,6 +55,18 @@ ifndef arch
  endif
 endif
 
+ifeq (ios,$(target))
+  ifneq (armv7, $(arch))
+    $(error $(arch) not supported for target 'ios')
+  endif
+  SDKROOT?=$(shell xcodebuild -sdk -version | grep -o -E '/.*SDKs/iPhoneOS.*' 2>/dev/null)
+  ifeq (,$(SDKROOT))
+    $(error iOS SDK not found)
+  endif
+  # next, use a single compiler include file for both iOS* and OS X* builds.
+  override target:=macos
+endif
+
 ifndef runtime
  gcc_version = $(shell gcc -dumpversion)
  os_version:=$(shell /usr/bin/sw_vers -productVersion)
@@ -73,7 +85,7 @@ MD?=mkdir -p
 NUL= /dev/null
 SLASH=/
 MAKE_VERSIONS=sh $(tbb_root)/build/version_info_macos.sh $(CPLUS) $(CPLUS_FLAGS) $(INCLUDES) >version_string.ver
-MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh
+MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh DY
 
 ifdef DYLD_LIBRARY_PATH
         export DYLD_LIBRARY_PATH := .:$(DYLD_LIBRARY_PATH)

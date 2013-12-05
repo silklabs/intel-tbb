@@ -403,7 +403,7 @@ public:
         return my_divisor > 1;
     }
     bool should_create_trap() {
-        return true; // TODO: rethink for the stage after memorizing level
+        return false;
     }
     static const unsigned range_pool_size = __TBB_RANGE_POOL_CAPACITY;
 };

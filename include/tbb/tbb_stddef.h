@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 1
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 6103
+#define TBB_INTERFACE_VERSION 6105
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -241,7 +241,7 @@ const size_t NFS_MaxLineSize = 128;
     both as a way to have the compiler help enforce use of the label and to quickly rule out
     one potential issue.
 
-    Note however that, with some architecture/compiler combinations, e.g. on IA-64, "volatile" 
+    Note however that, with some architecture/compiler combinations, e.g. on IA-64 architecture, "volatile" 
     also has non-portable memory semantics that are needlessly expensive for "relaxed" operations.
 
     Note that this must only be applied to data that will not change bit patterns when cast to/from
@@ -304,9 +304,11 @@ template<typename T>
 inline void poison_pointer( T* ) {/*do nothing*/}
 #endif /* !TBB_USE_ASSERT */
 
-//! Cast pointer from U* to T.
+//! Cast between unrelated pointer types.
 /** This method should be used sparingly as a last resort for dealing with 
     situations that inherently break strict ISO C++ aliasing rules. */
+// T is a pointer type because it will be explicitly provided by the programmer as a template argument;
+// U is a referent type to enable the compiler to check that "ptr" is a pointer, deducing U in the process.
 template<typename T, typename U> 
 inline T punned_cast( U* ptr ) {
     uintptr_t x = reinterpret_cast<uintptr_t>(ptr);
@@ -385,6 +387,10 @@ inline bool is_power_of_two_factor(argument_integer_type arg, divisor_integer_ty
     __TBB_ASSERT( is_power_of_two(divisor), "Divisor should be a power of two" );
     return 0 == (arg & (arg - divisor));
 }
+
+//! Utility template function to prevent "unused" warnings by various compilers.
+template<typename T>
+void suppress_unused_warning( const T& ) {}
 
 // Struct to be used as a version tag for inline functions.
 /** Version tag can be necessary to prevent loader on Linux from using the wrong 

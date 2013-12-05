@@ -87,7 +87,7 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "CompanyName", "Intel Corporation\0"
-            VALUE "FileDescription", "Threading Building Blocks resource manager library\0"
+            VALUE "FileDescription", "Intel(R) Threading Building Blocks resource manager library\0"
             VALUE "FileVersion", TBB_VERSION "\0"
 //what is it?            VALUE "InternalName", "irml\0"
             VALUE "LegalCopyright", "Copyright 2005-2013 Intel Corporation.  All Rights Reserved.\0"

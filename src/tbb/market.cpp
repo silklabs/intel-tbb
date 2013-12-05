@@ -113,7 +113,7 @@ market& market::global_market ( unsigned max_num_workers, size_t stack_size ) {
         size += sizeof(generic_scheduler*) * (max_num_workers - 1);
 #endif /* __TBB_TASK_GROUP_CONTEXT */
         __TBB_InitOnce::add_ref();
-        void* storage = NFS_Allocate(size, 1, NULL);
+        void* storage = NFS_Allocate(1, size, NULL);
         memset( storage, 0, size );
         // Initialize and publish global market
         m = new (storage) market( max_num_workers, stack_size );
@@ -158,7 +158,13 @@ void market::wait_workers () {
 
 arena& market::create_arena ( unsigned max_num_workers, size_t stack_size ) {
     market &m = global_market( max_num_workers, stack_size ); // increases market's ref count
+#if __TBB_TASK_ARENA
+    // Prevent cutting an extra slot for task_arena(p,0) with default market (p-1 worketrs).
+    // This is a temporary workaround for 1968 until (TODO:) master slot reservation is reworked
+    arena& a = arena::allocate_arena( m, min(max_num_workers, m.my_max_num_workers+1) );
+#else
     arena& a = arena::allocate_arena( m, min(max_num_workers, m.my_max_num_workers) );
+#endif
     // Add newly created arena into the existing market's list.
     arenas_list_mutex_type::scoped_lock lock(m.my_arenas_list_mutex);
     m.insert_arena_into_list(a);

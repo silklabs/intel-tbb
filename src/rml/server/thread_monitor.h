@@ -35,7 +35,10 @@
 #include <windows.h>
 #include <process.h>
 #include <malloc.h> //_alloca
-#include "tbb/tbb_misc.h" // NumberOfProcessorGroups, MoveThreadIntoProcessorGroup, FindProcessorGroupIndex
+#include "tbb/tbb_misc.h" // support for processor groups
+#if __TBB_WIN8UI_SUPPORT
+#include <thread>
+#endif
 #elif USE_PTHREAD
 #include <pthread.h>
 #include <string.h>
@@ -47,9 +50,6 @@
 #include "tbb/itt_notify.h"
 #include "tbb/atomic.h"
 #include "tbb/semaphore.h"
-#if __TBB_WIN8UI_SUPPORT
-#include <thread>
-#endif
 
 // All platform-specific threading support is in this header.
 
@@ -66,7 +66,7 @@
     __TBB_ASSERT_EX(sink_for_alloca, "_alloca failed");
 #else
 // Linux thread allocators avoid 64K aliasing.
-#define AVOID_64K_ALIASING(idx)
+#define AVOID_64K_ALIASING(idx) tbb::internal::suppress_unused_warning(idx)
 #endif /* _WIN32||_WIN64 */
 
 namespace rml {

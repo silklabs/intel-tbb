@@ -29,9 +29,7 @@
 #include "harness_graph.h"
 
 #include "tbb/task_scheduler_init.h"
-#include "tbb/spin_mutex.h"
-
-tbb::spin_mutex global_mutex;
+#include "tbb/spin_rw_mutex.h"
 
 #if TBB_USE_DEBUG
 #define N 16
@@ -42,7 +40,7 @@ tbb::spin_mutex global_mutex;
 
 //! Performs test on function nodes with limited concurrency and buffering
 /** Theses tests check:
-    1) that the number of executing copies never exceed the concurreny limit
+    1) that the number of executing copies never exceed the concurrency limit
     2) that the node never rejects
     3) that no items are lost
     and 4) all of this happens even if there are multiple predecessors and successors
@@ -72,11 +70,13 @@ void buffered_levels( size_t concurrency, Body body ) {
         tbb::flow::graph g;
 
         // Set the execute_counter back to zero in the harness
-        harness_graph_multifunction_executor<InputType, OutputTuple,tbb::spin_mutex>::execute_count = 0;
+        harness_graph_multifunction_executor<InputType, OutputTuple>::execute_count = 0;
+        // Set the number of current executors to zero.
+        harness_graph_multifunction_executor<InputType, OutputTuple>::current_executors = 0;
         // Set the max allowed executors to lc.  There is a check in the functor to make sure this is never exceeded.
-        harness_graph_multifunction_executor<InputType, OutputTuple,tbb::spin_mutex>::max_executors = lc;
+        harness_graph_multifunction_executor<InputType, OutputTuple>::max_executors = lc;
 
-        // Create the function_node with the appropriate concurreny level, and use default buffering
+        // Create the function_node with the appropriate concurrency level, and use default buffering
         tbb::flow::multifunction_node< InputType, OutputTuple > exe_node( g, lc, body );
    
         //Create a vector of identical exe_nodes
@@ -110,7 +110,7 @@ void buffered_levels( size_t concurrency, Body body ) {
                     NativeParallelFor( (int)num_senders, parallel_put_until_limit<InputType>(senders) );
                     g.wait_for_all();
 
-                    // cofirm that each sender was requested from N times 
+                    // confirm that each sender was requested from N times 
                     for (size_t s = 0; s < num_senders; ++s ) {
                         size_t n = senders[s].my_received;
                         ASSERT( n == N, NULL ); 
@@ -221,13 +221,12 @@ void buffered_levels_with_copy( size_t concurrency ) {
 
 template< typename InputType, typename OutputTuple >
 void run_buffered_levels( int c ) {
-    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
-    harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::max_executors = c;
     #if __TBB_LAMBDAS_PRESENT
-    buffered_levels<InputType,OutputTuple>( c, []( InputType i, output_ports_type &p ) { harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::func(i,p); } );
+    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
+    buffered_levels<InputType,OutputTuple>( c, []( InputType i, output_ports_type &p ) { harness_graph_multifunction_executor<InputType, OutputTuple>::func(i,p); } );
     #endif
-    buffered_levels<InputType,OutputTuple>( c, &harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::func );
-    buffered_levels<InputType,OutputTuple>( c, typename harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::functor() );
+    buffered_levels<InputType,OutputTuple>( c, &harness_graph_multifunction_executor<InputType, OutputTuple>::func );
+    buffered_levels<InputType,OutputTuple>( c, typename harness_graph_multifunction_executor<InputType, OutputTuple>::functor() );
     buffered_levels_with_copy<InputType,OutputTuple>( c );
 }
 
@@ -246,7 +245,14 @@ void concurrency_levels( size_t concurrency, Body body ) {
     typedef typename tbb::flow::tuple_element<0,OutputTuple>::type OutputType;
     for ( size_t lc = 1; lc <= concurrency; ++lc ) { 
         tbb::flow::graph g;
-        harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::execute_count = 0;
+
+        // Set the execute_counter back to zero in the harness
+        harness_graph_multifunction_executor<InputType, OutputTuple>::execute_count = 0;
+        // Set the number of current executors to zero.
+        harness_graph_multifunction_executor<InputType, OutputTuple>::current_executors = 0;
+        // Set the max allowed executors to lc.  There is a check in the functor to make sure this is never exceeded.
+        harness_graph_multifunction_executor<InputType, OutputTuple>::max_executors = lc;
+
 
         tbb::flow::multifunction_node< InputType, OutputTuple, tbb::flow::rejecting > exe_node( g, lc, body );
 
@@ -262,8 +268,8 @@ void concurrency_levels( size_t concurrency, Body body ) {
     
             for (size_t num_senders = 1; num_senders <= MAX_NODES; ++num_senders ) {
                 {
-                    // lock m to prevent exe_node from finishing
-                    tbb::spin_mutex::scoped_lock l( harness_graph_multifunction_executor< InputType, OutputTuple, tbb::spin_mutex >::mutex );
+                    // Exclusively lock m to prevent exe_node from finishing
+                    tbb::spin_rw_mutex::scoped_lock l( harness_graph_multifunction_executor< InputType, OutputTuple>::template mutex_holder<tbb::spin_rw_mutex>::mutex );
     
                     // put to lc level, it will accept and then block at m
                     for ( size_t c = 0 ; c < lc ; ++c ) {
@@ -312,13 +318,12 @@ void concurrency_levels( size_t concurrency, Body body ) {
 
 template< typename InputType, typename OutputTuple >
 void run_concurrency_levels( int c ) {
-    harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::max_executors = c;
-    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
     #if __TBB_LAMBDAS_PRESENT
-    concurrency_levels<InputType,OutputTuple>( c, []( InputType i, output_ports_type &p ) { harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::func(i,p); } );
+    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
+    concurrency_levels<InputType,OutputTuple>( c, []( InputType i, output_ports_type &p ) { harness_graph_multifunction_executor<InputType, OutputTuple>::template tfunc<tbb::spin_rw_mutex>(i,p); } );
     #endif
-    concurrency_levels<InputType,OutputTuple>( c, &harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::func );
-    concurrency_levels<InputType,OutputTuple>( c, typename harness_graph_multifunction_executor<InputType, OutputTuple, tbb::spin_mutex>::functor() );
+    concurrency_levels<InputType,OutputTuple>( c, &harness_graph_multifunction_executor<InputType, OutputTuple>::template tfunc<tbb::spin_rw_mutex> );
+    concurrency_levels<InputType,OutputTuple>( c, typename harness_graph_multifunction_executor<InputType, OutputTuple>::template tfunctor<tbb::spin_rw_mutex>() );
 }
 
 
@@ -386,9 +391,9 @@ void unlimited_concurrency( Body body ) {
 
 template< typename InputType, typename OutputTuple >
 void run_unlimited_concurrency() {
-    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
     harness_graph_multifunction_executor<InputType, OutputTuple>::max_executors = 0;
     #if __TBB_LAMBDAS_PRESENT
+    typedef typename tbb::flow::multifunction_node<InputType,OutputTuple>::output_ports_type output_ports_type;
     unlimited_concurrency<InputType,OutputTuple>( []( InputType i, output_ports_type &p ) { harness_graph_multifunction_executor<InputType, OutputTuple>::func(i,p); } );
     #endif
     unlimited_concurrency<InputType,OutputTuple>( &harness_graph_multifunction_executor<InputType, OutputTuple>::func );
@@ -455,7 +460,6 @@ void test_concurrency(int num_threads) {
 }
 
 int TestMain() { 
-    current_executors = 0;
     if( MinThread<1 ) {
         REPORT("number of threads must be positive\n");
         exit(1);

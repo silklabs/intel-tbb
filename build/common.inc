@@ -90,7 +90,7 @@ cross_cfg = $(if $(crosstest),$(call flip_cfg,$(1)),$(1))
 ifdef BUILDING_PHASE
  # Setting default configuration to release
  cfg?=release
- # No lambas or other C++0x extensions by default for compilers that implement them as experimental features
+ # No lambdas or other C++0x extensions by default for compilers that implement them as experimental features
  # TODO: it should become unnecessary when all relevant tests are "moved" to the TEST_TBB_CPP11 set
  lambdas ?= 0
  cpp0x ?= 0

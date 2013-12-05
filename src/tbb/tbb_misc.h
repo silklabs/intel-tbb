@@ -48,7 +48,14 @@ namespace internal {
 
 const size_t MByte = 1024*1024;
 
+#if __TBB_WIN8UI_SUPPORT
+// In Win8UI mode, TBB uses a thread creation API that does not allow to specify the stack size.
+// Still, the thread stack size value, either explicit or default, is used by the scheduler.
+// So here we set the default value to match the platform's default of 1MB.
+const size_t ThreadStackSize = 1*MByte;
+#else
 const size_t ThreadStackSize = (sizeof(uintptr_t) <= 4 ? 2 : 4 )*MByte;
+#endif
 
 #ifndef __TBB_HardwareConcurrency
 
@@ -117,12 +124,9 @@ T1 max ( const T1& val1, const T2& val2 ) {
     return val1 < val2 ? val2 : val1;
 }
 
-//! Utility template function to prevent "unused" warnings by various compilers.
-template<typename T>
-void suppress_unused_warning( const T& ) {}
-
 //! Utility helper structure to ease overload resolution
 template<int > struct int_to_type {};
+
 //------------------------------------------------------------------------
 // FastRandom
 //------------------------------------------------------------------------

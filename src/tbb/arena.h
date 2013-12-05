@@ -194,6 +194,7 @@ private:
     friend class intrusive_list<arena>;
 #if __TBB_TASK_ARENA
     friend class tbb::interface6::task_arena; // included through in scheduler_common.h
+    friend class interface6::delegated_task;
     friend class interface6::wait_task;
     friend struct interface6::wait_body;
 #endif //__TBB_TASK_ARENA
@@ -259,11 +260,7 @@ private:
     bool is_out_of_work();
 
     //! enqueue a task into starvation-resistance queue
-#if __TBB_TASK_PRIORITY
-    void enqueue_task( task&, priority_t, unsigned & );
-#else /* !__TBB_TASK_PRIORITY */
-    void enqueue_task( task&, unsigned & );
-#endif /* !__TBB_TASK_PRIORITY */
+    void enqueue_task( task&, intptr_t, unsigned & );
 
     //! Registers the worker with the arena and enters TBB scheduler dispatch loop
     void process( generic_scheduler& );

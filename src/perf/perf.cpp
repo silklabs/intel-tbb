@@ -353,10 +353,12 @@ namespace internal {
 #endif /* __linux__ */
 
     bool PinTheThread ( int cpu_idx, tbb::atomic<int>& nThreads ) {
+    #if _MSC_VER || __linux__
         cpu_set_t orig_mask, target_mask;
         CPU_ZERO( &target_mask );
         CPU_SET( cpu_idx, &target_mask );
         ASSERT ( CPU_ISSET(cpu_idx, &target_mask), "CPU_SET failed" );
+    #endif
     #if _MSC_VER
         orig_mask = SetThreadAffinityMask( GetCurrentThread(), target_mask );
         if ( !orig_mask )

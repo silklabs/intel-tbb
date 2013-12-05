@@ -37,11 +37,11 @@
 #define OLDTABLEHEADER "tbb/concurrent_hash_map-5468.h"//-4329
 
 //! enable/disable experimental implementation tests (correct include file also)
-#define TESTTABLE 1
+#define TESTTABLE 0
 #define TESTTABLEHEADER "tbb/concurrent_unordered_map.h"
 
 //! avoid erase()
-#define TEST_ERASE 0
+#define TEST_ERASE 1
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -226,7 +226,7 @@ public:
 
 class test_hash_map : public TestProcessor {
 public:
-    test_hash_map() : TestProcessor("test_hash_map") {}
+    test_hash_map() : TestProcessor("time_hash_map") {}
     void factory(int value, int threads) {
         if(Verbose) printf("Processing with %d threads: %d...\n", threads, value);
         process( value, threads,

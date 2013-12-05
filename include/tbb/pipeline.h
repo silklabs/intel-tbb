@@ -299,7 +299,7 @@ private:
     void __TBB_EXPORTED_METHOD inject_token( task& self );
 
 #if __TBB_TASK_GROUP_CONTEXT
-    //! Does clean up if pipeline is cancelled or exception occured
+    //! Does clean up if pipeline is cancelled or exception occurred
     void clear_filters();
 #endif
 };

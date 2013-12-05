@@ -175,4 +175,9 @@ void pover_video::on_process() {
         if(gIsGraphicalVersion) rt_sleep(2000);
     }
     if(gIsGraphicalVersion) rt_sleep(8000);
+    delete gPolymap1;
+    delete gPolymap2;
+#if _DEBUG
+    delete gResultMap;
+#endif
 }

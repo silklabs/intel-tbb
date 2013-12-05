@@ -71,7 +71,7 @@ void* MapMemory (size_t bytes, bool hugePages)
     void* result = 0;
     int prevErrno = errno;
 #ifndef MAP_ANONYMOUS
-// Mac OS* X defines MAP_ANON, which is deprecated in Linux.
+// OS X* defines MAP_ANON, which is deprecated in Linux*.
 #define MAP_ANONYMOUS MAP_ANON
 #endif /* MAP_ANONYMOUS */
     int addFlags = hugePages? __TBB_MAP_HUGETLB : 0;

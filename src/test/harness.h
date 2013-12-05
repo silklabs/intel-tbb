@@ -65,6 +65,7 @@ int TestMain ();
 #if __SUNPRO_CC
     #include <stdlib.h>
     #include <string.h>
+    #include <ucontext.h>
 #else /* !__SUNPRO_CC */
     #include <cstdlib>
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
@@ -89,50 +90,120 @@ int TestMain ();
 
 #if _WIN32||_WIN64
     #include "tbb/machine/windows_api.h"
-#if _XBOX
-    #undef HARNESS_NO_PARSE_COMMAND_LINE
-    #define HARNESS_NO_PARSE_COMMAND_LINE 1
-#endif
-#if __TBB_WIN8UI_SUPPORT
-#include <thread>
-#endif
+    #if _WIN32_WINNT > 0x0501 && _MSC_VER
+        #include <dbghelp.h>
+        #pragma comment (lib, "dbghelp.lib")
+    #endif
+    #if _XBOX
+        #undef HARNESS_NO_PARSE_COMMAND_LINE
+        #define HARNESS_NO_PARSE_COMMAND_LINE 1
+    #endif
+    #if __TBB_WIN8UI_SUPPORT
+        #include <thread>
+    #endif
+    #if _MSC_VER
+        #include <crtdbg.h>
+    #endif
     #include <process.h>
 #else
     #include <pthread.h>
 #endif
+
 #if __linux__
     #include <sys/utsname.h> /* for uname */
     #include <errno.h>       /* for use in LinuxKernelVersion() */
+    #include <features.h>
+#endif
+// at least GLIBC 2.1 or OSX 10.5
+#if __GLIBC__>2 || ( __GLIBC__==2 && __GLIBC_MINOR__ >= 1) || __APPLE__
+    #include <execinfo.h> /*backtrace*/
+    #define BACKTRACE_FUNCTION_AVAILABLE 1
 #endif
 
 #include "harness_report.h"
 
+#if HARNESS_USE_RUNTIME_LOADER
+    #define TBB_PREVIEW_RUNTIME_LOADER 1
+    #include "tbb/runtime_loader.h"
+    static char const * _path[] = { ".", NULL };
+    static tbb::runtime_loader _runtime_loader( _path );
+#endif // HARNESS_USE_RUNTIME_LOADER
+
 #if !HARNESS_NO_ASSERT
+
 #include "harness_assert.h"
+#if TEST_USES_TBB
+#include <tbb/tbb_stddef.h> /*set_assertion_handler*/
+
+struct InitReporter {
+    InitReporter() {
+#if TBB_USE_ASSERT
+        tbb::set_assertion_handler(ReportError);
+#endif
+        ASSERT_WARNING(TBB_INTERFACE_VERSION <= tbb::TBB_runtime_interface_version(), "runtime version mismatch");
+    }
+};
+static InitReporter InitReportError;
+#endif
 
 typedef void (*test_error_extra_t)(void);
 static test_error_extra_t ErrorExtraCall;
 //! Set additional handler to process failed assertions
 void SetHarnessErrorProcessing( test_error_extra_t extra_call ) {
     ErrorExtraCall = extra_call;
-    // TODO: add tbb::set_assertion_handler(ReportError);
 }
 
 //! Reports errors issued by failed assertions
 void ReportError( const char* filename, int line, const char* expression, const char * message ) {
+#if BACKTRACE_FUNCTION_AVAILABLE
+    const int sz = 100; // max number of frames to capture
+    void *buff[sz];
+    int n = backtrace(buff, sz);
+    REPORT("Call stack info (%d):\n", n);
+    backtrace_symbols_fd(buff, n, fileno(stdout));
+#elif __SUNPRO_CC
+    REPORT("Call stack info:\n");
+    printstack(fileno(stdout));
+#elif _WIN32_WINNT > 0x0501 && _MSC_VER && !__TBB_WIN8UI_SUPPORT
+    const int sz = 62; // XP limitation for number of frames
+    void *buff[sz];
+    int n = CaptureStackBackTrace(0, sz, buff, NULL);
+    REPORT("Call stack info (%d):\n", n);
+    static LONG once = 0;
+    if( !InterlockedExchange(&once, 1) )
+        SymInitialize(GetCurrentProcess(), NULL, TRUE);
+    const int len = 255; // just some reasonable string buffer size
+    union { SYMBOL_INFO sym; char pad[sizeof(SYMBOL_INFO)+len]; };
+    sym.MaxNameLen = len;
+    sym.SizeOfStruct = sizeof( SYMBOL_INFO );
+    DWORD64 offset;
+    for(int i = 1; i < n; i++) { // skip current frame
+        if(!SymFromAddr( GetCurrentProcess(), DWORD64(buff[i]), &offset, &sym )) {
+            sym.Address = ULONG64(buff[i]); offset = 0; sym.Name[0] = 0;
+        }
+        REPORT("[%d] %016I64LX+%04I64LX: %s\n", i, sym.Address, offset, sym.Name); //TODO: print module name
+    }
+#endif /*BACKTRACE_FUNCTION_AVAILABLE*/
+
 #if __TBB_ICL_11_1_CODE_GEN_BROKEN
     printf("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
 #else
     REPORT_FATAL_ERROR("%s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
 #endif
+
     if( ErrorExtraCall )
         (*ErrorExtraCall)();
+    fflush(stdout); fflush(stderr);
 #if HARNESS_TERMINATE_ON_ASSERT
     TerminateProcess(GetCurrentProcess(), 1);
 #elif HARNESS_EXIT_ON_ASSERT
     exit(1);
 #elif HARNESS_CONTINUE_ON_ASSERT
     // continue testing
+#elif _MSC_VER && _DEBUG
+    // aligned with tbb_assert_impl.h behavior
+    if(1 == _CrtDbgReport(_CRT_ASSERT, filename, line, NULL, "%s\r\n%s", expression, message?message:""))
+        _CrtDbgBreak();
 #else
     abort();
 #endif /* HARNESS_EXIT_ON_ASSERT */
@@ -141,14 +212,15 @@ void ReportError( const char* filename, int line, const char* expression, const 
 void ReportWarning( const char* filename, int line, const char* expression, const char * message ) {
     REPORT("Warning: %s:%d, assertion %s: %s\n", filename, line, expression, message ? message : "failed" );
 }
-#else /* !HARNESS_NO_ASSERT */
-//! Utility template function to prevent "unused" warnings by various compilers.
-template<typename T> void suppress_unused_warning( const T& ) {}
 
-#define ASSERT(p,msg) (suppress_unused_warning(p), (void)0)
-#define ASSERT_WARNING(p,msg) (suppress_unused_warning(p), (void)0)
+#else /* !HARNESS_NO_ASSERT */
+
+#define ASSERT(p,msg) (Harness::suppress_unused_warning(p), (void)0)
+#define ASSERT_WARNING(p,msg) (Harness::suppress_unused_warning(p), (void)0)
+
 #endif /* !HARNESS_NO_ASSERT */
 
+//TODO: unify with utility::internal::array_length from examples common utilities
 template<typename T, size_t N>
 inline size_t array_length(const T(&)[N])
 {
@@ -237,13 +309,6 @@ static void ParseCommandLine( int argc, char* argv[] ) {
 }
 #endif /* HARNESS_NO_PARSE_COMMAND_LINE */
 
-#if HARNESS_USE_PROXY
-    #define TBB_PREVIEW_RUNTIME_LOADER 1
-    #include "tbb/runtime_loader.h"
-    static char const * _path[] = { ".", NULL };
-    static tbb::runtime_loader _runtime_loader( _path );
-#endif // HARNESS_USE_PROXY
-
 #if !HARNESS_CUSTOM_MAIN
 
 #if __TBB_MPI_INTEROP
@@ -257,13 +322,13 @@ HARNESS_EXPORT
 #if HARNESS_NO_PARSE_COMMAND_LINE
 int main() {
 #if __TBB_MPI_INTEROP
-    MPI_Init(NULL,NULL); 
+    MPI_Init(NULL,NULL);
 #endif
 #else
 int main(int argc, char* argv[]) {
     ParseCommandLine( argc, argv );
 #if __TBB_MPI_INTEROP
-    MPI_Init(&argc,&argv); 
+    MPI_Init(&argc,&argv);
 #endif
 #endif
 #if __TBB_MPI_INTEROP
@@ -272,8 +337,8 @@ int main(int argc, char* argv[]) {
     // Master process receives this info and print it in verbose mode
     int rank, size, myrank;
     MPI_Status status;
-    MPI_Comm_size(MPI_COMM_WORLD,&size); 
-    MPI_Comm_rank(MPI_COMM_WORLD,&myrank); 
+    MPI_Comm_size(MPI_COMM_WORLD,&size);
+    MPI_Comm_rank(MPI_COMM_WORLD,&myrank);
     if (myrank == 0) {
 #if !HARNESS_NO_PARSE_COMMAND_LINE
         REMARK("Hello mpi world. I am %d of %d\n", myrank, size);
@@ -545,9 +610,9 @@ public:
 #endif /* !HARNESS_NO_ASSERT */
 
 #if _WIN32 || _WIN64
-    void Sleep ( int ms ) { 
+    void Sleep ( int ms ) {
 #if !__TBB_WIN8UI_SUPPORT
-        ::Sleep(ms); 
+        ::Sleep(ms);
 #else
          std::chrono::milliseconds sleep_time( ms );
          std::this_thread::sleep_for( sleep_time );

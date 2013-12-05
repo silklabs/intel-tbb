@@ -36,7 +36,8 @@
 
 #include "scalable_allocator.h"
 #include "tbb_stddef.h"
-#include "tbb_machine.h" // TODO: avoid linkage with libtbb on IA-64
+#include "tbb_machine.h" // TODO: avoid linkage with libtbb on IA-64 architecture
+#include "tbb/atomic.h" // for as_atomic
 #include <new> // std::bad_alloc
 #if __TBB_CPP11_RVALUE_REF_PRESENT && !__TBB_CPP11_STD_FORWARD_BROKEN
 #include <utility> // std::forward
@@ -263,7 +264,7 @@ inline fixed_pool::fixed_pool(void *buf, size_t size) : my_buffer(buf), my_size(
 }
 inline void *fixed_pool::allocate_request(intptr_t pool_id, size_t & bytes) {
     fixed_pool &self = *reinterpret_cast<fixed_pool*>(pool_id);
-    if( !__TBB_CompareAndSwapW(&self.my_size, 0, (bytes=self.my_size)) )
+    if( !tbb::internal::as_atomic(self.my_size).compare_and_swap(0, (bytes=self.my_size)) )
         return 0; // all the memory was given already
     return self.my_buffer;
 }

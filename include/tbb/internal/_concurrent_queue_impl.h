@@ -216,14 +216,14 @@ public:
 
 template<typename T>
 void micro_queue<T>::spin_wait_until_my_turn( atomic<ticket>& counter, ticket k, concurrent_queue_rep_base& rb ) const {
-    atomic_backoff backoff;
-    do {
-        backoff.pause();
-        if( counter&1 ) {
+    for( atomic_backoff b(true);;b.pause() ) {
+        ticket c = counter;
+        if( c==k ) return;
+        else if( c&1 ) {
             ++rb.n_invalid_entries;
             throw_exception( eid_bad_last_alloc );
         }
-    } while( counter!=k ) ;
+    }
 }
 
 template<typename T>

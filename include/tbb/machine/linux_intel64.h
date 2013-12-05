@@ -36,7 +36,7 @@
 #include "gcc_ia32_common.h"
 
 #define __TBB_WORDSIZE 8
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 #define __TBB_compiler_fence() __asm__ __volatile__("": : :"memory")
 #define __TBB_control_consistency_helper() __TBB_compiler_fence()

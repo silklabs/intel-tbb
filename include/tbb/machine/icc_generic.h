@@ -51,7 +51,7 @@
 #else
     #define __TBB_WORDSIZE 8
 #endif
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 //__TBB_compiler_fence() defined just in case, as it seems not to be used on its own anywhere else
 #if _MSC_VER
@@ -90,7 +90,7 @@ namespace icc_intrinsics_port {
         return (void*)value;
     }
 }
-//TODO: code bellow is a bit repetitive, consider simplifying it
+//TODO: code below is a bit repetitive, consider simplifying it
 template <typename T, size_t S>
 struct machine_load_store {
     static T load_with_acquire ( const volatile T& location ) {

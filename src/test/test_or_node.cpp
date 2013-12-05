@@ -434,28 +434,30 @@ int TestMain() {
 
    for (int p = 0; p < 2; ++p) {
        generate_test<serial_test, tbb::flow::tuple<float, test_class> >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 4
        generate_test<serial_test, tbb::flow::tuple<float, double, int, long> >::do_test();
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
        generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short> >::do_test();
 #endif
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
        generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long> >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
        generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long> >::do_test();
 #endif
-#endif
        generate_test<parallel_test, tbb::flow::tuple<float, double> >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 3
        generate_test<parallel_test, tbb::flow::tuple<float, int, long> >::do_test();
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short> >::do_test();
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 7
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 7
        generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long> >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
        generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long> >::do_test();
-#endif
 #endif
    }
    return Harness::Done;

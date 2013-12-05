@@ -46,8 +46,8 @@
 
 const int NumIterations = 100;
 const int NumLeafTasks = 2;
-int MinBaseDepth = 9;
-int MaxBaseDepth = 11;
+int MinBaseDepth = 8;
+int MaxBaseDepth = 10;
 int BaseDepth = 0;
 
 const int NumTests = 8;
@@ -293,7 +293,7 @@ public:
 template<class NodeType>
 void RunPrioritySwitchBetweenTwoMasters ( int idx, uintptr_t opts ) {
     ASSERT( idx < NumTests, NULL );
-    REMARK( "Config %d\r", ++g_CurConfig );
+    REMARK( "Config %d: idx=%i, opts=%u\r", ++g_CurConfig, idx, (unsigned)opts );
     NativeParallelFor ( 2, MasterBody<NodeType>(idx, opts) );
     Harness::Sleep(50);
 }
@@ -404,7 +404,7 @@ void TestPriorityAssertions () {
     tbb::task &t = *new( tbb::task::allocate_root() ) tbb::empty_task;
     TRY_BAD_EXPR( tbb::task::enqueue( t, bad_high_priority ), "Invalid priority level value" );
     // Restore normal assertion handling
-    tbb::set_assertion_handler( NULL );
+    tbb::set_assertion_handler( ReportError );
 #endif /* TRY_BAD_EXPR_ENABLED && __TBB_TASK_PRIORITY */
 }
 
@@ -454,7 +454,14 @@ void TestEnqueueOrder () {
 }
 #endif /* __TBB_TASK_PRIORITY */
 
+#if !__TBB_TEST_SKIP_AFFINITY
+#include "harness_concurrency.h"
+#endif
+
 int TestMain () {
+#if !__TBB_TEST_SKIP_AFFINITY
+    Harness::LimitNumberOfThreads( 16 );
+#endif
 #if !__TBB_TASK_PRIORITY
     REMARK( "Priorities disabled: Running as just yet another task scheduler test\n" );
 #else
@@ -464,6 +471,7 @@ int TestMain () {
     TestSimplePriorityOps(tbb::priority_low);
     TestSimplePriorityOps(tbb::priority_high);
     P = tbb::task_scheduler_init::default_num_threads();
+    REMARK( "The number of threads: %d\n", P );
     if ( P < 3 )
         return Harness::Skipped;
     TestPeriodicConcurrentActivities();

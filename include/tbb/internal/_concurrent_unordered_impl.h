@@ -45,7 +45,7 @@
 
 #include <iterator>
 #include <utility>      // Need std::pair
-#include <functional>
+#include <functional>   // Need std::equal_to (in ../concurrent_unordered_*.h)
 #include <string>       // For tbb_hasher
 #include <cstring>      // Need std::memset
 
@@ -56,6 +56,7 @@
 #include "../atomic.h"
 #include "../tbb_exception.h"
 #include "../tbb_allocator.h"
+#include "tbb/atomic.h"
 
 namespace tbb {
 namespace interface5 {
@@ -216,6 +217,10 @@ public:
     // Node that holds the element in a split-ordered list
     struct node : tbb::internal::no_assign
     {
+    private:
+        // for compilers that try to generate default constructors though they are not needed.
+        node();  // VS 2008, 2010, 2012
+    public:
         // Initialize the node with the given order key
         void init(sokey_t order_key) {
             my_order_key = order_key;
@@ -231,7 +236,7 @@ public:
         nodeptr_t atomic_set_next(nodeptr_t new_node, nodeptr_t current_node)
         {
             // Try to change the next pointer on the current element to a new element, only if it still points to the cached next
-            nodeptr_t exchange_node = (nodeptr_t) __TBB_CompareAndSwapW((void *) &my_next, (uintptr_t)new_node, (uintptr_t)current_node);
+            nodeptr_t exchange_node = tbb::internal::as_atomic(my_next).compare_and_swap(new_node, current_node);
 
             if (exchange_node == current_node) // TODO: why this branch?
             {
@@ -1293,8 +1298,8 @@ private:
         // Grow the table by a factor of 2 if possible and needed
         if ( ((float) total_elements / (float) current_size) > my_maximum_bucket_size )
         {
-            // Double the size of the hash only if size has not changed inbetween loads
-            __TBB_CompareAndSwapW((uintptr_t*)&my_number_of_buckets, uintptr_t(2u*current_size), uintptr_t(current_size) );
+            // Double the size of the hash only if size has not changed in between loads
+            my_number_of_buckets.compare_and_swap(2u*current_size, current_size);
             //Simple "my_number_of_buckets.compare_and_swap( current_size<<1, current_size );" does not work for VC8
             //due to overzealous compiler warnings in /Wp64 mode
         }
@@ -1340,7 +1345,7 @@ private:
             raw_iterator * new_segment = my_allocator.allocate(sz);
             std::memset(new_segment, 0, sz*sizeof(raw_iterator));
 
-            if (__TBB_CompareAndSwapW((void *) &my_buckets[segment], (uintptr_t)new_segment, 0) != 0)
+            if (my_buckets[segment].compare_and_swap( new_segment, NULL) != NULL)
                 my_allocator.deallocate(new_segment, sz);
         }
 

@@ -120,7 +120,7 @@ public:
             else {
                 ++stall_count;
                 // no progress for at least 0.1 s; consider it dead.
-                ASSERT(stall_count < stall_threshold, "no progress on enqueued tasks; deadlock, or the machine is oversubsribed?");
+                ASSERT(stall_count < stall_threshold, "no progress on enqueued tasks; deadlock, or the machine is oversubscribed?");
             }
             if( progress_mask==all_progressed || progress_mask^last_progress_mask ) {
                 uneven_progress_count = 0;

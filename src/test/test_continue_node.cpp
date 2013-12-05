@@ -29,9 +29,6 @@
 #include "harness_graph.h"
 
 #include "tbb/task_scheduler_init.h"
-#include "tbb/spin_mutex.h"
-
-tbb::spin_mutex global_mutex;
 
 #define N 1000
 #define MAX_NODES 4
@@ -41,6 +38,14 @@ struct empty_no_assign : private NoAssign {
    empty_no_assign() {}
    empty_no_assign( int ) {}
    operator int() { return 0; }
+};
+
+// A class to use as a fake predecessor of continue_node
+struct fake_continue_sender : public tbb::flow::sender<tbb::flow::continue_msg>
+{
+    // Define implementations of virtual methods that are abstract in the base class
+    /*override*/ bool register_successor( successor_type& ) { return false; }
+    /*override*/ bool remove_successor( successor_type& )   { return false; }  
 };
 
 template< typename InputType >
@@ -61,8 +66,9 @@ struct parallel_puts : private NoAssign {
 
 template< typename OutputType >
 void run_continue_nodes( int p, tbb::flow::graph& g, tbb::flow::continue_node< OutputType >& n ) {
+    fake_continue_sender fake_sender;
     for (size_t i = 0; i < N; ++i) {
-        n.register_predecessor( *reinterpret_cast< tbb::flow::sender< tbb::flow::continue_msg > * >(&n) );
+        n.register_predecessor( fake_sender );
     }
 
     for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) {
@@ -127,8 +133,9 @@ void continue_nodes_with_copy( ) {
         global_execute_count = Offset;
 
         tbb::flow::continue_node< OutputType > exe_node( g, cf );
+        fake_continue_sender fake_sender;
         for (size_t i = 0; i < N; ++i) {
-           exe_node.register_predecessor( *reinterpret_cast< tbb::flow::sender< tbb::flow::continue_msg > * >(&exe_node) );
+           exe_node.register_predecessor( fake_sender );
         }
 
         for (size_t num_receivers = 1; num_receivers <= MAX_NODES; ++num_receivers ) {

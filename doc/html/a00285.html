@@ -68,6 +68,10 @@ template&lt;typename InputIterator&gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00285.html#9147cb4207017c260a0c3929c12cd40f">concurrent_priority_queue</a> (InputIterator begin, InputIterator end, const <a class="el" href="a00285.html#1712cb3a46bc1821fccc5e2cd83d5cd7">allocator_type</a> &amp;a=<a class="el" href="a00285.html#1712cb3a46bc1821fccc5e2cd83d5cd7">allocator_type</a>())</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">[begin,end) constructor <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="36fc4734032fff2e98bc9f21b73ab1be"></a><!-- doxytag: member="tbb::interface5::concurrent_priority_queue::concurrent_priority_queue" ref="36fc4734032fff2e98bc9f21b73ab1be" args="(std::initializer_list&lt; T &gt; const &amp;init_list, const allocator_type &amp;a=allocator_type())" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#36fc4734032fff2e98bc9f21b73ab1be">concurrent_priority_queue</a> (std::initializer_list&lt; T &gt; const &amp;init_list, const <a class="el" href="a00285.html#1712cb3a46bc1821fccc5e2cd83d5cd7">allocator_type</a> &amp;a=<a class="el" href="a00285.html#1712cb3a46bc1821fccc5e2cd83d5cd7">allocator_type</a>())</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor from std::initializer_list. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#509419e320f200456d89dc54a65140b3">concurrent_priority_queue</a> (const <a class="el" href="a00285.html">concurrent_priority_queue</a> &amp;src)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor.  <a href="#509419e320f200456d89dc54a65140b3"></a><br></td></tr>
@@ -77,6 +81,19 @@ template&lt;typename InputIterator&gt; </td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="a00285.html">concurrent_priority_queue</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#2ab7f7808891027ac0f0f5b3a4be51e9">operator=</a> (const <a class="el" href="a00285.html">concurrent_priority_queue</a> &amp;src)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assignment operator.  <a href="#2ab7f7808891027ac0f0f5b3a4be51e9"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="e89e38c09b212a3d39d6e36a5ee33fe8"></a><!-- doxytag: member="tbb::interface5::concurrent_priority_queue::assign" ref="e89e38c09b212a3d39d6e36a5ee33fe8" args="(InputIterator begin, InputIterator end)" -->
+template&lt;typename InputIterator&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00285.html#e89e38c09b212a3d39d6e36a5ee33fe8">assign</a> (InputIterator begin, InputIterator end)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assign the queue from [begin,end) range, not thread-safe. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38dc06a3143eefe5697b8cd157e0d00a"></a><!-- doxytag: member="tbb::interface5::concurrent_priority_queue::assign" ref="38dc06a3143eefe5697b8cd157e0d00a" args="(std::initializer_list&lt; T &gt; const &amp;il)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#38dc06a3143eefe5697b8cd157e0d00a">assign</a> (std::initializer_list&lt; T &gt; const &amp;il)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assign the queue from std::initializer_list, not thread-safe. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9296c2eaeeae24cb7019659c2fdf0f62"></a><!-- doxytag: member="tbb::interface5::concurrent_priority_queue::operator=" ref="9296c2eaeeae24cb7019659c2fdf0f62" args="(std::initializer_list&lt; T &gt; const &amp;il)" -->
+<a class="el" href="a00285.html">concurrent_priority_queue</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#9296c2eaeeae24cb7019659c2fdf0f62">operator=</a> (std::initializer_list&lt; T &gt; const &amp;il)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Assign from std::initializer_list, not thread-safe. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00285.html#317c508fa92df218be5d014c26c09bb7">empty</a> () const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns true if empty, false otherwise.  <a href="#317c508fa92df218be5d014c26c09bb7"></a><br></td></tr>

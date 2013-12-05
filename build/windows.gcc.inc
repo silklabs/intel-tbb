@@ -83,7 +83,7 @@ LIBS = -lpsapi
 LINK_FLAGS = -Wl,--enable-auto-import
 LIB_LINK_FLAGS = $(DYLIB_KEY)
 # gcc 4.4 and higher support -std=c++0x
-ifeq (ok,$(shell cmd /C "cscript /nologo /E:jscript $(tbb_root)/build/detect.js /minversion gcc 4.4"))
+ifeq (ok,$(call detect_js,/minversion gcc 4.4))
     CPP11_FLAGS = -std=c++0x -D_TBB_CPP0X
 endif
 

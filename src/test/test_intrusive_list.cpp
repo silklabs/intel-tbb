@@ -134,7 +134,7 @@ void TestListAssertions () {
     TRY_BAD_EXPR( il1.push_front(n1), "only one intrusive list" );
     il2.push_front(n2);
     TRY_BAD_EXPR( il1.remove(n3), "not in the list" );
-    tbb::set_assertion_handler( NULL );
+    tbb::set_assertion_handler( ReportError );
 #endif /* TRY_BAD_EXPR_ENABLED */
 }
 

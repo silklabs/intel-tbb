@@ -72,7 +72,7 @@ ifeq ($(UI),mac)
 	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME).app/Contents
 	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME).app/Contents
 	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
-endif # Mac
+endif # OS X*
 
 release: resources
 ifeq ($(offload), mic)
@@ -80,7 +80,7 @@ ifeq ($(offload), mic)
 endif
 ifeq ($(UI),mac)
 	$(CXX_UI) -O2 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
-endif # Mac
+endif # OS X*
 	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) $(TBBLIB) $(LIBS)
 
 debug: resources
@@ -89,7 +89,7 @@ ifeq ($(offload), mic)
 endif
 ifeq ($(UI),mac)
 	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
-endif # Mac
+endif # OS X*
 	$(CXX) -g -O0 -DTBB_USE_DEBUG $(CXXFLAGS) -o $(EXE) $(SOURCES) $(MACUIOBJS) $(TBBLIB_DEBUG) $(LIBS)
 
 clean:

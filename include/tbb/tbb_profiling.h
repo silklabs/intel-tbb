@@ -63,7 +63,7 @@ namespace tbb {
 /** Should be used in the "tbb" namespace only.
     Don't place semicolon after it to avoid compiler warnings. **/
 #if _WIN32||_WIN64
-    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)    \
+    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)                       \
         namespace profiling {                                                       \
             inline void set_name( sync_object_type& obj, const wchar_t* name ) {    \
                 tbb::internal::itt_set_sync_name_v3( &obj, name );                  \
@@ -77,7 +77,7 @@ namespace tbb {
             }                                                                       \
         }
 #else /* !WIN */
-    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)    \
+    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)                       \
         namespace profiling {                                                       \
             inline void set_name( sync_object_type& obj, const char* name ) {       \
                 tbb::internal::itt_set_sync_name_v3( &obj, name );                  \
@@ -88,13 +88,13 @@ namespace tbb {
 #else /* no tools support */
 
 #if _WIN32||_WIN64
-    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)    \
+    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)               \
         namespace profiling {                                               \
             inline void set_name( sync_object_type&, const wchar_t* ) {}    \
             inline void set_name( sync_object_type&, const char* ) {}       \
         }
 #else /* !WIN */
-    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)    \
+    #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)               \
         namespace profiling {                                               \
             inline void set_name( sync_object_type&, const char* ) {}       \
         }

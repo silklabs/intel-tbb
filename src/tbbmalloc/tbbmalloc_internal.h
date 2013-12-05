@@ -82,6 +82,12 @@
 #define COLLECT_STATISTICS ( MALLOC_DEBUG && MALLOCENV_COLLECT_STATISTICS )
 #include "Statistics.h"
 
+// call yield for whitebox testing, skip in real library
+#ifndef WhiteboxTestingYield
+#define WhiteboxTestingYield() ((void)0)
+#endif
+
+
 /********* End compile-time options        **************/
 
 namespace rml {
@@ -213,7 +219,7 @@ public:
 
 /* cache blocks in range [MinSize; MaxSize) in bins with CacheStep
  TooLargeFactor -- when cache size treated "too large" in comparison to user data size
- OnMissFactor -- If cache miss occured and cache was cleaned,
+ OnMissFactor -- If cache miss occurred and cache was cleaned,
                  set ageThreshold to OnMissFactor * the difference
                  between current time and last time cache was cleaned.
  LongWaitFactor -- to detect rarely-used bins and forget about their usage history
@@ -357,7 +363,7 @@ private:
     HugeCacheType hugeCache;
 
     /* logical time, incremented on each put/get operation
-       To prevent starvation between pools, keep separatly for each pool.
+       To prevent starvation between pools, keep separately for each pool.
        Overflow is OK, as we only want difference between
        its current value and some recent.
 
@@ -427,8 +433,8 @@ struct LargeMemoryBlock : public BlockI {
     LargeMemoryBlock *next,          // ptrs in list of cached blocks
                      *prev,
     // 2-linked list of pool's large objects
-    // Used to destroy backrefs on pool destroy/reset (backrefs are global)
-    // and for releasing all non-binned blocks.
+    // Used to destroy backrefs on pool destroy (backrefs are global)
+    // and for object releasing during pool reset.
                      *gPrev,
                      *gNext;
     uintptr_t         age;           // age of block while in cache
@@ -444,9 +450,9 @@ class BackendSync {
     intptr_t  blocksInProcessing;  // to another
     intptr_t  binsModifications;   // incremented on every bin modification
 public:
-    void consume() { AtomicIncrement(blocksInProcessing); }
-    void pureSignal() { AtomicIncrement(binsModifications); }
-    void signal() {
+    void blockConsumed() { AtomicIncrement(blocksInProcessing); }
+    void binsModified() { AtomicIncrement(binsModifications); }
+    void blockReleased() {
 #if __TBB_MALLOC_BACKEND_STAT
         MALLOC_ITT_SYNC_RELEASING(&blocksInProcessing);
 #endif
@@ -456,26 +462,28 @@ public:
         suppress_unused_warning(prev);
     }
     intptr_t getNumOfMods() const { return FencedLoad(binsModifications); }
-    // return true if need re-do the search
-    bool waitTillSignalled(intptr_t startModifiedCnt) {
-        intptr_t myBlocksNum = FencedLoad(blocksInProcessing);
-        if (!myBlocksNum) {
-            // no threads, but were bins modified since scanned?
-            return startModifiedCnt != getNumOfMods();
-        }
+    // return true if need re-do the blocks search
+    bool waitTillBlockReleased(intptr_t startModifiedCnt) {
 #if __TBB_MALLOC_BACKEND_STAT
         MALLOC_ITT_SYNC_PREPARE(&blocksInProcessing);
 #endif
-        for (;;) {
+        for (intptr_t myBlocksNum = FencedLoad(blocksInProcessing);
+             // no blocks in processing, stop waiting
+             myBlocksNum; ) {
             SpinWaitWhileEq(blocksInProcessing, myBlocksNum);
-            if (myBlocksNum > blocksInProcessing)
+            WhiteboxTestingYield();
+            intptr_t newBlocksNum = FencedLoad(blocksInProcessing);
+            // stop waiting iff blocks were removed from processing,
+            // if blocks were added, there is no reason to stop waiting
+            if (newBlocksNum < myBlocksNum)
                 break;
-            myBlocksNum = FencedLoad(blocksInProcessing);
+            myBlocksNum = newBlocksNum;
         }
 #if __TBB_MALLOC_BACKEND_STAT
         MALLOC_ITT_SYNC_ACQUIRED(&blocksInProcessing);
 #endif
-        return true;
+        // were bins modified since scanned?
+        return startModifiedCnt != getNumOfMods();
     }
 };
 
@@ -690,7 +698,70 @@ public:
     LargeMemoryBlock *getHead() { return loHead; }
     void add(LargeMemoryBlock *lmb);
     void remove(LargeMemoryBlock *lmb);
-    void removeAll(Backend *backend);
+    template<bool poolDestroy> void releaseAll(Backend *backend);
+};
+
+struct ExtMemoryPool {
+    Backend           backend;
+
+    intptr_t          poolId;
+    // to find all large objects
+    AllLargeBlocksList lmbList;
+    // Callbacks to be used instead of MapMemory/UnmapMemory.
+    rawAllocType      rawAlloc;
+    rawFreeType       rawFree;
+    size_t            granularity;
+    bool              keepAllMemory,
+                      delayRegsReleasing,
+                      fixedPool;
+    TLSKey            tlsPointerKey;  // per-pool TLS key
+
+    LargeObjectCache  loc;
+
+    bool init(intptr_t poolId, rawAllocType rawAlloc, rawFreeType rawFree,
+              size_t granularity, bool keepAllMemory, bool fixedPool);
+    void initTLS();
+
+    // i.e., not system default pool for scalable_malloc/scalable_free
+    bool userPool() const { return rawAlloc; }
+
+     // true if something has beed released
+    bool softCachesCleanup();
+    bool releaseTLCaches();
+    // TODO: to release all thread's pools, not just current thread
+    bool hardCachesCleanup();
+    void reset() {
+        loc.reset();
+        tlsPointerKey.~TLSKey();
+        backend.reset();
+    }
+    void destroy() {
+        // pthread_key_dtors must be disabled before memory unmapping
+        // TODO: race-free solution
+        tlsPointerKey.~TLSKey();
+        if (rawFree || !userPool())
+            backend.destroy();
+    }
+    bool mustBeAddedToGlobalLargeBlockList() const { return userPool(); }
+    void delayRegionsReleasing(bool mode) { delayRegsReleasing = mode; }
+    inline bool regionsAreReleaseable() const;
+
+    LargeMemoryBlock *mallocLargeObject(size_t allocationSize);
+    void freeLargeObject(LargeMemoryBlock *lmb);
+    void freeLargeObjectList(LargeMemoryBlock *head);
+};
+
+inline bool Backend::inUserPool() const { return extMemPool->userPool(); }
+
+struct LargeObjectHdr {
+    LargeMemoryBlock *memoryBlock;
+    /* Backreference points to LargeObjectHdr.
+       Duplicated in LargeMemoryBlock to reuse in subsequent allocations. */
+    BackRefIdx       backRefIdx;
+};
+
+struct FreeObject {
+    FreeObject  *next;
 };
 
 // An TBB allocator mode that can be controlled by user
@@ -761,70 +832,6 @@ public:
 };
 
 extern HugePagesStatus hugePages;
-
-struct ExtMemoryPool {
-    Backend           backend;
-
-    intptr_t          poolId;
-    // to find all large objects
-    AllLargeBlocksList lmbList;
-    // Callbacks to be used instead of MapMemory/UnmapMemory.
-    rawAllocType      rawAlloc;
-    rawFreeType       rawFree;
-    size_t            granularity;
-    bool              keepAllMemory,
-                      delayRegsReleasing,
-                      fixedPool;
-    TLSKey            tlsPointerKey;  // per-pool TLS key
-
-    LargeObjectCache  loc;
-
-    bool init(intptr_t poolId, rawAllocType rawAlloc, rawFreeType rawFree,
-              size_t granularity, bool keepAllMemory, bool fixedPool);
-    void initTLS();
-
-    // i.e., not system default pool for scalable_malloc/scalable_free
-    bool userPool() const { return rawAlloc; }
-
-     // true if something has beed released
-    bool softCachesCleanup();
-    bool releaseTLCaches();
-    // TODO: to release all thread's pools, not just current thread
-    bool hardCachesCleanup();
-    void reset() {
-        lmbList.removeAll(&backend);
-        loc.reset();
-        tlsPointerKey.~TLSKey();
-        backend.reset();
-    }
-    void destroy() {
-        // pthread_key_dtors must be disabled before memory unmapping
-        // TODO: race-free solution
-        tlsPointerKey.~TLSKey();
-        if (rawFree || !userPool())
-            backend.destroy();
-    }
-    bool mustBeAddedToGlobalLargeBlockList() const { return userPool(); }
-    void delayRegionsReleasing(bool mode) { delayRegsReleasing = mode; }
-    inline bool regionsAreReleaseable() const;
-
-    LargeMemoryBlock *mallocLargeObject(size_t allocationSize);
-    void freeLargeObject(LargeMemoryBlock *lmb);
-    void freeLargeObjectList(LargeMemoryBlock *head);
-};
-
-inline bool Backend::inUserPool() const { return extMemPool->userPool(); }
-
-struct LargeObjectHdr {
-    LargeMemoryBlock *memoryBlock;
-    /* Backreference points to LargeObjectHdr.
-       Duplicated in LargeMemoryBlock to reuse in subsequent allocations. */
-    BackRefIdx       backRefIdx;
-};
-
-struct FreeObject {
-    FreeObject  *next;
-};
 
 /******* A helper class to support overriding malloc with scalable_malloc *******/
 #if MALLOC_CHECK_RECURSION

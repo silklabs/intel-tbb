@@ -56,6 +56,9 @@ ifndef arch
         ifeq ($(uname_m),sparc64)
                 export arch:=sparc
         endif
+        ifeq ($(uname_m),armv71)
+                export arch :=armv7
+        endif
         ifndef arch
                 export arch:=$(uname_m)
         endif
@@ -103,6 +106,9 @@ ifeq ($(arch),ia64)
 endif
 ifeq ($(arch),sparc)
         def_prefix = lin64
+endif
+ifeq ($(arch),armv7)
+        def_prefix = lin32
 endif
 ifeq (,$(def_prefix))
     ifeq (64,$(findstring 64,$(arch)))

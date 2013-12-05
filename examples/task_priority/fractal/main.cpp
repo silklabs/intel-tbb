@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         // command line parsing
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
-            //"-h" option for for displaying help is present implicitly
+            //"-h" option for displaying help is present implicitly
             .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(num_frames,"n-of-frames","number of frames the example processes internally")
             .positional_arg(max_iterations,"max-of-iterations","maximum number of the fractal iterations")

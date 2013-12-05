@@ -33,7 +33,7 @@
 #define __TBB_machine_windows_intel64_H
 
 #define __TBB_WORDSIZE 8
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 #include <intrin.h>
 #include "msvc_ia32_common.h"

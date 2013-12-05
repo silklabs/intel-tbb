@@ -29,7 +29,6 @@
 #ifndef __TBB_atomic_H
 #define __TBB_atomic_H
 
-#include "tbb_stddef.h"
 #include <cstddef>
 
 #if _MSC_VER
@@ -43,7 +42,7 @@
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
     // Workaround for overzealous compiler warnings
     #pragma warning (push)
-    #pragma warning (disable: 4244 4267)
+    #pragma warning (disable: 4244 4267 4512)
 #endif
 
 namespace tbb {
@@ -240,18 +239,6 @@ private:
     };
 
     template<typename value_t>
-    union ptr_converter;            //Primary template declared, but never defined.
-
-    template<typename value_t>
-    union ptr_converter<value_t *> {
-        typedef typename atomic_rep<sizeof(value_t)>::word * bits_ptr_type;
-        ptr_converter(){}
-        ptr_converter(value_t* a_value) : value(a_value) {}
-        value_t* value;
-        bits_ptr_type bits;
-    };
-
-    template<typename value_t>
     static typename converter<value_t>::bits_type to_bits(value_t value){
         return converter<value_t>(value).bits;
     }
@@ -262,21 +249,29 @@ private:
         return u.value;
     }
 
-    //separate function is needed as it is impossible to distinguish (and thus overload to_bits)
-    //whether the pointer passed in is a pointer to atomic location or a value of that location
     template<typename value_t>
-    static typename ptr_converter<value_t*>::bits_ptr_type to_bits_ptr(value_t* value){
-        //TODO: try to use cast to void* and second cast to required pointer type;
-        //Once (and if) union converter goes away - check if strict aliasing warning
-        //suppression is still needed once.
+    union ptr_converter;            //Primary template declared, but never defined.
+
+    template<typename value_t>
+    union ptr_converter<value_t *> {
+        ptr_converter(){}
+        ptr_converter(value_t* a_value) : value(a_value) {}
+        value_t* value;
+        uintptr_t bits;
+    };
+    //TODO: check if making to_bits accepting reference (thus unifying it with to_bits_ref)
+    //does not hurt performance
+    template<typename value_t>
+    static typename converter<value_t>::bits_type & to_bits_ref(value_t& value){
         //TODO: this #ifdef is temporary workaround, as union conversion seems to fail
         //on suncc for 64 bit types for 32 bit target
         #if !__SUNPRO_CC
-            return ptr_converter<value_t*>(value).bits;
+            return *(typename converter<value_t>::bits_type*)ptr_converter<value_t*>(&value).bits;
         #else
-            return typename ptr_converter<value_t*>::bits_ptr_type (value);
+            return *(typename converter<value_t>::bits_type*)(&value);
         #endif
     }
+
 
 public:
     typedef T value_type;
@@ -287,7 +282,9 @@ public:
 #endif
     template<memory_semantics M>
     value_type fetch_and_store( value_type value ) {
-          return to_value<value_type>(internal::atomic_traits<sizeof(value_type),M>::fetch_and_store(&my_storage.my_value,to_bits(value)));
+          return to_value<value_type>(
+                  internal::atomic_traits<sizeof(value_type),M>::fetch_and_store( &my_storage.my_value, to_bits(value) )
+          );
     }
 
     value_type fetch_and_store( value_type value ) {
@@ -296,7 +293,9 @@ public:
 
     template<memory_semantics M>
     value_type compare_and_swap( value_type value, value_type comparand ) {
-        return to_value<value_type>(internal::atomic_traits<sizeof(value_type),M>::compare_and_swap(&my_storage.my_value,to_bits(value),to_bits(comparand)));
+        return to_value<value_type>(
+                internal::atomic_traits<sizeof(value_type),M>::compare_and_swap( &my_storage.my_value, to_bits(value), to_bits(comparand) )
+        );
     }
 
     value_type compare_and_swap( value_type value, value_type comparand ) {
@@ -304,12 +303,16 @@ public:
     }
 
     operator value_type() const volatile {                // volatile qualifier here for backwards compatibility
-        return  to_value<value_type>(__TBB_load_with_acquire(*to_bits_ptr(&my_storage.my_value)));
+        return  to_value<value_type>(
+                __TBB_load_with_acquire( to_bits_ref(my_storage.my_value) )
+        );
     }
 
     template<memory_semantics M>
     value_type load () const {
-        return to_value<value_type>(internal::atomic_load_store_traits<M>::load(*to_bits_ptr(&my_storage.my_value)));
+        return to_value<value_type>(
+                internal::atomic_load_store_traits<M>::load( to_bits_ref(my_storage.my_value) )
+        );
     }
 
     value_type load () const {
@@ -318,7 +321,7 @@ public:
 
     template<memory_semantics M>
     void store ( value_type value ) {
-        internal::atomic_load_store_traits<M>::store( *to_bits_ptr(&my_storage.my_value), to_bits(value));
+        internal::atomic_load_store_traits<M>::store( to_bits_ref(my_storage.my_value), to_bits(value));
     }
 
     void store ( value_type value ) {
@@ -327,7 +330,8 @@ public:
 
 protected:
     value_type store_with_release( value_type rhs ) {
-        __TBB_store_with_release(*to_bits_ptr(&my_storage.my_value),to_bits(rhs));
+       //TODO: unify with store<release>
+        __TBB_store_with_release( to_bits_ref(my_storage.my_value), to_bits(rhs) );
         return rhs;
     }
 };

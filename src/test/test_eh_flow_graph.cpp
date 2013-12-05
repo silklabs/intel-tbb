@@ -30,8 +30,11 @@
     #pragma warning (disable: 4503) // Suppress "decorated name length exceeded, name was truncated" warning
     #if !TBB_USE_EXCEPTIONS
         // Suppress "C++ exception handler used, but unwind semantics are not enabled" warning in STL headers
-        #pragma warning (push)
         #pragma warning (disable: 4530)
+    #endif
+    #if _MSC_VER==1700 && !defined(__INTEL_COMPILER)
+        // Suppress "unreachable code" warning by VC++ 17.0 (VS 2012)
+        #pragma warning (disable: 4702)
     #endif
 #endif
 
@@ -1365,7 +1368,7 @@ struct run_one_join_node_test {
             if(iter == 0) {
                 remove_edge(node_to_test, sink);
                 tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 1));
-                tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 2));
+                tbb::flow::input_port<1>(node_to_test).try_put(ItemType1(g_NumItems + 2));
                 g.wait_for_all();
                 g.reset();
                 source0_count = source1_count = sink_count = 0;
@@ -1469,7 +1472,7 @@ struct run_one_join_node_test<
             if(iter == 0) {
                 remove_edge(node_to_test, sink);
                 tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 4));
-                tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 2));
+                tbb::flow::input_port<1>(node_to_test).try_put(ItemType1(g_NumItems + 2));
                 g.wait_for_all();   // have to wait for the graph to stop again....
                 g.reset();  // resets the body of the source_nodes, test_node and the absorb_nodes. 
                 source0_count = source1_count = sink_count = 0;
@@ -1844,7 +1847,7 @@ void run_one_or_node_test(bool throwException,bool flog) {
         if(iter == 0) {
             remove_edge(node_to_test, sink);
             tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 4));
-            tbb::flow::input_port<0>(node_to_test).try_put(ItemType0(g_NumItems + 2));
+            tbb::flow::input_port<1>(node_to_test).try_put(ItemType1(g_NumItems + 2));
             g.wait_for_all();
             g.reset();
             source0_count = source1_count = sink_count = 0;
@@ -2031,7 +2034,3 @@ int TestMain() {
     return Harness::Skipped;
 }
 #endif // TBB_USE_EXCEPTIONS
-
-#if !TBB_USE_EXCEPTIONS && _MSC_VER
-    #pragma warning (pop)
-#endif

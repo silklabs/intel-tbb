@@ -38,18 +38,7 @@
     switching producer thread, and the check is repeated.
 */
 
-#if HARNESS_USE_PROXY
-
-// The test includes injects scheduler directly, so skip it when proxy tested.
-
-#undef HARNESS_USE_PROXY
-#include "harness.h"
-
-int TestMain () {
-    return Harness::Skipped;
-}
-
-#else // HARNESS_USE_PROXY
+#define HARNESS_DEFAULT_MIN_THREADS -1
 
 #define  __TBB_COUNT_TASK_NODES 1
 #include "harness_inject_scheduler.h"
@@ -78,7 +67,6 @@ tbb::internal::scheduler* Producer;
 
 #include "tbb/task_scheduler_init.h"
 
-#define HARNESS_DEFAULT_MIN_THREADS -1
 #include "harness.h"
 
 using namespace tbb;
@@ -288,6 +276,3 @@ int TestMain () {
     TestTaskReclamation();
     return Harness::Done;
 }
-
-#endif  // HARNESS_USE_PROXY
-

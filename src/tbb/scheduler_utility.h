@@ -93,7 +93,7 @@ public:
             m_size += m_cur_segment_size;
             m_cur_segment_size *= 2;
             m_pos = m_cur_segment_size;
-            m_segments[m_num_segments++] = m_cur_segment = (T*)NFS_Allocate( m_cur_segment_size * sizeof(T), 1, NULL );
+            m_segments[m_num_segments++] = m_cur_segment = (T*)NFS_Allocate( m_cur_segment_size, sizeof(T), NULL );
             __TBB_ASSERT ( m_num_segments < max_segments, "Maximal capacity exceeded" );
         }
         m_cur_segment[--m_pos] = val;

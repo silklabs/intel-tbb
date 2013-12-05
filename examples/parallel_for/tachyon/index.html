@@ -76,8 +76,11 @@ The following versions of the example are provided:
 <DT><A HREF="msvs">msvs</A>
 <DD>Contains Microsoft* Visual Studio* 2005 workspace for building and running the 
     example (Windows* systems only).<DT><A HREF="xcode">xcode</A>
-<DD>Contains Xcode* IDE workspace for building and running the example (Mac OS* X 
+<DD>Contains Xcode* IDE workspace for building and running the example (OS X* 
     systems only).</DL>
+<A HREF="android">android</A>
+<DD>Contains Eclipse* IDE workspace for building and running the example on Android* system. JNI part needs to be compiled by Android NDK.</DL> 
+
 
 <H2>To Build</H2>
 General build directions can be found <A HREF=../../index.html#build>here</A>.
@@ -111,7 +114,7 @@ Here, &lt;<I>version</I>&gt; is one of the above versions of the example, i.e., 
     Direct2D*, X11, or OpenGL*
 	(see the description of the <A HREF=../../common/index.html>common GUI code</A>
 	for more information on available graphics support).
-    For Linux* and Mac OS* X systems, the best available driver is detected automatically by the Makefile.
+    For Linux* and OS X* systems, the best available driver is detected automatically by the Makefile.
     For Windows* systems, UI=gdi is the default GUI driver; compiling with UI=dd or 
     UI=d2d may offer superior
 	performance, but can only be used if the Microsoft* DirectX* SDK is installed on your system.

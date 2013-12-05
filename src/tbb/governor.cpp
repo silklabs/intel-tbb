@@ -46,7 +46,7 @@ namespace internal {
 //------------------------------------------------------------------------
 
 #if __TBB_SURVIVE_THREAD_SWITCH
-// Support for interoperability with Intel(R) Cilk(tm) Plus.
+// Support for interoperability with Intel(R) Cilk(TM) Plus.
 
 #if _WIN32
 #define CILKLIB_NAME "cilkrts20.dll"

@@ -32,7 +32,7 @@
 #include "harness.h"
 int TestMain() {
     REPORT("Known issue: %s\n",
-           __TBB_TEST_SKIP_PIC_MODE? "PIC mode is not supported" : "GCC/ICC builtins aren't available");
+           __TBB_TEST_SKIP_PIC_MODE? "PIC mode is not supported" : "Compiler builtins for atomic operations aren't available");
     return Harness::Skipped;
 }
 #else
@@ -52,6 +52,11 @@ using std::memcmp;
     // Unary minus operator applied to unsigned type, result still unsigned
     // Constant conditional expression
     #pragma warning( disable: 4127 4310 )
+#endif
+
+#if __TBB_GCC_STRICT_ALIASING_BROKEN && __TBB_GCC_WARNING_SUPPRESSION_PRESENT
+    // Suppress crazy warnings about strict aliasing
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
 enum LoadStoreExpression {
@@ -303,7 +308,7 @@ namespace initialization_tests {
         enum {fill_value = 0xFF };
         test_initialization_fixture(){
             memset(non_zeroed_storage.begin(),fill_value,sizeof(non_zeroed_storage));
-            ASSERT( char(fill_value)==*(tbb::internal::punned_cast<char*>(non_zeroed_storage.begin()))
+            ASSERT( char(fill_value)==*(reinterpret_cast<char*>(non_zeroed_storage.begin()))
                     ,"failed to fill the storage; memset error?");
         }
         //TODO: consider move it to destructor, even in a price of UB
@@ -322,7 +327,7 @@ namespace initialization_tests {
             //TODO: add use of KNOWN_ISSUE macro on SunCC 5.11
             #if !__SUNPRO_CC || __SUNPRO_CC > 0x5110
                 //TODO: add printing of typename to the assertion
-                ASSERT(char(0)==*(tbb::internal::punned_cast<char*>(this->non_zeroed_storage.begin()))
+                ASSERT(char(0)==*(reinterpret_cast<char*>(this->non_zeroed_storage.begin()))
                         ,("value initialization for tbb::atomic should do zero initialization; "
                           "actual value:"+to_string(this->non_zeroed_storage.begin()->load())).c_str());
             #endif
@@ -335,13 +340,12 @@ namespace initialization_tests {
         void operator ()(){
             typedef typename test_initialization_fixture<T>::atomic_t atomic_type;
             new (this->non_zeroed_storage.begin()) atomic_type;
-            ASSERT( char(this->fill_value)==*(tbb::internal::punned_cast<char*>(this->non_zeroed_storage.begin()))
+            ASSERT( char(this->fill_value)==*(reinterpret_cast<char*>(this->non_zeroed_storage.begin()))
                     ,"default initialization for atomic should do no initialization");
             this->tear_down();
         }
     };
 #   if __TBB_ATOMIC_CTORS
-
         template<typename T>
         struct TestDirectInitialization : test_initialization_fixture<T> {
             void operator()(T i){
@@ -628,9 +632,6 @@ void TestAtomicInteger( const char* name ) {
 namespace test_indirection_helpers {
     template<typename T>
     struct Foo {
-        //this constructor is needed to workaround ICC intrinsics port (compiler ?)bug, firing assertion below
-        //TODO: move this under #if
-        Foo(): x(), y(), z() {}
         T x, y, z;
     };
 }
@@ -652,20 +653,13 @@ void TestIndirection() {
         (*pointer).z = value2;
         T result1 = (*pointer).y;
         T result2 = pointer->z;
-        //TODO: investigate (fill a bug?)assertion failure bellow for ICC (12.1.2?) intrinsic port for sizes of 4,6,7
-        //and remove default constructor for test_indirection_helpers::Foo
-        #if !TBB_USE_ICC_BUILTINS
-            ASSERT( memcmp(&value1,&result1,sizeof(T))==0, NULL );
-            ASSERT( memcmp(&value2,&result2,sizeof(T))==0, NULL );
-        #else
-            if (    (memcmp(&value1,&result1,sizeof(T))!=0)
-                 || (memcmp(&value2,&result2,sizeof(T))!=0))
-            {
-                REMARK_ONCE("Known Issue: ICC builtins port seems to generate wrong code of atomic::operator* "
-                        "and operator*-> for some types \n");
-            }
-        #endif
+        ASSERT( memcmp(&value1,&result1,sizeof(T))==0, NULL );
+        ASSERT( memcmp(&value2,&result2,sizeof(T))==0, NULL );
     }
+    #if __TBB_ICC_BUILTIN_ATOMICS_POINTER_ALIASING_BROKEN
+        //prevent ICC compiler from assuming 'item' is unused and reusing it's storage
+        item.x = item.y=item.z;
+    #endif
 }
 
 //! Test atomic<T*>
@@ -712,12 +706,37 @@ void TestAtomicFloat( const char* name ) {
     TestParallel<T>( name );
 }
 
-#if __TBB_BIG_ENDIAN!=-1
+#define __TBB_TEST_GENERIC_PART_WORD_CAS (__TBB_ENDIANNESS!=__TBB_ENDIAN_UNSUPPORTED)
+#if __TBB_TEST_GENERIC_PART_WORD_CAS
+void TestEndianness() {
+    // Test for pure endianness (assumed by simpler probe in __TBB_MaskedCompareAndSwap()).
+    bool is_big_endian = true, is_little_endian = true;
+    const tbb::internal::uint32_t probe = 0x03020100;
+    ASSERT (tbb::internal::is_aligned(&probe,4), NULL);
+    for( const char *pc_begin = reinterpret_cast<const char*>(&probe)
+         , *pc = pc_begin, *pc_end = pc_begin + sizeof(probe)
+         ; pc != pc_end; ++pc) {
+        if (*pc != pc_end-1-pc) is_big_endian = false;
+        if (*pc != pc-pc_begin) is_little_endian = false;
+    }
+    ASSERT (!is_big_endian || !is_little_endian, NULL);
+    #if __TBB_ENDIANNESS==__TBB_ENDIAN_DETECT
+        ASSERT (is_big_endian || is_little_endian, "__TBB_ENDIANNESS should be set to __TBB_ENDIAN_UNSUPPORTED");
+    #elif __TBB_ENDIANNESS==__TBB_ENDIAN_BIG
+        ASSERT (is_big_endian, "__TBB_ENDIANNESS should NOT be set to __TBB_ENDIAN_BIG");
+    #elif __TBB_ENDIANNESS==__TBB_ENDIAN_LITTLE
+        ASSERT (is_little_endian, "__TBB_ENDIANNESS should NOT be set to __TBB_ENDIAN_LITTLE");
+    #elif __TBB_ENDIANNESS==__TBB_ENDIAN_UNSUPPORTED
+        #error Generic implementation of part-word CAS may not be used: unsupported endianness
+    #else
+        #error Unexpected value of __TBB_ENDIANNESS
+    #endif
+}
+
 namespace masked_cas_helpers {
     const int numMaskedOperations = 100000;
     const int testSpaceSize = 8;
     int prime[testSpaceSize] = {3,5,7,11,13,17,19,23};
-
 
     template<typename T>
     class TestMaskedCAS_Body: NoAssign {
@@ -727,7 +746,7 @@ namespace masked_cas_helpers {
         TestMaskedCAS_Body( T* _space1, T* _space2 ) : test_space_uncontended(_space1), test_space_contended(_space2) {}
         void operator()( int my_idx ) const {
             using tbb::internal::__TBB_MaskedCompareAndSwap;
-            const T my_prime = T(prime[my_idx]);
+            const volatile T my_prime = T(prime[my_idx]); // 'volatile' prevents erroneous optimizations by SunCC
             T* const my_ptr = test_space_uncontended+my_idx;
             T old_value=0;
             for( int i=0; i<numMaskedOperations; ++i, old_value+=my_prime ){
@@ -791,6 +810,7 @@ namespace masked_cas_helpers {
         return slot.result;
     }
 } // namespace masked_cas_helpers
+
 template<typename T>
 void TestMaskedCAS() {
     using namespace masked_cas_helpers;
@@ -813,7 +833,8 @@ void TestMaskedCAS() {
         ASSERT( arr2[i+1]==correctContendedValue, "unexpected value in a contended slot" );
     }
 }
-#endif
+#endif // __TBB_TEST_GENERIC_PART_WORD_CAS
+
 template <typename T>
 class TestRelaxedLoadStorePlainBody {
     static T s_turn,
@@ -973,9 +994,11 @@ int TestMain () {
 #   if __TBB_ATOMIC_CTORS
          TestConstExprInitializationOfGlobalObjects();
 #   endif //__TBB_ATOMIC_CTORS
-#   if __TBB_64BIT_ATOMICS
+#   if __TBB_64BIT_ATOMICS && !__TBB_CAS_8_CODEGEN_BROKEN
          TestAtomicInteger<unsigned long long>("unsigned long long");
          TestAtomicInteger<long long>("long long");
+#   elif __TBB_CAS_8_CODEGEN_BROKEN
+         REPORT("Known issue: compiler generates incorrect code for 64-bit atomics on this configuration\n");
 #   else
          REPORT("64-bit atomics not supported\n");
          ASSERT(sizeof(long long)==8, "type long long is not 64 bits");
@@ -1005,19 +1028,26 @@ int TestMain () {
     TestAtomicBool();
     TestAtomicEnum();
     TestAtomicFloat<float>("float");
-#   if __TBB_64BIT_ATOMICS
+#   if __TBB_64BIT_ATOMICS && !__TBB_CAS_8_CODEGEN_BROKEN
         TestAtomicFloat<double>("double");
 #   else
         ASSERT(sizeof(double)==8, "type double is not 64 bits");
 #   endif
     ASSERT( !ParallelError, NULL );
-#   if __TBB_BIG_ENDIAN!=-1
-         TestMaskedCAS<unsigned char>();
-         TestMaskedCAS<unsigned short>();
+#   if __TBB_TEST_GENERIC_PART_WORD_CAS
+        TestEndianness();
+        ASSERT (sizeof(short)==2, NULL);
+        TestMaskedCAS<unsigned short>();
+        TestMaskedCAS<short>();
+        TestMaskedCAS<unsigned char>();
+        TestMaskedCAS<signed char>();
+        TestMaskedCAS<char>();
+#   elif __TBB_USE_GENERIC_PART_WORD_CAS
+#       error Generic part-word CAS is enabled, but not covered by the test
 #   else
-         REPORT("Generic part-word CAS is not available\n");
+        REPORT("Skipping test for generic part-word CAS\n");
 #   endif
-#   if __TBB_64BIT_ATOMICS
+#   if __TBB_64BIT_ATOMICS && !__TBB_CAS_8_CODEGEN_BROKEN
         TestRegisterPromotionSuppression<tbb::internal::int64_t>();
 #   endif
     TestRegisterPromotionSuppression<tbb::internal::int32_t>();
@@ -1039,13 +1069,13 @@ public:
         std::memset(&raw_space[0],0, sizeof(raw_space));
         uintptr_t delta = aligned ? 0 : sizeof(T)/2;
         size_t index=sizeof(T)-1;
-        tbb::atomic<T>& y = *reinterpret_cast<tbb::atomic<T>*>((reinterpret_cast<uintptr_t>(&raw_space[index+delta])&~index) - delta);
+        tbb::atomic<T>* y = reinterpret_cast<tbb::atomic<T>*>((reinterpret_cast<uintptr_t>(&raw_space[index+delta])&~index) - delta);
         // Assertion checks that y really did end up somewhere inside "raw_space".
-        ASSERT( raw_space<=reinterpret_cast<char*>(&y), "y starts before raw_space" );
-        ASSERT( reinterpret_cast<char*>(&y+1) <= raw_space+sizeof(raw_space), "y starts after raw_space" );
-        ASSERT( !(aligned ^ tbb::internal::is_aligned(&y,sizeof(T))), "y is not aligned as it required" );
-        new (&y) tbb::atomic<T> ();
-        return y;
+        ASSERT( raw_space<=reinterpret_cast<char*>(y), "y starts before raw_space" );
+        ASSERT( reinterpret_cast<char*>(y+1) <= raw_space+sizeof(raw_space), "y starts after raw_space" );
+        ASSERT( !(aligned ^ tbb::internal::is_aligned(y,sizeof(T))), "y is not aligned as it required" );
+        new (y) tbb::atomic<T> ();
+        return *y;
     }
 };
 

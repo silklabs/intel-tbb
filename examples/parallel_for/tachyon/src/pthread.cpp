@@ -58,7 +58,7 @@
 #ifdef EMULATE_PTHREADS
 
 #include <assert.h>
-#include "pthread.h"
+#include "pthread_w.h"
 
 /*
     Basics

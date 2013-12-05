@@ -28,6 +28,10 @@ tbb_root?=..
 examples_root:=$(tbb_root)/examples
 include $(tbb_root)/build/common.inc
 
+#workaround for non-depend targets tbb and tbbmalloc which both depend on version_string.ver
+#According to documentation, recursively invoked make commands can process their targets in parallel
+.NOTPARALLEL:
+
 .PHONY: all tbb tbbmalloc tbbproxy test test_no_depends release debug examples clean
 
 all: release debug examples

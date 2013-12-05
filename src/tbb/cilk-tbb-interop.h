@@ -26,7 +26,8 @@
     the GNU General Public License.
 */
 
-/* The API to enable interoperability between Intel(R) Cilk(tm) Plus and TBB. */
+/* The API to enable interoperability between Intel(R) Cilk(TM) Plus and 
+   Intel(R) Threading Building Blocks. */
 
 #ifndef CILK_TBB_INTEROP_H
 #define CILK_TBB_INTEROP_H

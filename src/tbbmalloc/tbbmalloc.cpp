@@ -137,8 +137,11 @@ void init_tbbmalloc() {
 #if USE_WINTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED && !__TBB_WIN8UI_SUPPORT
     // Prevent Windows from displaying message boxes if it fails to load library
     UINT prev_mode = SetErrorMode (SEM_FAILCRITICALERRORS);
-    HMODULE lib = LoadLibrary(MALLOCLIB_NAME);
-    MALLOC_ASSERT(lib, "Allocator can't load ifself.");
+    HMODULE lib;
+    BOOL ret = GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                                 |GET_MODULE_HANDLE_EX_FLAG_PIN,
+                                 (LPCTSTR)&scalable_malloc, &lib);
+    MALLOC_ASSERT(lib && ret, "Allocator can't find itself.");
     SetErrorMode (prev_mode);
 #endif /* USE_PTHREAD && !__TBB_SOURCE_DIRECTLY_INCLUDED */
 }
@@ -218,18 +221,14 @@ void __TBB_internal_free(void *object)
 } } // namespaces
 
 #if __TBB_ipf
-/* It was found that on IPF inlining of __TBB_machine_lockbyte leads
-   to serious performance regression with ICC 10.0. So keep it out-of-line.
+/* It was found that on IA-64 architecture inlining of __TBB_machine_lockbyte leads
+   to serious performance regression with ICC. So keep it out-of-line.
 
    This code is copy-pasted from tbb_misc.cpp.
  */
 extern "C" intptr_t __TBB_machine_lockbyte( volatile unsigned char& flag ) {
-    if ( !__TBB_TryLockByte(flag) ) {
-        tbb::internal::atomic_backoff b;
-        do {
-            b.pause();
-        } while ( !__TBB_TryLockByte(flag) );
-    }
+    tbb::internal::atomic_backoff backoff;
+    while( !__TBB_TryLockByte(flag) ) backoff.pause();
     return 0;
 }
 #endif

@@ -69,7 +69,7 @@ class __TBB_InitOnce {
 public:
     static void lock()   { __TBB_LockByte( InitializationLock ); }
 
-    static void unlock() { __TBB_UnlockByte( InitializationLock, 0 ); }
+    static void unlock() { __TBB_UnlockByte( InitializationLock ); }
 
     static bool initialization_done() { return __TBB_load_with_acquire(InitializationDone); }
 

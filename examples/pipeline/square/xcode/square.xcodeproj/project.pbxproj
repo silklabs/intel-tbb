@@ -7,21 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6DA3F3EC0DE5D3D80039CADE /* gen_input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D0FC7170DE5BA4D0026B02B /* gen_input.cpp */; };
 		A1F593A60B8F042A00073279 /* square.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F593A50B8F042A00073279 /* square.cpp */; };
 		A1F593B70B8F06F900073279 /* libtbb.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A1F593B30B8F06F900073279 /* libtbb.dylib */; };
 		A1F593BB0B8F072500073279 /* libtbb.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1F593B30B8F06F900073279 /* libtbb.dylib */; };
+		EA09E56116E4F19700CA4CF4 /* gen_input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D0FC7170DE5BA4D0026B02B /* gen_input.cpp */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		6DA3F3ED0DE5D4090039CADE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6DA3F3E10DE5D34A0039CADE;
-			remoteInfo = "gen-input";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		8DD76F690486A84900D96B5E /* CopyFiles */ = {
@@ -38,20 +28,12 @@
 
 /* Begin PBXFileReference section */
 		6D0FC7170DE5BA4D0026B02B /* gen_input.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = gen_input.cpp; path = ../gen_input.cpp; sourceTree = SOURCE_ROOT; };
-		6DA3F3E20DE5D34A0039CADE /* gen-input */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "gen-input"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76F6C0486A84900D96B5E /* square */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = square; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F593A50B8F042A00073279 /* square.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = square.cpp; path = ../square.cpp; sourceTree = SOURCE_ROOT; };
 		A1F593B30B8F06F900073279 /* libtbb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.dylib; path = ../../../../lib/libtbb.dylib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		6DA3F3E00DE5D34A0039CADE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DD76F660486A84900D96B5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				8DD76F6C0486A84900D96B5E /* square */,
-				6DA3F3E20DE5D34A0039CADE /* gen-input */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,22 +83,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6DA3F3E10DE5D34A0039CADE /* gen-input */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6DA3F3E40DE5D36B0039CADE /* Build configuration list for PBXNativeTarget "gen-input" */;
-			buildPhases = (
-				6DA3F3DF0DE5D34A0039CADE /* Sources */,
-				6DA3F3E00DE5D34A0039CADE /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "gen-input";
-			productName = "gen-input";
-			productReference = 6DA3F3E20DE5D34A0039CADE /* gen-input */;
-			productType = "com.apple.product-type.tool";
-		};
 		8DD76F620486A84900D96B5E /* square */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "square" */;
@@ -125,12 +90,10 @@
 				8DD76F640486A84900D96B5E /* Sources */,
 				8DD76F660486A84900D96B5E /* Frameworks */,
 				8DD76F690486A84900D96B5E /* CopyFiles */,
-				6D3576C90DE5C7A500C03B6D /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6DA3F3EE0DE5D4090039CADE /* PBXTargetDependency */,
 			);
 			name = square;
 			productInstallPath = "$(HOME)/bin";
@@ -158,54 +121,21 @@
 			projectRoot = "";
 			targets = (
 				8DD76F620486A84900D96B5E /* square */,
-				6DA3F3E10DE5D34A0039CADE /* gen-input */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		6D3576C90DE5C7A500C03B6D /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/input.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "$TARGET_BUILD_DIR/gen-input >$TARGET_BUILD_DIR/input.txt";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		6DA3F3DF0DE5D34A0039CADE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6DA3F3EC0DE5D3D80039CADE /* gen_input.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DD76F640486A84900D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA09E56116E4F19700CA4CF4 /* gen_input.cpp in Sources */,
 				A1F593A60B8F042A00073279 /* square.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		6DA3F3EE0DE5D4090039CADE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6DA3F3E10DE5D34A0039CADE /* gen-input */;
-			targetProxy = 6DA3F3ED0DE5D4090039CADE /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB923208733DC60010E9CD /* Debug */ = {
@@ -271,58 +201,6 @@
 				SYMROOT = "/tmp/tbb-$(USER)";
 			};
 			name = Release;
-		};
-		6DA3F3E50DE5D36B0039CADE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = "gen-input";
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		6DA3F3E60DE5D36B0039CADE /* Debug64 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				GCC_MODEL_TUNING = G5;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = "gen-input";
-				ZERO_LINK = YES;
-			};
-			name = Debug64;
-		};
-		6DA3F3E70DE5D36B0039CADE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = "gen-input";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		6DA3F3E80DE5D36B0039CADE /* Release64 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				GCC_MODEL_TUNING = G5;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = "gen-input";
-				ZERO_LINK = YES;
-			};
-			name = Release64;
 		};
 		A1F593C60B8F0E6E00073279 /* Debug64 */ = {
 			isa = XCBuildConfiguration;
@@ -421,17 +299,6 @@
 				A1F593C80B8F0E6E00073279 /* Debug64 */,
 				1DEB923708733DC60010E9CD /* Release */,
 				A1F593C90B8F0E6E00073279 /* Release64 */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6DA3F3E40DE5D36B0039CADE /* Build configuration list for PBXNativeTarget "gen-input" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6DA3F3E50DE5D36B0039CADE /* Debug */,
-				6DA3F3E60DE5D36B0039CADE /* Debug64 */,
-				6DA3F3E70DE5D36B0039CADE /* Release */,
-				6DA3F3E80DE5D36B0039CADE /* Release64 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

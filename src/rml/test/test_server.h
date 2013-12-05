@@ -132,7 +132,7 @@ private:
 public:
     enum state_t {
         //! Treat *this as constructed.
-        live=0x1,
+        live=0x1234,
         //! Treat *this as destroyed.
         destroyed=0xDEAD
     };

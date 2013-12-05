@@ -181,7 +181,7 @@ TestAlignedRealloc* Raligned_realloc;
 bool error_occurred = false;
 
 #if __APPLE__
-// Tests that use the variable are skipped on Mac OS* X
+// Tests that use the variable are skipped on OS X*
 #else
 static bool perProcessLimits = true;
 #endif
@@ -262,7 +262,7 @@ static void setSystemAllocs()
     Taligned_free=_aligned_free;
     Rposix_memalign=0;
 #elif  __APPLE__ || __sun || __ANDROID__ 
-// Mac OS* X, Solaris, and Android don't have posix_memalign
+// OS X*, Solaris, and Android don't have posix_memalign
     Raligned_malloc=0;
     Raligned_realloc=0;
     Taligned_free=0;
@@ -339,7 +339,7 @@ int main(int argc, char* argv[]) {
 #endif
     //-------------------------------------
 #if __APPLE__
-    /* Skip due to lack of memory limit enforcing under Mac OS X. */
+    /* Skip due to lack of memory limit enforcing under OS X*. */
 #else
     limitMem(200);
     ReallocParam();
@@ -1017,7 +1017,7 @@ void CMemTest::RunAllTests(int total_threads)
         InvariantDataRealloc(/*aligned=*/true);
     TestAlignedParameters();
 #if __APPLE__
-    REPORT("Known issue: some tests are skipped on Mac OS* X\n");
+    REPORT("Known issue: some tests are skipped on OS X*\n");
 #else
     UniquePointer();
     AddrArifm();

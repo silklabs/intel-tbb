@@ -300,7 +300,7 @@ void cat_file( char const * dir, char const * file, char * buffer, size_t len ) 
         } else {
             /*
                 FormatMessage() returns Windows-style end-of-lines, "\r\n". When string is printed,
-                printf() also replaces all the occurences of "\n" with "\r\n" (again!), so sequences
+                printf() also replaces all the occurrences of "\n" with "\r\n" (again!), so sequences
                 like "\r\r\r\n" appear in output. It is not too good. Stripping all "\r" normalizes
                 string and returns it to canonical form, so printf() will produce correct end-of-line
                 sequences.

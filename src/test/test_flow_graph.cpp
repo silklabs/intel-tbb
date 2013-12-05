@@ -215,7 +215,6 @@ void test_parallel(int nThreads) {
 }
 
 int TestMain() { 
-    current_executors = 0;
     if( MinThread<1 ) {
         REPORT("number of threads must be positive\n");
         exit(1);

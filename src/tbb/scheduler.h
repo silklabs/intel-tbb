@@ -120,6 +120,7 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     friend class arena;
 #if __TBB_TASK_ARENA
     friend class interface6::task_arena;
+    friend class interface6::delegated_task;
     friend class interface6::wait_task;
     friend struct interface6::wait_body;
 #endif //__TBB_TASK_ARENA
@@ -360,11 +361,14 @@ public:
         dispatch loop (one of wait_for_all methods) invoked directly from that thread. **/
     inline bool master_outermost_level () const;
 
+    //! True if the scheduler is on the outermost dispatch level in a worker thread.
+    inline bool worker_outermost_level () const;
+
 #if __TBB_TASK_GROUP_CONTEXT
     //! Returns task group context used by this scheduler instance.
     /** This context is associated with root tasks created by a master thread 
         without explicitly specified context object outside of any running task.
-        
+
         Note that the default context of a worker thread is never accessed by
         user code (directly or indirectly). **/
     inline task_group_context* default_context ();
@@ -421,9 +425,6 @@ public:
     tbb::atomic<uintptr_t> my_local_ctx_list_update;
 
 #if __TBB_TASK_PRIORITY
-    //! True if the scheduler is on the outermost dispatch level in a worker thread.
-    inline bool worker_outermost_level () const;
-
     //! Returns reference priority used to decide whether a task should be offloaded.
     inline intptr_t effective_reference_priority () const;
 
@@ -543,6 +544,10 @@ inline bool generic_scheduler::master_outermost_level () const {
     return my_dispatching_task == my_dummy_task;
 }
 
+inline bool generic_scheduler::worker_outermost_level () const {
+    return !my_dispatching_task;
+}
+
 #if __TBB_TASK_GROUP_CONTEXT
 inline task_group_context* generic_scheduler::default_context () {
     return my_dummy_task->prefix().context;
@@ -651,10 +656,6 @@ void generic_scheduler::free_task( task& t ) {
 }
 
 #if __TBB_TASK_PRIORITY
-inline bool generic_scheduler::worker_outermost_level () const {
-    return !my_dispatching_task;
-}
-
 inline intptr_t generic_scheduler::effective_reference_priority () const {
     // Workers on the outermost dispatch level (i.e. with empty stack) use market's
     // priority as a reference point (to speedup discovering process level priority

@@ -60,7 +60,7 @@ class governor {
     //! TLS for scheduler instances associated with individual threads
     static basic_tls<generic_scheduler*> theTLS;
 
-    //! Caches the maximal level of paralellism supported by the hardware
+    //! Caches the maximal level of parallelism supported by the hardware
     static unsigned DefaultNumberOfThreads;
 
     static rml::tbb_factory theRMLServerFactory;

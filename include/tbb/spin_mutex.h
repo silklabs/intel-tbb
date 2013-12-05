@@ -86,6 +86,7 @@ public:
 
         //! Construct and acquire lock on a mutex.
         scoped_lock( spin_mutex& m ) : my_unlock_value(0) { 
+            internal::suppress_unused_warning(my_unlock_value);
 #if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             my_mutex=NULL;
             internal_acquire(m);
@@ -123,7 +124,7 @@ public:
 #if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
             internal_release();
 #else
-            __TBB_UnlockByte(my_mutex->flag, 0);
+            __TBB_UnlockByte(my_mutex->flag);
             my_mutex = NULL;
 #endif /* TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT */
         }
@@ -134,7 +135,7 @@ public:
 #if TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT
                 internal_release();
 #else
-                __TBB_UnlockByte(my_mutex->flag, 0);
+                __TBB_UnlockByte(my_mutex->flag);
 #endif /* TBB_USE_THREADING_TOOLS||TBB_USE_ASSERT */
             }
         }

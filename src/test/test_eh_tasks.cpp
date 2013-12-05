@@ -510,8 +510,6 @@ typedef tbb::movable_exception<int> SolitaryMovableException;
 typedef tbb::movable_exception<ExceptionData> MultipleMovableException;
 
 class LeafTaskWithMovableExceptions : public TaskBase {
-    bool m_IntAsData;
-
     tbb::task* do_execute () {
         Harness::ConcurrencyTracker ct;
         WaitUntilConcurrencyPeaks();

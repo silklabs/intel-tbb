@@ -56,7 +56,7 @@ ifeq ($(UI),mac)
 	cp ../../common/gui/xcode/tbbExample/Info.plist $(NAME).app/Contents
 	cp ../../common/gui/xcode/tbbExample/PkgInfo $(NAME).app/Contents
 	cp ../../common/gui/xcode/tbbExample/en.lproj/* $(APPRES)/en.lproj
-endif # Mac
+endif # OS X*
 
 release: $(SRCFILES) resources
 ifeq ($(compiler),xl)
@@ -65,14 +65,14 @@ ifeq ($(compiler),xl)
 else
 ifeq ($(UI),mac)
 	$(CXX_UI) -O3 -DNDEBUG $(CXXFLAGS) -c $(MACUISOURCES)
-endif # Mac
+endif # OS X*
 	$(CXX) -O3 -DNDEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) $(MACUIOBJS) -ltbb -ltbbmalloc $(LIBS)
 endif
 
 debug:  $(SRCFILES) resources
 ifeq ($(UI),mac)
 	$(CXX_UI) -g -O0 -DTBB_USE_DEBUG -D_DEBUG $(CXXFLAGS) -c $(MACUISOURCES)
-endif # Mac
+endif # OS X*
 	$(CXX) -g -O0 -DTBB_USE_DEBUG -D_DEBUG $(CXXFLAGS) -o $(EXE) $(SRCFILES) $(MACUIOBJS) -ltbb_debug -ltbbmalloc_debug $(LIBS)
 
 clean:

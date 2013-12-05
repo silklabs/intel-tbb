@@ -27,16 +27,16 @@
 */
 
 /*
-    This is the TBB implementation for the ARMv7-a architecture.
+    Platform isolation layer for the ARMv7-a architecture.
 */
 
 #ifndef __TBB_machine_H
 #error Do not include this file directly; include tbb_machine.h instead
 #endif
 
-//TODO: is ARMv7 is the only version ever to support ?
+//TODO: is ARMv7 is the only version ever to support?
 #if !(__ARM_ARCH_7A__)
-#error Threading Building Blocks ARM port requires an ARMv7-a architecture.
+#error compilation requires an ARMv7-a architecture.
 #endif
 
 #include <sys/param.h>
@@ -44,26 +44,27 @@
 
 #define __TBB_WORDSIZE 4
 
-#ifndef __BYTE_ORDER__
-    // Hopefully endianness can be validly determined at runtime.
-    // This may silently fail in some embedded systems with page-specific endianness.
-#elif __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
-    #define __TBB_BIG_ENDIAN 1
-#elif __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-    #define __TBB_BIG_ENDIAN 0
+// Traditionally ARM is little-endian.
+// Note that, since only the layout of aligned 32-bit words is of interest,
+// any apparent PDP-endianness of 32-bit words at half-word alignment or
+// any little-endian ordering of big-endian 32-bit words in 64-bit quantities
+// may be disregarded for this setting.
+#if __BIG_ENDIAN__ || (defined(__BYTE_ORDER__) && __BYTE_ORDER__==__ORDER_BIG_ENDIAN__)
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_BIG
+#elif __LITTLE_ENDIAN__ || (defined(__BYTE_ORDER__) && __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__)
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
+#elif defined(__BYTE_ORDER__)
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_UNSUPPORTED
 #else
-    #define __TBB_BIG_ENDIAN -1 // not currently supported
+    #define __TBB_ENDIANNESS __TBB_ENDIAN_DETECT
 #endif
 
 
-#define __TBB_compiler_fence() __asm__ __volatile__("": : :"memory")
+#define __TBB_compiler_fence()    __asm__ __volatile__("": : :"memory")
+#define __TBB_full_memory_fence() __asm__ __volatile__("dmb ish": : :"memory")
 #define __TBB_control_consistency_helper() __TBB_compiler_fence()
-
-#define __TBB_armv7_inner_shareable_barrier() __asm__ __volatile__("dmb ish": : :"memory")
-#define __TBB_acquire_consistency_helper() __TBB_armv7_inner_shareable_barrier()
-#define __TBB_release_consistency_helper() __TBB_armv7_inner_shareable_barrier()
-#define __TBB_full_memory_fence() __TBB_armv7_inner_shareable_barrier()
-
+#define __TBB_acquire_consistency_helper() __TBB_full_memory_fence()
+#define __TBB_release_consistency_helper() __TBB_full_memory_fence()
 
 //--------------------------------------------------
 // Compare and swap
@@ -195,7 +196,7 @@ namespace internal {
             * An extra memory barrier is required for errata #761319
             * Please see http://infocenter.arm.com/help/topic/com.arm.doc.uan0004a
             */
-            __TBB_armv7_inner_shareable_barrier();
+            __TBB_acquire_consistency_helper();
             return value;
         }
 
@@ -209,7 +210,6 @@ namespace internal {
 
 #define __TBB_CompareAndSwap4(P,V,C) __TBB_machine_cmpswp4(P,V,C)
 #define __TBB_CompareAndSwap8(P,V,C) __TBB_machine_cmpswp8(P,V,C)
-#define __TBB_CompareAndSwapW(P,V,C) __TBB_machine_cmpswp4(P,V,C)
 #define __TBB_Pause(V) __TBB_machine_pause(V)
 
 // Use generics for some things

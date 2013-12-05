@@ -46,7 +46,7 @@ CPLUS = g++
 CONLY = gcc
 LIB_LINK_FLAGS = $(DYLIB_KEY) -Wl,-soname=$(BUILDING_LIBRARY)
 LIBS += -lpthread -lrt
-LINK_FLAGS = -Wl,-rpath-link=.
+LINK_FLAGS = -Wl,-rpath-link=. -rdynamic
 C_FLAGS = $(CPLUS_FLAGS)
 # gcc 4.4 and higher support -std=c++0x
 ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[4-9]|[5-9])"))
@@ -56,6 +56,11 @@ endif
 # gcc 4.2 and higher support OpenMP
 ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[2-9]|[5-9])"))
     OPENMP_FLAG = -fopenmp
+endif
+
+# gcc 4.4 is particularly zealous about strict aliasing rules; suppress it for library builds
+ifneq (,$(shell gcc -dumpversion | egrep  "^4\.4"))
+    WARNING_SUPPRESS += -Wno-strict-aliasing
 endif
 
 ifeq ($(cfg), release)
@@ -73,7 +78,7 @@ TBB_ASM.OBJ=
 MALLOC_ASM.OBJ=
 
 ifeq (ia64,$(arch))
-# Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
+# Position-independent code (PIC) is a must on IA-64 architecture, even for regular (not shared) executables
     CPLUS_FLAGS += $(PIC_KEY)
 endif
 
@@ -108,6 +113,11 @@ endif
 ifeq (sparc,$(arch))
     CPLUS_FLAGS    += -mcpu=v9 -m64
     LIB_LINK_FLAGS += -mcpu=v9 -m64
+endif
+
+# automatically generate "IT" instructions when compiling for Thumb ISA
+ifeq (armv7,$(arch))
+    CPLUS_FLAGS    += -Wa,-mimplicit-it=thumb
 endif
 
 #------------------------------------------------------------------------------

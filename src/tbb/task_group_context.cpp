@@ -370,7 +370,7 @@ bool market::propagate_task_group_state ( T task_group_context::*mptr_state, tas
         generic_scheduler *s = slot.my_scheduler;
         // If the master is under construction, skip it. Otherwise make sure that it does not 
         // leave its arena and its scheduler get destroyed while we accessing its data.
-        if ( s && __TBB_CompareAndSwapW(&slot.my_scheduler, (intptr_t)LockedMaster, (intptr_t)s) == (intptr_t)s ) { //TODO: remove need in lock
+        if ( s && as_atomic(slot.my_scheduler).compare_and_swap(LockedMaster, s) == s ) { //TODO: remove need in lock
             __TBB_ASSERT( slot.my_scheduler == LockedMaster, NULL );
             // The whole propagation sequence is locked, thus no contention is expected
             __TBB_ASSERT( s != LockedMaster, NULL );
@@ -389,7 +389,7 @@ bool arena::propagate_task_group_state ( T task_group_context::*mptr_state, task
 
 bool task_group_context::cancel_group_execution () {
     __TBB_ASSERT ( my_cancellation_requested == 0 || my_cancellation_requested == 1, "Invalid cancellation state");
-    if ( my_cancellation_requested || __TBB_CompareAndSwapW(&my_cancellation_requested, 1, 0) ) {
+    if ( my_cancellation_requested || as_atomic(my_cancellation_requested).compare_and_swap(1, 0) ) {
         // This task group has already been canceled
         return false;
     }

@@ -35,7 +35,7 @@
 #include "msvc_ia32_common.h"
 
 #define __TBB_WORDSIZE 4
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 #if __INTEL_COMPILER && (__INTEL_COMPILER < 1100)
     #define __TBB_compiler_fence()    __asm { __asm nop }
@@ -137,7 +137,7 @@ static inline void __TBB_machine_AND( volatile void *operand, __int32 addend ) {
 #define __TBB_AtomicOR(P,V) __TBB_machine_OR(P,V)
 #define __TBB_AtomicAND(P,V) __TBB_machine_AND(P,V)
 
-//TODO: Check if it possible and profitable for IA-32 on (Linux and Windows)
+//TODO: Check if it possible and profitable for IA-32 architecture on (Linux and Windows)
 //to use of 64-bit load/store via floating point registers together with full fence
 //for sequentially consistent load/store, instead of CAS.
 #define __TBB_USE_FETCHSTORE_AS_FULL_FENCED_STORE           1

@@ -29,14 +29,13 @@ run_cmd=
 PROG=square
 ARGS=0 input.txt output.txt
 PERF_RUN_ARGS=auto input.txt output.txt silent
-GEN=gen_input
 
 # The C++ compiler
 ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # icc
 
-SQUARE = square.cpp
+SOURCES = square.cpp gen_input.cpp
 
 ifeq ($(shell uname), Linux)
 ifeq ($(target), android)
@@ -49,26 +48,20 @@ endif
 
 all:	release test
 
-release: $(SQUARE) input.txt
-	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $(SQUARE) -ltbb $(LIBS)
+release: $(SOURCES)
+	$(CXX) -O2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb $(LIBS)
 
-debug: $(SQUARE) input.txt
-	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $(SQUARE) -ltbb_debug $(LIBS)
+debug: $(SOURCES)
+	$(CXX) -O0 -g -DTBB_USE_DEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb_debug $(LIBS)
 
 clean:
-	$(RM) $(PROG) $(GEN) *.o *.d input.txt output.txt
+	$(RM) $(PROG) *.o *.d input.txt output.txt
 
-$(GEN): gen_input.cpp 
-	$(CXX) -O2 $(CXXFLAGS) -o $(GEN) $^ $(LIBS)
-
-input.txt: $(GEN)
-	./$(GEN)  >input.txt
-
-test: input.txt
+test:
 	$(run_cmd) ./$(PROG) $(ARGS)
 
-perf_build: $(SQUARE) input.txt
-	$(CXX) -O2 -msse2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $(SQUARE) -ltbb $(LIBS)
+perf_build: $(SOURCES)
+	$(CXX) -O2 -msse2 -DNDEBUG $(CXXFLAGS) -o $(PROG) $^ -ltbb $(LIBS)
 
-perf_run: input.txt
+perf_run:
 	./$(PROG) $(PERF_RUN_ARGS)

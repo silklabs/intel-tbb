@@ -36,7 +36,7 @@
 #include <ia64intrin.h>
 
 #define __TBB_WORDSIZE 8
-#define __TBB_BIG_ENDIAN 0
+#define __TBB_ENDIANNESS __TBB_ENDIAN_LITTLE
 
 #if __INTEL_COMPILER
     #define __TBB_compiler_fence()

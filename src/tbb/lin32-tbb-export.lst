@@ -161,8 +161,10 @@ __TBB_SYMBOL( _ZN3tbb21set_assertion_handlerEPFvPKciS1_S1_E )
 __TBB_SYMBOL( _ZN3tbb8internal36get_initial_auto_partitioner_divisorEv )
 __TBB_SYMBOL( _ZN3tbb8internal13handle_perrorEiPKc )
 __TBB_SYMBOL( _ZN3tbb8internal15runtime_warningEPKcz )
+#if __TBB_x86_32
 __TBB_SYMBOL( __TBB_machine_store8_slow_perf_warning )
 __TBB_SYMBOL( __TBB_machine_store8_slow )
+#endif
 __TBB_SYMBOL( TBB_runtime_interface_version )
 
 /* tbb_main.cpp */

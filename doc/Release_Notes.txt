@@ -90,6 +90,12 @@ Please note the following with respect to this particular release of
 Intel(R) Threading Building Blocks.
 
 Library Issues
+    - If Intel TBB is used together with Intel C++ Compiler 12.1 and 
+	the standard C++ library from GCC 4.4, compilation in C++11 mode 
+	(-std=c++0x) may fail with an error saying 'namespace "std" has 
+	no member "exception_ptr"'. To overcome the problem, include an 
+	Intel TBB header (e.g. tbb_stddef.h) before any standard 
+	library headers.
 
     - If an application is built for Microsoft* Windows* XP Professional
 	or similar the _WIN32_WINNT macro must be set manually to 0x0501

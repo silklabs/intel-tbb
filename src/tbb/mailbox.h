@@ -33,6 +33,7 @@
 #include "tbb/cache_aligned_allocator.h"
 
 #include "scheduler_common.h"
+#include "tbb/atomic.h"
 
 namespace tbb {
 namespace internal {
@@ -79,7 +80,7 @@ struct task_proxy : public task {
             // Attempt to transition the proxy to the "empty" state with
             // cleaner_bit specifying entity responsible for its eventual freeing.
             // Explicit cast to void* is to work around a seeming ICC 11.1 bug.
-            if ( __TBB_CompareAndSwapW( (void*)&task_and_tag, cleaner_bit, tat ) == tat ) {
+            if ( as_atomic(task_and_tag).compare_and_swap(cleaner_bit, tat) == tat ) {
                 // Successfully grabbed the task, and left new owner with the job of freeing the proxy
                 return task_ptr(tat);
             }
@@ -125,15 +126,15 @@ class mail_outbox : unpadded_mail_outbox {
         } else {
             // There is only one item.  Some care is required to pop it.
             my_first = NULL;
-            if( (proxy_ptr*)__TBB_CompareAndSwapW(&my_last, (intptr_t)&my_first,
-                                (intptr_t)&first->next_in_mailbox) == &first->next_in_mailbox )
+            if( as_atomic(my_last).compare_and_swap(&my_first,&first->next_in_mailbox) == &first->next_in_mailbox )
             {
                 // Successfully transitioned mailbox from having one item to having none.
                 __TBB_ASSERT(!first->next_in_mailbox,NULL);
             } else {
                 // Some other thread updated my_last but has not filled in first->next_in_mailbox
                 // Wait until first item points to second item.
-                for( atomic_backoff backoff; !(second = first->next_in_mailbox); backoff.pause() ) {}
+                atomic_backoff backoff;
+                while( !(second = first->next_in_mailbox) ) backoff.pause();
                 my_first = second;
             }
         }
@@ -163,6 +164,7 @@ public:
         __TBB_ASSERT( !my_last, NULL );
         __TBB_ASSERT( !my_is_idle, NULL );
         my_last=&my_first;
+        suppress_unused_warning(pad);
     }
 
     //! Drain the mailbox 

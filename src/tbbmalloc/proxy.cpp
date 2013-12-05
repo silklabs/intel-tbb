@@ -139,6 +139,20 @@ int mallopt(int /*param*/, int /*value*/) __THROW
     return 1;
 }
 
+#if !__ANDROID__
+// Those non-standart functions are exported by GLIBC, and might be used
+// in conjunction with standart malloc/free, so we must ovberload them.
+// Bionic doesn't have them. Not removing from the linker scripts,
+// as absent entry points are ignored by the linker.
+void *__libc_malloc(size_t size) __attribute__ ((alias ("malloc")));
+void *__libc_realloc(void *ptr, size_t size) __attribute__ ((alias ("realloc")));
+void *__libc_calloc(size_t num, size_t size) __attribute__ ((alias ("calloc")));
+void __libc_free(void *ptr) __attribute__ ((alias ("free")));
+void *__libc_memalign(size_t alignment, size_t size) __attribute__ ((alias ("memalign")));
+void *__libc_pvalloc(size_t size) __attribute__ ((alias ("pvalloc")));
+void *__libc_valloc(size_t size) __attribute__ ((alias ("valloc")));
+#endif
+
 } /* extern "C" */
 
 #if __linux__

@@ -194,17 +194,16 @@ void micro_queue::push( const void* item, ticket k, concurrent_queue_base& base 
     }
 
     // wait for my turn
-    if( tail_counter!=k ) {
-        atomic_backoff backoff;
-        do {
-            backoff.pause();
-            // no memory. throws an exception; assumes concurrent_queue_rep::n_queue>1
-            if( tail_counter&0x1 ) {
+    if( tail_counter!=k ) // The developer insisted on keeping first check out of the backoff loop
+        for( atomic_backoff b(true);;b.pause() ) {
+            ticket tail = tail_counter;
+            if( tail==k ) break;
+            else if( tail&0x1 ) {
+                // no memory. throws an exception; assumes concurrent_queue_rep::n_queue>1
                 ++base.my_rep->n_invalid_entries;
                 throw_exception( eid_bad_last_alloc );
             }
-        } while( tail_counter!=k ) ;
-    }
+        }
 
     if( p ) { // page is newly allocated; insert in micro_queue
         spin_mutex::scoped_lock lock( page_mutex );

@@ -34,7 +34,7 @@
 #include "tbb/tbb_stddef.h"
 
 #ifndef LIBRARY_ASSERT
-    #define LIBRARY_ASSERT(x,y) __TBB_ASSERT(x,y)
+    #define LIBRARY_ASSERT(x,y) __TBB_ASSERT_EX(x,y)
 #endif /* !LIBRARY_ASSERT */
 
 /** By default, symbols declared and defined here go into namespace tbb::internal.
@@ -111,7 +111,7 @@ enum dynamic_link_error_t {
     dl_success = 0,
     dl_lib_not_found,     // char const * lib, dlerr_t err
     dl_sym_not_found,     // char const * sym, dlerr_t err
-                          // Note: dlerr_t depends on OS: it is char const * on Linux and Mac, int on Windows.
+                          // Note: dlerr_t depends on OS: it is char const * on Linux* and OS X*, int on Windows*.
     dl_sys_fail,          // char const * func, int err
     dl_buff_too_small     // none
 }; // dynamic_link_error_t

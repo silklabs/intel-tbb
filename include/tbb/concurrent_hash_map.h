@@ -76,6 +76,7 @@ namespace interface5 {
 
     //! @cond INTERNAL
     namespace internal {
+    using namespace tbb::internal;
 
 
     //! Type of a hash code.
@@ -285,8 +286,9 @@ namespace interface5 {
             if( sz >= mask ) { // TODO: add custom load_factor
                 segment_index_t new_seg = __TBB_Log2( mask+1 ); //optimized segment_index_of
                 __TBB_ASSERT( is_valid(my_table[new_seg-1]), "new allocations must not publish new mask until segment has allocated");
+                static const segment_ptr_t is_allocating = (segment_ptr_t)2;
                 if( !itt_hide_load_word(my_table[new_seg])
-                  && __TBB_CompareAndSwapW(&my_table[new_seg], 2, 0) == 0 )
+                  && as_atomic(my_table[new_seg]).compare_and_swap(is_allocating, NULL) == NULL )
                     return new_seg; // The value must be processed
             }
             return 0;
@@ -1004,10 +1006,9 @@ bool concurrent_hash_map<Key,T,HashCompare,A>::lookup( bool op_insert, const Key
         // TODO: the following seems as generic/regular operation
         // acquire the item
         if( !result->try_acquire( n->mutex, write ) ) {
-            // we are unlucky, prepare for longer wait
-            tbb::internal::atomic_backoff trials;
-            do {
-                if( !trials.bounded_pause() ) {
+            for( tbb::internal::atomic_backoff backoff(true);; ) {
+                if( result->try_acquire( n->mutex, write ) ) break;
+                if( !backoff.bounded_pause() ) {
                     // the wait takes really long, restart the operation
                     b.release();
                     __TBB_ASSERT( !op_insert || !return_value, "Can't acquire new item in locked bucket?" );
@@ -1015,7 +1016,7 @@ bool concurrent_hash_map<Key,T,HashCompare,A>::lookup( bool op_insert, const Key
                     m = (hashcode_t) itt_load_word_with_acquire( my_mask );
                     goto restart;
                 }
-            } while( !result->try_acquire( n->mutex, write ) );
+            }
         }
     }//lock scope
     result->my_node = n;

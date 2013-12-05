@@ -57,7 +57,7 @@ TBB_ASM.OBJ=
 MALLOC_ASM.OBJ=
 
 ifeq (ia64,$(arch))
-# Position-independent code (PIC) is a must on IA-64, even for regular (not shared) executables
+# Position-independent code (PIC) is a must on IA-64 architecture, even for regular (not shared) executables
     CPLUS_FLAGS += $(PIC_KEY)
 endif 
 

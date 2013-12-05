@@ -90,6 +90,7 @@
 namespace tbb {
 #if __TBB_TASK_ARENA
 namespace interface6 {
+class delegated_task;
 class wait_task;
 struct wait_body;
 }
@@ -202,7 +203,11 @@ inline void assert_task_valid( const task& task ) {
     __TBB_ASSERT( &task!=NULL, NULL );
     __TBB_ASSERT( !is_poisoned(&task), NULL );
     __TBB_ASSERT( (uintptr_t)&task % task_alignment == 0, "misaligned task" );
+#if __TBB_RECYCLE_TO_ENQUEUE
+    __TBB_ASSERT( (unsigned)task.state()<=(unsigned)task::to_enqueue, "corrupt task (invalid state)" );
+#else
     __TBB_ASSERT( (unsigned)task.state()<=(unsigned)task::recycle, "corrupt task (invalid state)" );
+#endif
 }
 
 #else /* !TBB_USE_ASSERT */
@@ -265,6 +270,7 @@ inline bool ConcurrentWaitsEnabled ( task& t ) { return false; }
 // arena_slot
 //------------------------------------------------------------------------
 struct arena_slot_line1 {
+    //TODO: make this tbb:atomic<>.
     //! Scheduler of the thread attached to the slot
     /** Marks the slot as busy, and is used to iterate through the schedulers belonging to this arena **/
     generic_scheduler* my_scheduler;
@@ -314,7 +320,7 @@ struct arena_slot : padded<arena_slot_line1>, padded<arena_slot_line2> {
     void allocate_task_pool( size_t n ) {
         size_t byte_size = ((n * sizeof(task*) + NFS_MaxLineSize - 1) / NFS_MaxLineSize) * NFS_MaxLineSize;
         my_task_pool_size = byte_size / sizeof(task*);
-        task_pool_ptr = (task**)NFS_Allocate( byte_size, 1, NULL );
+        task_pool_ptr = (task**)NFS_Allocate( 1, byte_size, NULL );
         // No need to clear the fresh deque since valid items are designated by the head and tail members.
         // But fill it with a canary pattern in the high vigilance debug mode.
         fill_with_canary_pattern( 0, my_task_pool_size );

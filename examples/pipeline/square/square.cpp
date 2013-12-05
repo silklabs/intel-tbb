@@ -40,6 +40,8 @@
 #include <cctype>
 #include "../../common/utility/utility.h"
 
+extern void generate_if_needed(const char*);
+
 using namespace std;
 
 //! Holds a slice of text.
@@ -244,13 +246,14 @@ int main( int argc, char* argv[] ) {
 
         utility::parse_cli_arguments(argc,argv,
             utility::cli_argument_pack()
-            //"-h" option for for displaying help is present implicitly
+            //"-h" option for displaying help is present implicitly
             .positional_arg(threads,"n-of-threads",utility::thread_number_range_desc)
             .positional_arg(InputFileName,"input-file","input file name")
             .positional_arg(OutputFileName,"output-file","output file name")
             .positional_arg(MAX_CHAR_PER_INPUT_SLICE, "max-slice-size","the maximum number of characters in one slice")
             .arg(silent,"silent","no output except elapsed time")
             );
+        generate_if_needed( InputFileName.c_str() );
 
         if ( threads.first ) {
             for(int p = threads.first;  p <= threads.last; p=threads.step(p) ) {

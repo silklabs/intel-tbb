@@ -117,7 +117,7 @@ static void TestTinyLock() {
         #else
         ASSERT( flags[i]==(i==8?1:i), NULL );
         #endif
-    __TBB_UnlockByte(flags[8], 0);
+    __TBB_UnlockByte(flags[8]);
     for( unsigned int i=0; i<16; ++i )
         ASSERT( flags[i] == (i==8?0:i), NULL );
 }

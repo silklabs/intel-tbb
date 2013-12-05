@@ -37,6 +37,8 @@
 #       define __ARCH_ipf 1
 #   elif defined(_M_IX86)||defined(__i386__) // the latter for MinGW support
 #       define __ARCH_x86_32 1
+#   elif defined(_M_ARM)
+#       define __ARCH_other 1
 #   else
 #       error Unknown processor architecture for Windows
 #   endif

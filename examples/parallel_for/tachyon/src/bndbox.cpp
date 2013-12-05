@@ -122,7 +122,7 @@ static void bndbox_intersect(bndbox * bx, ray * ry) {
 
   /* eliminate bounded rays whose bounds do not intersect  */
   /* the bounds of the box..                               */
-  if (ry->flags |= RT_RAY_BOUNDED) {
+  if (ry->flags & RT_RAY_BOUNDED) {
     if ((ry->s.x > bx->max.x) && (ry->e.x > bx->max.x)) return;
     if ((ry->s.x < bx->min.x) && (ry->e.x < bx->min.x)) return;
   

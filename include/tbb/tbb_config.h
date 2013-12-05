@@ -72,7 +72,7 @@
     /** On Windows environment when using Intel C++ compiler with Visual Studio 2010*,
         the C++0x features supported by Visual C++ 2010 are enabled by default
         TODO: find a way to get know if c++0x mode is specified in command line on windows **/
-    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    ( __GXX_EXPERIMENTAL_CXX0X__ && __VARIADIC_TEMPLATES )
+    #define __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT    ( __VARIADIC_TEMPLATES && (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER) )
     #define __TBB_CPP11_RVALUE_REF_PRESENT            ( (__GXX_EXPERIMENTAL_CXX0X__ || _MSC_VER >= 1600) && (__INTEL_COMPILER >= 1200) )
     #if  _MSC_VER >= 1600
         #define __TBB_EXCEPTION_PTR_PRESENT           ( __INTEL_COMPILER > 1300                                                \
@@ -83,9 +83,9 @@
      * Because of that ICC 12.1 does not support C++11 mode with with gcc 4.6. (or higher)
      * , and therefore does not  define __GXX_EXPERIMENTAL_CXX0X__ macro**/
     #elif (__TBB_GCC_VERSION >= 40404) && (__TBB_GCC_VERSION < 40600)
-        #define __TBB_EXCEPTION_PTR_PRESENT        ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200 )
+        #define __TBB_EXCEPTION_PTR_PRESENT           ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200 )
     #elif (__TBB_GCC_VERSION >= 40600)
-        #define __TBB_EXCEPTION_PTR_PRESENT        ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300 )
+        #define __TBB_EXCEPTION_PTR_PRESENT           ( __GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300 )
     #else
         #define __TBB_EXCEPTION_PTR_PRESENT           0
     #endif
@@ -245,8 +245,8 @@
     #if __GNUC__==4 && __GNUC_MINOR__>=4 && __GXX_EXPERIMENTAL_CXX0X__
         #define TBB_IMPLEMENT_CPP0X 0
     #elif __clang__ && __cplusplus >= 201103L
-        //TODO: consider introducing separate macroses for each file?
-        //prevent injection of according tbb names into std:: namespace if native headers are present
+        //TODO: consider introducing separate macros for each file?
+        //prevent injection of corresponding tbb names into std:: namespace if native headers are present
         #if __has_include(<thread>) || __has_include(<condition_variable>)
             #define TBB_IMPLEMENT_CPP0X 0
         #else
@@ -314,6 +314,7 @@
 #if TBB_PREVIEW_TASK_ARENA
     #define TBB_PREVIEW_LOCAL_OBSERVER 1
     #define __TBB_NO_IMPLICIT_LINKAGE 1
+    #define __TBB_RECYCLE_TO_ENQUEUE 1
     #define __TBB_TASK_PRIORITY 0 // TODO: it will be removed in next versions
     #if !__TBB_SCHEDULER_OBSERVER
         #error TBB_PREVIEW_TASK_ARENA requires __TBB_SCHEDULER_OBSERVER to be enabled
@@ -419,7 +420,7 @@
 #endif
 
 //TODO: recheck for different clang versions 
-#if __GLIBC__==2 && __GLIBC_MINOR__==3 || __MINGW32__ || (__APPLE__ && (__clang__ || __INTEL_COMPILER==1200 && !TBB_USE_DEBUG))
+#if __GLIBC__==2 && __GLIBC_MINOR__==3 || __MINGW32__ || (__APPLE__ && ( __INTEL_COMPILER==1200 && !TBB_USE_DEBUG))
     /** Macro controlling EH usages in TBB tests.
         Some older versions of glibc crash when exception handling happens concurrently. **/
     #define __TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN 1

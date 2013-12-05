@@ -161,6 +161,14 @@ class tbb_exception : public std::exception
     void* operator new ( size_t );
 
 public:
+#if __clang__
+    // At -O3 or even -O2 optimization level, Clang may fully throw away an empty destructor
+    // of tbb_exception from destructors of derived classes. As a result, it does not create
+    // vtable for tbb_exception, which is a required part of TBB binary interface.
+    // Making the destructor non-empty (with just a semicolon) prevents that optimization.
+    ~tbb_exception() throw() { /* keep the semicolon! */ ; }
+#endif
+
     //! Creates and returns pointer to the deep copy of this exception object.
     /** Move semantics is allowed. **/
     virtual tbb_exception* move () throw() = 0;

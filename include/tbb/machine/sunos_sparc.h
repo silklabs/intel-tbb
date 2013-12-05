@@ -37,7 +37,9 @@
 #include <unistd.h>
 
 #define __TBB_WORDSIZE 8
-#define __TBB_BIG_ENDIAN 1 // assumption (hardware may support page-specific bi-endianness)
+// Big endian is assumed for SPARC.
+// While hardware may support page-specific bi-endianness, only big endian pages may be exposed to TBB  
+#define __TBB_ENDIANNESS __TBB_ENDIAN_BIG
 
 /** To those working on SPARC hardware. Consider relaxing acquire and release
     consistency helpers to no-op (as this port covers TSO mode only). **/

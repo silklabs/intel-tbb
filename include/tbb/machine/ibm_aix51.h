@@ -35,7 +35,7 @@
 #define __TBB_machine_ibm_aix51_H
 
 #define __TBB_WORDSIZE 8
-#define __TBB_BIG_ENDIAN 1 // assumption based on operating system
+#define __TBB_ENDIANNESS __TBB_ENDIAN_BIG // assumption based on operating system
 
 #include <stdint.h>
 #include <unistd.h>

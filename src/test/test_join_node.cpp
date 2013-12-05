@@ -26,22 +26,10 @@
     the GNU General Public License.
 */
 
-#if _MSC_VER
-// Name length is limited to avoid "decorated name length exceeded, name was truncated" warning.
-#define _VARIADIC_MAX 8
-#endif
-
 #include "harness.h"
 
 #include "tbb/flow_graph.h"
 #include "tbb/task_scheduler_init.h"
-
-// the tuple-based tests with more inputs take a long time to compile.  If changes
-// are made to the tuple implementation or any switch that controls it, the test
-// should be compiled with COMPREHENSIVE_TEST == 1 to ensure all tuple sizes are tested.
-#ifndef COMPREHENSIVE_TEST
-#define COMPREHENSIVE_TEST 0
-#endif
 
 //
 // Tests
@@ -197,6 +185,7 @@ public:
     static void destroy(JType *p) { delete p; }
 };
 
+#if MAX_TUPLE_TEST_SIZE >= 3
 template<typename JType>
 class makeJoin<3,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -214,7 +203,8 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
-
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 4
 template<typename JType>
 class makeJoin<4,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -234,7 +224,8 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
-
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
 template<typename JType>
 class makeJoin<5,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -256,7 +247,8 @@ public:
     }
     static void destroy(JType *p) { delete p; }
 };
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
 template<typename JType>
 class makeJoin<6,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -282,7 +274,7 @@ public:
 };
 #endif
 
-#if __TBB_VARIADIC_MAX >= 7
+#if MAX_TUPLE_TEST_SIZE >= 7
 template<typename JType>
 class makeJoin<7,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -310,7 +302,7 @@ public:
 };
 #endif
 
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
 template<typename JType>
 class makeJoin<8,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -340,7 +332,7 @@ public:
 };
 #endif
 
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
 template<typename JType>
 class makeJoin<9,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -372,7 +364,7 @@ public:
 };
 #endif
 
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
 template<typename JType>
 class makeJoin<10,JType,tbb::flow::tag_matching> {
     typedef typename JType::output_type TType;
@@ -618,11 +610,11 @@ template<typename JType, tbb::flow::graph_buffer_policy JP>
 class parallel_test {
 public:
     typedef typename JType::output_type TType;
-    static const int SIZE = tbb::flow::tuple_size<TType>::value;
+    static const int TUPLE_SIZE = tbb::flow::tuple_size<TType>::value;
     static const tbb::flow::graph_buffer_policy jp = JP;
     static void test() {
         TType v;
-        source_node_helper<SIZE,JType>::print_remark("Parallel test of join_node");
+        source_node_helper<TUPLE_SIZE,JType>::print_remark("Parallel test of join_node");
         REMARK(" >\n");
         for(int i=0; i < MaxPorts; ++i) {
             for(int j=0; j < MaxNSources; ++j) {
@@ -633,39 +625,39 @@ public:
             tbb::flow::graph g;
             // JType my_join(g);
             bool not_out_of_order = (nInputs == 1) && (jp != tbb::flow::tag_matching);
-            JType* my_join = makeJoin<SIZE,JType,JP>::create(g);
+            JType* my_join = makeJoin<TUPLE_SIZE,JType,JP>::create(g);
             tbb::flow::queue_node<TType> outq1(g);
             tbb::flow::queue_node<TType> outq2(g);
 
             tbb::flow::make_edge( *my_join, outq1 );
             tbb::flow::make_edge( *my_join, outq2 );
 
-            source_node_helper<SIZE, JType>::add_source_nodes((*my_join), g, nInputs);
+            source_node_helper<TUPLE_SIZE, JType>::add_source_nodes((*my_join), g, nInputs);
 
             g.wait_for_all();
 
-            reset_outputCheck(SIZE, Count);
+            reset_outputCheck(TUPLE_SIZE, Count);
             for(int i=0; i < Count; ++i) {
                 ASSERT(outq1.try_get(v), NULL);
-                source_node_helper<SIZE, JType>::check_value(i, v, not_out_of_order);
+                source_node_helper<TUPLE_SIZE, JType>::check_value(i, v, not_out_of_order);
             }
 
-            check_outputCheck(SIZE, Count);
-            reset_outputCheck(SIZE, Count);
+            check_outputCheck(TUPLE_SIZE, Count);
+            reset_outputCheck(TUPLE_SIZE, Count);
 
             for(int i=0; i < Count; i++) {
                 ASSERT(outq2.try_get(v), NULL);;
-                source_node_helper<SIZE, JType>::check_value(i, v, not_out_of_order);
+                source_node_helper<TUPLE_SIZE, JType>::check_value(i, v, not_out_of_order);
             }
-            check_outputCheck(SIZE, Count);
+            check_outputCheck(TUPLE_SIZE, Count);
 
             ASSERT(!outq1.try_get(v), NULL);
             ASSERT(!outq2.try_get(v), NULL);
 
-            source_node_helper<SIZE, JType>::remove_source_nodes((*my_join), nInputs);
+            source_node_helper<TUPLE_SIZE, JType>::remove_source_nodes((*my_join), nInputs);
             tbb::flow::remove_edge( *my_join, outq1 );
             tbb::flow::remove_edge( *my_join, outq2 );
-            makeJoin<SIZE,JType,JP>::destroy(my_join);
+            makeJoin<TUPLE_SIZE,JType,JP>::destroy(my_join);
         }
     }
 };
@@ -755,9 +747,9 @@ public:
 template<typename JType, tbb::flow::graph_buffer_policy JP>
 void test_one_serial( JType &my_join, tbb::flow::graph &g) {
     typedef typename JType::output_type TType;
-    static const int SIZE = tbb::flow::tuple_size<TType>::value;
+    static const int TUPLE_SIZE = tbb::flow::tuple_size<TType>::value;
     std::vector<bool> flags;
-    serial_queue_helper<SIZE, JType>::add_queue_nodes(g,my_join);
+    serial_queue_helper<TUPLE_SIZE, JType>::add_queue_nodes(g,my_join);
     typedef TType q3_input_type;
     tbb::flow::queue_node< q3_input_type >  q3(g);
 
@@ -766,7 +758,7 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
     // fill each queue with its value one-at-a-time
     flags.clear();
     for (int i = 0; i < Count; ++i ) {
-        serial_queue_helper<SIZE,JType>::put_one_queue_val(i);
+        serial_queue_helper<TUPLE_SIZE,JType>::put_one_queue_val(i);
         flags.push_back(false);
     }
 
@@ -779,11 +771,11 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
         if(jp == tbb::flow::tag_matching) {
             // because we look up tags in the hash table, the output may be out of order.
             int j = int(tbb::flow::get<0>(v)) / 2;  // figure what the index should be
-            serial_queue_helper<SIZE,JType>::check_queue_value(j, v);
+            serial_queue_helper<TUPLE_SIZE,JType>::check_queue_value(j, v);
             flags[j] = true;
         }
         else {
-            serial_queue_helper<SIZE,JType>::check_queue_value(i, v);
+            serial_queue_helper<TUPLE_SIZE,JType>::check_queue_value(i, v);
         }
     }
 
@@ -795,7 +787,7 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
     }
 
     // fill each queue completely before filling the next.
-    serial_queue_helper<SIZE, JType>::fill_one_queue(Count);
+    serial_queue_helper<TUPLE_SIZE, JType>::fill_one_queue(Count);
 
     g.wait_for_all();
     for (int i = 0; i < Count; ++i ) {
@@ -804,11 +796,11 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
         ASSERT(q3.try_get( v ), "Error in try_get()");
         if(jp == tbb::flow::tag_matching) {
             int j = int(tbb::flow::get<0>(v)) / 2;
-            serial_queue_helper<SIZE,JType>::check_queue_value(j, v);
+            serial_queue_helper<TUPLE_SIZE,JType>::check_queue_value(j, v);
             flags[i] = true;
         }
         else {
-            serial_queue_helper<SIZE,JType>::check_queue_value(i, v);
+            serial_queue_helper<TUPLE_SIZE,JType>::check_queue_value(i, v);
         }
     }
 
@@ -818,28 +810,28 @@ void test_one_serial( JType &my_join, tbb::flow::graph &g) {
         }
     }
 
-    serial_queue_helper<SIZE, JType>::remove_queue_nodes(my_join);
+    serial_queue_helper<TUPLE_SIZE, JType>::remove_queue_nodes(my_join);
 
 }
 
 template<typename JType, tbb::flow::graph_buffer_policy JP>
 class serial_test {
     typedef typename JType::output_type TType;
-    static const int SIZE = tbb::flow::tuple_size<TType>::value;
+    static const int TUPLE_SIZE = tbb::flow::tuple_size<TType>::value;
     static const int ELEMS = 3;
 public:
 static void test() {
     tbb::flow::graph g;
     std::vector<bool> flags;
     flags.reserve(Count);
-    JType* my_join = makeJoin<SIZE,JType,JP>::create(g);
-    serial_queue_helper<SIZE, JType>::print_remark(); REMARK(" >\n");
+    JType* my_join = makeJoin<TUPLE_SIZE,JType,JP>::create(g);
+    serial_queue_helper<TUPLE_SIZE, JType>::print_remark(); REMARK(" >\n");
 
     test_one_serial<JType,JP>( *my_join, g);
     // build the vector with copy construction from the used join node.
     std::vector<JType>join_vector(ELEMS, *my_join);
     // destroy the tired old join_node in case we're accidentally reusing pieces of it.
-    makeJoin<SIZE,JType,JP>::destroy(my_join);
+    makeJoin<TUPLE_SIZE,JType,JP>::destroy(my_join);
 
 
     for(int e = 0; e < ELEMS; ++e) {  // exercise each of the vector elements
@@ -1164,82 +1156,89 @@ int TestMain() {
    for (int p = 0; p < 2; ++p) {
        REMARK("reserving\n");
        generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::reserving >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 4
        generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::reserving >::do_test();
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
        generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::reserving >::do_test();
 #endif
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
        generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::reserving >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
        generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::reserving >::do_test();
 #endif
-#endif
        generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::reserving >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 3
        generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::reserving >::do_test();
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::reserving >::do_test();
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 7
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 7
        generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::reserving >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
        generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::reserving >::do_test();
-#endif
 #endif
        REMARK("queueing\n");
        generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::queueing >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 4
        generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::queueing >::do_test();
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
        generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::queueing >::do_test();
 #endif
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
        generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::queueing >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
        generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::queueing >::do_test();
 #endif
-#endif
        generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::queueing >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 3
        generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::queueing >::do_test();
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::queueing >::do_test();
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 7
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 7
        generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::queueing >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
        generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::queueing >::do_test();
-#endif
 #endif
        REMARK("tag_matching\n");
        generate_test<serial_test, tbb::flow::tuple<float, double>, tbb::flow::tag_matching >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 4
        generate_test<serial_test, tbb::flow::tuple<float, double, int, long>, tbb::flow::tag_matching >::do_test();
-#if __TBB_VARIADIC_MAX >= 6
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 6
        generate_test<serial_test, tbb::flow::tuple<double, double, int, long, int, short>, tbb::flow::tag_matching >::do_test();
 #endif
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 8
+#if MAX_TUPLE_TEST_SIZE >= 8
        generate_test<serial_test, tbb::flow::tuple<float, double, double, double, float, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 10
+#if MAX_TUPLE_TEST_SIZE >= 10
        generate_test<serial_test, tbb::flow::tuple<float, double, int, double, double, float, long, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
-#endif
        generate_test<parallel_test, tbb::flow::tuple<float, double>, tbb::flow::tag_matching >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 3
        generate_test<parallel_test, tbb::flow::tuple<float, int, long>, tbb::flow::tag_matching >::do_test();
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_test<parallel_test, tbb::flow::tuple<double, double, int, int, short>, tbb::flow::tag_matching >::do_test();
-#if COMPREHENSIVE_TEST
-#if __TBB_VARIADIC_MAX >= 7
+#endif
+#if MAX_TUPLE_TEST_SIZE >= 7
        generate_test<parallel_test, tbb::flow::tuple<float, int, double, float, long, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
-#if __TBB_VARIADIC_MAX >= 9
+#if MAX_TUPLE_TEST_SIZE >= 9
        generate_test<parallel_test, tbb::flow::tuple<float, double, int, double, double, long, int, float, long>, tbb::flow::tag_matching >::do_test();
 #endif
-#endif
-
        generate_recirc_test<tbb::flow::tuple<float,double> >::do_test();
+#if MAX_TUPLE_TEST_SIZE >= 5
        generate_recirc_test<tbb::flow::tuple<double, double, int, int, short> >::do_test();
+#endif
    }
    return Harness::Done;
 }

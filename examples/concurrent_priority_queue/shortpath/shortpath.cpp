@@ -26,9 +26,14 @@
     the GNU General Public License.
 */
 
+// This header should come before any other one.
+// For details, see Known Issues in the Release Notes.
+#include "tbb/tbb_stddef.h"
+
 #include <cstdio>
 #include <vector>
 #include <math.h>
+
 #include "tbb/atomic.h"
 #include "tbb/tick_count.h"
 #include "tbb/task_scheduler_init.h"
@@ -327,7 +332,7 @@ int main(int argc, char *argv[]) {
         utility::thread_number_range threads(get_default_num_threads);
         utility::parse_cli_arguments(argc, argv,
                                      utility::cli_argument_pack()
-                                     //"-h" option for for displaying help is present implicitly
+                                     //"-h" option for displaying help is present implicitly
                                      .positional_arg(threads,"#threads",utility::thread_number_range_desc)
                                      .arg(verbose,"verbose","   print diagnostic output to screen")
                                      .arg(silent,"silent","    limits output to timing info; overrides verbose")
