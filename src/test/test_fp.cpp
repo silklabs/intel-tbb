@@ -375,17 +375,56 @@ void TestContextFpuEnvBody::operator()( const tbb::blocked_range<int> &r ) const
 class TestContextFpuEnvNativeLoopBody {
 public:
     void operator() ( int arenaNum ) const {
-        roundingModes[numModes+arenaNum] = roundingModes[arenaNum%numModes];
-        sseModes[numModes+arenaNum] = sseModes[arenaNum%numModes];
-        SetRoundingMode( roundingModes[numModes+arenaNum] );
-        SetSseMode( sseModes[numModes+arenaNum] );
-
+        SetMode(numModes+arenaNum);
         tbb::task_scheduler_init init;
         tbb::task::spawn_root_and_wait( *new (tbb::task::allocate_root()) TestContextFpuEnvTask( arenaNum, numModes+arenaNum ) );
     }
 };
 
+#if TBB_USE_EXCEPTIONS
+const int NUM_ITERS = 1000;
+class TestContextFpuEnvEhBody {
+    int mode;
+    int eh_iter;
+    int depth;
+public:
+    TestContextFpuEnvEhBody( int _mode, int _eh_iter, int _depth = 0 ) : mode(_mode), eh_iter(_eh_iter), depth(_depth) {}
+    void operator()( const tbb::blocked_range<int> &r ) const {
+        AssertMode( mode );
+        if ( depth < 1 ) {
+            const int newMode1 = SetNextMode( mode, 1 );
+            tbb::task_group_context ctx;
+            ctx.capture_fp_settings();
+            const int newMode2 = SetNextMode( newMode1, 1 );
+            try {
+                tbb::parallel_for( tbb::blocked_range<int>(0, NUM_ITERS), TestContextFpuEnvEhBody(newMode1,rand()%NUM_ITERS,1), tbb::simple_partitioner(), ctx );
+            } catch (...) {
+                AssertMode( newMode2 );
+                if ( r.begin() == eh_iter ) throw;
+            }
+            AssertMode( newMode2 );
+            SetMode( mode );
+        } else if ( r.begin() == eh_iter ) throw 0;
+    }
+};
+
+class TestContextFpuEnvEhNativeLoopBody {
+public:
+    void operator() ( int arenaNum ) const {
+        SetMode( arenaNum%numModes );
+        try {
+            tbb::parallel_for( tbb::blocked_range<int>(0, NUM_ITERS), TestContextFpuEnvEhBody((arenaNum+1)%numModes,rand()%NUM_ITERS),
+                tbb::simple_partitioner(), *contexts[(arenaNum+1)%numModes] );
+            ASSERT( false, "parallel_for has not thrown an exception." );
+        } catch (...) {
+            AssertMode( arenaNum%numModes );
+        }
+    }
+};
+#endif /* TBB_USE_EXCEPTIONS */
+
 void TestContextFpuEnv() {
+    // Prepare contexts' fp modes.
     for ( int i = 0, modeNum = 0; i < NumRoundingModes; ++i ) {
         const int roundingMode = RoundingModes[i];
         SetRoundingMode( roundingMode );
@@ -399,7 +438,15 @@ void TestContextFpuEnv() {
             sseModes[modeNum] = sseMode;
         }
     }
+    // Prepare arenas' fp modes.
+    for ( int arenaNum = 0; arenaNum < numArenas; ++arenaNum ) {
+        roundingModes[numModes+arenaNum] = roundingModes[arenaNum%numModes];
+        sseModes[numModes+arenaNum] = sseModes[arenaNum%numModes];
+    }
     NativeParallelFor( numArenas, TestContextFpuEnvNativeLoopBody() );
+#if TBB_USE_EXCEPTIONS
+    NativeParallelFor( numArenas, TestContextFpuEnvEhNativeLoopBody() );
+#endif
     for ( int modeNum = 0; modeNum < numModes; ++modeNum )
         delete contexts[modeNum];
 }

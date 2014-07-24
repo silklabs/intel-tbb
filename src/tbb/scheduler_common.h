@@ -96,7 +96,6 @@ namespace internal {
 class task_arena_base;
 class delegated_task;
 class wait_task;
-struct wait_body;
 }}
 namespace internal {
 using namespace interface7::internal;
@@ -191,7 +190,11 @@ enum free_task_hint {
     small_task=2,
     //! Bitwise-OR of local_task and small_task.
     /** Task should be returned to free list of this scheduler. */
-    small_local_task=3
+    small_local_task=3,
+    //! Disable caching for a small task.
+    no_cache = 4,
+    //! Task is known to be a small task and must not be cached.
+    no_cache_small_task = no_cache | small_task
 };
 
 //------------------------------------------------------------------------
@@ -367,7 +370,7 @@ public:
     //   2. The user is allowed to recapture different FPU settings to context so 'current FPU settings' inside
     //   dispatch loop may become invalid.
     // But do we really want to improve the fenv implementation? It seems to be better to replace the fenv implementation
-    // with a platform specifc implementation.
+    // with a platform specific implementation.
     void operator=( const cpu_ctl_env &src ) {
         __TBB_ASSERT( src.my_fenv_ptr, NULL );
         if ( !my_fenv_ptr )
@@ -398,7 +401,37 @@ struct task_group_context_accessor : tbb::internal::no_copy {
     task_group_context_accessor( tbb::task_group_context &ctx ) :
         my_cpu_ctl_env( *punned_cast<cpu_ctl_env*>(&ctx.my_cpu_ctl_env) ) {}
 };
-#endif
+class cpu_ctl_env_helper {
+    cpu_ctl_env guard_cpu_ctl_env;
+    cpu_ctl_env curr_cpu_ctl_env;
+public:
+    cpu_ctl_env_helper() {
+        guard_cpu_ctl_env.get_env();
+        curr_cpu_ctl_env = guard_cpu_ctl_env;
+    }
+    ~cpu_ctl_env_helper() {
+        if ( curr_cpu_ctl_env != guard_cpu_ctl_env )
+            guard_cpu_ctl_env.set_env();
+    }
+    void set_env( task_group_context &ctx ) {
+        if ( task_group_context_accessor(ctx).my_cpu_ctl_env != curr_cpu_ctl_env ) {
+            curr_cpu_ctl_env = task_group_context_accessor(ctx).my_cpu_ctl_env;
+            curr_cpu_ctl_env.set_env();
+        }
+    }
+    void restore_default() {
+        if ( curr_cpu_ctl_env != guard_cpu_ctl_env ) {
+            guard_cpu_ctl_env.set_env();
+            curr_cpu_ctl_env = guard_cpu_ctl_env;
+        }
+    }
+};
+#else
+struct cpu_ctl_env_helper {
+    void set_env( __TBB_CONTEXT_ARG1(task_group_context &) ) {}
+    void restore_default() {}
+};
+#endif /* __TBB_FP_CONTEXT */
 
 } // namespace internal
 } // namespace tbb

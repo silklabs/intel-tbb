@@ -595,7 +595,7 @@ namespace interface6 {
 
         template<typename T>
         struct destruct_only: tbb::internal::no_copy {
-            tbb::aligned_space<T,1> value;
+            tbb::aligned_space<T> value;
             ~destruct_only() {value.begin()[0].~T();}
         };
 

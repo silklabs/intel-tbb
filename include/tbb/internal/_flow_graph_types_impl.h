@@ -306,12 +306,12 @@ template<class T> struct alignment_of {
 
 template< size_t N, class Tuple, template<class> class Selector > struct pick_tuple_max {
     typedef typename pick_tuple_max<N-1, Tuple, Selector>::type LeftMaxType;
-    typedef typename tuple_element<N-1, Tuple>::type ThisType;
+    typedef typename tbb::flow::tuple_element<N-1, Tuple>::type ThisType;
     typedef typename pick_max<Selector, LeftMaxType, ThisType>::type type;
 };
 
 template< class Tuple, template<class> class Selector > struct pick_tuple_max<0, Tuple, Selector> {
-    typedef typename tuple_element<0, Tuple>::type type;
+    typedef typename tbb::flow::tuple_element<0, Tuple>::type type;
 };
 
 // is the specified type included in a tuple?
@@ -321,13 +321,13 @@ template<class W>          struct is_same_type<W,W> { static const bool value = 
 
 template<class Q, size_t N, class Tuple>
 struct is_element_of {
-    typedef typename tuple_element<N-1, Tuple>::type T_i;
+    typedef typename tbb::flow::tuple_element<N-1, Tuple>::type T_i;
     static const bool value = is_same_type<Q,T_i>::value || is_element_of<Q,N-1,Tuple>::value;
 };
 
 template<class Q, class Tuple>
 struct is_element_of<Q,0,Tuple> {
-    typedef typename tuple_element<0, Tuple>::type T_i;
+    typedef typename tbb::flow::tuple_element<0, Tuple>::type T_i;
     static const bool value = is_same_type<Q,T_i>::value;
 };
 
@@ -363,7 +363,7 @@ template<typename TagType, typename T0, typename T1=tagged_null_type, typename T
                            typename T4=tagged_null_type, typename T5=tagged_null_type, typename T6=tagged_null_type,
                            typename T7=tagged_null_type, typename T8=tagged_null_type, typename T9=tagged_null_type>
 class tagged_msg {
-    typedef tuple<T0, T1, T2, T3, T4
+    typedef tbb::flow::tuple<T0, T1, T2, T3, T4
                   #if __TBB_VARIADIC_MAX >= 6
                   , T5
                   #endif
@@ -383,7 +383,7 @@ class tagged_msg {
 
 private:
     class variant {
-        static const size_t N = tuple_size<Tuple>::value;
+        static const size_t N = tbb::flow::tuple_size<Tuple>::value;
         typedef typename pick_tuple_max<N, Tuple, alignment_of>::type AlignType;
         typedef typename pick_tuple_max<N, Tuple, size_of>::type MaxSizeType;
         static const size_t MaxNBytes = (sizeof(Wrapper<MaxSizeType>)+sizeof(AlignType)-1);
@@ -443,6 +443,11 @@ public:
 
     template<typename T, typename R>
     tagged_msg(T const &index, R const &value) : my_tag(index), my_msg(value) {}
+    
+    #if __TBB_CONST_REF_TO_ARRAY_TEMPLATE_PARAM_BROKEN
+    template<typename T, typename R, size_t N>
+    tagged_msg(T const &index,  R (&value)[N]) : my_tag(index), my_msg(value) {}
+    #endif
 
     void set_tag(TagType const &index) {my_tag = index;}
     TagType tag() const {return my_tag;}

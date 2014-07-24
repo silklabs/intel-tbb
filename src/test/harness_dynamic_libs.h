@@ -26,11 +26,19 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_config.h"
+
+// Include this header file before harness.h for HARNESS_SKIP_TEST to take effect
+#if !__TBB_DYNAMIC_LOAD_ENABLED
+#define HARNESS_SKIP_TEST 1
+#else
+
 #if _WIN32 || _WIN64
 #include "tbb/machine/windows_api.h"
 #else
 #include <dlfcn.h>
 #endif
+#include "harness_assert.h"
 
 namespace Harness {
 
@@ -118,3 +126,5 @@ FunctionAddress GetAddress(Harness::LIBRARY_HANDLE lib, const char *name)
 }
 
 }  // namespace Harness
+
+#endif // __TBB_DYNAMIC_LOAD_ENABLED

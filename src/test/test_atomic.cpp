@@ -303,7 +303,7 @@ namespace initialization_tests {
     template<typename T>
     struct test_initialization_fixture{
         typedef tbb::atomic<T> atomic_t;
-        tbb::aligned_space<atomic_t,1> non_zeroed_storage;
+        tbb::aligned_space<atomic_t> non_zeroed_storage;
         enum {fill_value = 0xFF };
         test_initialization_fixture(){
             memset(non_zeroed_storage.begin(),fill_value,sizeof(non_zeroed_storage));

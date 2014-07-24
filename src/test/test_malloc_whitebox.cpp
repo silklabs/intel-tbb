@@ -820,6 +820,11 @@ void TestCleanAllBuffers() {
 }
 /*---------------------------------------------------------------------------*/
 /*------------------------- Large Object Cache tests ------------------------*/
+#if _MSC_VER==1600 || _MSC_VER==1500
+  // ignore C4275: non dll-interface class 'stdext::exception' used as
+  // base for dll-interface class 'std::bad_cast'
+  #pragma warning (disable: 4275)
+#endif
 #include <vector>
 #include <list>
 

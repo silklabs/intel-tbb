@@ -287,6 +287,7 @@ enum priority_t {
 #endif /* !TBB_USE_CAPTURED_EXCEPTION */
 
 class task_scheduler_init;
+namespace interface7 { class task_arena; }
 
 //! Used to form groups of tasks
 /** @ingroup task_scheduling
@@ -313,6 +314,7 @@ class task_group_context : internal::no_copy {
 private:
     friend class internal::generic_scheduler;
     friend class task_scheduler_init;
+    friend class interface7::task_arena;
 
 #if TBB_USE_CAPTURED_EXCEPTION
     typedef tbb_exception exception_container_type;

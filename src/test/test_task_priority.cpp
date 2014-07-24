@@ -51,7 +51,7 @@ int MinBaseDepth = 8;
 int MaxBaseDepth = 10;
 int BaseDepth = 0;
 
-const int DesiredNumThreads = 16;
+const int DesiredNumThreads = 12;
 
 const int NumTests = 8;
 const int TestRepeats = 4;

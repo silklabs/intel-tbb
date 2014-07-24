@@ -216,7 +216,9 @@ public:
 protected:
     thread_bound_filter(mode filter_mode): 
          filter(static_cast<mode>(filter_mode | filter::filter_is_bound))
-    {}
+    {
+        __TBB_ASSERT(filter_mode & filter::filter_is_serial, "thread-bound filters must be serial");
+    }
 public:
     //! If a data item is available, invoke operator() on that item.  
     /** This interface is non-blocking.

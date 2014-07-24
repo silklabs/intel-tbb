@@ -113,7 +113,7 @@ static const size_t cache_line_size = tbb::internal::NFS_MaxLineSize;
 
 
 #if _MSC_VER && !defined(__INTEL_COMPILER)
-    // Suppress overzealous compiler warnings about uninstantiatble class
+    // Suppress overzealous compiler warnings about uninstantiable class
     #pragma warning(push)
     #pragma warning(disable:4510 4610)
 #endif
@@ -271,7 +271,7 @@ void private_worker::start_shutdown() {
 void private_worker::run() {
     my_server.propagate_chain_reaction();
 
-    // Transitting to st_normal here would require setting my_handle,
+    // Transiting to st_normal here would require setting my_handle,
     // which would create race with the launching thread and 
     // complications in handle management on Windows.
 

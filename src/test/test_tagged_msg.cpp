@@ -122,6 +122,7 @@ void RunTests() {
     tagged_msg_type i(1,3);
     check_type<int>::check_type_counter = 0;
     int z;
+    #if TBB_USE_EXCEPTIONS
     try {
         z = cast_to<int>(def); // disallowed (non-array returning int)
         ASSERT(false, "should not allow cast to int of non-array");
@@ -129,6 +130,7 @@ void RunTests() {
     catch(...) {
         REMARK("cast of non-array to int disallowed (okay)\n");
     }
+    #endif
     z = cast_to<int>(i);
     ASSERT(is_a<int>(i), "wrong type for i ( == int)");
     ASSERT(!(is_a<double>(i)), "Wrong type for i ( != double)");

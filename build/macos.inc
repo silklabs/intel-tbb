@@ -74,8 +74,8 @@ ifndef runtime
  export runtime:=cc$(gcc_version)_os$(os_version)
 endif
 
-native_compiler := gcc
-export compiler ?= gcc
+native_compiler := clang
+export compiler ?= clang
 debugger ?= gdb
 
 CMD=$(SHELL) -c

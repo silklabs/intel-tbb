@@ -58,7 +58,7 @@ namespace internal {
     public:
         Body my_body;
     private:
-        aligned_space<Range,1> my_range;
+        aligned_space<Range> my_range;
         //! Where to put result of last subrange, or NULL if not last subrange.
         Body* my_stuff_last;
     public:

@@ -129,7 +129,7 @@ private:
 #endif /* _WIN32||_WIN64 */
 
 
-//! for performance reasons, we want specialied binary_semaphore
+//! for performance reasons, we want specialized binary_semaphore
 #if _WIN32||_WIN64
 #if !__TBB_USE_SRWLOCK
 //! binary_semaphore for concurrent_monitor

@@ -339,6 +339,7 @@ const size_t MemoryPool::defaultGranularity;
 MallocMutex  MemoryPool::memPoolListLock;
 // TODO: move huge page status to default pool, because that's its states
 HugePagesStatus hugePages;
+static bool usedBySrcIncluded;
 
 // Slab block is 16KB-aligned. To prevent false sharing, separate locally-accessed
 // fields and fields commonly accessed by not owner threads.
@@ -1866,7 +1867,7 @@ void AllocControlledMode::initReadEnv(const char *envName, intptr_t defaultVal)
 
 void MemoryPool::initDefaultPool()
 {
-    long long hugePageSize = 0;
+    long long unsigned hugePageSize = 0;
 #if __linux__
     if (FILE *f = fopen("/proc/meminfo", "r")) {
         const int READ_BUF_SIZE = 100;
@@ -2742,7 +2743,8 @@ extern "C" void __TBB_mallocProcessShutdownNotification()
     for( int i=1; i<=nThreads && i<MAX_THREADS; ++i )
         STAT_print(i);
 #endif
-    MALLOC_ITT_FINI_ITTLIB();
+    if (!usedBySrcIncluded)
+        MALLOC_ITT_FINI_ITTLIB();
 }
 
 extern "C" void * scalable_malloc(size_t size)
@@ -3045,6 +3047,17 @@ extern "C" int scalable_allocation_mode(int param, intptr_t value)
         }
 #else
         return TBBMALLOC_NO_EFFECT;
+#endif
+#if __TBB_SOURCE_DIRECTLY_INCLUDED
+    } else if (param == TBBMALLOC_INTERNAL_SOURCE_INCLUDED) {
+        switch (value) {
+        case 0: // used by dynamic library
+        case 1: // used by static library or directly included sources
+            usedBySrcIncluded = value;
+            return TBBMALLOC_OK;
+        default:
+            return TBBMALLOC_INVALID_PARAM;
+        }
 #endif
     }
     return TBBMALLOC_INVALID_PARAM;

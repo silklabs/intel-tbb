@@ -149,7 +149,7 @@ public:
 };
 
 //! Depth is a relative depth of recursive division inside a range pool. Relative depth allows
-//! infinite absolute depth of the recursion for heavily imbalanced workloads with range represented
+//! infinite absolute depth of the recursion for heavily unbalanced workloads with range represented
 //! by a number that cannot fit into machine word.
 typedef unsigned char depth_t;
 

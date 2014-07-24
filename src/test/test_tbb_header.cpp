@@ -146,7 +146,7 @@ int TestMain ()
     #if __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN
         REPORT("Known issue: \"multiple definition\" linker error detection test skipped.\n");
     #endif
-    TestTypeDefinitionPresence2(aligned_space<int, 1> );
+    TestTypeDefinitionPresence( aligned_space<int> );
     TestTypeDefinitionPresence( atomic<int> );
     TestTypeDefinitionPresence( cache_aligned_allocator<int> );
     TestTypeDefinitionPresence( tbb_hash_compare<int> );

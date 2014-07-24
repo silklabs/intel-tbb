@@ -71,7 +71,7 @@ namespace tbb {
   passed between nodes in a graph.  These messages may contain data or
   simply act as signals that a predecessors has completed. The graph
   class and its associated node classes can be used to express such
-  applcations.
+  applications.
 */
 
 namespace tbb {
@@ -1136,7 +1136,8 @@ public:
 
     /* override */ bool register_successor( successor_type &s ) {
         spin_mutex::scoped_lock l( my_mutex );
-        if ( my_buffer_is_valid ) {
+        task* tp = this->my_graph.root_task();  // just to test if we are resetting
+        if (my_buffer_is_valid && tp) {
             // We have a valid value that must be forwarded immediately.
             if ( s.try_put( my_buffer ) || !s.register_predecessor( *this  ) ) {
                 // We add the successor: it accepted our put or it rejected it but won't let us become a predecessor

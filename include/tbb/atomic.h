@@ -425,7 +425,7 @@ struct atomic: internal::atomic_impl<T> {
 #if __TBB_ATOMIC_CTORS
     #define __TBB_DECL_ATOMIC(T)                                                                    \
         template<> struct atomic<T>: internal::atomic_impl_with_arithmetic<T,T,char> {              \
-            atomic() = default;                                                                             \
+            atomic() = default;                                                                     \
             constexpr atomic(T arg): internal::atomic_impl_with_arithmetic<T,T,char>(arg) {}        \
                                                                                                     \
             T operator=( T rhs ) {return store_with_release(rhs);}                                  \
@@ -458,7 +458,7 @@ __TBB_DECL_ATOMIC(unsigned long)
    perspective of /Wp64. */
 #define __TBB_DECL_ATOMIC_ALT(T,U) \
     template<> struct atomic<T>: internal::atomic_impl_with_arithmetic<T,T,char> {             \
-        atomic() = default ;                                                                            \
+        atomic() = default ;                                                                   \
         constexpr atomic(T arg): internal::atomic_impl_with_arithmetic<T,T,char>(arg) {}       \
         T operator=( U rhs ) {return store_with_release(T(rhs));}                              \
         atomic<T>& operator=( const atomic<T>& rhs ) {store_with_release(rhs); return *this;}  \
@@ -530,7 +530,7 @@ template <memory_semantics M, typename T>
 void store ( atomic<T>& a, T value ) { return a.template store<M>(value); }
 
 namespace interface6{
-//! Make an atomic for use in an initialization (list), as an alternative to zero-initializaton or normal assignment.
+//! Make an atomic for use in an initialization (list), as an alternative to zero-initialization or normal assignment.
 template<typename T>
 atomic<T> make_atomic(T t) {
     atomic<T> a;

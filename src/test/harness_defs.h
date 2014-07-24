@@ -120,6 +120,8 @@
 
 #define __TBB_CAS_8_CODEGEN_BROKEN (__TBB_x86_32 && __PIC__ && __TBB_GCC_VERSION == 40102 && !__INTEL_COMPILER)
 
+#define __TBB_THROW_FROM_DTOR_BROKEN (__clang__ &&  (__apple_build_version__ &&  __apple_build_version__ < 5000279 || __TBB_CLANG_VERSION && __TBB_CLANG_VERSION < 50000))
+
 #if __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN
   #define _EXCEPTION_PTR_H /* prevents exception_ptr.h inclusion */
   #define _GLIBCXX_NESTED_EXCEPTION_H /* prevents nested_exception.h inclusion */

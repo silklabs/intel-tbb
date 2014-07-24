@@ -430,7 +430,7 @@ void TestTaskHandle2 () {
     FIB_TEST_PROLOGUE();
     g_Sum = 0;
     task_group_type rg;
-    typedef tbb::aligned_space<handle_type,1> handle_space_t;
+    typedef tbb::aligned_space<handle_type> handle_space_t;
     handle_space_t *handles = new handle_space_t[numRepeats];
     handle_type *h = NULL;
 #if __TBB_ipf && __TBB_GCC_VERSION==40601
@@ -849,7 +849,11 @@ int TestMain () {
         TestEh2();
         TestStructuredWait();
         TestStructuredCancellation2<true>();
+#if !__TBB_THROW_FROM_DTOR_BROKEN
         TestStructuredCancellation2<false>();
+#else
+        REPORT("Known issue: TestStructuredCancellation2<false>() is skipped.\n");
+#endif
 #endif /* TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN */
 #if !TBBTEST_USE_TBB
         s->Release();

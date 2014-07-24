@@ -239,7 +239,7 @@ void interface5::internal::task_base::destroy( task& victim ) {
         parent->internal_decrement_ref_count();
         // Even if the last reference to *parent is removed, it should not be spawned (documented behavior).
     }
-    governor::local_scheduler()->free_task<no_hint>( victim );
+    governor::local_scheduler()->free_task<no_cache>( victim );
 }
 
 void task::spawn_and_wait_for_all( task_list& list ) {

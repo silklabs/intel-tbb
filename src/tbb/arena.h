@@ -189,7 +189,6 @@ private:
     friend class interface7::internal::task_arena_base; // declared in scheduler_common.h
     friend class interface7::internal::delegated_task;
     friend class interface7::internal::wait_task;
-    friend struct interface7::internal::wait_body;
 
     typedef padded<arena_base> base_type;
 
@@ -270,6 +269,9 @@ private:
     //! Check if recent priority changes may bring some tasks to the current priority level soon
     /** /param tasks_present indicates presence of tasks at any priority level. **/
     inline bool may_have_tasks ( generic_scheduler*, bool& tasks_present, bool& dequeuing_possible );
+
+    //! Puts offloaded tasks into global list of orphaned tasks
+    void orphan_offloaded_tasks ( generic_scheduler& s );
 #endif /* __TBB_TASK_PRIORITY */
 
 #if __TBB_COUNT_TASK_NODES

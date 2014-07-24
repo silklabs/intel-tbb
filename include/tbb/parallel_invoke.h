@@ -336,7 +336,7 @@ void parallel_invoke(const F0& f0, const F1& f1, const F2& f2, const F3& f3, con
     task_group_context context;
     parallel_invoke<F0, F1, F2, F3, F4, F5, F6>(f0, f1, f2, f3, f4, f5, f6, context);
 }
-// eigth arguments
+// eight arguments
 template<typename F0, typename F1, typename F2, typename F3, typename F4,
          typename F5, typename F6, typename F7>
 void parallel_invoke(const F0& f0, const F1& f1, const F2& f2, const F3& f3, const F4& f4,

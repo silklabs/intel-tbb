@@ -175,7 +175,7 @@ inline void AtomicUpdate(Arg &location, Arg newVal, const Compare &cmp)
 // (currenty, it fits BitMaskMin well, but not as suitable for BitMaskMax)
 template<unsigned NUM>
 class BitMaskBasic {
-    static const int SZ = (NUM-1)/(CHAR_BIT*sizeof(uintptr_t))+1;
+    static const unsigned SZ = (NUM-1)/(CHAR_BIT*sizeof(uintptr_t))+1;
     static const unsigned WORD_LEN = CHAR_BIT*sizeof(uintptr_t);
     uintptr_t mask[SZ];
 protected:
@@ -190,24 +190,25 @@ protected:
             AtomicAnd(&mask[i], ~(1ULL << pos));
     }
     int getMinTrue(unsigned startIdx) const {
-        size_t idx = startIdx / WORD_LEN;
-        uintptr_t curr;
+        unsigned idx = startIdx / WORD_LEN;
         int pos;
 
-        if (startIdx % WORD_LEN) { // clear bits before startIdx
+        if (startIdx % WORD_LEN) {
+            // only interested in part of a word, clear bits before startIdx
             pos = WORD_LEN - startIdx % WORD_LEN;
-            curr = mask[idx] & ((1ULL<<pos) - 1);
-        } else
-            curr = mask[idx];
-
-        for (int i=idx; i<SZ; i++, curr=mask[i]) {
-            if (-1 != (pos = BitScanRev(curr)))
-                return (i+1)*WORD_LEN - pos - 1;
+            uintptr_t actualMask = mask[idx] & (((uintptr_t)1<<pos) - 1);
+            idx++;
+            if (-1 != (pos = BitScanRev(actualMask)))
+                return idx*WORD_LEN - pos - 1;
         }
+
+        while (idx<SZ)
+            if (-1 != (pos = BitScanRev(mask[idx++])))
+                return idx*WORD_LEN - pos - 1;
         return -1;
     }
 public:
-    void reset() { for (int i=0; i<SZ; i++) mask[i] = 0; }
+    void reset() { for (unsigned i=0; i<SZ; i++) mask[i] = 0; }
 };
 
 template<unsigned NUM>
@@ -465,7 +466,8 @@ private:
 
             public:
                 OperationPreprocessor(CacheBin *bin) :
-                    lastGetOpTime(0), opGet(NULL), opClean(NULL), head(NULL), cleanTime(0), decrUsedSize(0), lclTime(0), isCleanAll(false), bin(bin) {}
+                    bin(bin), lclTime(0), opGet(NULL), opClean(NULL), cleanTime(0),
+                    lastGetOpTime(0), decrUsedSize(0), head(NULL), isCleanAll(false)  {}
                 void operator()(CacheBinOperation* opList);
                 uintptr_t getTimeRange() const { return -lclTime; }
 

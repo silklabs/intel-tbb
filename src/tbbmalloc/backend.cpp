@@ -139,9 +139,10 @@ void *Backend::allocRawMem(size_t &size) const
 void Backend::freeRawMem(void *object, size_t size) const
 {
     AtomicAdd((intptr_t&)totalMemSize, -size);
-    if (extMemPool->userPool())
+    if (extMemPool->userPool()) {
+        MALLOC_ASSERT(!extMemPool->fixedPool, "No free for fixed-size pools.");
         (*extMemPool->rawFree)(extMemPool->poolId, object, size);
-    else {
+    } else {
         hugePages.registerReleasing(size);
         freeRawMemory(object, size);
     }
@@ -1112,11 +1113,10 @@ void Backend::startUseBlock(MemRegion *region, FreeBlock *fBlock, bool addToBin)
 
 FreeBlock *Backend::addNewRegion(size_t size, bool exact, bool addToBin)
 {
-    // to guarantee that header is not overwritten in used blocks
-    MALLOC_ASSERT(sizeof(BlockMutexes) <= sizeof(BlockI), ASSERT_TEXT);
-    // to guarantee that block length is not conflicting with
-    // special values of GuardedSize
-    MALLOC_ASSERT(FreeBlock::minBlockSize > GuardedSize::MAX_SPEC_VAL, ASSERT_TEXT);
+    MALLOC_STATIC_ASSERT(sizeof(BlockMutexes) <= sizeof(BlockI),
+                 "Header must be not overwritten in used blocks");
+    MALLOC_ASSERT(FreeBlock::minBlockSize > GuardedSize::MAX_SPEC_VAL,
+          "Block length must not conflict with special values of GuardedSize");
     // "exact" means that not less than rawSize for block inside the region.
     // Reserve space for region header, worst case alignment
     // and last block mark.

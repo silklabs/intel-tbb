@@ -162,7 +162,7 @@ void market::wait_workers () {
 arena& market::create_arena ( unsigned max_num_workers, size_t stack_size ) {
     market &m = global_market( max_num_workers, stack_size ); // increases market's ref count
 #if __TBB_TASK_ARENA
-    // Prevent cutting an extra slot for task_arena(p,0) with default market (p-1 worketrs).
+    // Prevent cutting an extra slot for task_arena(p,0) with default market (p-1 workers).
     // This is a temporary workaround for 1968 until (TODO:) master slot reservation is reworked
     arena& a = arena::allocate_arena( m, min(max_num_workers, m.my_max_num_workers+1) );
 #else
@@ -551,7 +551,7 @@ void market::update_arena_top_priority ( arena& a, intptr_t new_priority ) {
     remove_arena_from_list(a);
     a.my_top_priority = new_priority;
     insert_arena_into_list(a);
-    ++a.my_reload_epoch;
+    ++a.my_reload_epoch; // TODO: synch with global reload epoch in order to optimize usage of local reload epoch
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
     // Arena's my_num_workers_present may remain positive for some time after its
     // my_num_workers_requested becomes zero. Thus the following two lines are

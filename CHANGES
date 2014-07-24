@@ -3,6 +3,34 @@ The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.2 Update 5
+TBB_INTERFACE_VERSION == 7005
+
+Changes (w.r.t. Intel TBB 4.2 Update 4):
+
+- The second template argument of class aligned_space<T,N> now is set
+    to 1 by default.
+
+Preview Features:
+
+- Better support for exception safety, task priorities and floating
+    point settings in class task_arena.
+- task_arena::current_slot() has been renamed to
+    task_arena::current_thread_index().
+
+Bugs fixed:
+
+- Task priority change possibly ignored by a worker thread entering
+    a nested parallel construct.
+- Memory leaks inside the task scheduler when running on
+    Intel(R) Xeon Phi(tm) coprocessor.
+
+Open-source contributions integrated:
+
+- Improved detection of X Window support for Intel TBB examples
+    and other feedback by Raf Schietekat.
+
+------------------------------------------------------------------------
 Intel TBB 4.2 Update 4
 TBB_INTERFACE_VERSION == 7004
 

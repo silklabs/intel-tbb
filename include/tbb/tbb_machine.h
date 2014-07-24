@@ -177,7 +177,7 @@ template<> struct atomic_selector<8> {
 #define __TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(M)                                        \
     inline void __TBB_machine_generic_store8##M(volatile void *ptr, int64_t value) {         \
         for(;;) {                                                                            \
-            int64_t result = *(volatile int64_t *)ptr;                                                \
+            int64_t result = *(volatile int64_t *)ptr;                                       \
             if( __TBB_machine_cmpswp8##M(ptr,value,result)==result ) break;                  \
         }                                                                                    \
     }                                                                                        \
@@ -231,8 +231,11 @@ template<> struct atomic_selector<8> {
 #elif __TBB_DEFINE_MIC
 
     #include "machine/mic_common.h"
-    //TODO: check if ICC atomic intrinsics are available for MIC
-    #include "machine/linux_intel64.h"
+    #if (TBB_USE_ICC_BUILTINS && __TBB_ICC_BUILTIN_ATOMICS_PRESENT)
+        #include "machine/icc_generic.h"
+    #else
+        #include "machine/linux_intel64.h"
+    #endif
 
 #elif __linux__ || __FreeBSD__ || __NetBSD__
 

@@ -63,7 +63,7 @@ struct scheduler_list_node_t {
 
 struct scheduler_state {
     //! Index of the arena slot the scheduler occupies now, or occupied last time.
-    size_t my_arena_index;
+    size_t my_arena_index; // TODO: make it unsigned and pair with my_affinity_id to fit into cache line
 
     //! Pointer to the slot in the arena we own at the moment.
     arena_slot* my_arena_slot;
@@ -96,6 +96,15 @@ struct scheduler_state {
     //! Last observer in the local observers list processed by this scheduler
     observer_proxy* my_last_local_observer;
 #endif /* __TBB_SCHEDULER_OBSERVER */
+#if __TBB_TASK_PRIORITY
+    //! Latest known highest priority of tasks in the market or arena.
+    /** Master threads currently tracks only tasks in their arenas, while workers
+        take into account global top priority (among all arenas in the market). **/
+    volatile intptr_t *my_ref_top_priority;
+
+    //! Pointer to market's (for workers) or current arena's (for the master) reload epoch counter.
+    volatile uintptr_t *my_ref_reload_epoch;
+#endif /* __TBB_TASK_PRIORITY */
 };
 
 //! Work stealing task scheduler.
@@ -283,8 +292,9 @@ public:
 #endif /* TBB_USE_ASSERT <= 1 */
 
 #if __TBB_TASK_ARENA
-    template<typename Body>
-    void nested_arena_execute(arena*, task*, bool, Body&);
+    void nested_arena_entry(arena*, task*, scheduler_state*, bool);
+    void nested_arena_exit(scheduler_state*, bool);
+    void wait_until_empty();
 #endif
 
     /*override*/ 
@@ -392,20 +402,12 @@ public:
     //! Returns reference priority used to decide whether a task should be offloaded.
     inline intptr_t effective_reference_priority () const;
 
-    //! Latest known highest priority of tasks in the market or arena.
-    /** Master threads currently tracks only tasks in their arenas, while workers
-        take into account global top priority (among all arenas in the market). **/
-    volatile intptr_t *my_ref_top_priority;
-
     // TODO: move into slots and fix is_out_of_work
     //! Task pool for offloading tasks with priorities lower than the current top priority.
     task* my_offloaded_tasks;
 
     //! Points to the last offloaded task in the my_offloaded_tasks list.
     task** my_offloaded_task_list_tail_link;
-
-    //! Pointer to market's (for workers) or current arena's (for the master) reload epoch counter.
-    volatile uintptr_t *my_ref_reload_epoch;
 
     //! Indicator of how recently the offload area was checked for the presence of top priority tasks.
     uintptr_t my_local_reload_epoch;
@@ -611,8 +613,7 @@ void generic_scheduler::commit_relocated_tasks ( size_t new_tail ) {
 template<free_task_hint hint>
 void generic_scheduler::free_task( task& t ) {
 #if __TBB_HOARD_NONLOCAL_TASKS
-    // TODO: remove the whole free_task_hint stuff when enabled permanently
-    static const free_task_hint h = no_hint;
+    static const int h = hint&(~local_task);
 #else
     static const free_task_hint h = hint;
 #endif
@@ -621,6 +622,7 @@ void generic_scheduler::free_task( task& t ) {
     // Verify that optimization hints are correct.
     __TBB_ASSERT( h!=small_local_task || p.origin==this, NULL );
     __TBB_ASSERT( !(h&small_task) || p.origin, NULL );
+    __TBB_ASSERT( !(h&local_task) || (!p.origin || uintptr_t(p.origin) > uintptr_t(4096)), "local_task means allocated");
     poison_value(p.depth);
     poison_value(p.ref_count);
     poison_pointer(p.owner);
@@ -630,17 +632,18 @@ void generic_scheduler::free_task( task& t ) {
         GATHER_STATISTIC(++my_counters.free_list_length);
         p.next = my_free_list;
         my_free_list = &t;
-    } else if( p.origin && uintptr_t(p.origin) < uintptr_t(4096) ) {
+    } else if( !(h&local_task) && p.origin && uintptr_t(p.origin) < uintptr_t(4096) ) {
         // a special value reserved for future use, do nothing since
         // origin is not pointing to a scheduler instance
     } else if( !(h&local_task) && p.origin ) {
         GATHER_STATISTIC(++my_counters.free_list_length);
 #if __TBB_HOARD_NONLOCAL_TASKS
-        p.next = my_nonlocal_free_list;
-        my_nonlocal_free_list = &t;
-#else
-        free_nonlocal_small_task(t);
+        if( !(h&no_cache) ) {
+            p.next = my_nonlocal_free_list;
+            my_nonlocal_free_list = &t;
+        } else
 #endif
+        free_nonlocal_small_task(t);
     } else {
         GATHER_STATISTIC(--my_counters.big_tasks);
         deallocate_task(t);

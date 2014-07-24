@@ -605,6 +605,12 @@
 #if __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT && __TBB_GCC_VERSION < 40700 && !defined(__INTEL_COMPILER) && !defined (__clang__)
     #define __TBB_ZERO_INIT_WITH_DEFAULTED_CTOR_BROKEN 1
 #endif
+
+#if _MSC_VER && _MSC_VER <= 1800 && !__INTEL_COMPILER
+    // With MSVC, when an array is passed by const reference to a template function,
+    // constness from the function parameter may get propagated to the template parameter.
+    #define __TBB_CONST_REF_TO_ARRAY_TEMPLATE_PARAM_BROKEN 1
+#endif
 /** End of __TBB_XXX_BROKEN macro section **/
 
 #if defined(_MSC_VER) && _MSC_VER>=1500 && !defined(__INTEL_COMPILER)

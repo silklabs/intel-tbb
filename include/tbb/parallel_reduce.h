@@ -59,7 +59,7 @@ namespace internal {
         bool has_right_zombie;
         const reduction_context my_context;
         Body* my_body;
-        aligned_space<Body,1> zombie_space;
+        aligned_space<Body> zombie_space;
         finish_reduce( reduction_context context_ ) :
             has_right_zombie(false), // TODO: substitute by flag_task::child_stolen?
             my_context(context_),

@@ -286,7 +286,7 @@ public:
     /** Must be called before arena::on_thread_leaving() **/
     void prepare_wait_workers() { ++my_ref_count; }
 
-    //! Wait workers termiantion
+    //! Wait workers termination
     void wait_workers ();
 
     //! Returns the requested stack size of worker threads.

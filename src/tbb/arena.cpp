@@ -70,7 +70,7 @@ void arena::process( generic_scheduler& s ) {
     s.my_arena_index = index;
     s.my_arena_slot = my_slots + index;
 #if __TBB_TASK_PRIORITY
-    s.my_local_reload_epoch = my_reload_epoch;
+    s.my_local_reload_epoch = *s.my_ref_reload_epoch;
     __TBB_ASSERT( !s.my_offloaded_tasks, NULL );
 #endif /* __TBB_TASK_PRIORITY */
     s.attach_mailbox( affinity_id(index+1) );
@@ -114,20 +114,8 @@ void arena::process( generic_scheduler& s ) {
     s.my_last_local_observer = NULL;
 #endif /* __TBB_SCHEDULER_OBSERVER */
 #if __TBB_TASK_PRIORITY
-    if ( s.my_offloaded_tasks ) {
-        GATHER_STATISTIC( ++s.my_counters.prio_orphanings );
-        ++my_abandonment_epoch;
-        __TBB_ASSERT( s.my_offloaded_task_list_tail_link && !*s.my_offloaded_task_list_tail_link, NULL );
-        task* orphans;
-        do {
-            orphans = const_cast<task*>(my_orphaned_tasks);
-            *s.my_offloaded_task_list_tail_link = orphans;
-        } while ( as_atomic(my_orphaned_tasks).compare_and_swap(s.my_offloaded_tasks, orphans) != orphans );
-        s.my_offloaded_tasks = NULL;
-#if TBB_USE_ASSERT
-        s.my_offloaded_task_list_tail_link = NULL;
-#endif /* TBB_USE_ASSERT */
-    }
+    if ( s.my_offloaded_tasks )
+        orphan_offloaded_tasks( s );
 #endif /* __TBB_TASK_PRIORITY */
 #if __TBB_STATISTICS
     ++s.my_counters.arena_roundtrips;
@@ -303,10 +291,16 @@ void arena::dump_arena_statistics () {
 #endif /* __TBB_STATISTICS */
 
 #if __TBB_TASK_PRIORITY
-// TODO: This function seems deserving refactoring, e.g. get rid of 's'
+// The method inspects a scheduler to determine:
+// 1. if it has tasks that can be retrieved and executed (via the return value);
+// 2. if it has any tasks at all, including those of lower priority (via tasks_present);
+// 3. if it is able to work with enqueued tasks (via dequeuing_possible).
 inline bool arena::may_have_tasks ( generic_scheduler* s, bool& tasks_present, bool& dequeuing_possible ) {
-    if ( !s )
-        return false;
+    if ( !s
+#if __TBB_TASK_ARENA
+            || s->my_arena != this
+#endif
+            ) return false;
     dequeuing_possible |= s->worker_outermost_level();
     if ( s->my_pool_reshuffling_pending ) {
         // This primary task pool is nonempty and may contain tasks at the current
@@ -323,6 +317,22 @@ inline bool arena::may_have_tasks ( generic_scheduler* s, bool& tasks_present, b
         }
     }
     return false;
+}
+
+void arena::orphan_offloaded_tasks(generic_scheduler& s) {
+    __TBB_ASSERT( s.my_offloaded_tasks, NULL );
+    GATHER_STATISTIC( ++s.my_counters.prio_orphanings );
+    ++my_abandonment_epoch;
+    __TBB_ASSERT( s.my_offloaded_task_list_tail_link && !*s.my_offloaded_task_list_tail_link, NULL );
+    task* orphans;
+    do {
+        orphans = const_cast<task*>(my_orphaned_tasks);
+        *s.my_offloaded_task_list_tail_link = orphans;
+    } while ( as_atomic(my_orphaned_tasks).compare_and_swap(s.my_offloaded_tasks, orphans) != orphans );
+    s.my_offloaded_tasks = NULL;
+#if TBB_USE_ASSERT
+    s.my_offloaded_task_list_tail_link = NULL;
+#endif /* TBB_USE_ASSERT */
 }
 #endif /* __TBB_TASK_PRIORITY */
 
@@ -528,45 +538,76 @@ void arena::enqueue_task( task& t, intptr_t prio, FastRandom &random )
 }
 
 #if __TBB_TASK_ARENA
-template<typename Body>
-void generic_scheduler::nested_arena_execute(arena* arena, task* t, bool needs_adjusting, Body &b) {
-    // TODO: add FPU control settings support to local arenas
-    // TODO: is it safe to assign slot to a scheduler which is not yet switched
+void generic_scheduler::nested_arena_entry(arena* a, task* t, scheduler_state* s, bool needs_adjusting) {
+    __TBB_ASSERT( is_alive(a->my_guard), NULL );
     // save current arena settings
-    scheduler_state state = *this;
+    new (s) scheduler_state(*this);
     // overwrite arena settings
-    my_arena = arena;
+#if __TBB_TASK_PRIORITY
+    if ( my_offloaded_tasks )
+        my_arena->orphan_offloaded_tasks( *this );
+    my_ref_top_priority = &a->my_top_priority;
+    my_ref_reload_epoch = &a->my_reload_epoch;
+    my_local_reload_epoch = a->my_reload_epoch;
+#endif /* __TBB_TASK_PRIORITY */
+    my_arena = a;
     my_arena_index = 0;
     my_arena_slot = my_arena->my_slots + my_arena_index;
     my_inbox.detach(); // TODO: mailboxes were not designed for switching, add copy constructor?
     attach_mailbox( affinity_id(my_arena_index+1) );
     my_innermost_running_task = my_dispatching_task = t;
 
-#if __TBB_SCHEDULER_OBSERVER
-    my_last_local_observer = 0;
+#if __TBB_ARENA_OBSERVER
+    my_last_local_observer = 0; // TODO: try optimize number of calls
     my_arena->my_observers.notify_entry_observers( my_last_local_observer, /*worker=*/false );
 #endif
+    // TODO? ITT_NOTIFY(sync_acquired, a->my_slots + index);
     // TODO: it requires market to have P workers (not P-1)
     // TODO: it still allows temporary oversubscription by 1 worker (due to my_max_num_workers)
     // TODO: a preempted worker should be excluded from assignment to other arenas e.g. my_slack--
     if( needs_adjusting ) my_arena->my_market->adjust_demand(*my_arena, -1);
-    b();
+}
+
+void generic_scheduler::nested_arena_exit(scheduler_state* s, bool needs_adjusting) {
     if( needs_adjusting ) my_arena->my_market->adjust_demand(*my_arena, 1);
-#if __TBB_SCHEDULER_OBSERVER
+#if __TBB_ARENA_OBSERVER
     my_arena->my_observers.notify_exit_observers( my_last_local_observer, /*worker=*/false );
 #endif /* __TBB_SCHEDULER_OBSERVER */
 
-    // Free the master slot. TODO: support multiple masters
 #if __TBB_TASK_PRIORITY
+    if ( my_offloaded_tasks )
+        my_arena->orphan_offloaded_tasks( *this );
+    my_local_reload_epoch = *s->my_ref_reload_epoch;
     while ( as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap( NULL, this) != this )
-        __TBB_Yield(); // task priority can use master slot for locking while accessing the scheduler
+        __TBB_Yield(); // TODO: task priority can use master slot for locking while accessing the scheduler
 #else
+    // Free the master slot. TODO: support multiple masters
     __TBB_store_with_release(my_arena->my_slots[0].my_scheduler, (generic_scheduler*)NULL);
 #endif
     my_arena->my_exit_monitors.notify_one_relaxed();
     // restore arena settings
-    *(scheduler_state*)this = state;
+    *(scheduler_state*)this = *s;
+    s->~scheduler_state(); // should be no-op since it's almost POD
 }
+
+struct nested_arena_context : no_copy {
+    generic_scheduler *const my_scheduler;
+    aligned_space<scheduler_state> my_state;
+    bool my_adjusting;
+    nested_arena_context(generic_scheduler *s, arena* a, task* t, bool needs_adjusting)
+    : my_scheduler(s->my_arena == a? 0:s), my_adjusting(needs_adjusting) {
+        if(my_scheduler) s->nested_arena_entry(a, t, my_state.begin(), needs_adjusting);
+    }
+    ~nested_arena_context() { if(my_scheduler) my_scheduler->nested_arena_exit(my_state.begin(), my_adjusting); }
+};
+
+void generic_scheduler::wait_until_empty() {
+    my_dummy_task->prefix().ref_count++; // prevents exit from local_wait_for_all when local work is done enforcing the stealing
+    while( my_arena->my_pool_state != arena::SNAPSHOT_EMPTY )
+        local_wait_for_all(*my_dummy_task, NULL);
+    my_dummy_task->prefix().ref_count--;
+}
+
 #endif /* __TBB_TASK_ARENA */
 
 } // namespace internal
@@ -599,7 +640,10 @@ void task_arena_base::internal_initialize( ) {
         new_arena->on_thread_leaving</*is_master*/true>(); // deallocate new arena
     }
 #if __TBB_TASK_GROUP_CONTEXT
-    else my_context = new_arena->my_default_ctx;
+    else {
+        my_context = new_arena->my_default_ctx;
+        my_context->my_version_and_traits |= my_version_and_traits & exact_exception_flag;
+    }
 #endif
 }
 
@@ -622,7 +666,8 @@ void task_arena_base::internal_enqueue( task& t, intptr_t prio ) const {
     __TBB_ASSERT(s, "Scheduler is not initialized"); // we allocated a task so can expect the scheduler
 #if __TBB_TASK_GROUP_CONTEXT
     __TBB_ASSERT(my_arena->my_default_ctx == t.prefix().context, NULL);
-    ITT_STACK_CREATE(my_arena->my_default_ctx->itt_caller);
+    __TBB_ASSERT(!my_arena->my_default_ctx->is_group_execution_cancelled(), // TODO: any better idea?
+                 "The task will not be executed because default task_group_context of task_arena is cancelled. Has previously enqueued task thrown an exception?");
 #endif
     my_arena->enqueue_task( t, prio, s->my_random );
 }
@@ -660,29 +705,45 @@ public:
     bool operator()(uintptr_t ctx) const { return (void*)ctx == (void*)&my_delegate; }
 };
 
-struct arena_join_body : internal::delegate_base {
-    generic_scheduler *my_scheduler;
-    task * my_root;
-    arena_join_body(generic_scheduler *s, task * t) : my_scheduler(s), my_root(t) {}
-    /*override*/ void operator()() const {
-        my_scheduler->local_wait_for_all(*my_root, NULL);
-    }
-};
-
 void task_arena_base::internal_execute( internal::delegate_base& d) const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT(s, "Scheduler is not initialized");
-    if( s->my_arena == my_arena )
+    // TODO: is it safe to assign slot to a scheduler which is not yet switched?
+    // TODO TEMP: one master, make more masters
+    if( s->my_arena == my_arena || (!__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler)
+            && as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap(s, NULL ) == NULL) ) {
+        cpu_ctl_env_helper cpu_ctl_helper;
+        cpu_ctl_helper.set_env( __TBB_CONTEXT_ARG1(*my_context) );
+#if TBB_USE_EXCEPTIONS
+        try {
+#endif
+        nested_arena_context scope(s, my_arena, s->my_dummy_task, !my_master_slots);
         d();
-    else if( !__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler) // TODO TEMP: one master, make more masters
-         &&   as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap(s, NULL ) == NULL ) {
-            s->nested_arena_execute<const internal::delegate_base>(my_arena, s->my_dummy_task, !my_master_slots, d);
+#if TBB_USE_EXCEPTIONS
+        } catch(...) {
+            cpu_ctl_helper.restore_default(); // TODO: is it needed on Windows?
+            if( my_version_and_traits & exact_exception_flag ) throw;
+            else {
+                task_group_context exception_container;
+                exception_container.register_pending_exception();
+                __TBB_ASSERT(exception_container.my_exception, NULL);
+                exception_container.my_exception->throw_self();
+            }
+        }
+#endif
     } else {
         concurrent_monitor::thread_context waiter;
-        auto_empty_task root(__TBB_CONTEXT_ARG(s, s->my_dummy_task->prefix().context));
+#if __TBB_TASK_GROUP_CONTEXT
+        task_group_context exec_context( task_group_context::isolated, my_version_and_traits & exact_exception_flag );
+#if __TBB_FP_CONTEXT
+        task_group_context_accessor(exec_context).my_cpu_ctl_env = task_group_context_accessor(*my_context).my_cpu_ctl_env;
+#endif
+#endif
+        auto_empty_task root(__TBB_CONTEXT_ARG(s, &exec_context));
         root.prefix().ref_count = 2;
-        internal_enqueue( *new( task::allocate_root(__TBB_CONTEXT_ARG1(*my_context)) ) delegated_task(d, my_arena->my_exit_monitors, &root), 0 ); // TODO: priority?
+        my_arena->enqueue_task( *new( task::allocate_root(__TBB_CONTEXT_ARG1(exec_context)) ) delegated_task(d, my_arena->my_exit_monitors, &root),
+                                0, s->my_random ); // TODO: priority?
         do {
             my_arena->my_exit_monitors.prepare_wait(waiter, (uintptr_t)&d);
             if( __TBB_load_with_acquire(root.prefix().ref_count) < 2 ) {
@@ -692,12 +753,21 @@ void task_arena_base::internal_execute( internal::delegate_base& d) const {
             else if( !__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler) // TODO: refactor into a function?
             &&   as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap(s, NULL ) == NULL ) {
                 my_arena->my_exit_monitors.cancel_wait(waiter);
-                s->nested_arena_execute<const internal::delegate_base>(my_arena, s->my_dummy_task, !my_master_slots, arena_join_body(s, &root));
+                nested_arena_context scope(s, my_arena, s->my_dummy_task, !my_master_slots);
+                s->local_wait_for_all(root, NULL);
+#if TBB_USE_EXCEPTIONS
+                __TBB_ASSERT( !exec_context.my_exception, NULL ); // exception can be thrown above, not deferred
+#endif
                 __TBB_ASSERT( root.prefix().ref_count == 0, NULL );
             } else {
                 my_arena->my_exit_monitors.commit_wait(waiter);
             }
         } while( __TBB_load_with_acquire(root.prefix().ref_count) == 2 );
+#if TBB_USE_EXCEPTIONS
+        // process possible exception
+        if( task_group_context::exception_container_type *pe = exec_context.my_exception )
+            pe->throw_self();
+#endif
     }
 }
 
@@ -709,8 +779,7 @@ class wait_task : public task {
         generic_scheduler& s = *governor::local_scheduler_if_initialized();
         if( s.my_arena_index && s.worker_outermost_level() ) {// on outermost level of workers only
             s.local_wait_for_all( *s.my_dummy_task, NULL ); // run remaining tasks
-        }
-        else s.my_arena->is_out_of_work(); // avoids starvation of internal_wait: issuing this task makes arena full
+        } else s.my_arena->is_out_of_work(); // avoids starvation of internal_wait: issuing this task makes arena full
         my_signal.V();
         return NULL;
     }
@@ -718,18 +787,6 @@ public:
     wait_task ( binary_semaphore & s ) : my_signal(s) {}
 };
 
-struct wait_body : internal::delegate_base {
-    generic_scheduler *my_scheduler;
-    wait_body(generic_scheduler *s) : my_scheduler(s) {}
-    /*override*/ void operator()() const {
-        my_scheduler->my_dummy_task->prefix().ref_count++; // force stealing
-        while( my_scheduler->my_arena->my_pool_state != arena::SNAPSHOT_EMPTY )
-            my_scheduler->local_wait_for_all(*my_scheduler->my_dummy_task, NULL);
-        my_scheduler->my_dummy_task->prefix().ref_count--;
-    }
-};
-
-// todo: merge with internal_execute()
 void task_arena_base::internal_wait() const {
     __TBB_ASSERT(my_arena, NULL);
     generic_scheduler* s = governor::local_scheduler();
@@ -740,12 +797,13 @@ void task_arena_base::internal_wait() const {
         __TBB_ASSERT(s->master_outermost_level(), "unsupported");
         if( !s->my_arena_index )
             while( my_arena->num_workers_active() )
-                (wait_body(s))();
+                s->wait_until_empty();
     } else for(;;) {
         while( my_arena->my_pool_state != arena::SNAPSHOT_EMPTY ) {
             if( !__TBB_load_with_acquire(my_arena->my_slots[0].my_scheduler) // TODO TEMP: one master, make more masters
                 && as_atomic(my_arena->my_slots[0].my_scheduler).compare_and_swap(s, NULL) == NULL ) {
-                s->nested_arena_execute<const internal::delegate_base>(my_arena, NULL, !my_master_slots, wait_body(s));
+                nested_arena_context a(s, my_arena, NULL, !my_master_slots);
+                s->wait_until_empty();
             } else {
                 binary_semaphore waiter; // TODO: replace by a single event notification from is_out_of_work
                 internal_enqueue( *new( task::allocate_root(__TBB_CONTEXT_ARG1(*my_context)) ) wait_task(waiter), 0 ); // TODO: priority?

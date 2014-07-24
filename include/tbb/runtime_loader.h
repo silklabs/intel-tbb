@@ -86,7 +86,7 @@ There are some implications:
         cooperatively, otherwise the second object will report an error.
 
     -   \c runtime_loader objects will not work (correctly) in parallel due to absence of
-        syncronization.
+        synchronization.
 
 */
 

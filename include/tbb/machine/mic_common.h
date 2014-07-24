@@ -47,7 +47,9 @@
 #endif
 
 /** Intel(R) Many Integrated Core Architecture does not support mfence and pause instructions **/
-#define __TBB_full_memory_fence() __asm__ __volatile__("lock; addl $0,(%%rsp)":::"memory")
+#if !TBB_USE_ICC_BUILTINS
+    #define __TBB_full_memory_fence() __asm__ __volatile__("lock; addl $0,(%%rsp)":::"memory")
+#endif
 #define __TBB_Pause(x) _mm_delay_32(16*(x))
 #define __TBB_STEALING_PAUSE 1500/16
 #include <sched.h>

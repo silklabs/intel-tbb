@@ -569,7 +569,7 @@ struct thread_map_base {
 #endif /* !RML_USE_WCRM */
 
 #if _MSC_VER && !defined(__INTEL_COMPILER)
-    // Suppress overzealous compiler warnings about uninstantiatble class
+    // Suppress overzealous compiler warnings about uninstantiable class
     #pragma warning(push)
     #pragma warning(disable:4510 4610)
 #endif

@@ -39,8 +39,7 @@
 #include <stdlib.h>
 
 #if _WIN32||_WIN64
-// isMallocOverloaded must be defined in DLL to linker not drop the dependence
-// to the DLL.
+// isMallocOverloaded must be defined in DLL for linker to not drop the dependence on the DLL.
 extern __declspec(dllexport) bool isMallocOverloaded();
 
 bool isMallocOverloaded()

@@ -189,7 +189,7 @@ public:
 class aggregator : private aggregator_ext<internal::basic_handler> {
 public:
     aggregator() : aggregator_ext<internal::basic_handler>(internal::basic_handler()) {}
-    //! BASIC INTERFACE: Enter a function for exclusvie execution by the aggregator.
+    //! BASIC INTERFACE: Enter a function for exclusive execution by the aggregator.
     /** The calling thread stores the function object in a basic_operation and
         places the operation in the aggregator's mailbox */
     template<typename Body>

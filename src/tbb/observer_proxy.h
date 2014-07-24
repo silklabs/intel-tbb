@@ -44,7 +44,7 @@ class observer_list {
 
     // Mutex is wrapped with aligned_space to shut up warnings when its destructor
     // is called while threads are still using it.
-    typedef aligned_space<spin_rw_mutex,1>  my_mutex_type;
+    typedef aligned_space<spin_rw_mutex>  my_mutex_type;
 
     //! Pointer to the head of this list.
     observer_proxy* my_head;

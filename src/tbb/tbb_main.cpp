@@ -52,7 +52,7 @@ rml::tbb_factory governor::theRMLServerFactory;
 bool governor::UsePrivateRML;
 const task_scheduler_init *governor::BlockingTSI;
 #if TBB_USE_ASSERT
-bool governor::IsBlockingTermiantionInProgress;
+bool governor::IsBlockingTerminationInProgress;
 #endif
 #if __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
 bool governor::is_speculation_enabled;
@@ -226,6 +226,7 @@ void ITT_DoOneTimeInitialization() {
 
 //! Performs thread-safe lazy one-time general TBB initialization.
 void DoOneTimeInitializations() {
+    suppress_unused_warning(_pad);
     __TBB_InitOnce::lock();
     // No fence required for load of InitializationDone, because we are inside a critical section.
     if( !__TBB_InitOnce::InitializationDone ) {

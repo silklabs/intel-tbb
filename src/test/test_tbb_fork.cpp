@@ -34,6 +34,10 @@
 
 #define HARNESS_DEFAULT_MIN_THREADS (tbb::task_scheduler_init::default_num_threads())
 #define HARNESS_DEFAULT_MAX_THREADS (4*tbb::task_scheduler_init::default_num_threads())
+#if __bg__
+// CNK does not support fork()
+#define HARNESS_SKIP_TEST 1
+#endif
 #include "harness.h"
 
 #if _WIN32||_WIN64

@@ -49,7 +49,6 @@
 #include "tbb_allocator.h"
 #include "spin_rw_mutex.h"
 #include "atomic.h"
-#include "aligned_space.h"
 #include "tbb_exception.h"
 #include "tbb_profiling.h"
 #include "internal/_concurrent_unordered_impl.h" // Need tbb_hasher

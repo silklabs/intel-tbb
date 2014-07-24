@@ -225,10 +225,10 @@ class memptr_intrusive_list : public intrusive_list_base<memptr_intrusive_list<T
     static intrusive_list_node& node ( T& val ) { return val.*NodePtr; }
 
     static T& item ( intrusive_list_node* node ) {
-        // Cannot use __TBB_offestof (and consequently __TBB_get_object_ref) macro 
+        // Cannot use __TBB_offsetof (and consequently __TBB_get_object_ref) macro 
         // with *NodePtr argument because gcc refuses to interpret pasted "->" and "*"
         // as member pointer dereferencing operator, and explicit usage of ## in 
-        // __TBB_offestof implementation breaks operations with normal member names.
+        // __TBB_offsetof implementation breaks operations with normal member names.
         return *reinterpret_cast<T*>((char*)node - ((ptrdiff_t)&(reinterpret_cast<T*>(0x1000)->*NodePtr) - 0x1000));
     }
 }; // intrusive_list<T, U, NodePtr>

@@ -39,10 +39,10 @@ endif
 ifneq (,$(repeat))
   override largs+=-r $(repeat)
 endif
-ifneq (,$(largs))
-  override run_cmd:=$(run_cmd)$(TEST_LAUNCHER)
+ifneq (,$(largs)$(run_prefix))
+  override run_cmd:=$(run_cmd) $(TEST_LAUNCHER)
   TEST_LAUNCHER=
-  ifeq (,$(run_cmd))
+  ifeq (,$(strip $(run_cmd)))
     $(warning Test launcher is not defined for the platform, ignoring launcher arguments)
   endif
 endif
