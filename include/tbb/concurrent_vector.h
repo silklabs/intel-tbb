@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -870,9 +870,10 @@ public:
 
     //! swap two instances
     void swap(concurrent_vector &vector) {
+        using std::swap;
         if( this != &vector ) {
             concurrent_vector_base_v3::internal_swap(static_cast<concurrent_vector_base_v3&>(vector));
-            std::swap(this->my_allocator, vector.my_allocator);
+            swap(this->my_allocator, vector.my_allocator);
         }
     }
 

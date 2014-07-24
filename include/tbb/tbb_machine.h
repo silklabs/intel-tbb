@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -125,7 +125,7 @@
 #include "tbb_stddef.h"
 
 namespace tbb {
-namespace internal {
+namespace internal { //< @cond INTERNAL
 
 ////////////////////////////////////////////////////////////////////////////////
 // Overridable helpers declarations
@@ -172,7 +172,7 @@ template<> struct atomic_selector<8> {
     inline static word fetch_store ( volatile void* location, word value );
 };
 
-}} // namespaces internal, tbb
+}} //< namespaces internal @endcond, tbb
 
 #define __TBB_MACHINE_DEFINE_STORE8_GENERIC_FENCED(M)                                        \
     inline void __TBB_machine_generic_store8##M(volatile void *ptr, int64_t value) {         \
@@ -349,7 +349,7 @@ namespace tbb {
 //! Sequentially consistent full memory fence.
 inline void atomic_fence () { __TBB_full_memory_fence(); }
 
-namespace internal {
+namespace internal { //< @cond INTERNAL
 
 //! Class that implements exponential backoff.
 /** See implementation of spin_wait_while_eq for an example. */
@@ -834,7 +834,7 @@ const T reverse<T>::byte_table[256] = {
     0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 };
 
-} // namespace internal
+} // namespace internal @endcond
 } // namespace tbb
 
 // Preserving access to legacy APIs

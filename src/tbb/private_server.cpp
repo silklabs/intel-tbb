@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -84,6 +84,7 @@ class private_worker: no_copy {
     thread_monitor my_thread_monitor;
 
     //! Handle of the OS thread associated with this worker
+    /** my_handle and my_handle_ready are used only in needsWaitWorkers() mode */
     thread_handle my_handle;
 
     atomic<bool> my_handle_ready; // make atomic to add fences
@@ -199,7 +200,7 @@ public:
     } 
 
     /*override*/ void request_close_connection( bool /*exiting*/ ) {
-        for( size_t i=0; i<my_n_thread; ++i ) 
+        for( size_t i=0; i<my_n_thread; ++i )
             my_thread_array[i].start_shutdown();
         remove_server_ref();
     }
@@ -245,7 +246,7 @@ __RML_DECL_THREAD_ROUTINE private_worker::thread_routine( void* arg ) {
 #endif
 
 void private_worker::start_shutdown() {
-    state_t s; 
+    state_t s;
     // Transition from st_starting or st_normal to st_plugged or st_quit
     do {
         s = my_state;
@@ -262,14 +263,11 @@ void private_worker::start_shutdown() {
     }
     // Do not need join for st_init state,
     // because in this case the thread wasn't started yet.
-    if (s!=st_init) {
+    if (governor::needsWaitWorkers() && s!=st_init) {
         while (!my_handle_ready)
             __TBB_Yield();
         // my_handle is valid at this point
-        if (governor::needsWaitWorkers())
-            thread_monitor::join(my_handle);
-        else
-            thread_monitor::detach_thread(my_handle);
+        thread_monitor::join(my_handle);
     }
 }
 
@@ -306,17 +304,22 @@ void private_worker::run() {
 
 inline void private_worker::wake_or_launch() {
     if( my_state==st_init && my_state.compare_and_swap( st_starting, st_init )==st_init ) {
+        thread_handle handle;
 #if USE_WINTHREAD
-        my_handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size, &this->my_index );
+        handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size, &this->my_index );
 #elif USE_PTHREAD
         {
         affinity_helper fpa;
         fpa.protect_affinity_mask();
-        my_handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size );
+        handle = thread_monitor::launch( thread_routine, this, my_server.my_stack_size );
         // Implicit destruction of fpa resets original affinity mask.
         }
 #endif /* USE_PTHREAD */
-        my_handle_ready = true;
+        if (governor::needsWaitWorkers()) {
+            my_handle = handle;
+            my_handle_ready = true; // do visible that my_handle is valid
+        } else
+            thread_monitor::detach_thread(handle);
     }
     else
         my_thread_monitor.notify();

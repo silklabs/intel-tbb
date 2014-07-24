@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Mutex Flavors">
 <meta name="DC.subject" content="Mutex Flavors">
@@ -23,10 +20,9 @@
 </head>
 <body id="tutorial_Mutex_Flavors">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="tutorial_Mutex_Flavors"><!-- --></a>
 
  
@@ -134,7 +130,7 @@
  
 		<li> 
 		  <p><samp class="codeph">mutex</samp> and 
-			 <samp class="codeph">recursive_mutex</samp> are wrappers around the system&#8217;s
+			 <samp class="codeph">recursive_mutex</samp> are wrappers around the system’s
 			 "native" mutual exclusion. On Windows* operating systems it is implemented on
 			 top of 
 			 <samp class="codeph">CRITICAL_SECTION</samp>. On Linux* and OS X* operating
@@ -166,37 +162,37 @@
 <div class="tablenoborder"><a name="tbl11"><!-- --></a><table cellpadding="4" summary="" id="tbl11" width="100%" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Traits and Behaviors of Mutexes</span></caption> 
 	 <thead align="left"> 
 		<tr> 
-		  <th class="cellrowborder" valign="top" width="26.247689463955638%" id="d10124e206"> 
+		  <th class="cellrowborder" valign="top" width="26.247689463955638%" id="d142672e207"> 
 			 <p>Mutex 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="17.744916820702404%" id="d10124e212"> 
+		  <th class="cellrowborder" valign="top" width="17.744916820702404%" id="d142672e213"> 
 			 <p>Scalable 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="17.56007393715342%" id="d10124e218"> 
+		  <th class="cellrowborder" valign="top" width="17.56007393715342%" id="d142672e219"> 
 			 <p>Fair 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="14.602587800369685%" id="d10124e224"> 
+		  <th class="cellrowborder" valign="top" width="14.602587800369685%" id="d142672e225"> 
 			 <p>Recursive 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="12.199630314232902%" id="d10124e230"> 
+		  <th class="cellrowborder" valign="top" width="12.199630314232902%" id="d142672e231"> 
 			 <p>Long Wait 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="11.645101663585953%" id="d10124e236"> 
+		  <th class="cellrowborder" valign="top" width="11.645101663585953%" id="d142672e238"> 
 			 <p>Size 
 			 </p>
  
@@ -207,38 +203,38 @@
  
 	 <tbody> 
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>OS dependent 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
 			 <p>OS dependent 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>blocks 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
-			 <p>&#8805; 3 words 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
+			 <p>≥ 3 words 
 			 </p>
  
 		  </td>
@@ -246,38 +242,38 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">recursive_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>OS dependent 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
 			 <p>OS dependent 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>yes 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>blocks 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
-			 <p>&#8805; 3 words 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
+			 <p>≥ 3 words 
 			 </p>
  
 		  </td>
@@ -285,37 +281,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">spin_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>yields 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>1 byte 
 			 </p>
  
@@ -324,37 +320,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">queuing_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>yields 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>1 word 
 			 </p>
  
@@ -363,37 +359,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">spin_rw_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>yields 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>1 word 
 			 </p>
  
@@ -402,37 +398,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">queuing_rw_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
 			 <p>no 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>yields 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>1 word 
 			 </p>
  
@@ -441,37 +437,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">null_mutex</samp><a href="#ftn6"><sup><sup>[6]</sup></sup></a> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>moot 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>never 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>empty 
 			 </p>
  
@@ -480,37 +476,37 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d10124e206 "> 
+		  <td class="cellrowborder" valign="top" width="26.247689463955638%" headers="d142672e207 "> 
 			 <p><samp class="codeph">null_rw_mutex</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d10124e212 "> 
+		  <td class="cellrowborder" valign="top" width="17.744916820702404%" headers="d142672e213 "> 
 			 <p>moot 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d10124e218 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="17.56007393715342%" headers="d142672e219 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d10124e224 "> 
-			 <p>&#10003; 
+		  <td class="cellrowborder" valign="top" width="14.602587800369685%" headers="d142672e225 "> 
+			 <p>✓ 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d10124e230 "> 
+		  <td class="cellrowborder" valign="top" width="12.199630314232902%" headers="d142672e231 "> 
 			 <p>never 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d10124e236 "> 
+		  <td class="cellrowborder" valign="top" width="11.645101663585953%" headers="d142672e238 "> 
 			 <p>empty 
 			 </p>
  
@@ -527,7 +523,7 @@
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../tbb_userguide/Mutual_Exclusion.htm">Mutual Exclusion</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../tbb_userguide/Mutual_Exclusion.htm">Mutual Exclusion</a></div>
 </div>
 <div></div>
 <p class="tfootnote"><a id="ftn5"><sup>[5]</sup></a>   The yielding is implemented via 

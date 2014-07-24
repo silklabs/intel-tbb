@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="atomic Template Class">
 <meta name="DC.subject" content="atomic Template Class">
@@ -19,10 +16,9 @@
 </head>
 <body id="atomic_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="atomic_cls"><!-- --></a>
 
  
@@ -66,7 +62,7 @@
 		</p>
  
 		<p>Some of the methods have template method variants
-		  that permit more selective memory fencing. On IA-32 and Intel(R) 64 architecture
+		  that permit more selective memory fencing. On IA-32 and Intel&reg; 64 architecture
 		  processors, they have the same effect as the non-templated variants. On
 		  processors with IA-64 architecture, they may improve performance by allowing
 		  the memory subsystem more latitude on the orders of reads and write. Using them
@@ -82,19 +78,19 @@
 		   
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" valign="top" width="NaN%" id="d6686e102"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d95291e103"> 
 				  <p>Kind 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" width="NaN%" id="d6686e108"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d95291e109"> 
 				  <p>Description 
 				  </p>
  
 				</th>
  
-				<th class="row-nocellborder" valign="top" width="NaN%" id="d6686e114"> 
+				<th class="row-nocellborder" valign="top" width="NaN%" id="d95291e115"> 
 				  <p>Default For 
 				  </p>
  
@@ -106,20 +102,20 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e102 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e103 "> 
 				  <p>acquire 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e108 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e109 "> 
 				  <p>Operations after the atomic operation never
 					 move over it. 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d6686e114 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d95291e115 "> 
 				  <p>read 
 				  </p>
  
@@ -128,20 +124,20 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e102 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e103 "> 
 				  <p>release 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e108 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e109 "> 
 				  <p>Operations before the atomic operation
 					 never move over it. 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d6686e114 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d95291e115 "> 
 				  <p>write 
 				  </p>
  
@@ -150,13 +146,13 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e102 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e103 "> 
 				  <p>sequentially consistent 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d6686e108 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d95291e109 "> 
 				  <p>Operations on either side never move over
 					 it and furthermore, the sequentially consistent atomic operations have a global
 					 order. 
@@ -164,7 +160,7 @@
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d6686e114 "><samp class="codeph"> fetch_and_store,
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d95291e115 "><samp class="codeph"> fetch_and_store,
 					 fetch_and_add, compare_and_swap 
 				  </samp> 
 				</td>
@@ -275,10 +271,10 @@
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d6686e246">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d95291e248">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d6686e249">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d95291e251">Description 
 				  </th>
  
 				</tr>
@@ -286,11 +282,11 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">memory_semantics Enum 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">memory_semantics Enum 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Defines values used to select the
 						template variants that permit more selective control over visibility of
 						operations (see the table above). 
@@ -301,11 +297,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">atomic() = default 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">atomic() = default 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>C++11 Specific; 
 					 </p>
  
@@ -319,11 +315,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">constexpr atomic(value_type arg) 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">constexpr atomic(value_type arg) 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>C++11 Specific; 
 					 </p>
  
@@ -338,11 +334,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">value_type fetch_and_add(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">value_type fetch_and_add(
 						value_type addend )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Let 
 						<samp class="codeph"><em>x</em></samp> be the value of 
 						<samp class="codeph">*this</samp>. Atomically updates 
@@ -358,11 +354,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword"> value_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword"> value_type
 						fetch_and_increment()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Let x be the value of 
 						<samp class="codeph">*this</samp>. Atomically updates 
 						<samp class="codeph"><em>x = x + 1</em>. 
@@ -378,11 +374,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">value_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">value_type
 						fetch_and_decrement()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Let 
 						<samp class="codeph"><em>x</em></samp> be the value of *this. Atomically
 						updates 
@@ -399,7 +395,7 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">value_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">value_type
 						compare_and_swap</span> 
 					 <p>value_type compare_and_swap( value_type
 						new_value, value_type comparand ) 
@@ -407,7 +403,7 @@
  
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Let 
 						<em>x</em> be the value of 
 						<samp class="codeph">*this</samp>. Atomically compares 
@@ -424,11 +420,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d6686e246 "><span class="keyword">value_type fetch_and_store(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d95291e248 "><span class="keyword">value_type fetch_and_store(
 						value_type new_value )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d6686e249 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d95291e251 "> 
 					 <p>Let 
 						<samp class="codeph">x</samp> be the value of 
 						<samp class="codeph">*this</samp>. Atomically exchanges old value of 
@@ -454,7 +450,7 @@
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/synchronization.htm">Synchronization</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/synchronization.htm">Synchronization</a></div>
 </div>
 <div></div>
 

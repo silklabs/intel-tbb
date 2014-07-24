@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -39,7 +39,9 @@ TBBLIB = -ltbb
 TBBLIB_DEBUG = -ltbb_debug
 
 ifneq (,$(filter icc icpc,$(CXX)))
+ifneq (0,$(cpp0x))
 CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
+endif
 ifeq ($(offload), mic)
 override CXXFLAGS += -D__TBB_MIC_OFFLOAD=1
 # Replace -ltbb with -tbb in the offload mode
@@ -74,5 +76,5 @@ test:
 perf_build: release
 
 perf_run:
-	./$(PROG) $(PERF_RUN_ARGS)
+	$(run_cmd) ./$(PROG) $(PERF_RUN_ARGS)
 

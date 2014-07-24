@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Atomic Operations">
 <meta name="DC.subject" content="Atomic Operations">
@@ -25,10 +22,9 @@
 </head>
 <body id="tutorial_Atomic_Operations">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="tutorial_Atomic_Operations"><!-- --></a>
 
  
@@ -63,13 +59,13 @@
 <div class="tablenoborder"><a name="tbl12"><!-- --></a><table cellpadding="4" summary="" id="tbl12" width="100%" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Interleaving of Machine Instructions</span></caption> 
 	 <thead align="left"> 
 		<tr> 
-		  <th class="cellrowborder" valign="top" width="53.92156862745098%" id="d8799e63">
+		  <th class="cellrowborder" valign="top" width="53.92156862745098%" id="d126840e63">
 			 <p>Thread A
 			 </p>
 
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="46.07843137254902%" id="d8799e69">
+		  <th class="cellrowborder" valign="top" width="46.07843137254902%" id="d126840e69">
 			 <p>Thread B
 			 </p>
 
@@ -80,66 +76,66 @@
  
 	 <tbody> 
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>t<sub>a</sub>  = x</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
 			 <pre>&nbsp;</pre>
 		  </td>
 
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>&nbsp;</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
 			 <pre>t<sub>b</sub> = x</pre>
 		  </td>
 
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>x = t<sub>a</sub> -<sub> </sub>1</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
 			 <pre>&nbsp;</pre>
 		  </td>
 
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>&nbsp;</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
-			 <pre>x = t<sub>b</sub> &#8211;<sub> </sub>1</pre>
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
+			 <pre>x = t<sub>b</sub> –<sub> </sub>1</pre>
 		  </td>
 
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>if( x==0 )</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
 			 <pre>&nbsp;</pre>
 		  </td>
 
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d8799e63 ">
+		  <td class="cellrowborder" valign="top" width="53.92156862745098%" headers="d126840e63 ">
 			 <pre>&nbsp;</pre>
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d8799e69 ">
+		  <td class="cellrowborder" valign="top" width="46.07843137254902%" headers="d126840e69 ">
 			 <pre>if( x==0 )</pre>
 		  </td>
 
@@ -377,7 +373,7 @@ int UpdateX() {      // Update x and return old value of x.
 
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../tbb_userguide/title.htm">Intel&reg; Threading Building Blocks (Intel&reg; TBB) User Guide</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../tbb_userguide/title.htm">Intel&reg; Threading Building Blocks (Intel&reg; TBB) User Guide</a></div>
 </div>
 <div>
 <ul class="ullinks">

@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -88,16 +88,16 @@ endif
 
 test:
 ifeq ($(UI),mac)
-	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; ./$(EXE) $(ARGS)
+	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; $(run_cmd) ./$(EXE) $(ARGS)
 else
-	./$(EXE) $(ARGS)
+	$(run_cmd) ./$(EXE) $(ARGS)
 endif
 
 perf_build: override CXXFLAGS+=$(PERFFLAGS)
 perf_build: release
 
 perf_run:
-	./$(EXE) $(PERF_RUN_ARGS)
+	$(run_cmd) ./$(EXE) $(PERF_RUN_ARGS)
 
 light_test:
-	./$(EXE) $(LIGHT_ARGS)
+	$(run_cmd) ./$(EXE) $(LIGHT_ARGS)

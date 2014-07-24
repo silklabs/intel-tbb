@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -779,8 +779,14 @@ private:
         if ( my_reserved ) {
             return false;
         }
-        if ( !my_has_cached_item && (*my_body)(my_cached_item) )
-            my_has_cached_item = true;
+        if ( !my_has_cached_item ) {
+            tbb::internal::fgt_begin_body( my_body );
+            bool r = (*my_body)(my_cached_item); 
+            tbb::internal::fgt_end_body( my_body );
+            if (r) {
+                my_has_cached_item = true;
+            }
+        }
         if ( my_has_cached_item ) {
             v = my_cached_item;
             my_reserved = true;
@@ -1358,9 +1364,9 @@ protected:
             }
         }
         if (try_forwarding && !forwarder_busy) {
-            forwarder_busy = true;
             task* tp = this->my_graph.root_task();
             if(tp) {
+                forwarder_busy = true;
                 task *new_task = new(task::allocate_additional_child_of(*tp)) internal::
                         forward_task_bypass
                         < buffer_node<input_type, A> >(*this);
@@ -1809,9 +1815,9 @@ protected:
         // process pops!  for now, no special pop processing
         if (mark<this->my_tail) heapify();
         if (try_forwarding && !this->forwarder_busy) {
-            this->forwarder_busy = true;
             task* tp = this->my_graph.root_task();
             if(tp) {
+                this->forwarder_busy = true;
                 task *new_task = new(task::allocate_additional_child_of(*tp)) internal::
                         forward_task_bypass
                         < buffer_node<input_type, A> >(*this);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -52,7 +52,7 @@ class task_group_context;
 #define __TBB_TASK_BASE_ACCESS private
 #endif
 
-namespace internal {
+namespace internal { //< @cond INTERNAL
 
     class allocate_additional_child_of_proxy: no_assign {
         //! No longer used, but retained for binary layout compatibility.  Always NULL.
@@ -64,7 +64,7 @@ namespace internal {
         void __TBB_EXPORTED_METHOD free( task& ) const;
     };
 
-}
+} //< namespace internal @endcond
 
 namespace interface5 {
     namespace internal {

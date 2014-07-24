@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -40,10 +40,7 @@
 #include "tbb/memory_pool.h"
 #include "tbb/scalable_allocator.h"
 
-#if __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||_WIN64)
-#include "../tbbmalloc/tbbmalloc_internal_api.h"
-#define __TBBMALLOC_CALL_THREAD_SHUTDOWN 1
-#endif
+#define HARNESS_TBBMALLOC_THREAD_SHUTDOWN 1
 // the actual body of the test is there:
 #include "test_allocator.h"
 #include "harness_allocator.h"

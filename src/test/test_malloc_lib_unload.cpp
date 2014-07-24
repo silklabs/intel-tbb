@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -124,6 +124,7 @@ extern "C" size_t safer_scalable_msize (void *, size_t (*)(void*))
 #include <cstdlib>
 #include "tbb/tbb_stddef.h"
 #define HARNESS_NO_PARSE_COMMAND_LINE 1
+#define HARNESS_TBBMALLOC_THREAD_SHUTDOWN 1
 #include "harness.h"
 
 #if __TBB_WIN8UI_SUPPORT

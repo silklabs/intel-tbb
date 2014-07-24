@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="Mutex Concept">
 <meta name="DC.subject" content="Mutex Concept">
@@ -20,10 +17,9 @@
 </head>
 <body id="mutex_concept">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(3);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="mutex_concept"><!-- --></a>
 
  
@@ -79,13 +75,13 @@
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="border" border="1" cellspacing="0" rules="all">
 		  <thead align="left">
 			 <tr> 
-				<th class="cellrowborder" valign="top" id="d6839e69"> 
+				<th class="cellrowborder" valign="top" id="d97337e70"> 
 				  <p><strong>Pseudo-Signature</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e77"> 
+				<th class="cellrowborder" valign="top" id="d97337e78"> 
 				  <p><strong>Semantics</strong>
 				  </p>
  
@@ -97,13 +93,13 @@
 
 		  <tbody>
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Construct unlocked mutex.
 				  </p>
  
@@ -112,13 +108,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">~M()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Destroy unlocked mutex. 
 				  </p>
  
@@ -127,13 +123,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">typename M::scoped_lock</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Corresponding scoped-lock type.
 				  </p>
  
@@ -142,13 +138,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M::scoped_lock()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Construct lock without acquiring mutex.
 				  </p>
  
@@ -157,13 +153,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M::scoped_lock(M&amp;)</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Construct lock and acquire lock on mutex.
 				  </p>
  
@@ -172,13 +168,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M::~scoped_lock()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Release lock (if acquired). 
 				  </p>
  
@@ -187,13 +183,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M::scoped_lock::acquire(M&amp;)</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Acquire lock on mutex.
 				  </p>
  
@@ -202,13 +198,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">bool M::scoped_lock::try_acquire(M&amp;)</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Try to acquire lock on mutex. Return true if lock acquired,
 					 false otherwise.
 				  </p>
@@ -218,13 +214,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">M::scoped_lock::release()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>Release lock.
 				  </p>
  
@@ -233,13 +229,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">static const bool M::is_rw_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>True if mutex is reader-writer mutex; false otherwise.
 				  </p>
  
@@ -248,13 +244,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">static const bool M::is_recursive_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>True if mutex is recursive mutex; false otherwise.
 				  </p>
  
@@ -263,13 +259,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e69 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e70 "> 
 				  <p><samp class="codeph">static const bool M::is_fair_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e77 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e78 "> 
 				  <p>True if mutex is fair; false otherwise.
 				  </p>
  
@@ -296,37 +292,37 @@
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="border" border="1" cellspacing="0" rules="all">
 		  <thead align="left">
 			 <tr> 
-				<th class="cellrowborder" valign="top" id="d6839e319"> 
+				<th class="cellrowborder" valign="top" id="d97337e322"> 
 				  <p>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e325"> 
+				<th class="cellrowborder" valign="top" id="d97337e328"> 
 				  <p><strong>Scalable</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e333"> 
+				<th class="cellrowborder" valign="top" id="d97337e336"> 
 				  <p><strong>Fair</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e341"> 
+				<th class="cellrowborder" valign="top" id="d97337e344"> 
 				  <p><strong>Reentrant</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e349"> 
+				<th class="cellrowborder" valign="top" id="d97337e352"> 
 				  <p><strong>Long Wait</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e357"> 
+				<th class="cellrowborder" valign="top" id="d97337e361"> 
 				  <p><strong>Size</strong>
 				  </p>
  
@@ -338,37 +334,37 @@
 
 		  <tbody>
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>OS dependent
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>OS dependent
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Blocks
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>&gt;=3 words
 				  </p>
  
@@ -377,37 +373,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">recursive_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>OS dependent
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>OS dependent
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Blocks
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>&gt;=3 words
 				  </p>
  
@@ -416,37 +412,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">spin_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Yields
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>1 byte
 				  </p>
  
@@ -455,37 +451,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">speculative_spin_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Yields
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>2 cache lines
 				  </p>
  
@@ -494,37 +490,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">queuing_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Yields
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>1 word
 				  </p>
  
@@ -533,37 +529,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">spin_rw_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Yields
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>1 word
 				  </p>
  
@@ -572,37 +568,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">queuing_rw_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>No
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>Yields
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>1 word
 				  </p>
  
@@ -611,37 +607,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">null_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>-
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>-
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>empty
 				  </p>
  
@@ -650,37 +646,37 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e319 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e322 "> 
 				  <p><samp class="codeph">null_rw_mutex</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e325 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e328 "> 
 				  <p>-
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e333 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e336 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e341 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e344 "> 
 				  <p>Yes
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e349 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e352 "> 
 				  <p>-
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e357 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e361 "> 
 				  <p>empty
 				  </p>
  
@@ -717,13 +713,13 @@
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="border" border="1" cellspacing="0" rules="all">
 		  <thead align="left">
 			 <tr> 
-				<th class="cellrowborder" valign="top" id="d6839e775"> 
+				<th class="cellrowborder" valign="top" id="d97337e790"> 
 				  <p><strong>Pseudo-Signature</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e783"> 
+				<th class="cellrowborder" valign="top" id="d97337e798"> 
 				  <p><strong>Semantics</strong>
 				  </p>
  
@@ -735,13 +731,13 @@
 
 		  <tbody>
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e775 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e790 "> 
 				  <p><samp class="codeph">void M::lock()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e783 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e798 "> 
 				  <p>Acquire lock.
 				  </p>
  
@@ -750,13 +746,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e775 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e790 "> 
 				  <p><samp class="codeph">bool M::try_lock()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e783 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e798 "> 
 				  <p>Try to acquire lock on mutex. Return true if lock acquired,
 					 false otherwise.
 				  </p>
@@ -766,13 +762,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e775 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e790 "> 
 				  <p><samp class="codeph">void M::unlock()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e783 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e798 "> 
 				  <p>Release lock.
 				  </p>
  
@@ -781,13 +777,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e775 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e790 "> 
 				  <p><samp class="codeph">class lock_guard&lt;M&gt;</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" rowspan="2" valign="top" headers="d6839e783 "> 
+				<td class="cellrowborder" rowspan="2" valign="top" headers="d97337e798 "> 
 				  <p>See Section C++11 Synchronization
 				  </p>
  
@@ -796,7 +792,7 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e775 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e790 "> 
 				  <p><samp class="codeph">class unique_lock&lt;M&gt;</samp>
 				  </p>
  
@@ -823,13 +819,13 @@
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="border" border="1" cellspacing="0" rules="all">
 		  <thead align="left">
 			 <tr> 
-				<th class="cellrowborder" valign="top" id="d6839e896"> 
+				<th class="cellrowborder" valign="top" id="d97337e911"> 
 				  <p><strong>Pseudo-Signature</strong>
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" id="d6839e904"> 
+				<th class="cellrowborder" valign="top" id="d97337e919"> 
 				  <p><strong>Semantics</strong>
 				  </p>
  
@@ -841,13 +837,13 @@
 
 		  <tbody>
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e896 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e911 "> 
 				  <p><samp class="codeph">M::native_handle_type</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e904 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e919 "> 
 				  <p>Native handle type.
 				  </p>
  
@@ -863,13 +859,13 @@
 			 </tr>
 
 			 <tr> 
-				<td class="cellrowborder" valign="top" headers="d6839e896 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e911 "> 
 				  <p><samp class="codeph">native_handle_type M::native_handle()</samp>
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" headers="d6839e904 "> 
+				<td class="cellrowborder" valign="top" headers="d97337e919 "> 
 				  <p>Get underlying native handle of mutex M.
 				  </p>
  
@@ -896,7 +892,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../../reference/synchronization/mutexes.htm">Mutexes</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../../reference/synchronization/mutexes.htm">Mutexes</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

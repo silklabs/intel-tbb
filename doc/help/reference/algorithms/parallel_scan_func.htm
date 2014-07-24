@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="parallel_scan Template Function">
 <meta name="DC.subject" content="parallel_scan Template Function">
@@ -26,10 +23,9 @@
 </head>
 <body id="parallel_scan_func">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="parallel_scan_func"><!-- --></a>
 
 
@@ -60,29 +56,29 @@ void parallel_scan( const Range&amp; range, Body&amp; body, const simple_partiti
     in parallel computing that is sometimes useful in scenarios that appear to have inherently
     serial dependences.</p>
 <p>A mathematical definition of the parallel prefix is as follows. Let
-    &times; be an associative operation with left-identity element id<sub>&times;</sub>. 
-    The parallel prefix of &times; over a sequence <em>z</em><sub>0</sub>, <em>z</em><sub>1</sub>, ...<em>z</em><sub>n-1</sub> 
+    × be an associative operation with left-identity element id<sub>×</sub>. 
+    The parallel prefix of × over a sequence <em>z</em><sub>0</sub>, <em>z</em><sub>1</sub>, ...<em>z</em><sub>n-1</sub> 
     is a sequence <em>y</em><sub>0</sub>, <em>y</em><sub>1</sub>, <em>y</em><sub>2</sub>, ...<em>y</em><sub>n-1</sub> 
     where:</p>
-<ul type="disc"> <li> y<sub>0</sub> = id<sub>&times;</sub> &times; z<sub>0</sub>
+<ul type="disc"> <li> y<sub>0</sub> = id<sub>×</sub> × z<sub>0</sub>
     </li>
 
-    <li> y<sub>i</sub> = y<sub>i-1</sub> &times; z<sub>i</sub>
+    <li> y<sub>i</sub> = y<sub>i-1</sub> × z<sub>i</sub>
     </li>
 
    </ul>
-<p>For example, if &times; is addition, the parallel prefix corresponds a running sum. A
+<p>For example, if × is addition, the parallel prefix corresponds a running sum. A
     serial implementation of parallel prefix
     is:</p>
 <pre>
-T temp = id<sub>&times;</sub>;
+T temp = id<sub>×</sub>;
 for( int i=1; i&lt;=n; ++i ) {
-    temp = temp &times; z[i];
+    temp = temp × z[i];
     y[i] = temp;
 }
 </pre><p>Parallel
-    prefix performs this in parallel by reassociating the application of &times; and using two
-    passes. It may invoke &times; up to twice as many times as the serial prefix algorithm. Given
+    prefix performs this in parallel by reassociating the application of × and using two
+    passes. It may invoke × up to twice as many times as the serial prefix algorithm. Given
     the right grain size and sufficient hardware threads, it can out perform the serial prefix
     because even though it does more work, it can distribute the work across more than one hardware
     thread.</p>
@@ -103,12 +99,12 @@ for( int i=1; i&lt;=n; ++i ) {
      
      <thead align="left">
       <tr>
-       <th class="cellrowborder" valign="top" width="50.24875621890548%" id="d510e169">
+       <th class="cellrowborder" valign="top" width="50.24875621890548%" id="d7237e170">
         <p>Pseudo-Signature </p>
 
        </th>
 
-       <th class="row-nocellborder" valign="top" width="49.75124378109454%" id="d510e175">
+       <th class="row-nocellborder" valign="top" width="49.75124378109454%" id="d7237e176">
         <p>Semantics </p>
 
        </th>
@@ -119,14 +115,14 @@ for( int i=1; i&lt;=n; ++i ) {
 
      <tbody>
       <tr valign="top">
-       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d510e169 ">
+       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d7237e170 ">
         <p><samp class="codeph">void Body::operator()( const Range&amp; r, pre_scan_tag )
          </samp>
         </p>
 
        </td>
 
-       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d510e175 ">
+       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d7237e176 ">
         <p> Accumulate summary for range <samp class="codeph">r</samp> . </p>
 
        </td>
@@ -134,14 +130,14 @@ for( int i=1; i&lt;=n; ++i ) {
       </tr>
 
       <tr valign="top">
-       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d510e169 ">
+       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d7237e170 ">
         <p><samp class="codeph">void Body::operator()( const Range&amp; r, final_scan_tag )
          </samp>
         </p>
 
        </td>
 
-       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d510e175 ">
+       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d7237e176 ">
         <p> Compute scan result and summary for range<samp class="codeph"> r</samp>.</p>
 
        </td>
@@ -149,13 +145,13 @@ for( int i=1; i&lt;=n; ++i ) {
       </tr>
 
       <tr valign="top">
-       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d510e169 ">
+       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d7237e170 ">
         <p><samp class="codeph">Body::Body( Body&amp; b, split )</samp>
         </p>
 
        </td>
 
-       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d510e175 ">
+       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d7237e176 ">
         <p>Split <samp class="codeph">b</samp> so that <samp class="codeph">this</samp> and <samp class="codeph">b</samp> can
          accumulate summaries separately. Body <samp class="codeph">*this</samp> is object <samp class="codeph">a</samp> in the table row
          below.</p>
@@ -165,13 +161,13 @@ for( int i=1; i&lt;=n; ++i ) {
       </tr>
 
       <tr valign="top">
-       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d510e169 ">
+       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d7237e170 ">
         <p><samp class="codeph"> void Body::reverse_join( Body&amp; a )</samp>
         </p>
 
        </td>
 
-       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d510e175 ">
+       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d7237e176 ">
         <p> Merge summary accumulated by <samp class="codeph">a</samp> into summary accumulated by
           <samp class="codeph">this</samp>, where <samp class="codeph">this</samp> was created earlier from <samp class="codeph">a</samp> by <samp class="codeph">a</samp>'s
          splitting constructor. Body <samp class="codeph">*this</samp> is object <samp class="codeph">b</samp> in the table row above.</p>
@@ -181,12 +177,12 @@ for( int i=1; i&lt;=n; ++i ) {
       </tr>
 
       <tr valign="top">
-       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d510e169 ">
+       <td class="cellrowborder" valign="top" width="50.24875621890548%" headers="d7237e170 ">
         <p><samp class="codeph"> void Body::assign( Body&amp; b )</samp></p>
 
        </td>
 
-       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d510e175 ">
+       <td class="row-nocellborder" valign="top" width="49.75124378109454%" headers="d7237e176 ">
         <p>Assign summary of <samp class="codeph">b</samp> to <samp class="codeph">this</samp>.</p>
 
        </td>
@@ -244,7 +240,7 @@ for( int i=1; i&lt;=n; ++i ) {
      parallel_scan</strong></p>
 <img src="../Resources/parll_scan.jpg"><p>The following code demonstrates how the
     signatures could be implemented to use <samp class="codeph">parallel_scan</samp> to compute the same result as the earlier
-    sequential example involving &times;.
+    sequential example involving ×.
     </p>
 <pre>
 using namespace tbb;
@@ -254,21 +250,21 @@ class Body {
     T* const y;
     const T* const z;
 public:
-    Body( T y_[], const T z_[] ) : sum(id<sub>&times;</sub>), z(z_), y(y_) {}
+    Body( T y_[], const T z_[] ) : sum(id<sub>×</sub>), z(z_), y(y_) {}
     T get_sum() const {return sum;}
 
     template&lt;typename Tag&gt;
     void operator()( const blocked_range&lt;int&gt;&amp; r, Tag ) {
         T temp = sum;
         for( int i=r.begin(); i&lt;r.end(); ++i ) {
-            temp = temp &times; z[i];
+            temp = temp × z[i];
             if( Tag::is_final_scan() )
                 y[i] = temp;
         }
         sum = temp;
     }
-    Body( Body&amp; b, split ) : z(b.z), y(b.y), sum(id<sub>&times;</sub>) {}
-    void reverse_join( Body&amp; a ) { sum = a.sum &#1503;&#402;&#8230; sum;}
+    Body( Body&amp; b, split ) : z(b.z), y(b.y), sum(id<sub>×</sub>) {}
+    void reverse_join( Body&amp; a ) { sum = a.sum ןƒ… sum;}
     void assign( Body&amp; b ) {sum = b.sum;}
 };
 
@@ -285,19 +281,19 @@ float DoParallelScan( T y[], const T z[], int n ) {
      effort, because the two versions are usually similar. The library defines static method
       <samp class="codeph">is_final_scan(</samp>) to enable differentiation between the versions.</li>
 
-      <li> The prescan variant computes the &times; reduction, but does not update
+      <li> The prescan variant computes the × reduction, but does not update
       <samp class="codeph">y</samp>. The prescan is used by <samp class="codeph">parallel_scan</samp> to generate
      look-ahead partial reductions.</li>
 
-      <li> The final scan variant computes the &times; reduction and updates
+      <li> The final scan variant computes the × reduction and updates
       <samp class="codeph">y</samp>.</li>
 
    </ul>
 <p>The operation <samp class="codeph">reverse_join</samp> is similar to the operation
      <samp class="codeph">join</samp> used by <samp class="codeph">parallel_reduce</samp>, except that the arguments are
-    reversed. That is, <samp class="codeph">this</samp> is the <em>right</em> argument of &times;.
+    reversed. That is, <samp class="codeph">this</samp> is the <em>right</em> argument of ×.
     Template function <samp class="codeph">parallel_scan</samp> decides if and when to generate parallel work.
-    It is thus crucial that &times; is associative and that the methods of Body faithfully represent it.
+    It is thus crucial that × is associative and that the methods of Body faithfully represent it.
     Operations such as floating-point addition that are somewhat associative can be used, with the
     understanding that the results may be rounded differently depending upon the association used by
      <samp class="codeph">parallel_scan</samp>. The reassociation may differ between runs even on the same
@@ -316,7 +312,7 @@ float DoParallelScan( T y[], const T z[], int n ) {
 
  
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/algorithms.htm">Algorithms</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/algorithms.htm">Algorithms</a></div>
 </div>
 <div class="See Also">
 <ul class="ullinks">

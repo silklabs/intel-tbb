@@ -3,17 +3,39 @@ The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.2 Update 3
+TBB_INTERFACE_VERSION == 7003
+
+- Added support for Microsoft* Visual Studio* 2013.
+- Improved Microsoft* PPL-compatible form of parallel_for for better 
+    support of auto-vectorization.
+- Added a new example for cancellation and reset in the flow graph:
+    Kohonen self-organizing map (examples/graph/som).
+- Various improvements in source code, tests, and makefiles.
+
+Bugs fixed:
+- Added dynamic replacement of _aligned_msize() previously missed.
+- Fixed task_group::run_and_wait() to throw invalid_multiple_scheduling
+    exception if the specified task handle is already scheduled.
+
+Open-source contributions integrated:
+
+- A fix for ARM* processors by Steve Capper.
+- Improvements in std::swap calls by Robert Maynard.
+
+------------------------------------------------------------------------
 Intel TBB 4.2 Update 2
 TBB_INTERFACE_VERSION == 7002
 
 Changes (w.r.t. Intel TBB 4.2 Update 1):
 
-- Enable C++11 features available in Microsoft* Visual Studio* 2013 Preview.
-- Added test for compatibility of TBB containers with C++11 range-based for loop.
+- Enable C++11 features for Microsoft* Visual Studio* 2013 Preview.
+- Added a test for compatibility of TBB containers with C++11
+    range-based for loop.
 
 Changes affecting backward compatibility:
 
-- Internal layout changed for class limiter_node.
+- Internal layout changed for class tbb::flow::limiter_node.
 
 Bugs fixed:
 
@@ -45,8 +67,8 @@ Community Preview Features:
 - Class task_arena no longer requires linking with a preview library,
     though still remains a community preview feature.
 - The method task_arena::wait_until_empty() is removed.
-- The method task_arena::current_slot() now returns -1 if the task scheduler
-    is not initialized in the thread.
+- The method task_arena::current_slot() now returns -1 if 
+    the task scheduler is not initialized in the thread.
 
 Changes affecting backward compatibility:
 

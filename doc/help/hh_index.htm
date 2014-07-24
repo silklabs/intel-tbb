@@ -8,6 +8,12 @@
   if (parent.location.href == self.location.href)
     window.location.href = "index.htm#+hh_index.htm";
 
+  function CloseNav() {
+    if ((top.right.location == null) || (top.right.location == undefined) || (typeof(top.right.location.href) != "string") || (top.right.location.href == ""))
+      top.location="main/title.htm";
+    else
+      top.location=top.right.location;
+  }
   function IndexListOnChange() { //Listbox select -> Put selected text into Entry field
     var iSelect = document.getElementById("indexcontainer").selectedIndex;
     var text = document.getElementById("indexcontainer").item(iSelect).text;
@@ -78,6 +84,10 @@
   function resizeIndex() {
     var indexDiv = document.getElementById("indexcontainer");
     var xTop = indexDiv.offsetTop;
+    var DivFooter = document.getElementById("DivFooter");
+    if ((DivFooter != null) && (DivFooter != undefined))
+        xTop = xTop + DivFooter.offsetHeight;
+
     var WW = GetFrameWidth() - 10; //working with 5px each side 
     indexDiv.style.width = WW.toString() + "px"; 
     var HH = GetFrameHeight() -  xTop; 
@@ -98,8 +108,8 @@
   <style type="text/css">
   .docstyle
   {
-    font-size: 85%;
-    font-family: verdana,arial,sans-serif;
+    font-size: 80%;
+    font-family: arial,verdana,sans-serif;
   }
   </style>
 
@@ -515,6 +525,7 @@
 <option value="reference/memory_allocation/zero_allocator.htm">zero allocator</option>
 </select>
 </div>
+
 
 </body>
 </html>

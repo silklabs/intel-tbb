@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="task_scheduler_observer Members">
 <meta name="DC.subject" content="task_scheduler_observer">
@@ -19,10 +16,9 @@
 </head>
 <body id="task_scheduler_observer_member">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(3);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="task_scheduler_observer_member"><!-- --></a>
 
  
@@ -35,10 +31,10 @@
 		  of this template class. 
 		</span><thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" valign="top" width="33.89830508474576%" id="d8202e29">Member 
+				<th class="cellrowborder" valign="top" width="33.89830508474576%" id="d117586e29">Member 
 				</th>
  
-				<th class="cellrowborder" valign="top" width="66.10169491525423%" id="d8202e32">Description 
+				<th class="cellrowborder" valign="top" width="66.10169491525423%" id="d117586e32">Description 
 				</th>
  
 			 </tr>
@@ -46,10 +42,10 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">task_scheduler_observer()</span> 
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">task_scheduler_observer()</span> 
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p>Constructs instance with observing
 					 disabled.
 				  </p>
@@ -59,11 +55,11 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">~task_scheduler_observer()</span>
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">~task_scheduler_observer()</span>
 				  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p>Disables observing. Waits for extant
 					 invocations of 
 					 <samp class="codeph">on_scheduler_entry</samp> or 
@@ -75,11 +71,11 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">void observe( bool state=true
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">void observe( bool state=true
 					 )</span> 
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p>Enables observing if state is true;
 					 disables observing if state is false.
 				  </p>
@@ -89,10 +85,10 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">bool is_observing() const</span> 
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">bool is_observing() const</span> 
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p><strong>Returns</strong>: True if observing is
 					 enabled; false otherwise.
 				  </p>
@@ -102,11 +98,11 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">virtual void on_scheduler_entry(
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">virtual void on_scheduler_entry(
 					 bool is_worker)</span> 
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p>
 					 The task scheduler invokes this method once per each thread participating in TBB work
 					 after enabling the observation and before it starts participating for the first time,
@@ -137,11 +133,11 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d8202e29 "><span class="keyword">virtual void on_scheduler_exit( bool
+				<td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d117586e29 "><span class="keyword">virtual void on_scheduler_exit( bool
 					 is_worker )</span> 
 				</td>
  
-				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d8202e32 ">
+				<td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d117586e32 ">
 				  <p>The task scheduler invokes this method when
 					 a thread stops participating in task scheduling, if observing is enabled. 
 				  </p>
@@ -182,7 +178,7 @@
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../../reference/task_scheduler/task_scheduler_observer.htm">task_scheduler_observer</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../../reference/task_scheduler/task_scheduler_observer.htm">task_scheduler_observer</a></div>
 </div>
 <div></div>
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -40,9 +40,14 @@ namespace internal {
     template<typename F> class task_handle_task;
 }
 
+class task_group;
+class structured_task_group;
+
 template<typename F>
 class task_handle : internal::no_assign {
     template<typename _F> friend class internal::task_handle_task;
+    friend class task_group;
+    friend class structured_task_group;
 
     static const intptr_t scheduled = 0x1;
 
@@ -203,6 +208,7 @@ public:
 
     template<typename F>
     task_group_status run_and_wait( task_handle<F>& h ) {
+      h.mark_scheduled();
       return internal_run_and_wait< task_handle<F> >( h );
     }
 }; // class task_group
@@ -211,6 +217,7 @@ class structured_task_group : public internal::task_group_base {
 public:
     template<typename F>
     task_group_status run_and_wait ( task_handle<F>& h ) {
+        h.mark_scheduled();
         return internal_run_and_wait< task_handle<F> >( h );
     }
 

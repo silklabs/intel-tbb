@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Partitioner Summary">
 <meta name="DC.subject" content="Partitioner Summary">
@@ -25,10 +22,9 @@
 </head>
 <body id="tutorial_Partitioner_Summary">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="tutorial_Partitioner_Summary"><!-- --></a>
 
  
@@ -49,19 +45,19 @@
 <div class="tablenoborder"><a name="tbl10"><!-- --></a><table cellpadding="4" summary="" id="tbl10" width="100%" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Partitioners</span></caption> 
 	 <thead align="left"> 
 		<tr> 
-		  <th class="cellrowborder" valign="top" width="33.23076923076923%" id="d10467e52"> 
+		  <th class="cellrowborder" valign="top" width="33.23076923076923%" id="d148489e52"> 
 			 <p>Partitioner 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="30.76923076923077%" id="d10467e58"> 
+		  <th class="cellrowborder" valign="top" width="30.76923076923077%" id="d148489e58"> 
 			 <p>Description 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="36%" id="d10467e64"> 
+		  <th class="cellrowborder" valign="top" width="36%" id="d148489e64"> 
 			 <p>When Used with blocked_range(i,j,<var>g</var>) 
 			 </p>
  
@@ -72,21 +68,21 @@
  
 	 <tbody> 
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d10467e52 "> 
+		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d148489e52 "> 
 			 <p><samp class="codeph">simple_partitioner</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d10467e58 "> 
+		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d148489e58 "> 
 			 <p>Chunksize bounded by grain size. 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="36%" headers="d10467e64 "> 
-			 <p><samp class="codeph"><var>g</var>/2 &#8804; 
-				  <var>chunksize</var> &#8804; 
+		  <td class="cellrowborder" valign="top" width="36%" headers="d148489e64 "> 
+			 <p><samp class="codeph"><var>g</var>/2 ≤ 
+				  <var>chunksize</var> ≤ 
 				  <var>g</var></samp> 
 			 </p>
  
@@ -95,20 +91,20 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d10467e52 "> 
+		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d148489e52 "> 
 			 <p><samp class="codeph">auto_partitioner</samp> (default)<a href="#ftn4"><sup><sup>[4]</sup></sup></a> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d10467e58 "> 
+		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d148489e58 "> 
 			 <p>Automatic chunk size. 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="36%" headers="d10467e64 "> 
-			 <p><samp class="codeph"><var>g</var>/2 &#8804; 
+		  <td class="cellrowborder" valign="top" width="36%" headers="d148489e64 "> 
+			 <p><samp class="codeph"><var>g</var>/2 ≤ 
 				  <var>chunksize</var></samp> 
 			 </p>
  
@@ -117,13 +113,13 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d10467e52 "> 
+		  <td class="cellrowborder" valign="top" width="33.23076923076923%" headers="d148489e52 "> 
 			 <p><samp class="codeph">affinity_partitioner</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d10467e58 "> 
+		  <td class="cellrowborder" valign="top" width="30.76923076923077%" headers="d148489e58 "> 
 			 <p>Automatic chunk size and cache affinity. 
 			 </p>
  
@@ -182,7 +178,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../tbb_userguide/parallel_for.htm">parallel_for</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../tbb_userguide/parallel_for.htm">parallel_for</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

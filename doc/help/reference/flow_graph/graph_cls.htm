@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="graph Class">
 <meta name="DC.subject" content="graph Class">
@@ -21,10 +18,9 @@
 </head>
 <body id="graph_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="graph_cls"><!-- --></a>
 
  
@@ -142,10 +138,10 @@ public:
 			 members of this class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d4815e144">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d72114e145">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d4815e147">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d72114e148">Description 
 				  </th>
  
 				</tr>
@@ -153,11 +149,11 @@ public:
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">graph([task_group_context&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">graph([task_group_context&amp;
 						group] )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Constructs a graph with no nodes. If 
 						<span class="keyword">group</span> is specified the graph tasks are
 						executed in this group. By default the graph is executed in a bound context of
@@ -172,10 +168,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">~graph()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">~graph()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Calls 
 						<span class="keyword">wait_for_all</span> on the graph, then destroys
 						the root task. 
@@ -186,11 +182,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">void
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">void
 						increment_wait_count()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Used to register that an external entity may still interact
 						with the graph. 
 					 </p>
@@ -204,11 +200,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">void
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">void
 						decrement_wait_count()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Used to unregister an external entity that may have
 						interacted with the graph. 
 					 </p>
@@ -222,11 +218,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">template&lt; typename Receiver,
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">template&lt; typename Receiver,
 						typename Body &gt; void run( Receiver &amp;r, Body body )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Use this method to spawn a task that runs a body and puts
 						its output to a specific receiver. The task is created as a child of the
 						graph's root task and therefore 
@@ -245,11 +241,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">template&lt; typename Body &gt;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">template&lt; typename Body &gt;
 						void run( Body body )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>This method spawns a task that runs as a child of the
 						graph's root task. Calls to 
 						<span class="keyword">wait_for_all</span> will not return until this
@@ -266,10 +262,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">void wait_for_all()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">void wait_for_all()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p>Blocks until all tasks associated with the root task have
 						completed and the number of 
 						<span class="keyword">decrement_wait_count</span> calls equals the
@@ -285,10 +281,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">task *root_task()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">task *root_task()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p><strong>Returns</strong>: a pointer to the root task of the flow
 						graph. 
 					 </p>
@@ -298,10 +294,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">bool is_cancelled()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">bool is_cancelled()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">true</samp> if the graph was cancelled during the
 						last call to 
@@ -319,10 +315,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">bool exception_thrown()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">bool exception_thrown()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">true</samp> if during the last call to 
 						<span class="keyword">wait_for_all</span>() an exception was thrown, 
@@ -338,10 +334,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4815e144 "><span class="keyword">void reset()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d72114e145 "><span class="keyword">void reset()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4815e147 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d72114e148 "> 
 					 <p> Resets the internal state of the nodes of a 
 						<span class="keyword">graph</span> to their initial state. The state of
 						the bodies of 
@@ -371,7 +367,7 @@ public:
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/flow_graph.htm">Flow Graph</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/flow_graph.htm">Flow Graph</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

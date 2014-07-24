@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="limiter_node Template Class">
 <meta name="DC.subject" content="limiter_node Template Class">
@@ -20,10 +17,9 @@
 </head>
 <body id="limiter_node_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="limiter_node_cls"><!-- --></a>
 
  
@@ -72,13 +68,13 @@
 <div class="tablenoborder"><a name="tbl27"><!-- --></a><table cellpadding="4" summary="" id="tbl27" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Behavior of a call to a limiter_node's try_put</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="center" valign="top" width="30%" id="d5089e94"> 
+				<th class="cellrowborder" align="center" valign="top" width="30%" id="d75154e95"> 
 				  <p>Value of counter C 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="70%" id="d5089e100"> 
+				<th class="cellrowborder" align="center" valign="top" width="70%" id="d75154e101"> 
 				  <p>bool try_put( const input_type &amp;v ) 
 				  </p>
  
@@ -89,13 +85,13 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="30%" headers="d5089e94 "> 
+				<td class="cellrowborder" valign="top" width="30%" headers="d75154e95 "> 
 				  <p>C &lt; threshold 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="70%" headers="d5089e100 "> 
+				<td class="cellrowborder" valign="top" width="70%" headers="d75154e101 "> 
 				  <p>C is incremented and 
 					 <span class="keyword">v</span> is broadcast to all successors. If no
 					 successor accepts the message, C is decremented. Returns 
@@ -109,13 +105,13 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="30%" headers="d5089e94 "> 
+				<td class="cellrowborder" valign="top" width="30%" headers="d75154e95 "> 
 				  <p>C == threshold 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="70%" headers="d5089e100 "> 
+				<td class="cellrowborder" valign="top" width="70%" headers="d75154e101 "> 
 				  <p>Returns 
 					 <span class="keyword">false</span>. 
 				  </p>
@@ -185,10 +181,10 @@ public:
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d5089e258">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d75154e260">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d5089e261">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d75154e263">Description 
 				  </th>
  
 				</tr>
@@ -196,11 +192,11 @@ public:
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">limiter_node( graph &amp;g, size_t
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">limiter_node( graph &amp;g, size_t
 						threshold, int number_of_decrement_predecessors = 0 )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Constructs a 
 						<span class="keyword">limiter_node</span> that allows up to 
 						<span class="keyword">threshold</span> items to pass through before
@@ -217,11 +213,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">limiter_node( const limiter_node
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">limiter_node( const limiter_node
 						&amp;src )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Constructs a 
 						<span class="keyword">limiter_node</span> that has the same initial
 						state that 
@@ -241,11 +237,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool try_put( const input_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool try_put( const input_type
 						&amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>If the broadcast count is below the threshold, 
 						<span class="keyword">v</span> is broadcast to all successors. For each
 						successor 
@@ -270,11 +266,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool register_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool register_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Adds a predecessor that can be pulled from once the
 						broadcast count falls below the threshold. 
 					 </p>
@@ -291,11 +287,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool remove_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool remove_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Removes 
 						<span class="keyword">p</span> from the set of predecessors. 
 					 </p>
@@ -309,11 +305,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool register_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool register_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Adds 
 						<span class="keyword">r</span> to the set of successors. 
 					 </p>
@@ -327,11 +323,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool remove_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool remove_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Removes 
 						<span class="keyword">r</span> from the set of successors. 
 					 </p>
@@ -345,11 +341,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool try_get( output_type &amp;v
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool try_get( output_type &amp;v
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Does not contain buffering and therefore cannot be pulled
 						from. 
 					 </p>
@@ -363,11 +359,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool try_reserve( output_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool try_reserve( output_type
 						&amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -380,10 +376,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool try_release( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool try_release( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -396,10 +392,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5089e258 "><span class="keyword">bool try_consume( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d75154e260 "><span class="keyword">bool try_consume( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5089e261 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d75154e263 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -422,7 +418,7 @@ public:
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/flow_graph.htm">Flow Graph</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/flow_graph.htm">Flow Graph</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

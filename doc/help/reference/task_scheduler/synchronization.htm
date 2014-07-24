@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="Synchronization">
 <meta name="DC.subject" content="Synchronization">
@@ -22,10 +19,9 @@
 </head>
 <body id="synchronization">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="synchronization"><!-- --></a>
 
  
@@ -85,10 +81,10 @@
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d7734e106">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d110779e108">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d7734e109">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d110779e111">Description 
 				  </th>
  
 				</tr>
@@ -96,11 +92,11 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">void set_ref_count( int count
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">void set_ref_count( int count
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p><strong>Requirements</strong>: count&gt;=0. If the
 						intent is to subsequently spawn 
 						<em>n</em> predecessors and wait, then 
@@ -119,11 +115,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">void
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">void
 						increment_ref_count();</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>Atomically increments 
 						<em>refcount</em> attribute. 
 					 </p>
@@ -133,11 +129,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">int
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">int
 						decrement_ref_count();</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>Atomically decrements 
 						<em>refcount</em> attribute. 
 					 </p>
@@ -161,10 +157,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">void wait_for_all()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">void wait_for_all()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p><strong>Requirements</strong>: 
 						<samp class="codeph"><em>refcount</em>=<em>n</em>+1</samp>, where 
 						<em>n</em> is the number of predecessors that are still
@@ -239,11 +235,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">static void spawn( task&amp; t
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">static void spawn( task&amp; t
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>Puts task 
 						<em>t</em> into the ready pool and immediately returns. 
 					 </p>
@@ -266,11 +262,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">static void spawn ( task_list&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">static void spawn ( task_list&amp;
 						list )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>Equivalent to executing spawn on each
 						task in 
 						<em>list</em> and clearing 
@@ -292,11 +288,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">void spawn_and_wait_for_all(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">void spawn_and_wait_for_all(
 						task&amp; t )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p><strong>Requirements</strong>: Any other
 						predecessors of 
 						<samp class="codeph">this</samp> must already be spawned. The 
@@ -340,11 +336,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">void spawn_and_wait_for_all(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">void spawn_and_wait_for_all(
 						task_list&amp; list )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>Similar to 
 						<samp class="codeph">{spawn(<em>list</em>); wait_for_all();}</samp>, but
 						often more efficient. 
@@ -355,11 +351,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">static void spawn_root_and_wait(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">static void spawn_root_and_wait(
 						task&amp; root )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p><strong>Requirements</strong>: The memory for task 
 						<em>root</em> was allocated by 
 						<samp class="codeph">task::allocate_root()</samp>. 
@@ -378,11 +374,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">static void spawn_root_and_wait(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">static void spawn_root_and_wait(
 						task_list&amp; root_list )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p><strong>Requirements</strong>: Each 
 						<samp class="codeph">task</samp> object 
 						<em>t</em> in 
@@ -404,11 +400,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7734e106 "><span class="keyword">static void enqueue ( task&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d110779e108 "><span class="keyword">static void enqueue ( task&amp;
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7734e109 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d110779e111 "> 
 					 <p>The task is scheduled for eventual
 						execution by a worker thread even if no thread ever explicitly waits for the
 						task to complete. If the total number of worker threads is zero, a special
@@ -454,7 +450,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/task_scheduler.htm">Task Scheduler</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/task_scheduler.htm">Task Scheduler</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

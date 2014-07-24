@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -60,4 +60,4 @@ test:
 perf_build: release
 
 perf_run:
-	./$(PROG) $(PERF_RUN_ARGS)
+	$(run_cmd) ./$(PROG) $(PERF_RUN_ARGS)

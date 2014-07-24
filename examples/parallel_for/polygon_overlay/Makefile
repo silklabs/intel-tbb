@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -83,14 +83,14 @@ endif
 
 test:
 ifeq ($(UI),mac)
-	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; ./$(EXE) $(ARGS)
+	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; $(run_cmd) ./$(EXE) $(ARGS)
 else
-	./$(EXE) $(ARGS)
+	$(run_cmd) ./$(EXE) $(ARGS)
 endif
 
 light_test:
 ifeq ($(UI),mac)
-	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; ./$(EXE) $(LIGHT_ARGS)
+	export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH):$(TBBLIBSPATH)"; $(run_cmd) ./$(EXE) $(LIGHT_ARGS)
 else
-	./$(EXE) $(LIGHT_ARGS)
+	$(run_cmd) ./$(EXE) $(LIGHT_ARGS)
 endif

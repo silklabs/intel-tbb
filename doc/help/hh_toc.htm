@@ -14,6 +14,12 @@
   if (parent.location.href == self.location.href)
     window.location.href = "index.htm";
 
+  function CloseNav() {
+    if ((top.right.location == null) || (top.right.location == undefined) || (typeof(top.right.location.href) != "string") || (top.right.location.href == ""))
+      top.location="main/title.htm";
+    else
+      top.location=top.right.location;
+  }
 
   //Links to other domains normally wont work because of browser security 
   function SyncDocUrl(showError) 
@@ -30,8 +36,8 @@
      else 
      { 
 	if (showError) 
-     alert("Operation failed!\r\rCross frame communication is blocked. Please check your browser security settings or try another browser."); 
-     return ""; 
+          alert("Operation failed!\r\rCross frame communication is blocked. Please check your browser security settings or try another browser."); 
+        return ""; 
      } 
   } 
   
@@ -54,37 +60,62 @@
     return sRet;
   }
   
-function GetFullLink(promptUser)
+function GetGotoURL()
 {
+   var topURL = top.location.href;  
+   if (topURL == undefined)      // undefined if frame communication is blocked
+      topURL = location.href;
+   var i = topURL.indexOf("#");  // trim off any bookmark
+   if (i > 0)
+      topURL = topURL.substr(0, i);
+   var baseURL = topURL.substr(0, topURL.lastIndexOf("/") + 1);   // "http://c:/base/start.htm" --> "http://c:/base/"
+   return baseURL + "hh_goto.htm";
+}
+
+function ShowUrlBox(rightURL)
+{
+   var gotoUrl = GetGotoURL();
+   var sBase = gotoUrl.substr(0, gotoUrl.lastIndexOf("/") + 1);   // "http://c:/base/goto.htm" --> "http://c:/base/"
+
+   rightURL = TrimURL(rightURL);     // "http://c:/base/" --> "c:/base/dir/page.htm"
+   sBase = TrimURL(sBase);           // "http://c:/base/" --> "c:/base/"
+   if (rightURL.indexOf(sBase) >= 0)
+      rightURL = rightURL.substr(sBase.length, rightURL.length); // "c:/base/dir/page.htm" --> "dir/page.htm" 
+
+   //create full goto full URL. The bookmark allows goto.htm to set the right frame. 
+   //Using hh_goto.htm works where hh_start.htm usually wont update.
+   var url=gotoUrl + "#"+ rightURL;
+
+   //Show URL in prompt and give option to goto the URL
+   url = prompt("Absolute address. Click OK to load this URL in the browser", url)
+   if (url != "" && url != null)
+     top.location.href= url;
+}
+
+function GetFullLink(){
+  if (SyncDocUrl(false) == "")  // Can't see the right frame -- Use the current TOC selection
+  {
+     var el = findLinkNode();
+     if (el != null && el != undefined)
+       ShowUrlBox(el.getAttribute('href'));
+     else
+       alert("Please select a Table of Contents item."); 
+     return;
+  }
+
   var rightURL = SyncDocUrl(true);
   if (rightURL != "")
   {
-      //Top level URL - Trim off Bookmark etc
-      var topURL = top.location.href;
-      var i = topURL.indexOf("#");
-      if (i > 0)
-        topURL = topURL.substr(0, i);
-
-      //trim off prefix
-      var sBase = TrimURL(topURL);
-      rightURL = TrimURL(rightURL);
-
-      sBase = sBase.substr(0, sBase.lastIndexOf("/") + 1);     // "c:/base/start.htm" --> "c:/base/"
-      topURL = topURL.substr(0, topURL.lastIndexOf("/") + 1);   // "http://c:/base/start.htm" --> "c:/base/"
-      var BM = rightURL.substr(sBase.length, rightURL.length); // "c:/base/dir/page.htm" --> "dir/page.htm"
-
-      //create and goto full URL. If not promptUser mode then just return the full URL
-      var url=topURL + "hh_goto.htm" + "#"+ BM;
-      if (promptUser == false)
-        return url;
-
-      //Show URL in prompt and give option to goto the URL
-      url = prompt("Absolute address. Click OK to load this URL in the browser", url)
-      if ((url != "") && (url != null))
-        top.location.href= url;
+      ShowUrlBox(rightURL);
   }
 }
 
+
+  function DoTocNext(fwd) { 
+    var aref = selectNext(fwd); 
+    if (aref != null && aref != undefined && aref != "") 
+       top.right.location = aref;
+  } 
 
   function DoTocSync(showError) { 
     var url = SyncDocUrl(showError); 
@@ -97,13 +128,35 @@ function GetFullLink(promptUser)
     resizeTree();
     DoTocSync(false);
   }
+
+  function KeyDownEvent(event) {
+    if ((event.which && event.which==13) || (event.keyCode && event.keyCode==13)) {  // Return
+      var node = findLinkNode();
+      if (node != null && node != undefined && node != "") 
+      {
+        aref = node.getAttribute('href');
+        if (aref != null && aref != undefined && aref != "") 
+          top.right.location = aref;
+      }
+    }
+    else if ((event.which && event.which==40) || (event.keyCode && event.keyCode==40)) { //down arrow
+      selectNext(true);
+    }
+    else if ((event.which && event.which==38) || (event.keyCode && event.keyCode==38)) { //up arrow
+      selectNext(false);
+    }
+
+    return(true); //do not gobble keypress 
+  }
   -->
   </script>
 
 
 </head>
 
-<body id="docBody" style="color: Black; margin: 5px 0px 0px 0px;" onload="OnLoadCode()" onselectstart="return false;">
+<body id="docBody" style="color: Black; margin: 5px 0px 0px 0px;" 
+  onkeydown="javascript:return(KeyDownEvent(event));"
+  onload="OnLoadCode()" onselectstart="return false;">
 
 
 <div style="display: inline; white-space: nowrap; margin: 0px 0px 0px 5px;">
@@ -116,20 +169,32 @@ function GetFullLink(promptUser)
  NAME="Search">
 </div>
 
-<div align="right" style="margin: 3 5 5 3;">
+
+<div align="right" style="margin: 3 8 5 3;">
    <span title="Get absolute address of current page"
       style="cursor: pointer; font-size: 8pt; font-family: verdana,arial,sans-serif;"
       onmouseover="this.style.textDecoration='underline'"
       onmouseout="this.style.textDecoration='none'"
-      onclick="GetFullLink(true);">Get Link</span>
+      onclick="GetFullLink();">Get Link</span>
 |
    <span title="Sync table of contents to current page"
       style="cursor: pointer; font-size: 8pt; font-family: verdana,arial,sans-serif;"
       onmouseover="this.style.textDecoration='underline'"
       onmouseout="this.style.textDecoration='none'"
       onclick="DoTocSync(true);">Sync TOC</span>
+|
+   <span title="Previous Page"
+      style="cursor: pointer; font-size: 8pt; font-family: verdana,arial,sans-serif;"
+      onmouseover="this.style.textDecoration='underline'"
+      onmouseout="this.style.textDecoration='none'"
+      onclick="DoTocNext(false);">&lt;&lt;</span>
+|
+   <span title="Next Page"
+      style="cursor: pointer; font-size: 8pt; font-family: verdana,arial,sans-serif;"
+      onmouseover="this.style.textDecoration='underline'"
+      onmouseout="this.style.textDecoration='none'"
+      onclick="DoTocNext(true);">&gt;&gt;</span>
 </div>
-
 
     <div id="tree" style="top: 35px; left: 0px;" class="treeDiv">
       <div id="treeRoot" onselectstart="return false" ondragstart="return false">
@@ -159,7 +224,7 @@ function GetFullLink(promptUser)
             </div>
             <div class="treeNode">
               <img src="treenodeplus.gif" class="treeLinkImage" onclick="expandCollapse(this.parentNode)" alt="">
-              <a href="tbb_userguide/title.htm" target="right" class="treeUnselected" onclick="clickAnchor(this)">Intel&reg; Threading Building Blocks (Intel&reg; TBB) User Guide</a>
+              <a href="tbb_userguide/title.htm" target="right" class="treeUnselected" onclick="clickAnchor(this)">Intel® Threading Building Blocks (Intel® TBB) User Guide</a>
               <div class="treeSubnodesHidden">
                 <div class="treeNode">
                   <img src="treenodeplus.gif" class="treeLinkImage" onclick="expandCollapse(this.parentNode)" alt="">
@@ -1566,7 +1631,10 @@ function GetFullLink(promptUser)
           </div>
         </div>
       </div>
+
     </div>
+
+
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -33,6 +33,8 @@
 // According to C99 standard INTPTR_MIN defined for C++
 // iff __STDC_LIMIT_MACROS pre-defined
 #define __STDC_LIMIT_MACROS 1
+
+#define HARNESS_TBBMALLOC_THREAD_SHUTDOWN 1
 
 #include "harness.h"
 #include "harness_barrier.h"
@@ -745,6 +747,57 @@ void checkNoHugePages()
            "must have priority over environment variable");
 }
 
+/*---------------------------------------------------------------------------*/
+// The regression test against a bug in TBBMALLOC_CLEAN_ALL_BUFFERS allocation
+// command. When cleanup is requested the backend should process the queue of
+// postponed coalescing requests otherwise not all unsued memory might be
+// deallocated.
+
+const size_t alloc_size = 16*1024;
+const int total_alloc_size = 100 * 1024 * 1024;
+const int num_allocs = total_alloc_size / alloc_size;
+void *ptrs[num_allocs];
+
+tbb::atomic<int> deallocs_counter;
+
+struct TestCleanAllBuffersDeallocate : public SimpleBarrier {
+    void operator() ( int ) const {
+        barrier.wait();
+        for( int i = deallocs_counter++; i < num_allocs; i = deallocs_counter++ )
+           scalable_free( ptrs[i] );
+    }
+};
+
+// The idea is to allocate a set of objects and then deallocate them in random
+// order in parallel to force occuring conflicts in backend during coalescing.
+// Thus if the backend does not check the queue of postponed coalescing
+// requests it will not be able to unmap all memory and a memory leak will be
+// observed.
+void TestCleanAllBuffers() {
+    const int num_threads = 8;
+    // Clean up if something was allocated before the test
+    scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS,0);
+
+    size_t memory_in_use_before = getMemSize();
+    for ( int i=0; i<num_allocs; ++i ) {
+        ptrs[i] = scalable_malloc( alloc_size );
+        ASSERT( ptrs[i] != NULL, "scalable_malloc has return zero." );
+    }
+    deallocs_counter = 0;
+    TestCleanAllBuffersDeallocate::initBarrier(num_threads);
+    NativeParallelFor(num_threads, TestCleanAllBuffersDeallocate());
+    if ( defaultMemPool->extMemPool.backend.coalescQ.blocksToFree == NULL )
+        REPORT( "Warning: The queue of postponed coalescing requests is empty. Unable to create the condition for bug reproduction.\n" );
+    ASSERT( scalable_allocation_command(TBBMALLOC_CLEAN_ALL_BUFFERS,0) == TBBMALLOC_OK, "The cleanup request has not cleaned anithing." );
+    size_t memory_in_use_after = getMemSize();
+
+    REMARK( "memory_in_use_before = %ld\nmemory_in_use_after = %ld\n", memory_in_use_before, memory_in_use_after );
+
+    size_t memory_leak = memory_in_use_after - memory_in_use_before;
+    ASSERT( memory_leak == 0, "The backend has not processed the queue of postponed coalescing requests during cleanup." );
+}
+/*---------------------------------------------------------------------------*/
+
 int TestMain () {
     scalable_allocation_mode(USE_HUGE_PAGES, 0);
 #if !_XBOX && !__TBB_WIN8UI_SUPPORT
@@ -771,5 +824,6 @@ int TestMain () {
     TestObjectRecognition();
     TestBitMask();
     TestHeapLimit();
+    TestCleanAllBuffers();
     return Harness::Done;
 }

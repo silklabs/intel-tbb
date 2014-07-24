@@ -8,7 +8,7 @@
    color: #000000;               /* text color */ 
    overflow: auto;
    margin: 0px 0px 0px 0px;
-   padding: 0px 0px 0px 8px;
+   padding: 0px 0px 0px 2px;  // 8px is better left padding but obscures the scroll bar in Chrome */
 }
 .treeNode
 {
@@ -51,7 +51,7 @@ A.treeSelected
 
    border-right: 1px solid #999999;
    border-left: 1px solid #999999;
-   border-bottom: 1px solid #999999; 
+   border-bottom: 1px solid #999999;
    color: #000000;               /* selected text color */ 
 }
 A.treeUnselected
@@ -62,7 +62,7 @@ A.treeUnselected
    border-right: solid 1px transparent;
 
    border-left: solid 1px transparent;
-   border-bottom: solid 1px transparent; 
+   border-bottom: solid 1px transparent;
    background-color: transparent;
 
 

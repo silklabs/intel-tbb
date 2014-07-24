@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="parallel_reduce Template Function">
 <meta name="DC.subject" content="parallel_reduce Template Function">
@@ -25,10 +22,9 @@
 </head>
 <body id="parallel_reduce_func">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="parallel_reduce_func"><!-- --></a>
 
 
@@ -81,12 +77,12 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                     
                     <thead align="left">
                         <tr>
-                            <th class="cellrowborder" valign="top" id="d431e110">
+                            <th class="cellrowborder" valign="top" id="d5924e111">
                                 <p>Pseudo-Signature </p>
 
                             </th>
 
-                            <th class="row-nocellborder" valign="top" id="d431e116">
+                            <th class="row-nocellborder" valign="top" id="d5924e117">
                                 <p>Semantics </p>
 
                             </th>
@@ -97,13 +93,13 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
 
                     <tbody>
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e110 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e111 ">
                                 <p><samp class="codeph"> Value Identity;</samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e116 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e117 ">
                                 <p> Left identity element for
                                         <samp class="codeph">Func::operator()</samp>.</p>
 
@@ -112,14 +108,14 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                         </tr>
 
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e110 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e111 ">
                                 <p><samp class="codeph"> Value Func::operator()(const
                                         Range&amp; range, const Value&amp; x) </samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e116 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e117 ">
                                 <p> Accumulate result for subrange, starting with
                                     initial value <samp class="codeph">x</samp>.</p>
 
@@ -128,14 +124,14 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                         </tr>
 
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e110 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e111 ">
                                 <p><samp class="codeph">Value Reduction::operator()(const
                                         Value&amp; x, const Value&amp; y); </samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e116 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e117 ">
                                 <p> Combine results<samp class="codeph"> x</samp> and
                                         <samp class="codeph">y</samp>.</p>
 
@@ -160,12 +156,12 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                     
                     <thead align="left">
                         <tr>
-                            <th class="cellrowborder" valign="top" id="d431e227">
+                            <th class="cellrowborder" valign="top" id="d5924e228">
                                 <p>Pseudo-Signature </p>
 
                             </th>
 
-                            <th class="row-nocellborder" valign="top" id="d431e233">
+                            <th class="row-nocellborder" valign="top" id="d5924e234">
                                 <p>Semantics </p>
 
                             </th>
@@ -176,14 +172,14 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
 
                     <tbody>
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e227 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e228 ">
                                 <p><samp class="codeph"> Body::Body( Body&amp;, split
                                         );</samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e233 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e234 ">
                                 <p>Splitting constructor. Must be able to run concurrently with
                                         <samp class="codeph">operator()</samp> and method
                                     <samp class="codeph">join</samp>.</p>
@@ -193,13 +189,13 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                         </tr>
 
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e227 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e228 ">
                                 <p><samp class="codeph"> Body::~Body()</samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e233 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e234 ">
                                 <p> Destructor.</p>
 
                             </td>
@@ -207,14 +203,14 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                         </tr>
 
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e227 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e228 ">
                                 <p><samp class="codeph"> void Body::operator()(const
                                         Range&amp; range); </samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e233 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e234 ">
                                 <p> Accumulate result for subrange.</p>
 
                             </td>
@@ -222,14 +218,14 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                         </tr>
 
                         <tr valign="top">
-                            <td class="cellrowborder" valign="top" headers="d431e227 ">
+                            <td class="cellrowborder" valign="top" headers="d5924e228 ">
                                 <p><samp class="codeph"> void Body::join( Body&amp; rhs );
                                     </samp>
                                 </p>
 
                             </td>
 
-                            <td class="row-nocellborder" valign="top" headers="d431e233 ">
+                            <td class="row-nocellborder" valign="top" headers="d5924e234 ">
                                 <p> Join results. The result in rhs should be merged into the result
                                     of <samp class="codeph">this</samp>.</p>
 
@@ -245,7 +241,7 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
             <p>A <samp class="codeph">parallel_reduce</samp> recursively splits the range into subranges to the
                 point such that <samp class="codeph">is_divisible()</samp> is false for each subrange.
                     A<samp class="codeph"> parallel_reduce</samp> uses the splitting constructor to make one or
-                more copies of the body for each thread. It may copy a body while the body&#8217;s
+                more copies of the body for each thread. It may copy a body while the body’s
                     <samp class="codeph">operator() </samp>or method join runs concurrently. You are
                 responsible for ensuring the safety of such concurrency. In typical usage, the
                 safety requires no extra effort.</p>
@@ -311,7 +307,7 @@ void parallel_reduce( const Range&amp; range, const Body&amp; body
                     <samp class="codeph">parallel_for</samp> . Sequential execution never invokes the splitting
                 constructor or method join.</p>
 <p>All overloads can be passed a<samp class="codeph">
-                    task_group_context</samp> object so that the algorithm&#8217;s tasks are executed in
+                    task_group_context</samp> object so that the algorithm’s tasks are executed in
                 this group. By default the algorithm is executed in a bound group of its
                     own.</p>
 <p><strong>Complexity</strong></p>
@@ -419,7 +415,7 @@ float ParallelSum( float array[], size_t n ) {
 </div>
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/algorithms.htm">Algorithms</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/algorithms.htm">Algorithms</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

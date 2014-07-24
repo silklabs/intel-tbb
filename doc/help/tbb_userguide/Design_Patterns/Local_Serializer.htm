@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Local Serializer">
 <meta name="DC.subject" content="Local Serializer">
@@ -24,10 +21,9 @@
 </head>
 <body id="Local_Serializer">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="Local_Serializer"><!-- --></a>
 
  
@@ -113,13 +109,13 @@ void EnqueueWork( Priority p, Func f, Serializer* s=NULL );</pre>
 <div class="tablenoborder"><table cellpadding="4" summary="" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Implementation of Constraints</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" valign="top" width="66.39676113360325%" id="d9503e118"> 
+				<th class="cellrowborder" valign="top" width="66.39676113360325%" id="d134980e118"> 
 				  <p>Constraint 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" width="33.603238866396765%" id="d9503e124"> 
+				<th class="cellrowborder" valign="top" width="33.603238866396765%" id="d134980e124"> 
 				  <p>Resolved by class... 
 				  </p>
  
@@ -130,14 +126,14 @@ void EnqueueWork( Priority p, Func f, Serializer* s=NULL );</pre>
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d9503e118 "> 
+				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d134980e118 "> 
 				  <p>Any prior work for the 
 					 <samp class="codeph">Serializer</samp> has completed. 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d9503e124 "> 
+				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d134980e124 "> 
 				  <p><samp class="codeph">Serializer</samp> 
 				  </p>
  
@@ -146,13 +142,13 @@ void EnqueueWork( Priority p, Func f, Serializer* s=NULL );</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d9503e118 "> 
+				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d134980e118 "> 
 				  <p>A thread is available. 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d9503e124 "> 
+				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d134980e124 "> 
 				  <p><samp class="codeph">RunWorkItem</samp> 
 				  </p>
  
@@ -161,13 +157,13 @@ void EnqueueWork( Priority p, Func f, Serializer* s=NULL );</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d9503e118 "> 
+				<td class="cellrowborder" valign="top" width="66.39676113360325%" headers="d134980e118 "> 
 				  <p>No higher priority work is ready to run. 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d9503e124 "> 
+				<td class="cellrowborder" valign="top" width="33.603238866396765%" headers="d134980e124 "> 
 				  <p><samp class="codeph">ReadyPileType</samp> 
 				  </p>
  
@@ -218,7 +214,7 @@ class SerializedWorkItem: public WorkItem {
 <span xml:lang="PT-BR">   /*override*/ void run() {</span>
 <span xml:lang="PT-BR">       f();</span>
 <span xml:lang="PT-BR">       Serializer* s = serializer;</span>
-<span xml:lang="PT-BR">       // Destroy f before running Serializer&#8217;s next functor.</span>
+<span xml:lang="PT-BR">       // Destroy f before running Serializer’s next functor.</span>
        delete this;
        if( s )
            s-&gt;noteCompletion();
@@ -294,7 +290,7 @@ public:
            moveOneItemToReadyPile();
    }
    void noteCompletion() {        // Called when WorkItem completes.
-       if( &#8208;&#8208;count!=0 )
+       if( ‐‐count!=0 )
            moveOneItemToReadyPile();
    }
 };</pre> 
@@ -401,7 +397,7 @@ public:
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../tbb_userguide/Design_Patterns/Design_Patterns.htm">Design Patterns</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../tbb_userguide/Design_Patterns/Design_Patterns.htm">Design Patterns</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Continuation Passing">
 <meta name="DC.subject" content="Continuation Passing">
@@ -23,10 +20,9 @@
 </head>
 <body id="tutorial_Continuation_Passing">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="tutorial_Continuation_Passing"><!-- --></a>
 
  
@@ -43,7 +39,7 @@
 		ready to continue, but cannot do so immediately because its thread is still
 		executing one of the other tasks. The solution is for the parent to not wait on
 		its children, and instead spawn both children and return. The children are
-		allocated not as children of the parent, but as children of the parent&#8217;s 
+		allocated not as children of the parent, but as children of the parent’s 
 		<em>continuation task</em>. Any idle thread can steal and run the
 		continuation task when its children complete. 
 	 </p>
@@ -176,10 +172,10 @@ struct FibTask: public task {
 		actually wait for 
 		<var>x</var> to complete. Instead, it constructs a dummy
 		successor of 
-		<var>x</var>, and waits for the successors&#8217;s reference count to
+		<var>x</var>, and waits for the successors’s reference count to
 		be decremented. Because 
 		<samp class="codeph">allocate_continuation</samp> forwards this dummy successor to
-		the continuation, the dummy successor&#8217;s reference count is not decremented
+		the continuation, the dummy successor’s reference count is not decremented
 		until the continuation completes. 
 	 </p>
  
@@ -187,7 +183,7 @@ struct FibTask: public task {
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../tbb_userguide/Useful_Task_Techniques.htm">Useful Task Techniques</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../tbb_userguide/Useful_Task_Techniques.htm">Useful Task Techniques</a></div>
 </div>
 <div></div>
 

@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -56,4 +56,4 @@ clean:
 test:
 	$(run_cmd) ./$(PROG) $(ARGS)
 light_test:
-	./$(PROG) $(LIGHT_ARGS)
+	$(run_cmd) ./$(PROG) $(LIGHT_ARGS)

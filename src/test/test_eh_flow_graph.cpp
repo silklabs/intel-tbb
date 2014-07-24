@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -48,6 +48,12 @@
 // not the arena.
 // #define USE_TASK_SCHEDULER_OBSERVER 1
 #define TBB_PREVIEW_GRAPH_NODES 1
+
+#if _MSC_VER && defined(__INTEL_COMPILER) && !TBB_USE_DEBUG
+    #define TBB_RUN_BUFFERING_TEST __INTEL_COMPILER > 1210
+#else
+    #define TBB_RUN_BUFFERING_TEST 1
+#endif
 
 #if TBB_USE_EXCEPTIONS
 #if USE_TASK_SCHEDULER_OBSERVER
@@ -987,7 +993,6 @@ void run_one_buffer_node_test(bool throwException,bool flog) {
     o.observe(false);
 #endif
 }
-
 template<class BufferItemType,
          TestNodeTypeEnum SourceThrowType,
          TestNodeTypeEnum SinkThrowType>
@@ -1005,6 +1010,7 @@ void run_buffer_queue_and_overwrite_node_test() {
         if(i == 2) continue;  // no need to test flog w/o throws
         bool throwException = (i & 0x1) != 0;
         bool doFlog = (i & 0x2) != 0;
+#if TBB_RUN_BUFFERING_TEST
         run_one_buffer_node_test<
             /* class BufferItemType*/     BufferItemType,
             /*class SourceNodeType*/      SrcType,
@@ -1021,6 +1027,7 @@ void run_buffer_queue_and_overwrite_node_test() {
             /*class SinkNodeType*/        SnkType,
             /*class SinkNodeBodyType*/    SinkBodyType
             >(throwException, doFlog);
+#endif
         run_one_buffer_node_test<
             /* class BufferItemType*/     BufferItemType,
             /*class SourceNodeType*/      SrcType,
@@ -1034,6 +1041,10 @@ void run_buffer_queue_and_overwrite_node_test() {
 
 void test_buffer_queue_and_overwrite_node() {
     REMARK("Testing buffer_node, queue_node and overwrite_node\n");
+#if TBB_RUN_BUFFERING_TEST
+#else
+    REMARK("skip buffer and queue test (known issue)\n");
+#endif
     g_Wakeup_Msg = "buffer, queue, overwrite(is,non): Missed wakeup or machine is overloaded?";
     run_buffer_queue_and_overwrite_node_test<int,isThrowing,nonThrowing>();
     g_Wakeup_Msg = "buffer, queue, overwrite(non,is): Missed wakeup or machine is overloaded?";

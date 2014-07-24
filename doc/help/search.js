@@ -12,6 +12,7 @@
 //*  10-June-2009: RWC - All files now saved in UTF-8 file format. Search is now Unicode based. Previously ANSI based.
 //*     - Added reBreakChars to allow multiple text break chars. Was just space char (0x20).
 //*  12-Sept-2011: RWC - Search highlighting now works for all browsers (previously just Internet Explorer).
+//*  04-Sept-2012: RWC - Select first item when result list loads.
 //*
 
 
@@ -404,8 +405,10 @@ function HighlightTopic() {
 function OpenResultListDoc() {
   //Something selected in the search result list?
   var iSelect = document.forms['searchform'].SearchResultList.selectedIndex;
-  if (iSelect < 0) 
+  if (iSelect < 0) {
     iSelect = 0;
+    document.forms['searchform'].SearchResultList.selectedIndex = 0;
+  }
 
   //Open the selected file
   if (window.navigator.userAgent.indexOf("Netscape") > 0) {

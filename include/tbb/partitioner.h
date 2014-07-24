@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -60,7 +60,7 @@ namespace interface6 {
     }
 }
 
-namespace internal {
+namespace internal { //< @cond INTERNAL
 size_t __TBB_EXPORTED_FUNC get_initial_auto_partitioner_divisor();
 
 //! Defines entry point for affinity partitioner into tbb run-time library.
@@ -95,8 +95,7 @@ public:
 
 template<typename Range, typename Body, typename Partitioner> class start_scan;
 
-} // namespace internal
-//! @endcond
+} //< namespace internal @endcond
 
 namespace serial {
 namespace interface6 {
@@ -128,17 +127,6 @@ public:
     }
     static bool is_peer_stolen(task &t) {
         return static_cast<flag_task*>(t.parent())->my_child_stolen;
-    }
-};
-
-//! Task to signal the demand without carrying the work
-class signal_task: public task {
-public:
-    task* execute() {
-        if( is_stolen_task() ) {
-            flag_task::mark_task_stolen(*this);
-        }
-        return NULL;
     }
 };
 
@@ -216,21 +204,11 @@ struct partition_type_base {
     void note_affinity( task::affinity_id ) {}
     bool check_being_stolen(task &) { return false; } // part of old should_execute_range()
     bool check_for_demand(task &) { return false; }
-    bool divisions_left() { return true; } // part of old should_execute_range()
-    bool should_create_trap() { return false; }
+    bool is_divisible() { return true; } // part of old should_execute_range()
     depth_t max_depth() { return 0; }
     void align_depth(depth_t) { }
     // common function blocks
-    Partition& derived() { return *static_cast<Partition*>(this); }
-    template<typename StartType>
-    flag_task* split_work(StartType &start) {
-        flag_task* parent_ptr = start.create_continuation(); // the type here is to express expectation
-        start.set_parent(parent_ptr);
-        parent_ptr->set_ref_count(2);
-        StartType& right_work = *new( parent_ptr->allocate_child() ) StartType(start, split());
-        start.spawn(right_work);
-        return parent_ptr;
-    }
+    Partition& self() { return *static_cast<Partition*>(this); } // CRTP helper
     template<typename StartType, typename Range>
     void execute(StartType &start, Range &range) {
         // The algorithm in a few words ([]-denotes calls to decision methods of partitioner):
@@ -240,34 +218,20 @@ struct partition_type_base {
         //    Create trap task [if necessary];
         // }
         // If not divisible or [max depth is reached], execute, else do the range pool part
-        task* parent_ptr = start.parent();
-        if( range.is_divisible() ) {
-            if( derived().divisions_left() )
-                do parent_ptr = split_work(start); // split until divisions_left()
-                while( range.is_divisible() && derived().divisions_left() );
-            if( derived().should_create_trap() ) { // only for range pool
-                if( parent_ptr->ref_count() > 1 ) { // create new parent if necessary
-                    parent_ptr = start.create_continuation();
-                    start.set_parent(parent_ptr);
-                } else __TBB_ASSERT(parent_ptr->ref_count() == 1, NULL);
-                parent_ptr->set_ref_count(2); // safe because parent has only one reference
-                signal_task& right_signal = *new( parent_ptr->allocate_child() ) signal_task();
-                start.spawn(right_signal); // pure signal is to avoid deep recursion in the end
-            }
+        if ( range.is_divisible() ) {
+            if ( self().is_divisible() )
+                do start.offer_work( split() ); // split until is divisible
+                while ( range.is_divisible() && self().is_divisible() );
         }
-        if( !range.is_divisible() || !derived().max_depth() )
+        if( !range.is_divisible() || !self().max_depth() )
             start.run_body( range ); // simple partitioner goes always here
         else { // do range pool
             internal::range_vector<Range, Partition::range_pool_size> range_pool(range);
             do {
-                range_pool.split_to_fill(derived().max_depth()); // fill range pool
-                if( derived().check_for_demand( start ) ) {
+                range_pool.split_to_fill(self().max_depth()); // fill range pool
+                if( self().check_for_demand( start ) ) {
                     if( range_pool.size() > 1 ) {
-                        parent_ptr = start.create_continuation();
-                        start.set_parent(parent_ptr);
-                        parent_ptr->set_ref_count(2);
-                        StartType& right_work = *new( parent_ptr->allocate_child() ) StartType(start, range_pool.front(), range_pool.front_depth());
-                        start.spawn(right_work);
+                        start.offer_work( range_pool.front(), range_pool.front_depth() );
                         range_pool.pop_front();
                         continue;
                     }
@@ -319,7 +283,7 @@ struct auto_partition_type_base : partition_type_base<Partition> {
         }
         return false;
     }
-    bool divisions_left() { // part of old should_execute_range()
+    bool is_divisible() { // part of old should_execute_range()
         if( my_divisor > 1 ) return true;
         if( my_divisor && my_max_depth > 1 ) { // can split the task and once more internally. TODO: on-stack flag instead
             // keep same fragmentation while splitting for the local task pool
@@ -327,9 +291,6 @@ struct auto_partition_type_base : partition_type_base<Partition> {
             my_divisor = 0; // decrease max_depth once per task
             return true;
         } else return false;
-    }
-    bool should_create_trap() {
-        return my_divisor > 0;
     }
     bool check_for_demand(task &t) {
         if( flag_task::is_peer_stolen(t) ) {
@@ -399,11 +360,8 @@ public:
         } else my_delay = false;
         return false;
     }
-    bool divisions_left() { // part of old should_execute_range()
+    bool is_divisible() {
         return my_divisor > 1;
-    }
-    bool should_create_trap() {
-        return false;
     }
     static const unsigned range_pool_size = __TBB_RANGE_POOL_CAPACITY;
 };
@@ -424,7 +382,7 @@ public:
     template<typename StartType, typename Range>
     void execute(StartType &start, Range &range) {
         while( range.is_divisible() )
-            split_work( start );
+            start.offer_work( split() );
         start.run_body( range );
     }
     //static const unsigned range_pool_size = 1; - not necessary because execute() is overridden

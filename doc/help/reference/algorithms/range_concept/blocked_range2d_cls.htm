@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="blocked_range2d Template Class">
 <meta name="DC.subject" content="blocked_range2d Template Class">
@@ -24,10 +21,9 @@
 </head>
 <body id="blocked_range2d_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(3);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="blocked_range2d_cls"><!-- --></a>
 
 
@@ -59,7 +55,7 @@
 		  <samp class="codeph">blocked_range2d&lt;<em>RowValue</em> ,<em>ColValue</em>
 			 &gt;</samp> represents a half-open two dimensional range<samp class="codeph"> [<em>i</em> 
 			 <sub>0</sub>,<em>j</em> 
-			 <sub>0</sub>)&times;[<em>i</em> 
+			 <sub>0</sub>)×[<em>i</em> 
 			 <sub>1</sub>,<em>j</em> 
 			 <sub>1</sub>)</samp>. Each axis of the range has its own splitting
 		  threshold. The 
@@ -180,10 +176,10 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d937e166">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d13569e170">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d937e169">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d13569e173">Description 
 				  </th>
  
 				</tr>
@@ -191,10 +187,10 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">row_range_type</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">row_range_type</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 "> 
 					 <p> A 
 						<samp class="codeph">blocked_range&lt;RowValue&gt;</samp>. That is, the
 						type of the row values. 
@@ -205,10 +201,10 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">col_range_type</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">col_range_type</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 "> 
 					 <p>A<samp class="codeph">
 						  blocked_range&lt;ColValue&gt;</samp>. That is, the type of the column values.
 						
@@ -219,13 +215,13 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt;( RowValue
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt;( RowValue
 						row_begin, RowValue row_end, typename row_range_type::size_type row_grainsize,
 						ColValue col_begin, ColValue col_end, typename col_range_type::size_type
 						col_grainsize )</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">
 					 <p><strong>Effects: 
 						</strong> Constructs a 
 						<samp class="codeph">blocked_range2d</samp> representing a two
@@ -252,22 +248,22 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt;( RowValue
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt;( RowValue
 						row_begin, RowValue row_end, ColValue col_begin, ColValue col_end )</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">Same as 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">Same as 
 					 <samp class="codeph">blocked_range2d(row_begin,row_end,1,col_begin,col_end,1)</samp>.
 				  </td>
 
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt; (
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">blocked_range2d&lt;RowValue,ColValue&gt; (
 						blocked_range2d&amp; range, split )</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">Partitions range into two subranges. The
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">Partitions range into two subranges. The
 					 newly constructed 
 					 <samp class="codeph">blocked_range2d</samp> is approximately the second
 					 half of the original 
@@ -286,10 +282,10 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">bool empty() const</span>
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">bool empty() const</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">
 					 <p> Determines if range is empty. 
 					 </p>
 
@@ -303,11 +299,11 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">bool is_divisible()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">bool is_divisible()
 						const</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">
 					 <p> Determines if range can be split into subranges..
 					 </p>
 
@@ -321,11 +317,11 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">const row_range_type&amp; rows()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">const row_range_type&amp; rows()
 						const</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">
 					 <p><strong>Returns: 
 						</strong> Range containing the rows of the value space.
 					 </p>
@@ -335,11 +331,11 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 				</tr>
 
 				<tr>
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d937e166 "><span class="keyword">const col_range_type&amp; cols()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d13569e170 "><span class="keyword">const col_range_type&amp; cols()
 						const</span>
 				  </td>
 
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d937e169 ">
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d13569e173 ">
 					 <p><strong>Returns: 
 						</strong> Range containing the columns of the value space.
 					 </p>
@@ -361,7 +357,7 @@ void ParallelMatrixMultiply(float c[M][N], float a[M][L], float b[L][N]){
 
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../../reference/algorithms/range_concept.htm">Range Concept</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../../reference/algorithms/range_concept.htm">Range Concept</a></div>
 </div>
 <div></div>
 

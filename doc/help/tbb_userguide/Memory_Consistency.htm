@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="topic">
 <meta name="DC.Title" content="Memory Consistency">
 <meta name="DC.subject" content="Memory Consistency">
@@ -23,10 +20,9 @@
 </head>
 <body id="tutorial_Memory_Consistency">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(1);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="tutorial_Memory_Consistency"><!-- --></a>
 
  
@@ -51,19 +47,19 @@
 <div class="tablenoborder"><a name="tbl14"><!-- --></a><table cellpadding="4" summary="" id="tbl14" width="100%" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Ordering Constraints</span></caption> 
 	 <thead align="left"> 
 		<tr> 
-		  <th class="cellrowborder" valign="top" width="12.059369202226346%" id="d10038e46"> 
+		  <th class="cellrowborder" valign="top" width="12.059369202226346%" id="d141454e46"> 
 			 <p>Kind 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="58.070500927643785%" id="d10038e52"> 
+		  <th class="cellrowborder" valign="top" width="58.070500927643785%" id="d141454e52"> 
 			 <p>Description 
 			 </p>
  
 		  </th>
  
-		  <th class="cellrowborder" valign="top" width="29.87012987012987%" id="d10038e58"> 
+		  <th class="cellrowborder" valign="top" width="29.87012987012987%" id="d141454e58"> 
 			 <p>Default For 
 			 </p>
  
@@ -74,20 +70,20 @@
  
 	 <tbody> 
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d10038e46 "> 
+		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d141454e46 "> 
 			 <p><samp class="codeph">acquire 
 				</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d10038e52 "> 
+		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d141454e52 "> 
 			 <p>Operations after the atomic operation never move over it. 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d10038e58 "> 
+		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d141454e58 "> 
 			 <p>read 
 			 </p>
  
@@ -96,19 +92,19 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d10038e46 "> 
+		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d141454e46 "> 
 			 <p><samp class="codeph">release</samp> 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d10038e52 "> 
+		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d141454e52 "> 
 			 <p>Operations before the atomic operation never move over it. 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d10038e58 "> 
+		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d141454e58 "> 
 			 <p>write 
 			 </p>
  
@@ -117,20 +113,20 @@
 		</tr>
  
 		<tr> 
-		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d10038e46 "> 
+		  <td class="cellrowborder" valign="top" width="12.059369202226346%" headers="d141454e46 "> 
 			 <p>sequentially consistent 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d10038e52 "> 
+		  <td class="cellrowborder" valign="top" width="58.070500927643785%" headers="d141454e52 "> 
 			 <p>Operations on either side never move over the atomic operation and
 				the sequentially consistent atomic operations have a global order. 
 			 </p>
  
 		  </td>
  
-		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d10038e58 "> 
+		  <td class="cellrowborder" valign="top" width="29.87012987012987%" headers="d141454e58 "> 
 			 <p><samp class="codeph">fetch_and_store</samp> 
 			 </p>
  
@@ -184,7 +180,7 @@
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../tbb_userguide/Atomic_Operations.htm">Atomic Operations</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../tbb_userguide/Atomic_Operations.htm">Atomic Operations</a></div>
 </div>
 <div></div>
 

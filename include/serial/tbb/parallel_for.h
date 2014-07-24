@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -94,7 +94,7 @@ public:
 
 template< typename Range, typename Body, typename Partitioner >
 void start_for< Range, Body, Partitioner >::execute() {
-    if( !my_range.is_divisible() || !my_partition.divisions_left() ) {
+    if( !my_range.is_divisible() || !my_partition.is_divisible() ) {
         ANNOTATE_TASK_BEGIN( tbb_parallel_for_range );
         {
             my_body( my_range );

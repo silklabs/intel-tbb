@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="concurrent_bounded_queue Template Class">
 <meta name="DC.subject" content="concurrent_bounded_queue Template Class">
@@ -20,10 +17,9 @@
 </head>
 <body id="concurrent_bounded_queue_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="concurrent_bounded_queue_cls"><!-- --></a>
 
  
@@ -174,10 +170,10 @@
 			 methods that differ. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d2037e183">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d29901e185">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d2037e186">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d29901e188">Description 
 				  </th>
  
 				</tr>
@@ -185,11 +181,11 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">void push( const T&amp; source
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">void push( const T&amp; source
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p> Waits until size()&lt;capacity, and then pushes a copy of
 						source onto back of the queue. 
 					 </p>
@@ -199,11 +195,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">void pop( T&amp; destination
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">void pop( T&amp; destination
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p>Waits until a value becomes available and pops it from the
 						queue. Assigns it to destination. Destroys the original value. 
 					 </p>
@@ -213,10 +209,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">void abort()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">void abort()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p>Wakes up any threads that are waiting on the queue via the 
 						<samp class="codeph">push</samp> and 
 						<samp class="codeph">pop</samp> operations and raises the 
@@ -230,11 +226,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">bool try_push( const T&amp; source
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">bool try_push( const T&amp; source
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p>If size()&lt;capacity, pushes a copy of source onto back of
 						the queue. 
 					 </p>
@@ -247,11 +243,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">bool try_pop( T&amp; destination
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">bool try_pop( T&amp; destination
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p>If a value is available, pops it from the queue, assigns it
 						to destination, and destroys the original value. Otherwise does nothing. 
 					 </p>
@@ -265,10 +261,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">size_type size() const</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">size_type size() const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p><strong>Returns</strong>: Number of pushes minus number of pops. The
 						result is negative if there are pop operations waiting for corresponding
 						pushes. The result can exceed capacity() if the queue is full and there are
@@ -280,10 +276,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">bool empty() const</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">bool empty() const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">size()&lt;=0</samp> 
 					 </p>
@@ -293,11 +289,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">size_type capacity()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">size_type capacity()
 						const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p><strong>Returns</strong> 
 					 </p>
  
@@ -309,11 +305,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2037e183 "><span class="keyword">void set_capacity( size_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d29901e185 "><span class="keyword">void set_capacity( size_type
 						capacity )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2037e186 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d29901e188 "> 
 					 <p>Sets the maximum number of values that the queue can hold. 
 					 </p>
  
@@ -334,7 +330,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/containers_overview.htm">Containers Overview</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/containers_overview.htm">Containers Overview</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

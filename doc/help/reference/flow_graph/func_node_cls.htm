@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="function_node Template Class">
 <meta name="DC.subject" content="function_node Template Class">
@@ -23,10 +20,9 @@
 </head>
 <body id="func_node_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="func_node_cls"><!-- --></a>
 
  
@@ -95,19 +91,19 @@ class function_node;</pre>
 <div class="tablenoborder"><a name="tbl23"><!-- --></a><table cellpadding="4" summary="" id="tbl23" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">Behavior of a call to a function_node's try_put</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="center" valign="top" width="25%" id="d4626e115"> 
+				<th class="cellrowborder" align="center" valign="top" width="25%" id="d69978e115"> 
 				  <p>Value of threshold T 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="25%" id="d4626e121"> 
+				<th class="cellrowborder" align="center" valign="top" width="25%" id="d69978e121"> 
 				  <p>Value of counter C 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="50%" id="d4626e127"> 
+				<th class="cellrowborder" align="center" valign="top" width="50%" id="d69978e127"> 
 				  <p><span class="keyword">bool try_put( const input_type &amp;v )</span> 
 				  </p>
  
@@ -118,20 +114,20 @@ class function_node;</pre>
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e115 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e115 "> 
 				  <p> 
 					 <pre>T == flow::unlimited</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e121 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e121 "> 
 				  <p>NA 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e127 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e127 "> 
 				  <p>A task is spawned that broadcasts the result of 
 					 <span class="keyword">body(v)</span> to all successors. Returns 
 					 <span class="keyword">true</span>. 
@@ -142,20 +138,20 @@ class function_node;</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e115 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e115 "> 
 				  <p> 
 					 <pre>T != flow::unlimited</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e121 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e121 "> 
 				  <p>C &lt; T 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e127 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e127 "> 
 				  <p>Increments C. A task is spawned that broadcasts the result of
 					 
 					 <span class="keyword">body(v)</span> to all successors and then
@@ -168,20 +164,20 @@ class function_node;</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e115 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e115 "> 
 				  <p> 
 					 <pre>T != flow::unlimited</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="25%" headers="d4626e121 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d69978e121 "> 
 				  <p>C &gt;= T 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e127 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e127 "> 
 				  <p>If the template argument 
 					 <span class="keyword">graph_buffer_policy==queueing</span>, 
 					 <span class="keyword">v</span> is stored in an internal FIFO buffer until
@@ -250,13 +246,13 @@ class function_node;</pre>
 <div class="tablenoborder"><a name="tbl24"><!-- --></a><table cellpadding="4" summary="" id="tbl24" frame="border" border="1" cellspacing="0" rules="all"><caption><span class="tablecap">function_node&lt;Input, Output&gt; Body Concept</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="center" valign="top" width="50%" id="d4626e310"> 
+				<th class="cellrowborder" align="center" valign="top" width="50%" id="d69978e311"> 
 				  <p>Pseudo-Signature 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="50%" id="d4626e316"> 
+				<th class="cellrowborder" align="center" valign="top" width="50%" id="d69978e317"> 
 				  <p>Semantics 
 				  </p>
  
@@ -267,14 +263,14 @@ class function_node;</pre>
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e310 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e311 "> 
 				  <p> 
 					 <pre>B::B( const B&amp; )</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e316 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e317 "> 
 				  <p>Copy constructor. 
 				  </p>
  
@@ -283,14 +279,14 @@ class function_node;</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e310 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e311 "> 
 				  <p> 
 					 <pre>B::~B()</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e316 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e317 "> 
 				  <p>Destructor. 
 				  </p>
  
@@ -299,14 +295,14 @@ class function_node;</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e310 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e311 "> 
 				  <p> 
 					 <pre>void operator=( const B&amp; )</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e316 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e317 "> 
 				  <p>Assignment. The return type 
 					 <samp class="codeph">void</samp> in the pseudo-signature denotes that 
 					 <samp class="codeph">operator=</samp> is not required to return a value.
@@ -320,14 +316,14 @@ class function_node;</pre>
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e310 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e311 "> 
 				  <p> 
 					 <pre>Output B::operator() (const Input &amp;v) const</pre> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="50%" headers="d4626e316 "> 
+				<td class="cellrowborder" valign="top" width="50%" headers="d69978e317 "> 
 				  <p>Perform operation on 
 					 <span class="keyword">v</span> and return value of type 
 					 <span class="keyword">Output</span>. 
@@ -414,10 +410,10 @@ public:
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d4626e465">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d69978e467">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d4626e468">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d69978e470">Description 
 				  </th>
  
 				</tr>
@@ -425,11 +421,11 @@ public:
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">template&lt; typename Body&gt;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">template&lt; typename Body&gt;
 						function_node(graph &amp;g, size_t concurrency, Body body)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Constructs a 
 						<span class="keyword">function_node</span> that will invoke a copy of 
 						<span class="keyword">body</span>. At most 
@@ -442,11 +438,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">function_node( const function_node
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">function_node( const function_node
 						&amp;src )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Constructs a 
 						<span class="keyword">function_node</span> that has the same initial
 						state that 
@@ -479,11 +475,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool try_put( const input_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool try_put( const input_type
 						&amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>See the table above, "Behavior of a call to a 
 						<samp class="codeph">function_node</samp>'s <samp class="codeph">try_put</samp>," for more
 						information. 
@@ -499,11 +495,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool register_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool register_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Adds 
 						<span class="keyword">p</span> to the set of predecessors. 
 					 </p>
@@ -517,11 +513,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool remove_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool remove_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Removes 
 						<span class="keyword">p</span> from the set of predecessors. 
 					 </p>
@@ -535,11 +531,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool register_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool register_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Adds 
 						<span class="keyword">r</span> to the set of successors. 
 					 </p>
@@ -553,11 +549,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool remove_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool remove_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>Removes 
 						<span class="keyword">r</span> from the set of successors. 
 					 </p>
@@ -571,11 +567,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool try_get( output_type &amp;v
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool try_get( output_type &amp;v
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>A 
 						<span class="keyword">function_node</span> does not contain buffering
 						of its output. Therefore it always rejects 
@@ -591,11 +587,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool try_reserve( output_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool try_reserve( output_type
 						&amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>A 
 						<span class="keyword">function_node</span> does not contain buffering
 						of its output. Therefore it cannot be reserved. 
@@ -610,10 +606,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool try_release( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool try_release( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>A 
 						<span class="keyword">function_node</span> does not contain buffering
 						of its output. Therefore it cannot be reserved. 
@@ -628,10 +624,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4626e465 "><span class="keyword">bool try_consume( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d69978e467 "><span class="keyword">bool try_consume( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4626e468 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d69978e470 "> 
 					 <p>A 
 						<span class="keyword">function_node</span> does not contain buffering
 						of its output. Therefore it cannot be reserved. 
@@ -656,7 +652,7 @@ public:
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/flow_graph.htm">Flow Graph</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/flow_graph.htm">Flow Graph</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -42,6 +42,9 @@
     #include <sched.h>
     inline void do_yield() {sched_yield();}
     extern "C" { static void mallocThreadShutdownNotification(void*); }
+    #if __sun || __SUNPRO_CC
+    #define __asm__ asm
+    #endif
 
 #elif USE_WINTHREAD
     #define GetMyTID() GetCurrentThreadId()
@@ -2122,7 +2125,10 @@ LargeMemoryBlock *LocalLOCImpl<LOW_MARK, HIGH_MARK>::get(size_t size)
 {
     LargeMemoryBlock *localHead, *res=NULL;
 
-    if (!(localHead = (LargeMemoryBlock*)AtomicFetchStore(&head, 0))) {
+    if (size > MAX_TOTAL_SIZE)
+        return NULL;
+
+    if (!head || !(localHead = (LargeMemoryBlock*)AtomicFetchStore(&head, 0))) {
         // do not restore totalSize, numOfBlocks and tail at this point,
         // as they are used only in put(), where they must be restored
         return NULL;
@@ -2994,6 +3000,23 @@ extern "C" size_t safer_scalable_msize (void *object, size_t (*original_msize)(v
             return internalMsize(object);
         else if (original_msize)
             return original_msize(object);
+    }
+    // object is NULL or unknown
+    errno = EINVAL;
+    return 0;
+}
+
+/*
+ * The same as above but for _aligned_msize case
+ */
+extern "C" size_t safer_scalable_aligned_msize (void *object, size_t alignment, size_t offset, size_t (*orig_aligned_msize)(void*,size_t,size_t))
+{
+    if (object) {
+        // Check if the memory was allocated by scalable_malloc
+        if (isRecognized(object))
+            return internalMsize(object);
+        else if (orig_aligned_msize)
+            return orig_aligned_msize(object,alignment,offset);
     }
     // object is NULL or unknown
     errno = EINVAL;

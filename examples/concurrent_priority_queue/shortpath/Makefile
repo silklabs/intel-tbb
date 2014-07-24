@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -35,7 +35,9 @@ ifneq (,$(shell which icc 2>/dev/null))
 CXX=icc
 endif # which icc
 ifneq (,$(filter icc icpc,$(CXX)))
+ifneq (0,$(cpp0x))
 CXX0XFLAGS?=-std=c++0x -D_TBB_CPP0X
+endif
 endif # icc
 
 ifeq ($(shell uname), Linux)
@@ -64,4 +66,4 @@ test:
 perf_build: release
 
 perf_run:
-	./$(PROG) $(PERF_RUN_ARGS)
+	$(run_cmd) ./$(PROG) $(PERF_RUN_ARGS)

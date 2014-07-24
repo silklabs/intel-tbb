@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="pipeline Class">
 <meta name="DC.subject" content="pipeline Class">
@@ -27,10 +24,9 @@
 </head>
 <body id="pipeline_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="pipeline_cls"><!-- --></a>
 
  
@@ -154,10 +150,10 @@
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d738e201">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d10716e203">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d738e204">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d10716e206">Description 
 				  </th>
  
 				</tr>
@@ -165,10 +161,10 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d738e201 "><span class="keyword">pipeline()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d10716e203 "><span class="keyword">pipeline()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d738e204 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d10716e206 "> 
 					 <p> Constructs pipeline with no filters. 
 					 </p>
  
@@ -177,10 +173,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d738e201 "><span class="keyword">~pipeline()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d10716e203 "><span class="keyword">~pipeline()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d738e204 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d10716e206 "> 
 					 <p>Removes all filters from the pipeline and
 						destroys the pipeline. 
 					 </p>
@@ -190,11 +186,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d738e201 "><span class="keyword">void add_filter( filter&amp; f
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d10716e203 "><span class="keyword">void add_filter( filter&amp; f
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d738e204 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d10716e206 "> 
 					 <p> Appends filter 
 						<samp class="codeph"><em>f</em></samp> to sequence of filters in the
 						pipeline. The filter 
@@ -206,12 +202,12 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d738e201 "><span class="keyword">void run( size_t
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d10716e203 "><span class="keyword">void run( size_t
 						max_number_of_live_tokens[, task_group_context&amp; group] ) 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d738e204 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d10716e206 "> 
 					 <p> Runs the pipeline until the first filter returns NULL and
 						each subsequent filter has processed all items from its predecessor. The number
 						of items processed in parallel depends upon the structure of the pipeline and
@@ -226,7 +222,7 @@
 					 </p>
  
 					 <p> If the 
-						<samp class="codeph">group</samp> argument is specified, pipeline&#8217;s
+						<samp class="codeph">group</samp> argument is specified, pipeline’s
 						tasks are executed in this group. By default the algorithm is executed in a
 						bound group of its own. 
 					 </p>
@@ -236,10 +232,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d738e201 "><span class="keyword">void clear()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d10716e203 "><span class="keyword">void clear()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d738e204 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d10716e206 "> 
 					 <p> Removes all filters from the pipeline. 
 					 </p>
  
@@ -258,7 +254,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/algorithms.htm">Algorithms</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/algorithms.htm">Algorithms</a></div>
 </div>
 <div class="See Also">
 <ul class="ullinks">

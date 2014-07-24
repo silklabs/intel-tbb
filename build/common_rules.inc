@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -145,6 +145,9 @@ tbb_misc.E: tbb_misc.cpp version_string.ver
 %.res: %.rc version_string.ver $(TBB.MANIFEST)
 	rc /Fo$@ $(INCLUDES) $(filter /D%,$(CPLUS_FLAGS)) $<
 
+# TODO: add $(LIB_LINK_LIBS) $(LIB_LINK_FLAGS) (in a separate line?) and remove useless $(INCLUDES)
+VERSION_FLAGS=$(CPLUS) $(CPLUS_FLAGS) $(CXX_ONLY_FLAGS) $(INCLUDES)
+
 ifneq (,$(TBB.MANIFEST))
 $(TBB.MANIFEST):
 	cmd /C "echo #include ^<stdio.h^> >tbbmanifest.c"
@@ -154,8 +157,9 @@ $(TBB.MANIFEST):
 version_string.ver: $(TBB.MANIFEST)
 	$(MAKE_VERSIONS)
 	cmd /C "echo #define TBB_MANIFEST 1 >> version_string.ver"
-
+# TODO: fix parallel build by writting to a temporary file and rename it when complete
 else
+# TODO: make version strings directly representative for all the libraries
 version_string.ver:
 	$(MAKE_VERSIONS)
 endif

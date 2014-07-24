@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -102,9 +102,7 @@ class custom_scheduler: private generic_scheduler {
         if( SchedulerTraits::has_slow_atomic && p.ref_count==1 )
             p.ref_count=0;
         else if( __TBB_FetchAndDecrementWrelease(&p.ref_count) > 1 ) {// more references exist
-#if __TBB_PREFETCHING
-            __TBB_cl_evict(&p);
-#endif
+            // '__TBB_cl_evict(&p)' degraded performance of parallel_preorder example
             return;
         }
 

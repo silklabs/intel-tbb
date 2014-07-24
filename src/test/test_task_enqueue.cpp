@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -84,12 +84,12 @@ tbb::atomic<int> EnqueuedTask::nOrderedPairs;
 
 const int nTracks = 10;
 static int TaskTracks[nTracks];
-const int stall_threshold = 100000;
+const int stall_threshold = 1000000; // 1 sec
 
 void TimedYield( double pause_time ) {
     tbb::tick_count start = tbb::tick_count::now();
     while( (tbb::tick_count::now()-start).seconds() < pause_time )
-        __TBB_Yield();
+        tbb::this_tbb_thread::sleep(tbb::tick_count::interval_t(pause_time));
 }
 
 class ProgressMonitor {
@@ -119,8 +119,8 @@ public:
                 stall_count=0;
             else {
                 ++stall_count;
-                // no progress for at least 0.1 s; consider it dead.
-                ASSERT(stall_count < stall_threshold, "no progress on enqueued tasks; deadlock, or the machine is oversubscribed?");
+                // no progress; consider it dead.
+                ASSERT(stall_count < stall_threshold, "no progress on enqueued tasks; deadlock, or the machine is heavily oversubscribed?");
             }
             if( progress_mask==all_progressed || progress_mask^last_progress_mask ) {
                 uneven_progress_count = 0;
@@ -128,7 +128,8 @@ public:
             }
             else if ( overall_progress > 2 ) {
                 ++uneven_progress_count;
-                ASSERT(uneven_progress_count < 5, "some enqueued tasks seem stalling; no simultaneous progress?");
+                // The threshold of 16 is twice bigger than what was observed on a 8-core machine with oversubscription.
+                ASSERT(uneven_progress_count < 16, "some enqueued tasks seem stalling; no simultaneous progress, or the machine is oversubscribed?");
             }
         } while( !completed );
     }
@@ -323,7 +324,7 @@ void TestDequeueByMaster () {
 #include "tbb/parallel_for.h"
 
 static const int NUM_TASKS    = 4;
-static const size_t NUM_REPEATS = 100000;
+static const size_t NUM_REPEATS = TBB_USE_DEBUG ? 50000 : 100000;
 
 struct Functor : NoAssign
 {

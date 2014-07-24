@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -43,7 +43,7 @@
     #error Must define USE_PTHREAD or USE_WINTHREAD
 #endif
 
-#include "tbb/tbb_config.h"
+#include "tbb/tbb_config.h" // for __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN
 #if __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN
   #define _EXCEPTION_PTR_H /* prevents exception_ptr.h inclusion */
   #define _GLIBCXX_NESTED_EXCEPTION_H /* prevents nested_exception.h inclusion */
@@ -58,10 +58,6 @@
 #endif
 #include "tbb/scalable_allocator.h"
 #include "tbbmalloc_internal_api.h"
-
-#if __sun || __SUNPRO_CC
-#define __asm__ asm
-#endif
 
 /********* Various compile-time options        **************/
 
@@ -533,6 +529,7 @@ public:
 };
 
 class CoalRequestQ { // queue of free blocks that coalescing was delayed
+private:
     FreeBlock *blocksToFree;
 public:
     FreeBlock *getAll(); // return current list of blocks and make queue empty

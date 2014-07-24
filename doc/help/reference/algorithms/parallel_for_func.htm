@@ -1,11 +1,8 @@
-
-<!DOCTYPE html
+﻿<!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="parallel_for Template Function">
 <meta name="DC.subject" content="parallel_for Template Function">
@@ -26,10 +23,9 @@
 </head>
 <body id="parallel_for_func">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="parallel_for_func"><!-- --></a>
 
 
@@ -82,13 +78,13 @@ void parallel_for( const Range&amp; range, const Body&amp; body,
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"><caption><span class="tablecap">Requirements for parallel_for Body</span></caption> 
 			 <thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" id="d292e97"> 
+				  <th class="cellrowborder" valign="top" id="d3575e97"> 
 					 <p>Pseudo-Signature 
 					 </p>
  
 				  </th>
  
-				  <th class="row-nocellborder" valign="top" id="d292e103"> 
+				  <th class="row-nocellborder" valign="top" id="d3575e103"> 
 					 <p>Semantics 
 					 </p>
  
@@ -99,13 +95,13 @@ void parallel_for( const Range&amp; range, const Body&amp; body,
  
 			 <tbody> 
 				<tr valign="top"> 
-				  <td class="cellrowborder" valign="top" headers="d292e97 "> 
+				  <td class="cellrowborder" valign="top" headers="d3575e97 "> 
 					 <p><samp class="codeph"> Body::Body( const Body&amp; )</samp> 
 					 </p>
  
 				  </td>
  
-				  <td class="row-nocellborder" valign="top" headers="d292e103 "> 
+				  <td class="row-nocellborder" valign="top" headers="d3575e103 "> 
 					 <p> Copy constructor. 
 					 </p>
  
@@ -114,13 +110,13 @@ void parallel_for( const Range&amp; range, const Body&amp; body,
 				</tr>
  
 				<tr valign="top"> 
-				  <td class="cellrowborder" valign="top" headers="d292e97 "> 
+				  <td class="cellrowborder" valign="top" headers="d3575e97 "> 
 					 <p><samp class="codeph"> Body::~Body()</samp> 
 					 </p>
  
 				  </td>
  
-				  <td class="row-nocellborder" valign="top" headers="d292e103 "> 
+				  <td class="row-nocellborder" valign="top" headers="d3575e103 "> 
 					 <p> Destructor. 
 					 </p>
  
@@ -129,13 +125,13 @@ void parallel_for( const Range&amp; range, const Body&amp; body,
 				</tr>
  
 				<tr valign="top"> 
-				  <td class="cellrowborder" valign="top" headers="d292e97 "> 
+				  <td class="cellrowborder" valign="top" headers="d3575e97 "> 
 					 <p><samp class="codeph">    void Body::operator()( Range&amp; range ) const</samp> 
 					 </p>
  
 				  </td>
  
-				  <td class="row-nocellborder" valign="top" headers="d292e103 "> 
+				  <td class="row-nocellborder" valign="top" headers="d3575e103 "> 
 					   <p> Apply body to range.</p>
 
  
@@ -170,7 +166,7 @@ void parallel_for( const Range&amp; range, const Body&amp; body,
                 newly constructed object. Each leaf in the tree represents an indivisible subrange.
                 The method <samp class="codeph">Body::operator()</samp> is invoked on each leaf subrange, from
                 left to right.</p>
-<p>All overloads can be passed a <samp class="codeph">task_group_context</samp> object so that the algorithm&#8217;s
+<p>All overloads can be passed a <samp class="codeph">task_group_context</samp> object so that the algorithm’s
                 tasks are executed in this group. By default the algorithm is executed in a bound
                 group of its own.</p>
 <p><strong>Complexity</strong></p>
@@ -221,7 +217,7 @@ void ParallelAverage( float* output, const float* input, size_t n ) {
 <li>	Merge [begin1,m1) and [begin2,m2) to create the first part of the merged sequence.</li>
 <li>Merge [m1,end1) and [m2,end2) to create the second part of the merged sequence.</li>
 </ol>
-<p>The Intel(R) Threading Building Blocks implementation of this algorithm uses the range object to
+<p>The Intel&reg; Threading Building Blocks implementation of this algorithm uses the range object to
                 perform most of the steps. Predicate <samp class="codeph">is_divisible</samp> performs the test
                 in step 1, and step 2. The splitting constructor does steps 3-6. The body object
                 does the sequential merges.</p>
@@ -287,7 +283,7 @@ void ParallelMerge( Iterator begin1, Iterator end1, Iterator begin2, Iterator en
 </div>
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/algorithms.htm">Algorithms</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/algorithms.htm">Algorithms</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

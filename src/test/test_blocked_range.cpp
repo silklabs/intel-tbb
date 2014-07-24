@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -35,7 +35,7 @@
 class AbstractValueType {
     AbstractValueType() {}
     int value;
-public: 
+public:
     friend AbstractValueType MakeAbstractValueType( int i );
     friend int GetValueOf( const AbstractValueType& v ) {return v.value;}
 };
@@ -124,7 +124,7 @@ void TestRangeBasedFor(){
     REMARK("testing range based for loop compatibility \n");
 
     int int_array[100] = {0};
-    const int sequence_length = Harness::array_length(int_array);
+    const size_t sequence_length = Harness::array_length(int_array);
 
     for (int i =0; i< sequence_length; ++i){
         int_array[i]=i + 1;

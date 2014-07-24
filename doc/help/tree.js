@@ -10,6 +10,7 @@
 // RWC: 2009-09-26 - Allow Opera browser to scroll the tree when syncing TOC.
 // RWC: 2011-09-10 - Fix Sync for \\server\ UNC paths.
 // RWC: 2011-09-11 - Fix Sync for CJK paths.
+// RWC: 2012-09-04 - Added selectNext(fwd) & findLinkNode()
 
 
 /* Original Copyright © 2002 Jean-Claude Manoli [jc@manoli.net]
@@ -72,6 +73,60 @@ function clickAnchor(el)
 	expandNode(el.parentNode);
 	selectNode(el.parentNode);
 	el.blur();
+}
+
+function findLinkNode(node)
+{
+	if (node == null || node == undefined)
+		node = treeSelected;
+	node = findNode(node);
+	if (node == null)  
+		return null;
+	var anchors = node.getElementsByTagName('A');
+	if (anchors.length > 0)
+		return anchors[0];
+	return null;
+}
+
+
+function selectNext(fwd)
+{
+// Sync forward or back from current selected. Return href of newly selected node.
+//
+	var el;
+	var aref = "";
+        var node = document.getElementById('treeRoot');
+	var anchors = node.getElementsByTagName('A');
+
+	//nothing selected? - Select the first node
+	if (treeSelected == null)  
+	{
+		if (anchors.length > 0 && anchors[0] != null && anchors[0] != undefined)
+		{
+			el = anchors[0];
+			selectAndShowNode(el);
+			aref = el.getAttribute('href');
+		}
+	}
+	else //select the next node
+	{
+		for(var i = 0; i < anchors.length; i++)
+		{
+			el = anchors[i];
+			if (findNode(el) == treeSelected)  // find the current selected node & walk fwd or back
+			{
+				if (fwd) el = anchors[i+1];
+				else     el = anchors[i-1];
+				if (el != null && el != undefined)
+				{
+					selectAndShowNode(el);	
+					aref = el.getAttribute('href');
+				}
+				break;		
+			}
+		}
+	}
+	return aref;
 }
 
 

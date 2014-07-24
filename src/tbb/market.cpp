@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -456,6 +456,7 @@ void market::adjust_demand ( arena& a, int delta ) {
         __TBB_ASSERT( my_global_bottom_priority < p && p < my_global_top_priority, NULL );
         update_allotment( p );
     }
+    __TBB_ASSERT( my_global_top_priority >= a.my_top_priority || a.my_num_workers_requested<=0, NULL );
     assert_market_valid();
 #else /* !__TBB_TASK_PRIORITY */
     my_total_demand += delta;
@@ -535,6 +536,7 @@ void market::update_arena_top_priority ( arena& a, intptr_t new_priority ) {
 }
 
 bool market::lower_arena_priority ( arena& a, intptr_t new_priority, uintptr_t old_reload_epoch ) {
+    // TODO: replace the lock with a try_lock loop which performs a double check of the epoch
     arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
     if ( a.my_reload_epoch != old_reload_epoch ) {
         assert_market_valid();
@@ -542,6 +544,7 @@ bool market::lower_arena_priority ( arena& a, intptr_t new_priority, uintptr_t o
     }
     __TBB_ASSERT( a.my_top_priority > new_priority, NULL );
     __TBB_ASSERT( my_global_top_priority >= a.my_top_priority, NULL );
+
     intptr_t p = a.my_top_priority;
     update_arena_top_priority( a, new_priority );
     if ( a.my_num_workers_requested > 0 ) {
@@ -556,55 +559,65 @@ bool market::lower_arena_priority ( arena& a, intptr_t new_priority, uintptr_t o
         }
         update_allotment( p );
     }
+
+    __TBB_ASSERT( my_global_top_priority >= a.my_top_priority, NULL );
     assert_market_valid();
     return true;
 }
 
 bool market::update_arena_priority ( arena& a, intptr_t new_priority ) {
     arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex);
+
+    __TBB_ASSERT( my_global_top_priority >= a.my_top_priority || a.my_num_workers_requested <= 0, NULL );
+    assert_market_valid();
     if ( a.my_top_priority == new_priority ) {
-        assert_market_valid();
         return false;
     }
     else if ( a.my_top_priority > new_priority ) {
         if ( a.my_bottom_priority > new_priority )
             a.my_bottom_priority = new_priority;
-        assert_market_valid();
         return false;
     }
+    else if ( a.my_num_workers_requested <= 0 ) {
+        return false;
+    }
+
+    __TBB_ASSERT( my_global_top_priority >= a.my_top_priority, NULL );
+
     intptr_t p = a.my_top_priority;
     intptr_t highest_affected_level = max(p, new_priority);
     update_arena_top_priority( a, new_priority );
-    if ( a.my_num_workers_requested > 0 ) {
-        if ( my_global_top_priority < new_priority ) {
-            update_global_top_priority(new_priority);
-        }
-        else if ( my_global_top_priority == new_priority ) {
-            advance_global_reload_epoch();
-        }
-        else {
-            __TBB_ASSERT( new_priority < my_global_top_priority, NULL );
-            __TBB_ASSERT( new_priority > my_global_bottom_priority, NULL );
-            if ( p == my_global_top_priority && !my_priority_levels[p].workers_requested ) {
-                // Global top level became empty
-                __TBB_ASSERT( my_global_bottom_priority < p, NULL );
-                for ( --p; !my_priority_levels[p].workers_requested; --p ) continue;
-                __TBB_ASSERT( p >= new_priority, NULL );
-                update_global_top_priority(p);
-                highest_affected_level = p;
-            }
-        }
-        if ( p == my_global_bottom_priority ) {
-            // Arena priority was increased from the global bottom level.
-            __TBB_ASSERT( p < new_priority, NULL );                     // n
-            __TBB_ASSERT( new_priority <= my_global_top_priority, NULL );
-            while ( !my_priority_levels[my_global_bottom_priority].workers_requested )
-                ++my_global_bottom_priority;
-            __TBB_ASSERT( my_global_bottom_priority <= new_priority, NULL );
-            __TBB_ASSERT( my_priority_levels[my_global_bottom_priority].workers_requested > 0, NULL );
-        }
-        update_allotment( highest_affected_level );
+
+    if ( my_global_top_priority < new_priority ) {
+        update_global_top_priority(new_priority);
     }
+    else if ( my_global_top_priority == new_priority ) {
+        advance_global_reload_epoch();
+    }
+    else {
+        __TBB_ASSERT( new_priority < my_global_top_priority, NULL );
+        __TBB_ASSERT( new_priority > my_global_bottom_priority, NULL );
+        if ( p == my_global_top_priority && !my_priority_levels[p].workers_requested ) {
+            // Global top level became empty
+            __TBB_ASSERT( my_global_bottom_priority < p, NULL );
+            for ( --p; !my_priority_levels[p].workers_requested; --p ) continue;
+            __TBB_ASSERT( p >= new_priority, NULL );
+            update_global_top_priority(p);
+            highest_affected_level = p;
+        }
+    }
+    if ( p == my_global_bottom_priority ) {
+        // Arena priority was increased from the global bottom level.
+        __TBB_ASSERT( p < new_priority, NULL );                     // n
+        __TBB_ASSERT( new_priority <= my_global_top_priority, NULL );
+        while ( !my_priority_levels[my_global_bottom_priority].workers_requested )
+            ++my_global_bottom_priority;
+        __TBB_ASSERT( my_global_bottom_priority <= new_priority, NULL );
+        __TBB_ASSERT( my_priority_levels[my_global_bottom_priority].workers_requested > 0, NULL );
+    }
+    update_allotment( highest_affected_level );
+
+    __TBB_ASSERT( my_global_top_priority >= a.my_top_priority, NULL );
     assert_market_valid();
     return true;
 }

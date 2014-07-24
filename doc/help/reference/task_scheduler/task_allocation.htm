@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="task Allocation">
 <meta name="DC.subject" content="task Allocation">
@@ -21,10 +18,9 @@
 </head>
 <body id="task_allocation">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="task_allocation"><!-- --></a>
 
  
@@ -70,10 +66,10 @@
 		
 <div class="tablenoborder"><table cellpadding="4" summary="" frame="border" border="1" cellspacing="0" rules="all"><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d7823e65">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d112273e65">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d7823e68">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d112273e68">Description 
 				  </th>
  
 				</tr>
@@ -81,12 +77,12 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7823e65 "><span class="keyword">new( task::allocate_root(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d112273e65 "><span class="keyword">new( task::allocate_root(
 						task_group_context&amp; group ) ) T 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7823e68 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d112273e68 "> 
 					 <p>Allocate a 
 						<samp class="codeph">task</samp> of type 
 						<em>T 
@@ -110,11 +106,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7823e65 "><span class="keyword">new( task::allocate_root() )
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d112273e65 "><span class="keyword">new( task::allocate_root() )
 						T</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7823e68 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d112273e68 "> 
 					 <p>Like 
 						<samp class="codeph">new(task::allocate_root(task_group_context&amp;))</samp>
 						except that cancellation group is the current innermost cancellation group. 
@@ -125,11 +121,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7823e65 "><span class="keyword">new( x.allocate_continuation() )
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d112273e65 "><span class="keyword">new( x.allocate_continuation() )
 						T</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7823e68 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d112273e68 "> 
 					 <p>Allocates and constructs a task of type 
 						<samp class="codeph"><em>T</em></samp>, and transfers the 
 						<em>successor</em> from 
@@ -148,11 +144,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7823e65 "><span class="keyword">new( x.allocate_child() )
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d112273e65 "><span class="keyword">new( x.allocate_child() )
 						T</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7823e68 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d112273e68 "> 
 					 <p>Allocates a 
 						<samp class="codeph">task</samp> with 
 						<samp class="codeph">this</samp> as its 
@@ -192,11 +188,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d7823e65 "><span class="keyword">new(task::allocate_additional_child_of( y ))
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d112273e65 "><span class="keyword">new(task::allocate_additional_child_of( y ))
 						T</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d7823e68 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d112273e68 "> 
 					 <p>Allocates a 
 						<samp class="codeph">task</samp> as a predecessor of another 
 						<samp class="codeph">task 
@@ -237,7 +233,7 @@
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/task_scheduler.htm">Task Scheduler</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/task_scheduler.htm">Task Scheduler</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

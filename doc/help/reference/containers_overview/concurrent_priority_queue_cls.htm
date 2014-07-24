@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="concurrent_priority_queue Template Class">
 <meta name="DC.subject" content="concurrent_priority_queue Template Class">
@@ -19,10 +16,9 @@
 </head>
 <body id="concurrent_priority_queue_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="concurrent_priority_queue_cls"><!-- --></a>
 
  
@@ -70,26 +66,26 @@
 		</p>
  
 		
-<div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"><caption><span class="tablecap">Differences Between STL queue and Intel(R)
+<div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"><caption><span class="tablecap">Differences Between STL queue and Intel&reg;
 		  Threading Building Blocks concurrent_priority_queue</span></caption> 
 		   
 		   
 		   
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" valign="top" width="NaN%" id="d2509e84"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d37381e84"> 
 				  <p>Feature 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" width="NaN%" id="d2509e90"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d37381e90"> 
 				  <p>STL std::priority_queue 
 				  </p>
  
 				</th>
  
-				<th class="row-nocellborder" valign="top" width="NaN%" id="d2509e96"> 
+				<th class="row-nocellborder" valign="top" width="NaN%" id="d37381e96"> 
 				  <p>concurrent_priority_queue 
 				  </p>
  
@@ -101,19 +97,19 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e84 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e84 "> 
 				  <p>Choice of underlying container 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e90 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e90 "> 
 				  <p>Sequence template parameter 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2509e96 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d37381e96 "> 
 				  <p>No choice of underlying container;
 					 allocator choice is provided instead 
 				  </p>
@@ -123,20 +119,20 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e84 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e84 "> 
 				  <p>Access to highest priority item 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e90 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e90 "> 
 				  <p><samp class="codeph">const value_type&amp; top()
 						const</samp> 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2509e96 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d37381e96 "> 
 				  <p>Not available. Unsafe for concurrent
 					 container 
 				  </p>
@@ -146,20 +142,20 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e84 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e84 "> 
 				  <p>Copy and pop item if present 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e90 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e90 "> 
 				  <p><samp class="codeph">bool b=!q.empty(); if(b) {
 						x=q.top(); q.pop(); }</samp> 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2509e96 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d37381e96 "> 
 				  <p><samp class="codeph">bool b = q.try_pop(x);</samp> 
 				  </p>
  
@@ -168,19 +164,19 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e84 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e84 "> 
 				  <p>Get number of items in queue 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e90 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e90 "> 
 				  <p><samp class="codeph">size_type size() const</samp> 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2509e96 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d37381e96 "> 
 				  <p>Same, but may be inaccurate due to pending
 					 concurrent push or pop operations 
 				  </p>
@@ -190,19 +186,19 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e84 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e84 "> 
 				  <p>Check if there are items in queue 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2509e90 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d37381e90 "> 
 				  <p><samp class="codeph">bool empty() const</samp> 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2509e96 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d37381e96 "> 
 				  <p>Same, but may be inaccurate due to pending concurrent push or
 					 pop operations 
 				  </p>
@@ -281,10 +277,10 @@
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d2509e263">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d37381e263">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d2509e266">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d37381e266">Description 
 				  </th>
  
 				</tr>
@@ -292,11 +288,11 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue(const
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue(const
 						allocator_type&amp; a = allocator_type())</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Constructs empty queue. 
 					 </p>
  
@@ -305,11 +301,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue(size_type init_capacity,
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue(size_type init_capacity,
 						const allocator_type&amp; a = allocator_type())</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Constructs an empty queue with an initial capacity. 
 					 </p>
  
@@ -318,11 +314,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">template &lt;typename InputIterator&gt; concurrent_priority_queue(InputIterator begin,
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">template &lt;typename InputIterator&gt; concurrent_priority_queue(InputIterator begin,
 						InputIterator end, const allocator_type&amp; a = allocator_type())</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Constructs a queue containing copies of elements in the
 						iterator half-open interval 
 						<samp class="codeph">[begin, end)</samp>. 
@@ -333,11 +329,11 @@
 				</tr>
  
                 <tr> 
-                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue(const std::initializer_list&lt;T&gt; &amp; il,
+                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue(const std::initializer_list&lt;T&gt; &amp; il,
                      const allocator_type &amp;a = allocator_type())</span> 
                   </td>
  
-                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
                      <p>C++11 specific; Equivalent to <samp class="codeph">concurrent_priority_queue(<em>il</em>.begin(), <em>il</em>.end(), <em>a</em>)</samp>. 
                      </p>
  
@@ -346,12 +342,12 @@
                 </tr>
  				
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue (const
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue (const
 						concurrent_priority_queue&amp; src, const allocator_type&amp; a =
 						allocator_type())</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Constructs a copy of 
 						<samp class="codeph">src</samp>. This operation is not thread-safe and
 						may result in an error or an invalid copy of 
@@ -365,11 +361,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue&amp;
 						operator=(const concurrent_priority_queue&amp; src)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Assign contents of 
 						<samp class="codeph">src</samp> to 
 						<samp class="codeph">*this</samp>. This operation is not thread-safe and
@@ -384,11 +380,11 @@
 				</tr>
  
                 <tr> 
-                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">concurrent_priority_queue&amp;
+                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">concurrent_priority_queue&amp;
                         operator=(const std::initializer_list&lt;T&gt; &amp; il)</span> 
                   </td>
  
-                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
                      <p>C++11 specific; Sets 
                         <samp class="codeph">*<em>this</em></samp> 
                         to contain data from
@@ -401,11 +397,11 @@
                 </tr>
 
                 <tr> 
-                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">template &lt;typename InputIterator&gt; void assign(InputIterator begin,
+                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">template &lt;typename InputIterator&gt; void assign(InputIterator begin,
                         InputIterator end, const allocator_type&amp;)</span> 
                   </td>
  
-                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
                      <p>Assign contents of the
                         iterator half-open interval 
                         <samp class="codeph">[begin, end)</samp> to <samp class="codeph">*this</samp>. 
@@ -416,10 +412,10 @@
                 </tr>
  
                 <tr> 
-                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">void assign(const std::initializer_list&lt;T&gt; &amp; il)</span> 
+                  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">void assign(const std::initializer_list&lt;T&gt; &amp; il)</span> 
                   </td>
  
-                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+                  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
                      <p>C++11 specific; Equivalent to <samp class="codeph">assign(<em>il</em>.begin(), <em>il</em>.end())</samp>. 
                      </p>
  
@@ -428,10 +424,10 @@
                 </tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">~concurrent_priority_queue()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">~concurrent_priority_queue()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Destroys all items in the queue, and the container itself,
 						so that it can no longer be used. 
 					 </p>
@@ -441,10 +437,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">bool empty() const</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">bool empty() const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">true</samp> if queue has no items; 
 						<samp class="codeph">false</samp> otherwise. May be inaccurate when
@@ -460,10 +456,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">size_type size() const</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">size_type size() const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p><strong>Returns</strong>: Number of items in the queue. May be
 						inaccurate when concurrent 
 						<samp class="codeph">push</samp> or 
@@ -477,11 +473,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword">void push(const_reference
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword">void push(const_reference
 						elem)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Pushes a copy of 
 						<samp class="codeph">elem</samp> into the queue. This operation is
 						thread-safe with other 
@@ -494,11 +490,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword"> bool try_pop(reference
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword"> bool try_pop(reference
 						elem)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>If the queue is not empty, copies the highest priority item
 						from the queue and assigns it to 
 						<samp class="codeph">elem</samp>, and destroys the popped item in the
@@ -517,10 +513,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword"> void clear()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword"> void clear()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Clears the queue; results in 
 						<samp class="codeph">size()==0</samp>. This operation is not
 						thread-safe. 
@@ -531,11 +527,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword"> void
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword"> void
 						swap(concurrent_priority_queue&amp; other)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p>Swaps the queue contents with those of other. This operation
 						is not thread-safe. 
 					 </p>
@@ -545,11 +541,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2509e263 "><span class="keyword"> allocator_type get_allocator()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d37381e263 "><span class="keyword"> allocator_type get_allocator()
 						const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2509e266 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d37381e266 "> 
 					 <p><strong>Returns</strong>: Copy of allocator used to construct the
 						queue. 
 					 </p>
@@ -569,7 +565,7 @@
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/containers_overview.htm">Containers Overview</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/containers_overview.htm">Containers Overview</a></div>
 </div>
 <div></div>
 

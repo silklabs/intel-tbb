@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -102,7 +102,7 @@
 #endif
 
 //MSVC 2013 is unable to properly resolve call to overloaded operator= with std::initilizer_list argument for std::pair list elements
-#define __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN     _MSC_FULL_VER <= 180020827 && _MSC_VER && !__INTEL_COMPILER
+#define __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN     _MSC_FULL_VER <= 180021005 && _MSC_VER && !__INTEL_COMPILER
 //Implementation of C++11 std::placeholders in libstdc++ coming with gcc prior to 4.5 reveals bug in Intel Compiler 13 causing "multiple definition" link errors.
 #define __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN ((__INTEL_COMPILER == 1300 || __INTEL_COMPILER == 1310 )&& __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION < 40500)
 

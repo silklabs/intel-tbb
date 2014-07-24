@@ -51,7 +51,7 @@ Software - Recommended
 Software - Supported Operating Systems
 
     Systems with Microsoft* Windows* operating systems
-	Microsoft* Windows* 8
+	Microsoft* Windows* 8, 8.1
 	Microsoft* Windows* 7 SP1
 	Microsoft* Windows* Server 2012
 	Microsoft* Windows* Server 2008 SP2
@@ -70,12 +70,7 @@ Software - Supported Operating Systems
 Software - Supported Compilers
 
     Intel(R) C++ Composer XE 2011 SP1 and higher
-    Microsoft* Visual C++ 11.0 (Microsoft* Visual Studio* 2012,
-	Windows* OS only)
-    Microsoft* Visual C++ 10.0 (Microsoft* Visual Studio* 2010,
-	Windows* OS only)
-    Microsoft* Visual C++ 9.0 (Microsoft* Visual Studio* 2008,
-	Windows* OS only)
+    Microsoft* Visual Studio* 2008 and higher (Windows* OS only)
     For each supported Linux* operating system, the standard gcc
 	version provided with that operating system is supported,
 	including gcc 4.1 through 4.7
@@ -143,7 +138,7 @@ Library Issues
         Analyzers is not supported.
 
 ------------------------------------------------------------------------
-Copyright (C) 2005-2013 Intel Corporation.  All Rights Reserved.
+Copyright (C) 2005-2014 Intel Corporation.  All Rights Reserved.
 
 Intel, Xeon and Pentium are registered trademarks or trademarks of
 Intel Corporation or its subsidiaries in the United States and other countries.

@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="multifunction_node Template Class">
 <meta name="DC.subject" content="multifunction_node Template Class">
@@ -31,10 +28,9 @@
 </head>
 <body id="multifunc_node_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="multifunc_node_cls"><!-- --></a>
 
  
@@ -86,19 +82,19 @@
 		  multifunction_node's try_put</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="left" valign="top" width="40%" id="d5267e82"> 
+				<th class="cellrowborder" align="left" valign="top" width="40%" id="d76994e82"> 
 				  <p>Value of threshold T 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="left" valign="top" width="20%" id="d5267e88"> 
+				<th class="cellrowborder" align="left" valign="top" width="20%" id="d76994e88"> 
 				  <p>Value of counter C 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="left" valign="top" width="40%" id="d5267e94"> 
+				<th class="cellrowborder" align="left" valign="top" width="40%" id="d76994e94"> 
 				  <p>bool try_put( input_type v ) 
 				  </p>
  
@@ -109,20 +105,20 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e82 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e82 "> 
 				  <p><samp class="codeph">T
 						== graph::unlimited</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d5267e88 "> 
+				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d76994e88 "> 
 				  <p>NA 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e94 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e94 "> 
 				  <p>A task is spawned that executes body(v).
 					 Returns 
 					 <samp class="codeph">true</samp>. 
@@ -133,20 +129,20 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e82 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e82 "> 
 				  <p><samp class="codeph">T
 						!= flow::unlimited</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d5267e88 "> 
+				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d76994e88 "> 
 				  <p>C &lt; T 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e94 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e94 "> 
 				  <p>Increments C. A task is spawned that
 					 executes body(v) and then decrements C. Returns 
 					 <samp class="codeph">true</samp>. 
@@ -157,20 +153,20 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e82 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e82 "> 
 				  <p><samp class="codeph">T
 						!= flow::unlimited</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d5267e88 "> 
+				<td class="cellrowborder" align="left" valign="top" width="20%" headers="d76994e88 "> 
 				  <p>C &gt;= T 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d5267e94 "> 
+				<td class="cellrowborder" align="left" valign="top" width="40%" headers="d76994e94 "> 
 				  <p>Returns 
 					 <samp class="codeph">false</samp>. 
 				  </p>
@@ -204,13 +200,13 @@
 <div class="tablenoborder"><a name="tbl51"><!-- --></a><table cellpadding="4" summary="" id="tbl51" frame="border" border="1" cellspacing="0" rules="rows"><caption><span class="tablecap">multifunction_node Body Concept</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="center" valign="top" width="50%" id="d5267e215"> 
+				<th class="cellrowborder" align="center" valign="top" width="50%" id="d76994e216"> 
 				  <p>Pseudo-Signature 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="50%" id="d5267e221"> 
+				<th class="cellrowborder" align="center" valign="top" width="50%" id="d76994e222"> 
 				  <p>Semantics 
 				  </p>
  
@@ -221,13 +217,13 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e215 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e216 "> 
 				  <p><samp class="codeph">B::B( const B&amp; )</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e221 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e222 "> 
 				  <p>Copy constructor. 
 				  </p>
  
@@ -236,13 +232,13 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e215 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e216 "> 
 				  <p><samp class="codeph">B::~B()</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e221 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e222 "> 
 				  <p>Destructor. 
 				  </p>
  
@@ -251,13 +247,13 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e215 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e216 "> 
 				  <p><samp class="codeph">void operator=( const B&amp; )</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e221 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e222 "> 
 				  <p>Assignment 
 				  </p>
  
@@ -266,14 +262,14 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e215 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e216 "> 
 				  <p><samp class="codeph">void B::operator()(const input_type &amp;v,
 						output_ports_type &amp;p)</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d5267e221 "> 
+				<td class="cellrowborder" align="left" valign="top" width="50%" headers="d76994e222 "> 
 				  <p>Perform operation on 
 					 <samp class="codeph">v</samp>. May call 
 					 <samp class="codeph">try_put</samp> on
@@ -395,10 +391,10 @@ int main() {
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d5267e382">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d76994e384">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d5267e385">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d76994e387">Description 
 				  </th>
  
 				</tr>
@@ -406,13 +402,13 @@ int main() {
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "> 
 					 <span class="keyword">template &lt; typename Body &gt; multifunction_node(
 						graph &amp;g, size_t concurrency, Body body ) 
 					 </span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>Constructs a 
 						<span class="keyword">multifunction_node</span> with 
 						<span class="keyword">body</span> as its Body. At most 
@@ -425,12 +421,12 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "> 
 					 <span class="keyword">multifunction_node( const multifunction_node
 						&amp;other)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>Constructs a 
 						<span class="keyword">multifunction_node</span> that has the same
 						initial state that 
@@ -464,11 +460,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "> 
 					 <span class="keyword">~multifunction_node()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>Destructor 
 					 </p>
  
@@ -477,11 +473,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "> 
 					 <span class="keyword">bool try_put( const input_type &amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>See the table above describing the behavior of try_put for a
 						
 						<samp class="codeph">multifunction_node</samp> for more information. 
@@ -496,11 +492,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "><span class="keyword">bool register_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "><span class="keyword">bool register_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>Adds 
 						<span class="keyword">p</span> to the set of predecessors. 
 					 </p>
@@ -514,11 +510,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "><span class="keyword">bool remove_predecessor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "><span class="keyword">bool remove_predecessor(
 						predecessor_type &amp;p )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p>Removes 
 						<span class="keyword">p</span> from the set of predecessors. 
 					 </p>
@@ -532,11 +528,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d5267e382 "><span class="keyword">output_ports_type&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d76994e384 "><span class="keyword">output_ports_type&amp;
 						output_ports();</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d5267e385 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d76994e387 "> 
 					 <p><strong>Returns</strong>: a tuple of output ports. 
 					 </p>
  
@@ -555,7 +551,7 @@ int main() {
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/flow_graph.htm">Flow Graph</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/flow_graph.htm">Flow Graph</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

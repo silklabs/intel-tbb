@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="join_node Template Class">
 <meta name="DC.subject" content="join_node Template Class">
@@ -22,10 +19,9 @@
 </head>
 <body id="join_node_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="join_node_cls"><!-- --></a>
 
  
@@ -86,13 +82,13 @@ class join_node;
 		  ports.</span></caption> 
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" align="center" valign="top" width="25%" id="d4944e112"> 
+				<th class="cellrowborder" align="center" valign="top" width="25%" id="d73545e114"> 
 				  <p>Buffering Policy 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" align="center" valign="top" width="75%" id="d4944e118"> 
+				<th class="cellrowborder" align="center" valign="top" width="75%" id="d73545e120"> 
 				  <p>Behavior 
 				  </p>
  
@@ -103,13 +99,13 @@ class join_node;
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4944e112 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d73545e114 "> 
 				  <p>queueing 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="75%" headers="d4944e118 "> 
+				<td class="cellrowborder" valign="top" width="75%" headers="d73545e120 "> 
 				  <p>As each input port is put to, the incoming message is added to
 					 an unbounded first-in first-out queue in the port. When there is at least one
 					 message at each input port, the 
@@ -124,13 +120,13 @@ class join_node;
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4944e112 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d73545e114 "> 
 				  <p>reserving 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="75%" headers="d4944e118 "> 
+				<td class="cellrowborder" valign="top" width="75%" headers="d73545e120 "> 
 				  <p>As each input port is put to, the 
 					 <span class="keyword">join_node</span> marks that an input may be
 					 available at that port and returns 
@@ -150,13 +146,13 @@ class join_node;
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="25%" headers="d4944e112 "> 
+				<td class="cellrowborder" valign="top" width="25%" headers="d73545e114 "> 
 				  <p>tag_matching 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="75%" headers="d4944e118 "> 
+				<td class="cellrowborder" valign="top" width="75%" headers="d73545e120 "> 
 				  <p>As each input port is put to, a user-provided function object
 					 is applied to the message to obtain its tag. The message is then added to a
 					 hash table at the input port, using the tag as the key. When there is message
@@ -301,10 +297,10 @@ public:
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d4944e279">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d73545e284">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d4944e282">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d73545e287">Description 
 				  </th>
  
 				</tr>
@@ -312,11 +308,11 @@ public:
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">join_node( graph &amp;g
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">join_node( graph &amp;g
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> Constructs a 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> Constructs a 
 					 <span class="keyword">join_node</span> that will spawn tasks using the
 					 root task in 
 					 <span class="keyword">g</span>. 
@@ -325,11 +321,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">template &lt; typename B0,
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">template &lt; typename B0,
 						typename B1, ... &gt; join_node( graph &amp;g, B0 b0, B1 b1, ... )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>A constructor only available in the 
 						<span class="keyword">tag_matching</span> specialization of 
 						<span class="keyword">join_node</span>. 
@@ -355,11 +351,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">join_node( const join_node
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">join_node( const join_node
 						&amp;src )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Creates a 
 						<span class="keyword">join_node</span> that has the same initial state
 						that 
@@ -372,11 +368,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">input_ports_tuple_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">input_ports_tuple_type
 						&amp;inputs( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p><strong>Returns</strong>: a 
 						<span class="keyword">flow::tuple</span> of receivers. Each element
 						inherits from 
@@ -394,11 +390,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool register_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool register_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Adds 
 						<span class="keyword">r</span> to the set of successors. 
 					 </p>
@@ -412,11 +408,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool remove_successor(
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool remove_successor(
 						successor_type &amp;r )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Removes 
 						<span class="keyword">r</span> from the set of successors. 
 					 </p>
@@ -430,11 +426,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool try_get( output_type &amp;v
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool try_get( output_type &amp;v
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Attempts to generate a tuple based on the buffering policy
 						of the 
 						<span class="keyword">join_node</span>. 
@@ -452,11 +448,11 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool try_reserve( output_type
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool try_reserve( output_type
 						&amp;v )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -469,10 +465,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool try_release( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool try_release( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -485,10 +481,10 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">bool try_consume( )</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">bool try_consume( )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Does not support reservations. 
 					 </p>
  
@@ -501,12 +497,12 @@ public:
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d4944e279 "><span class="keyword">template&lt;size_t N, typename
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d73545e284 "><span class="keyword">template&lt;size_t N, typename
 						JNT&gt; typename flow::tuple_element&lt;N, typename
 						JNT::input_ports_tuple_type&gt;::type &amp;input_port( JNT &amp;jn )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d4944e282 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d73545e287 "> 
 					 <p>Calling 
 						<span class="keyword">input_port &lt;N&gt;( jn )</span> is equivalent
 						to calling 
@@ -532,7 +528,7 @@ public:
  
   
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/flow_graph.htm">Flow Graph</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/flow_graph.htm">Flow Graph</a></div>
 </div>
 <div class="See Also">
 <h2>See Also</h2>

@@ -1,4 +1,4 @@
-# Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+# Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 #
 # This file is part of Threading Building Blocks.
 #
@@ -42,6 +42,10 @@ ifeq ($(filter /% $(SLASH)%, $(subst :, ,$(tbb_root)) ),)
     # also changes related variables like work_dir
     override tbb_root := $(CWD)$(SLASH)..
     export TBBROOT := $(tbb_root)
+endif
+
+ifneq (00,$(lambdas)$(cpp0x))
+	override CXXFLAGS += $(CPP11_FLAGS)
 endif
 
 ifeq ($(tbb_os),windows)
@@ -113,8 +117,8 @@ else
         export DYLD_LIBRARY_PATH := $(DYLD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
     else
         export LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(work_dir)_release:$(work_dir)_debug
-        ifeq ($(offload),mic)
-            mic_path=$(tbb_build_dir)$(SLASH)$(mic_build_prefix)
+        ifeq ($(findstring mic,$(offload) $(target)),mic)
+            mic_path=$(tbb_build_dir)$(SLASH)$(mic_tbb_build_prefix)
             export MIC_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LIBRARY_PATH)
             export MIC_LD_LIBRARY_PATH := $(mic_path)_release:$(mic_path)_debug:$(MIC_LD_LIBRARY_PATH)
         else
@@ -144,7 +148,7 @@ $(COMMON_TARGETS):: % : $(addsuffix %,$(EXAMPLES_DIRS))
 # proxy rule for calling appropriate example
 $(EXAMPLES_TARGETS)::
 	@echo ------------------------ $@ ------------------------
-	-$(MAKE) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)"
+	-$(MAKE) -C $(@D)  -f $(EXAMPLE_MAKEFILE) $(notdir $@) CXX="$(CPLUS)" $(if $(run_cmd),run_cmd="$(run_cmd)",) $(if $(args),ARGS="$(args)",)
 
 printenv:
 ifeq ($(tbb_os),windows)

@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="thread_bound_filter Class">
 <meta name="DC.subject" content="thread_bound_filter Class">
@@ -24,10 +21,9 @@
 </head>
 <body id="thread_bound_filter_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(3);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="thread_bound_filter_cls"><!-- --></a>
 
  
@@ -183,10 +179,10 @@ int main() {
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="29.940119760479046%" id="d839e146">Member 
+				  <th class="cellrowborder" valign="top" width="29.940119760479046%" id="d12241e148">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="70.05988023952095%" id="d839e149">Description 
+				  <th class="cellrowborder" valign="top" width="70.05988023952095%" id="d12241e151">Description 
 				  </th>
  
 				</tr>
@@ -194,11 +190,11 @@ int main() {
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d839e146 "><span class="keyword">thread_bound_filter(mode
+				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d12241e148 "><span class="keyword">thread_bound_filter(mode
 						filter_mode)()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d839e149 "> 
+				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d12241e151 "> 
 					 <p>Constructs a filter of the specified mode. The pipeline
 						Class section describes the modes. 
 					 </p>
@@ -208,11 +204,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d839e146 "><span class="keyword">result_type
+				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d12241e148 "><span class="keyword">result_type
 						try_process_item()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d839e149 "> 
+				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d12241e151 "> 
 					 <p>If an item is available and it can be processed without
 						exceeding the token limit, process the item with 
 						<samp class="codeph">filter::operator()</samp>. The return values are
@@ -224,13 +220,13 @@ int main() {
 <div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"> 
 						  <thead align="left"> 
 							 <tr> 
-								<th class="cellrowborder" valign="top" id="d839e196"> 
+								<th class="cellrowborder" valign="top" id="d12241e198"> 
 								  <p>Return Value 
 								  </p>
  
 								</th>
  
-								<th class="row-nocellborder" valign="top" id="d839e202"> 
+								<th class="row-nocellborder" valign="top" id="d12241e204"> 
 								  <p> Description 
 								  </p>
  
@@ -241,10 +237,10 @@ int main() {
  
 						  <tbody> 
 							 <tr valign="top"> 
-								<td class="cellrowborder" valign="top" headers="d839e196 ">success 
+								<td class="cellrowborder" valign="top" headers="d12241e198 ">success 
 								</td>
  
-								<td class="row-nocellborder" valign="top" headers="d839e202 "> 
+								<td class="row-nocellborder" valign="top" headers="d12241e204 "> 
 								  <p>Applied 
 									 <samp class="codeph">filter::operator()</samp> to one item. 
 								  </p>
@@ -254,13 +250,13 @@ int main() {
 							 </tr>
  
 							 <tr valign="top"> 
-								<td class="cellrowborder" valign="top" headers="d839e196 "> 
+								<td class="cellrowborder" valign="top" headers="d12241e198 "> 
 								  <p>item_not_available 
 								  </p>
  
 								</td>
  
-								<td class="row-nocellborder" valign="top" headers="d839e202 "> 
+								<td class="row-nocellborder" valign="top" headers="d12241e204 "> 
 								  <p> No item is currently available
 									 to process, or the token limit would be exceeded. 
 								  </p>
@@ -270,13 +266,13 @@ int main() {
 							 </tr>
  
 							 <tr valign="top"> 
-								<td class="cellrowborder" valign="top" headers="d839e196 "> 
+								<td class="cellrowborder" valign="top" headers="d12241e198 "> 
 								  <p>end_of_stream 
 								  </p>
  
 								</td>
  
-								<td class="row-nocellborder" valign="top" headers="d839e202 "> 
+								<td class="row-nocellborder" valign="top" headers="d12241e204 "> 
 								  <p>No more items will ever arrive
 									 at this filter. 
 								  </p>
@@ -297,11 +293,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d839e146 "> 
+				  <td class="cellrowborder" valign="top" width="29.940119760479046%" headers="d12241e148 "> 
 					 <span class="keyword">result_type process_item()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d839e149 "> 
+				  <td class="cellrowborder" valign="top" width="70.05988023952095%" headers="d12241e151 "> 
 					 <p> Like 
 						<samp class="codeph">try_process_item</samp>, but waits until it can
 						process an item or the end of the stream is reached. 
@@ -335,7 +331,7 @@ int main() {
 
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../../reference/algorithms/pipeline_cls.htm">pipeline Class</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../../reference/algorithms/pipeline_cls.htm">pipeline Class</a></div>
 </div>
 <div></div>
 

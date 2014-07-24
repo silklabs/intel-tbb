@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -1204,6 +1204,9 @@ bool Backend::clean()
         if (i == freeLargeBins.getMinNonemptyBin(i))
             res |= freeLargeBins.tryReleaseRegions(i, this);
     }
+
+    scanCoalescQ(/*forceCoalescQDrop=*/false);
+
     return res;
 }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+    Copyright 2005-2014 Intel Corporation.  All Rights Reserved.
 
     This file is part of Threading Building Blocks.
 
@@ -441,6 +441,11 @@
         but no mandatory warning message appears from GCC 4.4.3. Instead, only a linkage error occurs when
         these atomic operations are used (such as in unit test test_atomic.exe). **/
     #define __TBB_GCC_64BIT_ATOMIC_BUILTINS_BROKEN 1
+#elif __TBB_x86_32 && __TBB_GCC_VERSION == 40102 && ! __GNUC_RH_RELEASE__
+    /** GCC 4.1.2 erroneously emit call to external function for 64 bit sync_ intrinsics.
+        However these functions are not defined anywhere. It seems that this problem was fixed later on
+        and RHEL got an updated version of gcc 4.1.2. **/
+    #define __TBB_GCC_64BIT_ATOMIC_BUILTINS_BROKEN 1
 #endif
 
 #if __GNUC__ && __TBB_x86_64 && __INTEL_COMPILER == 1200
@@ -539,6 +544,11 @@
     #define __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN 1
 #else
     #define __TBB_LIBSTDCPP_EXCEPTION_HEADERS_BROKEN 0
+#endif
+
+/*In a PIC mode some versions of GCC 4.1.2 generate incorrect inlined code for 8 byte __sync_val_compare_and_swap intrinisc */
+#if __TBB_GCC_VERSION == 40102 && __PIC__ && !defined(__INTEL_COMPILER) && !defined(__clang__)
+    #define __TBB_GCC_CAS8_BUILTIN_INLINING_BROKEN 1
 #endif
 
 #if __TBB_x86_32 && (__linux__ || __APPLE__ || _WIN32 || __sun) &&  ((defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 1400) || (__GNUC__==3 && __GNUC_MINOR__==3 ) || defined(__SUNPRO_CC))

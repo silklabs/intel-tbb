@@ -1,11 +1,8 @@
-
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<html xmlns:MSHelp="http://www.microsoft.com/MSHelp/" lang="en-us" xml:lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="DC.Type" content="reference">
 <meta name="DC.Title" content="concurrent_queue Template Class">
 <meta name="DC.subject" content="concurrent_queue Template Class">
@@ -19,10 +16,9 @@
 </head>
 <body id="concurrent_queue_cls">
  <!-- ==============(Start:NavScript)================= -->
- <script src="../../NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
+ <script src="..\..\NavScript.js" language="JavaScript1.2" type="text/javascript"></script>
  <script language="JavaScript1.2" type="text/javascript">WriteNavLink(2);</script>
  <!-- ==============(End:NavScript)================= -->
-<p id="header_text" style="margin-bottom : 20pt"><em>Intel&reg; Threading Building Blocks Documentation, version 4.2</em></p>
 <a name="concurrent_queue_cls"><!-- --></a>
 
  
@@ -71,26 +67,26 @@
 		</p>
  
 		
-<div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"><caption><span class="tablecap">Differences Between STL queue and Intel(R)
+<div class="tablenoborder"><table cellpadding="4" summary="" width="100%" frame="hsides" border="1" rules="all"><caption><span class="tablecap">Differences Between STL queue and Intel&reg;
 		  Threading Building Blocks concurrent_queue</span></caption> 
 		   
 		   
 		   
 		  <thead align="left"> 
 			 <tr> 
-				<th class="cellrowborder" valign="top" width="NaN%" id="d2608e87"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d39293e87"> 
 				  <p><strong>Feature</strong> 
 				  </p>
  
 				</th>
  
-				<th class="cellrowborder" valign="top" width="NaN%" id="d2608e95"> 
+				<th class="cellrowborder" valign="top" width="NaN%" id="d39293e95"> 
 				  <p><strong>STL std::queue</strong> 
 				  </p>
  
 				</th>
  
-				<th class="row-nocellborder" valign="top" width="NaN%" id="d2608e103"> 
+				<th class="row-nocellborder" valign="top" width="NaN%" id="d39293e103"> 
 				  <p><strong>concurrent_queue</strong> 
 				  </p>
  
@@ -102,13 +98,13 @@
  
 		  <tbody> 
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e87 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e87 "> 
 				  <p>Access to front and back 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e95 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e95 "> 
 				  <p>Methods 
 					 <samp class="codeph">front</samp> and 
 					 <samp class="codeph">back</samp> 
@@ -116,7 +112,7 @@
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2608e103 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d39293e103 "> 
 				  <p>Not present. They would be unsafe while
 					 concurrent operations are in progress. 
 				  </p>
@@ -126,19 +122,19 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e87 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e87 "> 
 				  <p><samp class="codeph">size_type</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e95 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e95 "> 
 				  <p>unsigned integral type 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2608e103 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d39293e103 "> 
 				  <p><samp class="codeph"><em>signed</em></samp> integral
 					 type 
 				  </p>
@@ -148,19 +144,19 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e87 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e87 "> 
 				  <p><samp class="codeph">unsafe_size()</samp> 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e95 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e95 "> 
 				  <p>Returns number of items in queue 
 				  </p>
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2608e103 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d39293e103 "> 
 				  <p>Returns number of items in queue. May
 					 return incorrect value if any 
 					 <samp class="codeph">push</samp> or 
@@ -173,13 +169,13 @@
 			 </tr>
  
 			 <tr> 
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e87 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e87 "> 
 				  <p>Copy and pop item unless queue q is empty. 
 				  </p>
  
 				</td>
  
-				<td class="cellrowborder" valign="top" width="NaN%" headers="d2608e95 "> 
+				<td class="cellrowborder" valign="top" width="NaN%" headers="d39293e95 "> 
 				  <p>bool b=!q.empty(); 
 				  </p>
  
@@ -197,7 +193,7 @@
  
 				</td>
  
-				<td class="row-nocellborder" valign="top" width="NaN%" headers="d2608e103 "> 
+				<td class="row-nocellborder" valign="top" width="NaN%" headers="d39293e103 "> 
 				  <p>bool b = 
 					 <em>q</em>.try_pop (x) 
 				  </p>
@@ -268,10 +264,10 @@
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d2608e275">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d39293e275">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d2608e278">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d39293e278">Description 
 				  </th>
  
 				</tr>
@@ -279,11 +275,11 @@
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">concurrent_queue( const Alloc&amp;
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">concurrent_queue( const Alloc&amp;
 						a = Alloc () )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Constructs empty queue. 
 					 </p>
  
@@ -292,11 +288,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">concurrent_queue( const
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">concurrent_queue( const
 						concurrent_queue&amp; src, const Alloc&amp; a = Alloc() )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Constructs a copy of 
 						<em>src</em>. 
 					 </p>
@@ -306,12 +302,12 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">template&lt;typename
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">template&lt;typename
 						InputIterator&gt; concurrent_queue( InputIterator first, InputIterator last,
 						const Alloc&amp; a = Alloc() )</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Constructs a queue containing copies of elements in the
 						iterator half-open interval [<em>first,last</em>). 
 					 </p>
@@ -321,10 +317,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">~concurrent_queue()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">~concurrent_queue()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Destroys all items in the queue. 
 					 </p>
  
@@ -333,11 +329,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">void push( const T&amp; source
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">void push( const T&amp; source
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Pushes a copy of 
 						<samp class="codeph">source</samp> onto back of the queue. 
 					 </p>
@@ -347,11 +343,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">bool try_pop ( T&amp; destination
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">bool try_pop ( T&amp; destination
 						)</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>If value is available, pops it from the queue, assigns it to
 						destination, and destroys the original value. Otherwise does nothing. 
 					 </p>
@@ -373,10 +369,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">void clear()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">void clear()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p>Clears the queue. Afterwards 
 						<samp class="codeph">size()==0</samp>. 
 					 </p>
@@ -386,11 +382,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">size_type unsafe_size()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">size_type unsafe_size()
 						const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p><strong>Returns</strong> 
 					 </p>
  
@@ -404,10 +400,10 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">bool empty() const</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">bool empty() const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">true</samp> if queue has no items; false otherwise.
 						
@@ -418,11 +414,11 @@
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e275 "><span class="keyword">Alloc get_allocator()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e275 "><span class="keyword">Alloc get_allocator()
 						const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e278 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e278 "> 
 					 <p><strong>Returns</strong>: Copy of allocator used to construct the
 						queue. 
 					 </p>
@@ -490,10 +486,10 @@ int main() {
 			 members of this template class. 
 		  </span><thead align="left"> 
 				<tr> 
-				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d2608e515">Member 
+				  <th class="cellrowborder" valign="top" width="33.89830508474576%" id="d39293e517">Member 
 				  </th>
  
-				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d2608e518">Description 
+				  <th class="cellrowborder" valign="top" width="66.10169491525423%" id="d39293e520">Description 
 				  </th>
  
 				</tr>
@@ -501,10 +497,10 @@ int main() {
  
 			 <tbody> 
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e515 "><span class="keyword">iterator unsafe_begin()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e517 "><span class="keyword">iterator unsafe_begin()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e518 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e520 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">iterator</samp> pointing to beginning of the queue.
 						
@@ -515,10 +511,10 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e515 "><span class="keyword">iterator unsafe_end()</span> 
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e517 "><span class="keyword">iterator unsafe_end()</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e518 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e520 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">iterator</samp> pointing to end of the queue. 
 					 </p>
@@ -528,11 +524,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e515 "><span class="keyword">const_iterator unsafe_begin()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e517 "><span class="keyword">const_iterator unsafe_begin()
 						const</span> 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e518 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e520 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">const_iterator</samp> with pointing to beginning of
 						the queue. 
@@ -543,11 +539,11 @@ int main() {
 				</tr>
  
 				<tr> 
-				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d2608e515 "><span class="keyword"></span><samp class="codeph">const_iterator</samp> unsafe_end()
+				  <td class="cellrowborder" valign="top" width="33.89830508474576%" headers="d39293e517 "><span class="keyword"></span><samp class="codeph">const_iterator</samp> unsafe_end()
 					 const 
 				  </td>
  
-				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d2608e518 "> 
+				  <td class="cellrowborder" valign="top" width="66.10169491525423%" headers="d39293e520 "> 
 					 <p><strong>Returns</strong>: 
 						<samp class="codeph">const_iterator</samp> pointing to end of the queue.
 						
@@ -568,7 +564,7 @@ int main() {
  
 
 <div class="familylinks">
-<div class="parentlink"><strong>Parent topic:</strong> <a href="../../reference/containers_overview.htm">Containers Overview</a></div>
+<div class="parentlink"><strong>Parent topic:</strong>&nbsp;<a href="../../reference/containers_overview.htm">Containers Overview</a></div>
 </div>
 <div></div>
 
