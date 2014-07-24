@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface7::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</title>
+<title>tbb::interface6::flow_control Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,78 +21,28 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00297.html">function_node</a></div>
-<h1>tbb::flow::interface7::function_node&lt; Input, Output,, Allocator &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::function_node" --><!-- doxytag: inherits="tbb::flow::interface7::graph_node" -->Implements a function node that supports Input -&gt; Output.  
+<a class="el" href="a00428.html">tbb</a>::<b>interface6</b>::<a class="el" href="a00297.html">flow_control</a></div>
+<h1>tbb::interface6::flow_control Class Reference</h1><!-- doxytag: class="tbb::interface6::flow_control" -->input_filter control to signal end-of-input for parallel_pipeline  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;flow_graph.h&gt;</code>
+<code>#include &lt;pipeline.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface7::function_node&lt; Input, Output,, Allocator &gt;:
-<p><center><img src="a00297.png" usemap="#tbb::flow::interface7::function_node< Input, Output,, Allocator >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface7::function_node< Input, Output,, Allocator >_map">
-<area href="a00300.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,368,24">
-</map>
-<a href="a00064.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00110.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="310a0656bbd201ec82e936a84c304d6c"></a><!-- doxytag: member="tbb::flow::interface7::function_node::input_type" ref="310a0656bbd201ec82e936a84c304d6c" args="" -->
-typedef Input&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f54a1e758d84872396184faa2427e74e"></a><!-- doxytag: member="tbb::flow::interface7::function_node::output_type" ref="f54a1e758d84872396184faa2427e74e" args="" -->
-typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2cfc4a99dea691d45e8b84f204056aec"></a><!-- doxytag: member="tbb::flow::interface7::function_node::predecessor_type" ref="2cfc4a99dea691d45e8b84f204056aec" args="" -->
-typedef <a class="el" href="a00338.html">sender</a>&lt; input_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0fcfc6ec801c63e72c1336d7b8f3cc1a"></a><!-- doxytag: member="tbb::flow::interface7::function_node::successor_type" ref="0fcfc6ec801c63e72c1336d7b8f3cc1a" args="" -->
-typedef <a class="el" href="a00332.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="08b7ee209c8d1832aad210633418a5c1"></a><!-- doxytag: member="tbb::flow::interface7::function_node::fInput_type" ref="08b7ee209c8d1832aad210633418a5c1" args="" -->
-typedef internal::function_input&lt;<br>
- input_type, output_type,<br>
- Allocator &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ba306ac57570a1d2070ff2a109ad9e3"></a><!-- doxytag: member="tbb::flow::interface7::function_node::fOutput_type" ref="0ba306ac57570a1d2070ff2a109ad9e3" args="" -->
-typedef internal::function_output&lt;<br>
- output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
-
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="12eb793d1501c607a1462f15a4dacffc"></a><!-- doxytag: member="tbb::flow::interface7::function_node::function_node" ref="12eb793d1501c607a1462f15a4dacffc" args="(graph &amp;g, size_t concurrency, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00297.html#12eb793d1501c607a1462f15a4dacffc">function_node</a> (<a class="el" href="a00299.html">graph</a> &amp;g, size_t concurrency, Body body)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="323d10b216110a00b93300c0c7278a57"></a><!-- doxytag: member="tbb::flow::interface7::function_node::function_node" ref="323d10b216110a00b93300c0c7278a57" args="(const function_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00297.html#323d10b216110a00b93300c0c7278a57">function_node</a> (const <a class="el" href="a00297.html">function_node</a> &amp;src)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e0e95aa279ef62eb22a761da64001433"></a><!-- doxytag: member="tbb::flow::interface7::function_node::reset" ref="e0e95aa279ef62eb22a761da64001433" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c796e31710e0c2b15d7672c822385973"></a><!-- doxytag: member="tbb::flow::interface7::function_node::successors" ref="c796e31710e0c2b15d7672c822385973" args="()" -->
-internal::broadcast_cache&lt;<br>
- output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4b2c7123577587e3c26506db3e5abe62"></a><!-- doxytag: member="tbb::interface6::flow_control::stop" ref="4b2c7123577587e3c26506db3e5abe62" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>stop</b> ()</td></tr>
 
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621bab40a858d214db69ef08d88b67c1"></a><!-- doxytag: member="tbb::flow::interface7::function_node::run_and_put_task" ref="621bab40a858d214db69ef08d88b67c1" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>run_and_put_task</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4fa30d87bc0bfa80942f97a8d58f1bd"></a><!-- doxytag: member="tbb::flow::interface7::function_node::internal::broadcast_cache" ref="e4fa30d87bc0bfa80942f97a8d58f1bd" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="31ba00ea3e3e5a421b38840bd0dc2589"></a><!-- doxytag: member="tbb::flow::interface7::function_node::internal::round_robin_cache" ref="31ba00ea3e3e5a421b38840bd0dc2589" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="15bb80e25fbcc4213e0053d558df6462"></a><!-- doxytag: member="tbb::interface6::flow_control::internal::concrete_filter" ref="15bb80e25fbcc4213e0053d558df6462" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::concrete_filter</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Input, typename Output = continue_msg, graph_buffer_policy = queueing, typename Allocator = cache_aligned_allocator&lt;Input&gt;&gt;<br>
- class tbb::flow::interface7::function_node&lt; Input, Output,, Allocator &gt;</h3>
-
-Implements a function node that supports Input -&gt; Output. 
+input_filter control to signal end-of-input for parallel_pipeline 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
+<li>pipeline.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

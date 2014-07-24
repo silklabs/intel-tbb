@@ -216,7 +216,7 @@ clean_debug:
 clean_examples:
 	$(shell $(MAKE) -s -i -r -C $(examples_root) -f Makefile tbb_root=.. clean >$(NUL) 2>$(NUL))
 
-.PHONY: mkdir_release mkdir_debug codecov do_codecov info
+.PHONY: mkdir_release mkdir_debug codecov do_codecov info tbbvars shell
 
 mkdir_release:
 	$(shell $(MD) "$(work_dir)_release" >$(NUL) 2>$(NUL))
@@ -246,3 +246,21 @@ info:
 	@echo compiler=$(compiler)
 	@echo runtime=$(runtime)
 	@echo tbb_build_prefix=$(tbb_build_prefix)
+	@echo work_dir=$(abspath $(tbb_build_dir)$(SLASH)$(tbb_build_prefix)_{cfg})
+
+# [usage]$ source `make <options> tbbvars`.sh
+tbbvars: cfg?=release
+tbbvars:
+	@echo $(tbb_build_dir)$(SLASH)$(tbb_build_prefix)_$(cfg)$(SLASH)tbbvars
+
+symbols: args=$(if $(findstring cl,$(compiler)), dumpbin /section:.text *.obj|findstr COMDAT , nm -Pg *.o|grep ' T '|cut -f1 -d' ')
+symbols: shell
+
+shell: cfg?=release
+shell:
+ifdef BUILDING_PHASE
+	-$(run_cmd) $(shell_cmd)
+else
+	@$(MAKE) -C "$(work_dir)_$(cfg)" -rf $(tbb_root)/src/Makefile BUILDING_PHASE=1 shell shell_cmd="$(if $(args),$(args),$(SHELL))"
+endif
+

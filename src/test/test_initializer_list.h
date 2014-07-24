@@ -82,7 +82,6 @@ namespace initializer_list_support_tests{
         TestInitListSupport<container_type>(il, Harness::int_to_type<false>());
     }
 
-
     //TODO: add test for no leaks, and correct element lifetime
     //the need for macro comes from desire to test different scenarios where initializer sequence is compile time constant
     #define __TBB_TEST_INIT_LIST_SUITE_SINGLE(FUNC_NAME, CONTAINER, ELEMENT_TYPE, INIT_SEQ)                                                           \
@@ -138,12 +137,18 @@ namespace initializer_list_support_tests{
     #define AD_HOC_INIT_SEQ {1,2,3,4}
     __TBB_TEST_INIT_LIST_SUITE_SINGLE(TestCompilerSupportInt, initializer_list_helpers::ad_hoc_container, int, AD_HOC_INIT_SEQ )
     #undef AD_HOC_INIT_SEQ
-    #define AD_HOC_PAIR_INIT_SEQ {{1,1}, {2,2},{3,3}, {4,4}}
-    #define AD_HOC_INIT_SEQ_PAIR_TYPE std::pair<int,int>
-    __TBB_TEST_INIT_LIST_SUITE_SINGLE(TestCompilerSupportIntPair, initializer_list_helpers::ad_hoc_container, AD_HOC_INIT_SEQ_PAIR_TYPE, AD_HOC_PAIR_INIT_SEQ )
-    #undef AD_HOC_INIT_SEQ_PAIR_TYPE
-    #undef AD_HOC_PAIR_INIT_SEQ
 
+    #if __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN
+        void TestCompilerSupportIntPair(){
+            REPORT("Known issue: skip initilizer_list compiler test for std::pair list elements.\n");
+        }
+    #else
+        #define AD_HOC_PAIR_INIT_SEQ {{1,1}, {2,2},{3,3}, {4,4}}
+        #define AD_HOC_INIT_SEQ_PAIR_TYPE std::pair<int,int>
+        __TBB_TEST_INIT_LIST_SUITE_SINGLE(TestCompilerSupportIntPair, initializer_list_helpers::ad_hoc_container, AD_HOC_INIT_SEQ_PAIR_TYPE, AD_HOC_PAIR_INIT_SEQ )
+        #undef AD_HOC_INIT_SEQ_PAIR_TYPE
+        #undef AD_HOC_PAIR_INIT_SEQ
+    #endif
 
     bool TestCompilerForInitializerList();
     namespace  {

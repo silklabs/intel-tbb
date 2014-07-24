@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor Class Reference</title>
+<title>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,73 +21,36 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00280.html">concurrent_hash_map</a>::<a class="el" href="a00283.html">const_accessor</a></div>
-<h1>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor Class Reference</h1><!-- doxytag: class="tbb::interface5::concurrent_hash_map::const_accessor" -->Combines data access, locking, and garbage collection.  
+<a class="el" href="a00428.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00281.html">concurrent_hash_map</a>::<a class="el" href="a00283.html">bucket_accessor</a></div>
+<h1>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor Class Reference</h1><!-- doxytag: class="tbb::interface5::concurrent_hash_map::bucket_accessor" -->bucket accessor is to find, rehash, acquire a lock, and access a bucket  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;concurrent_hash_map.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor:
-<p><center><img src="a00283.png" usemap="#tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::const_accessor_map" border="0" alt=""></center>
-<map name="tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::const_accessor_map">
-<area href="a00281.html" alt="tbb::interface5::concurrent_hash_map< Key, T, HashCompare, Allocator >::accessor" shape="rect" coords="0,56,530,80">
-</map>
-<a href="a00022.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00021.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a8e50238483ba451363dccebd981d346"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::value_type" ref="a8e50238483ba451363dccebd981d346" args="" -->
-typedef const concurrent_hash_map::value_type&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#a8e50238483ba451363dccebd981d346">value_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Type of value. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="84c3080d0c6124d55c8bb4cf6055e65f"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::empty" ref="84c3080d0c6124d55c8bb4cf6055e65f" args="() const " -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#84c3080d0c6124d55c8bb4cf6055e65f">empty</a> () const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b1dcb174ab54b8612b25b6126d18d6c3"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::bucket_accessor" ref="b1dcb174ab54b8612b25b6126d18d6c3" args="(concurrent_hash_map *base, const hashcode_t h, bool writer=false)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>bucket_accessor</b> (<a class="el" href="a00281.html">concurrent_hash_map</a> *base, const hashcode_t h, bool writer=false)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if result is empty. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7db006d41b49dc5f1716a913769d4698"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::release" ref="7db006d41b49dc5f1716a913769d4698" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#7db006d41b49dc5f1716a913769d4698">release</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d11c77f4d70a94d4fb344492bbf18007"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::acquire" ref="d11c77f4d70a94d4fb344492bbf18007" args="(concurrent_hash_map *base, const hashcode_t h, bool writer=false)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#d11c77f4d70a94d4fb344492bbf18007">acquire</a> (<a class="el" href="a00281.html">concurrent_hash_map</a> *base, const hashcode_t h, bool writer=false)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set to null. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9411df8197ceb4881ec4c7368a0a7f88"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::operator *" ref="9411df8197ceb4881ec4c7368a0a7f88" args="() const " -->
-const_reference&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#9411df8197ceb4881ec4c7368a0a7f88">operator *</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">find a bucket by masked hashcode, optionally rehash, and acquire the lock <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="07d958f151a0eaa92f50fd56ad6440e2"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::is_writer" ref="07d958f151a0eaa92f50fd56ad6440e2" args="()" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#07d958f151a0eaa92f50fd56ad6440e2">is_writer</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return reference to associated value in hash table. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d03a48ecb8cd9549bd8be64b09c9b0d"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::operator-&gt;" ref="3d03a48ecb8cd9549bd8be64b09c9b0d" args="() const " -->
-const_pointer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#3d03a48ecb8cd9549bd8be64b09c9b0d">operator-&gt;</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">check whether bucket is locked for write <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fa6314b861c574f86ed189b124cf5853"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::bucket_accessor::operator()" ref="fa6314b861c574f86ed189b124cf5853" args="()" -->
+bucket *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#fa6314b861c574f86ed189b124cf5853">operator()</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return pointer to associated value in hash table. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27399c613eb1aecd4660803955dda09d"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::const_accessor" ref="27399c613eb1aecd4660803955dda09d" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#27399c613eb1aecd4660803955dda09d">const_accessor</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create empty result. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="928769b139d53427e7075c1f86148e4c"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::~const_accessor" ref="928769b139d53427e7075c1f86148e4c" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00283.html#928769b139d53427e7075c1f86148e4c">~const_accessor</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy result after releasing the underlying reference. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45ab59454c6f11fe938bbcab637cdd73"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::is_writer" ref="45ab59454c6f11fe938bbcab637cdd73" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_writer</b> ()</td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="21856da696b0765cc3db90663160d95e"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::my_node" ref="21856da696b0765cc3db90663160d95e" args="" -->
-node *&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_node</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4936cc9432926ed38f0207828b388e24"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::my_hash" ref="4936cc9432926ed38f0207828b388e24" args="" -->
-hashcode_t&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_hash</b></td></tr>
-
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d062d8ecb243a6ec62fa30bca52a1bcf"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;" ref="d062d8ecb243a6ec62fa30bca52a1bcf" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ddd77aff56c12366acc02d0f1588a706"></a><!-- doxytag: member="tbb::interface5::concurrent_hash_map::const_accessor::accessor" ref="ddd77aff56c12366acc02d0f1588a706" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>accessor</b></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">get bucket pointer <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <h3>template&lt;typename Key, typename T, typename HashCompare, typename Allocator&gt;<br>
- class tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::const_accessor</h3>
+ class tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, Allocator &gt;::bucket_accessor</h3>
 
-Combines data access, locking, and garbage collection. 
+bucket accessor is to find, rehash, acquire a lock, and access a bucket 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>concurrent_hash_map.h</ul>

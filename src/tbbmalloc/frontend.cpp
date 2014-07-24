@@ -1113,6 +1113,8 @@ void MemoryPool::destroy()
         if (next)
             next->prev = prev;
     }
+    bootStrapBlocks.reset();
+    orphanedBlocks.reset();
     // slab blocks in non-default pool do not have backreferencies,
     // only large objects do
     if (extMemPool.userPool())
@@ -1881,6 +1883,52 @@ void MemoryPool::initDefaultPool()
     hugePages.init(hugePageSize);
 }
 
+#if USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
+
+/* Decrease race interval between dynamic library unloading and pthread key
+   destructor. Protect only Pthreads with supported unloading. */
+class ShutdownSync {
+/* flag is the number of threads in pthread key dtor body
+   (i.e., between threadDtorStart() and threadDtorDone())
+   or the signal to skip dtor, if flag < 0 */
+    intptr_t flag;
+    static const intptr_t skipDtor = INTPTR_MIN/2;
+public:
+    void init() { flag = 0; }
+/* Suppose that 2*abs(skipDtor) or more threads never call threadExitStart()
+   simultaneously, so flag is never becomes negative because of that. */
+    bool threadDtorStart() {
+        if (flag < 0)
+            return false;
+        if (AtomicIncrement(flag) <= 0) { // note that new value returned
+            AtomicAdd(flag, -1);  // flag is spoiled by us, restore it
+            return false;
+        }
+        return true;
+    }
+    void threadDtorDone() {
+        AtomicAdd(flag, -1);
+    }
+    void processExit() {
+        if (AtomicAdd(flag, skipDtor) != 0)
+            SpinWaitUntilEq(flag, skipDtor);
+    }
+};
+
+#else
+
+class ShutdownSync {
+public:
+    void init() { }
+    bool threadDtorStart() { return true; }
+    void threadDtorDone() { }
+    void processExit() { }
+};
+
+#endif // USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
+
+static ShutdownSync shutdownSync;
+
 inline bool isMallocInitialized() {
     // Load must have acquire fence; otherwise thread taking "initialized" path
     // might perform textually later loads *before* mallocInitialized becomes 2.
@@ -1912,6 +1960,9 @@ static void initMemoryManager()
     }
     ThreadId::init();      // Create keys for thread id
     MemoryPool::initDefaultPool();
+    // init() is required iff initMemoryManager() is called
+    // after mallocProcessShutdownNotification()
+    shutdownSync.init();
 #if COLLECT_STATISTICS
     initStatisticsCollection();
 #endif
@@ -2173,50 +2224,6 @@ void MemoryPool::putToLLOCache(TLSData *tls, void *object)
     if (!tls || !tls->lloc.put(header->memoryBlock, &extMemPool))
         extMemPool.freeLargeObject(header->memoryBlock);
 }
-
-#if USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
-
-/* Decrease race interval between dynamic library unloading and pthread key
-   destructor. Protect only Pthreads with supported unloading. */
-class ShutdownSync {
-/* flag is the number of threads in pthread key dtor body
-   (i.e., between threadDtorStart() and threadDtorDone())
-   or the signal to skip dtor, if flag < 0 */
-    intptr_t flag;
-    static const intptr_t skipDtor = INTPTR_MIN/2;
-public:
-/* Suppose that 2*abs(skipDtor) or more threads never call threadExitStart()
-   simultaneously, so flag is never becomes negative because of that. */
-    bool threadDtorStart() {
-        if (flag < 0)
-            return false;
-        if (AtomicIncrement(flag) <= 0) { // note that new value returned
-            AtomicAdd(flag, -1);  // flag is spoiled by us, restore it
-            return false;
-        }
-        return true;
-    }
-    void threadDtorDone() {
-        AtomicAdd(flag, -1);
-    }
-    void processExit() {
-        if (AtomicAdd(flag, skipDtor) != 0)
-            SpinWaitUntilEq(flag, skipDtor);
-    }
-};
-
-#else
-
-class ShutdownSync {
-public:
-    bool threadDtorStart() { return true; }
-    void threadDtorDone() { }
-    void processExit() { }
-};
-
-#endif // USE_PTHREAD && (__TBB_SOURCE_DIRECTLY_INCLUDED || __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND)
-
-static ShutdownSync shutdownSync;
 
 /*
  * All aligned allocations fall into one of the following categories:
@@ -2709,6 +2716,9 @@ extern "C" void __TBB_mallocProcessShutdownNotification()
     defaultMemPool->destroy();
     destroyBackRefMaster(&defaultMemPool->extMemPool.backend);
     ThreadId::destroy();      // Delete key for thread id
+    hugePages.reset();
+    // new total malloc initialization is possible after this point
+    FencedStore(mallocInitialized, 0);
 #elif __TBB_USE_DLOPEN_REENTRANCY_WORKAROUND
 /* In most cases we prevent unloading tbbmalloc, and don't clean up memory
    on process shutdown. When impossible to prevent, library unload results

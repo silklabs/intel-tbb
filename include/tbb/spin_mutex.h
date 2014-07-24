@@ -209,9 +209,9 @@ namespace tbb {
     @ingroup synchronization */
 
 #if ( __TBB_x86_32 || __TBB_x86_64 )
-typedef interface7::internal::padded_mutex<interface7::internal::x86_eliding_mutex> speculative_spin_mutex;
+typedef interface7::internal::padded_mutex<interface7::internal::x86_eliding_mutex,false> speculative_spin_mutex;
 #else
-typedef interface7::internal::padded_mutex<spin_mutex> speculative_spin_mutex;
+typedef interface7::internal::padded_mutex<spin_mutex,false> speculative_spin_mutex;
 #endif
 __TBB_DEFINE_PROFILING_SET_NAME(speculative_spin_mutex)
 

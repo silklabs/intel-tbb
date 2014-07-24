@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::atomic_backoff Class Reference</title>
+<title>tbb::atomic&lt; void * &gt; Struct Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,36 +21,33 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>internal</b>::<a class="el" href="a00267.html">atomic_backoff</a></div>
-<h1>tbb::internal::atomic_backoff Class Reference</h1><!-- doxytag: class="tbb::internal::atomic_backoff" -->Class that implements exponential backoff.  
+<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00267.html">atomic&lt; void * &gt;</a></div>
+<h1>tbb::atomic&lt; void * &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::atomic&lt; void * &gt;" -->Specialization for <a class="el" href="a00267.html">atomic&lt;void*&gt;</a>, for sake of not allowing arithmetic or operator-&gt;.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;tbb_machine.h&gt;</code>
+<code>#include &lt;atomic.h&gt;</code>
 <p>
-<a href="a00168.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00009.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="35029ddea6eb855b756292d1089054bb"></a><!-- doxytag: member="tbb::internal::atomic_backoff::atomic_backoff" ref="35029ddea6eb855b756292d1089054bb" args="(bool)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>atomic_backoff</b> (bool)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3529c5cc8a97732321719ef0b99e2ded"></a><!-- doxytag: member="tbb::atomic&lt; void * &gt;::atomic" ref="3529c5cc8a97732321719ef0b99e2ded" args="(void *arg)" -->
+constexpr&nbsp;</td><td class="memItemRight" valign="bottom"><b>atomic</b> (void *arg)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a174ea93e3bd3d5cce82389c2f28d037"></a><!-- doxytag: member="tbb::internal::atomic_backoff::pause" ref="a174ea93e3bd3d5cce82389c2f28d037" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00267.html#a174ea93e3bd3d5cce82389c2f28d037">pause</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ba6e74163e255b88c497c40db64c5dad"></a><!-- doxytag: member="tbb::atomic&lt; void * &gt;::operator=" ref="ba6e74163e255b88c497c40db64c5dad" args="(void *rhs)" -->
+void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (void *rhs)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Pause for a while. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c6179b19e2e8dedd73a36d523af2fe12"></a><!-- doxytag: member="tbb::internal::atomic_backoff::bounded_pause" ref="c6179b19e2e8dedd73a36d523af2fe12" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>bounded_pause</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45edb535489eb0e76ecc59a19fd952de"></a><!-- doxytag: member="tbb::internal::atomic_backoff::reset" ref="45edb535489eb0e76ecc59a19fd952de" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="37979e62d1f88eb45bd3ad7df5a140f8"></a><!-- doxytag: member="tbb::atomic&lt; void * &gt;::operator=" ref="37979e62d1f88eb45bd3ad7df5a140f8" args="(const atomic&lt; void * &gt; &amp;rhs)" -->
+<a class="el" href="a00266.html">atomic</a>&lt; void * &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00266.html">atomic</a>&lt; void * &gt; &amp;rhs)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Class that implements exponential backoff. 
+<h3>template&lt;&gt;<br>
+ struct tbb::atomic&lt; void * &gt;</h3>
+
+Specialization for <a class="el" href="a00267.html">atomic&lt;void*&gt;</a>, for sake of not allowing arithmetic or operator-&gt;. 
 <p>
-See implementation of spin_wait_while_eq for an example. 
-<p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li>tbb_machine.h</ul>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li>atomic.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

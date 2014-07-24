@@ -325,7 +325,7 @@ int main(int argc, char* argv[]) {
         if (strcmp((char*)*(argv+i),"-s")==0)
         {
 #if __INTEL_COMPILER == 1400 && __linux__
-            // Workaround for Intel(R) Compiler XE, version 14.0.0.080:
+            // Workaround for Intel(R) C++ Compiler XE, version 14.0.0.080:
             // unable to call setSystemAllocs() in such configuration.
             REPORT("Known issue: Standard allocator testing is not supported.\n");
             REPORT( "skip\n" );

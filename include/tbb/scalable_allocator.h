@@ -264,7 +264,7 @@ public:
         size_type absolutemax = static_cast<size_type>(-1) / sizeof (value_type);
         return (absolutemax > 0 ? absolutemax : 1);
     }
-#if __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
+#if __TBB_ALLOCATOR_CONSTRUCT_VARIADIC
     template<typename U, typename... Args>
     void construct(U *p, Args&&... args)
  #if __TBB_CPP11_STD_FORWARD_BROKEN
@@ -272,9 +272,9 @@ public:
  #else
         { ::new((void *)p) U(std::forward<Args>(args)...); }
  #endif
-#else // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
+#else // __TBB_ALLOCATOR_CONSTRUCT_VARIADIC
     void construct( pointer p, const value_type& value ) {::new((void*)(p)) value_type(value);}
-#endif // __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT && __TBB_CPP11_RVALUE_REF_PRESENT
+#endif // __TBB_ALLOCATOR_CONSTRUCT_VARIADIC
     void destroy( pointer p ) {p->~value_type();}
 };
 

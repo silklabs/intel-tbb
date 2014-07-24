@@ -26,34 +26,18 @@
     the GNU General Public License.
 */
 
-// Header that sets HAVE_tsx if TSX is available
-#define HAVE_TSX ( __TBB_x86_32 || __TBB_x86_64 )
+// Header that includes TSX-specific test functions
 
-#if HAVE_TSX 
+#if __TBB_TSX_AVAILABLE 
 
-// TODO: extend it for other compilers when we add API for XTEST
-#if __INTEL_COMPILER
+#if (__INTEL_COMPILER || __GNUC__ || _MSC_VER)
 
 #include "harness_defs.h"
+#include "tbb/tbb_config.h"
 
 inline static bool IsInsideTx()
 {
-#if _MSC_VER
-    __int8 res = 0;
-    __asm {
-      _asm _emit 0x0F 
-      _asm _emit 0x01 
-      _asm _emit 0xD6
-      _asm setz ah
-      _asm mov  res, ah
-    }
-    return res==0;
-#else
-    int8_t res = 0;
-    __asm__ __volatile__ (".byte 0x0F; .byte 0x01; .byte 0xD6;\n"
-                          "setz %0" : "=r"(res) : : "memory" );
-#endif
-    return res==0;
+    return __TBB_machine_is_in_transaction() != 0;
 }
 
 #if _MSC_VER
@@ -66,7 +50,8 @@ bool have_TSX() {
 #if _MSC_VER
     int info[4] = {0,0,0,0};
     const int EBX = 1;
-    __cpuidex(info, 7, 0);
+    int old_ecx = 0;
+    __cpuidex(info, 7, old_ecx);
     result = (info[EBX] & hle_ebx_mask)!=0;
     if( result ) ASSERT( (info[EBX] & rtm_ebx_mask)!=0, NULL );
 #elif __GNUC__
@@ -77,13 +62,18 @@ bool have_TSX() {
                            "cpuid\n"
                            "movl %%ebx, %0\n"
                            "movl %%esi, %%ebx\n"
-                           : "=a"(EBX) : "0" (reg_eax), "c" (reg_ecx) : "esi" );
+                           : "=a"(EBX) : "0" (reg_eax), "c" (reg_ecx) : "esi",
+#if __TBB_x86_64
+                           "ebx",
+#endif
+                           "edx"
+                           );
     result = (EBX & hle_ebx_mask)!=0 ;
     if( result ) ASSERT( (EBX & rtm_ebx_mask)!=0, NULL );
 #endif
     return result;
 }
 
-#endif /* __INTEL_COMPILER */
+#endif /* __INTEL_COMPILER || __GNUC__ || _MSC_VER */
 
-#endif /* HAVE_TSX */
+#endif /* __TBB_TSX_AVAILABLE */

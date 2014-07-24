@@ -134,7 +134,6 @@ generic_scheduler::generic_scheduler( arena* a, size_t index )
     my_last_local_observer = NULL;
 #endif /* __TBB_SCHEDULER_OBSERVER */
 
-    hint_for_push = index ^ my_random.get(); // randomizer seed
     my_dummy_task = &allocate_task( sizeof(task), __TBB_CONTEXT_ARG(NULL, NULL) );
 #if __TBB_TASK_GROUP_CONTEXT
     my_context_list_head.my_prev = &my_context_list_head;
@@ -674,20 +673,7 @@ void tbb::internal::generic_scheduler::enqueue( task& t, void* prio ) {
     generic_scheduler *s = governor::local_scheduler();
     // these redirections are due to bw-compatibility, consider reworking some day
     __TBB_ASSERT( s->my_arena, "thread is not in any arena" );
-    s->my_arena->enqueue_task(t, (intptr_t)prio, s->hint_for_push );
-}
-
-inline task* generic_scheduler::dequeue_task() {
-    task* result = NULL;
-#if __TBB_TASK_PRIORITY
-    task_stream &ts = my_arena->my_task_stream[my_arena->my_top_priority];
-#else /* !__TBB_TASK_PRIORITY */
-    task_stream &ts = my_arena->my_task_stream;
-#endif /* !__TBB_TASK_PRIORITY */
-    ts.pop(result, my_arena_slot->hint_for_pop);
-    if (result)
-        ITT_NOTIFY(sync_acquired, &ts);
-    return result;
+    s->my_arena->enqueue_task(t, (intptr_t)prio, s->my_random );
 }
 
 #if __TBB_TASK_PRIORITY
@@ -990,7 +976,7 @@ retry:
     return result;
 }
 
-inline task* generic_scheduler::get_mailbox_task() {
+task* generic_scheduler::get_mailbox_task() {
     __TBB_ASSERT( my_affinity_id>0, "not in arena" );
     while ( task_proxy* const tp = my_inbox.pop() ) {
         if ( task* result = tp->extract_task<task_proxy::mailbox_bit>() ) {
@@ -1066,10 +1052,10 @@ generic_scheduler* generic_scheduler::create_master( arena& a ) {
     s->attach_mailbox(1);
     s->my_arena_slot = a.my_slots + 0;
     s->my_arena_slot->my_scheduler = s;
-#if _WIN32|_WIN64
+#if _WIN32||_WIN64
     __TBB_ASSERT( s->my_market, NULL );
     s->my_market->register_master( s->master_exec_resource );
-#endif /* _WIN32|_WIN64 */
+#endif /* _WIN32||_WIN64 */
     s->init_stack_info();
 #if __TBB_TASK_GROUP_CONTEXT
     // Sync up the local cancellation state with the global one. No need for fence here.
@@ -1128,9 +1114,9 @@ void generic_scheduler::cleanup_master() {
     }
     __TBB_ASSERT( s.my_market, NULL );
     market *my_market = s.my_market;
-#if _WIN32|_WIN64
+#if _WIN32||_WIN64
     s.my_market->unregister_master( s.master_exec_resource );
-#endif /* _WIN32|_WIN64 */
+#endif /* _WIN32||_WIN64 */
     arena* a = s.my_arena;
     __TBB_ASSERT(a->my_slots+0 == my_arena_slot, NULL);
 #if __TBB_STATISTICS

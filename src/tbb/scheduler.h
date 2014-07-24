@@ -165,10 +165,6 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     //! Random number generator used for picking a random victim from which to steal.
     FastRandom my_random;
 
-    //! Hint provided for operations with the container of starvation-resistant tasks.
-    /** Modified by the owner thread (during these operations). **/
-    unsigned hint_for_push; //TODO: Replace by my_random?
-
     //! Free list of small tasks that can be reused.
     task* my_free_list;
 
@@ -274,11 +270,6 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     static bool is_proxy( const task& t ) {
         return t.prefix().extra_state==es_task_proxy;
     }
-
-    //! Get a task from the starvation-resistant task stream of the current arena.
-    /** Returns the pointer to the task, or NULL if the attempt was unsuccessful. 
-        The latter case does not mean that the stream is drained, however. **/
-    task* dequeue_task();
 
     //! Steal task from another scheduler's ready pool.
     task* steal_task( arena_slot& victim_arena_slot );

@@ -38,6 +38,7 @@
 #include "task.h"
 #include "concurrent_vector.h"
 #include "internal/_aggregator_impl.h"
+#include "tbb_profiling.h"
 
 #if TBB_DEPRECATED_FLOW_ENQUEUE
 #define FLOW_SPAWN(a) tbb::task::enqueue((a))
@@ -271,6 +272,15 @@ protected:
         friend class internal::successor_cache;
     /*override*/ bool is_continue_receiver() { return true; }
 };
+}  // interface7
+}  // flow
+}  // tbb
+
+#include "internal/_flow_graph_trace_impl.h"
+
+namespace tbb {
+namespace flow {
+namespace interface7 {
 
 #include "internal/_flow_graph_impl.h"
 using namespace internal::graph_policy_namespace;
@@ -386,6 +396,7 @@ public:
         my_context = new task_group_context();
         my_root_task = ( new ( task::allocate_root(*my_context) ) empty_task );
         my_root_task->set_ref_count(1);
+        tbb::internal::fgt_graph( this );
     }
 
     //! Constructs a graph with use_this_context as context
@@ -395,6 +406,7 @@ public:
         own_context = false;
         my_root_task = ( new ( task::allocate_root(*my_context) ) empty_task );
         my_root_task->set_ref_count(1);
+        tbb::internal::fgt_graph( this );
     }
 
     //! Destroys the graph.
@@ -405,6 +417,12 @@ public:
         task::destroy( *my_root_task );
         if (own_context) delete my_context;
     }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    void set_name( const char *name ) {
+        tbb::internal::fgt_graph_desc( this, name );
+    }
+#endif
 
     //! Used to register that an external entity may still interact with the graph.
     /** The graph will not return from wait_for_all until a matching number of decrement_wait_count calls
@@ -554,6 +572,10 @@ public:
         my_graph.remove_node(this);
     }
 
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    virtual void set_name( const char *name ) = 0;
+#endif
+
 protected:
     virtual void reset() = 0;
 };
@@ -619,6 +641,8 @@ public:
         my_reserved(false), my_has_cached_item(false)
     {
         my_successors.set_owner(this);
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_SOURCE_NODE, &this->my_graph, 
+                                           static_cast<sender<output_type> *>(this), this->my_body );
     }
 
     //! Copy constructor
@@ -629,10 +653,18 @@ public:
         my_reserved(false), my_has_cached_item(false)
     {
         my_successors.set_owner(this);
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_SOURCE_NODE, &this->my_graph, 
+                                           static_cast<sender<output_type> *>(this), this->my_body );
     }
 
     //! The destructor
     ~source_node() { delete my_body; }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
     //! Add a new successor to this node
     /* override */ bool register_successor( receiver<output_type> &r ) {
@@ -799,14 +831,24 @@ public:
     //! Constructor
     template< typename Body >
     function_node( graph &g, size_t concurrency, Body body ) :
-        graph_node(g), internal::function_input<input_type,output_type,Allocator>(g, concurrency, body)
-    {}
+        graph_node(g), internal::function_input<input_type,output_type,Allocator>(g, concurrency, body) {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_FUNCTION_NODE, &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this), 
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
 
     //! Copy constructor
     function_node( const function_node& src ) :
         graph_node(src.my_graph), internal::function_input<input_type,output_type,Allocator>( src ),
-        fOutput_type()
-    {}
+        fOutput_type() {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_FUNCTION_NODE, &this->my_graph, static_cast<receiver<input_type> *>(this), 
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
 protected:
     template< typename R, typename B > friend class run_and_put_task;
@@ -837,13 +879,23 @@ public:
     //! Constructor
     template< typename Body >
     function_node( graph &g, size_t concurrency, Body body ) :
-        graph_node(g), fInput_type( g, concurrency, body, new queue_type() )
-    {}
+        graph_node(g), fInput_type( g, concurrency, body, new queue_type() ) {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_FUNCTION_NODE, &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this),
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
 
     //! Copy constructor
     function_node( const function_node& src ) :
-        graph_node(src.graph_node::my_graph), fInput_type( src, new queue_type() ), fOutput_type()
-    {}
+        graph_node(src.graph_node::my_graph), fInput_type( src, new queue_type() ), fOutput_type() {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_FUNCTION_NODE, &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this),
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
 protected:
     template< typename R, typename B > friend class run_and_put_task;
@@ -886,11 +938,25 @@ private:
 public:
     template<typename Body>
     multifunction_node( graph &g, size_t concurrency, Body body ) :
-        graph_node(g), base_type(g,concurrency, body)
-    {}
+        graph_node(g), base_type(g,concurrency, body) {
+        tbb::internal::fgt_multioutput_node_with_body<Output,N>( tbb::internal::FLOW_MULTIFUNCTION_NODE, 
+                                                                 &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this), 
+                                                                 this->output_ports(), this->my_body );
+    }
+
     multifunction_node( const multifunction_node &other) :
-        graph_node(other.graph_node::my_graph), base_type(other)
-    {}
+        graph_node(other.graph_node::my_graph), base_type(other) {
+        tbb::internal::fgt_multioutput_node_with_body<Output,N>( tbb::internal::FLOW_MULTIFUNCTION_NODE, 
+                                                                 &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this), 
+                                                                 this->output_ports(), this->my_body );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_multioutput_node_desc( this, name );
+    }
+#endif
+
     // all the guts are in multifunction_input...
 protected:
     /*override*/void reset() { base_type::reset(); }
@@ -911,11 +977,25 @@ private:
 public:
     template<typename Body>
     multifunction_node( graph &g, size_t concurrency, Body body) :
-        graph_node(g), base_type(g,concurrency, body, new queue_type())
-    {}
+        graph_node(g), base_type(g,concurrency, body, new queue_type()) {
+        tbb::internal::fgt_multioutput_node_with_body<Output,N>( tbb::internal::FLOW_MULTIFUNCTION_NODE, 
+                                                                 &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this),
+                                                                 this->output_ports(), this->my_body );
+    }
+
     multifunction_node( const multifunction_node &other) :
-        graph_node(other.graph_node::my_graph), base_type(other, new queue_type())
-    {}
+        graph_node(other.graph_node::my_graph), base_type(other, new queue_type()) {
+        tbb::internal::fgt_multioutput_node_with_body<Output,N>( tbb::internal::FLOW_MULTIFUNCTION_NODE, 
+                                                                 &this->graph_node::my_graph, static_cast<receiver<input_type> *>(this),
+                                                                 this->output_ports(), this->my_body );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_multioutput_node_desc( this, name );
+    }
+#endif
+
     // all the guts are in multifunction_input...
 protected:
     /*override*/void reset() { base_type::reset(); }
@@ -939,8 +1019,22 @@ private:
 public:
     typedef TupleType input_type;
     typedef Allocator allocator_type;
-    split_node(graph &g) : base_type(g, unlimited, splitting_body()) {}
-    split_node( const split_node & other) : base_type(other) {}
+    split_node(graph &g) : base_type(g, unlimited, splitting_body()) {
+        tbb::internal::fgt_multioutput_node<TupleType,N>( tbb::internal::FLOW_SPLIT_NODE, &this->graph_node::my_graph, 
+                                                          static_cast<receiver<input_type> *>(this), this->output_ports() );
+    }
+
+    split_node( const split_node & other) : base_type(other) {
+        tbb::internal::fgt_multioutput_node<TupleType,N>( tbb::internal::FLOW_SPLIT_NODE, &this->graph_node::my_graph, 
+                                                          static_cast<receiver<input_type> *>(this), this->output_ports() );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_multioutput_node_desc( this, name );
+    }
+#endif
+
 };
 
 //! Implements an executable node that supports continue_msg -> Output
@@ -959,20 +1053,36 @@ public:
     //! Constructor for executable node with continue_msg -> Output
     template <typename Body >
     continue_node( graph &g, Body body ) :
-        graph_node(g), internal::continue_input<output_type>( g, body )
-    {}
+        graph_node(g), internal::continue_input<output_type>( g, body ) {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_CONTINUE_NODE, &this->my_graph, 
+                                           static_cast<receiver<input_type> *>(this),
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
+
 
     //! Constructor for executable node with continue_msg -> Output
     template <typename Body >
     continue_node( graph &g, int number_of_predecessors, Body body ) :
-        graph_node(g), internal::continue_input<output_type>( g, number_of_predecessors, body )
-    {}
+        graph_node(g), internal::continue_input<output_type>( g, number_of_predecessors, body ) {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_CONTINUE_NODE, &this->my_graph, 
+                                           static_cast<receiver<input_type> *>(this),
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
 
     //! Copy constructor
     continue_node( const continue_node& src ) :
         graph_node(src.graph_node::my_graph), internal::continue_input<output_type>(src),
-        internal::function_output<Output>()
-    {}
+        internal::function_output<Output>() {
+        tbb::internal::fgt_node_with_body( tbb::internal::FLOW_CONTINUE_NODE, &this->my_graph, 
+                                           static_cast<receiver<input_type> *>(this),
+                                           static_cast<sender<output_type> *>(this), this->my_body );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
 protected:
     template< typename R, typename B > friend class run_and_put_task;
@@ -997,6 +1107,8 @@ public:
 
     overwrite_node(graph &g) : graph_node(g), my_buffer_is_valid(false) {
         my_successors.set_owner( this );
+        tbb::internal::fgt_node( tbb::internal::FLOW_OVERWRITE_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
 
     // Copy constructor; doesn't take anything from src; default won't work
@@ -1004,9 +1116,17 @@ public:
         graph_node(src.my_graph), receiver<T>(), sender<T>(), my_buffer_is_valid(false)
     {
         my_successors.set_owner( this );
+        tbb::internal::fgt_node( tbb::internal::FLOW_OVERWRITE_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
 
     ~overwrite_node() {}
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
     /* override */ bool register_successor( successor_type &s ) {
         spin_mutex::scoped_lock l( my_mutex );
@@ -1084,10 +1204,24 @@ public:
     typedef receiver< output_type > successor_type;
 
     //! Constructor
-    write_once_node(graph& g) : overwrite_node<T>(g) {}
+    write_once_node(graph& g) : overwrite_node<T>(g) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_WRITE_ONCE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
 
     //! Copy constructor: call base class copy constructor
-    write_once_node( const write_once_node& src ) : overwrite_node<T>(src) {}
+    write_once_node( const write_once_node& src ) : overwrite_node<T>(src) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_WRITE_ONCE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
 protected:
     template< typename R, typename B > friend class run_and_put_task;
@@ -1122,6 +1256,8 @@ public:
 
     broadcast_node(graph& g) : graph_node(g) {
         my_successors.set_owner( this );
+        tbb::internal::fgt_node( tbb::internal::FLOW_BROADCAST_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
 
     // Copy constructor
@@ -1129,7 +1265,15 @@ public:
         graph_node(src.my_graph), receiver<T>(), sender<T>()
     {
         my_successors.set_owner( this );
+        tbb::internal::fgt_node( tbb::internal::FLOW_BROADCAST_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
     //! Adds a successor
     virtual bool register_successor( receiver<T> &r ) {
@@ -1337,6 +1481,8 @@ public:
         forwarder_busy(false) {
         my_successors.set_owner(this);
         my_aggregator.initialize_handler(my_handler(this));
+        tbb::internal::fgt_node( tbb::internal::FLOW_BUFFER_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
 
     //! Copy constructor
@@ -1345,9 +1491,17 @@ public:
         forwarder_busy = false;
         my_successors.set_owner(this);
         my_aggregator.initialize_handler(my_handler(this));
+        tbb::internal::fgt_node( tbb::internal::FLOW_BUFFER_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<sender<output_type> *>(this) );
     }
 
     virtual ~buffer_node() {}
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
     //
     // message sender implementation
@@ -1515,10 +1669,25 @@ public:
     typedef receiver< output_type > successor_type;
 
     //! Constructor
-    queue_node( graph &g ) : buffer_node<T, A>(g) {}
+    queue_node( graph &g ) : buffer_node<T, A>(g) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_QUEUE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
 
     //! Copy constructor
-    queue_node( const queue_node& src) : buffer_node<T, A>(src) {}
+    queue_node( const queue_node& src) : buffer_node<T, A>(src) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_QUEUE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 };
 
 //! Forwards messages in sequence order
@@ -1534,14 +1703,29 @@ public:
     //! Constructor
     template< typename Sequencer >
     sequencer_node( graph &g, const Sequencer& s ) : queue_node<T, A>(g),
-        my_sequencer(new internal::function_body_leaf< T, size_t, Sequencer>(s) ) {}
+        my_sequencer(new internal::function_body_leaf< T, size_t, Sequencer>(s) ) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_SEQUENCER_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
 
     //! Copy constructor
     sequencer_node( const sequencer_node& src ) : queue_node<T, A>(src),
-        my_sequencer( src.my_sequencer->clone() ) {}
+        my_sequencer( src.my_sequencer->clone() ) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_SEQUENCER_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
 
     //! Destructor
     ~sequencer_node() { delete my_sequencer; }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 protected:
     typedef typename buffer_node<T, A>::size_type size_type;
     typedef typename buffer_node<T, A>::buffer_operation sequencer_operation;
@@ -1572,10 +1756,25 @@ public:
     typedef receiver< output_type > successor_type;
 
     //! Constructor
-    priority_queue_node( graph &g ) : buffer_node<T, A>(g), mark(0) {}
+    priority_queue_node( graph &g ) : buffer_node<T, A>(g), mark(0) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_PRIORITY_QUEUE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
 
     //! Copy constructor
-    priority_queue_node( const priority_queue_node &src ) : buffer_node<T, A>(src), mark(0) {}
+    priority_queue_node( const priority_queue_node &src ) : buffer_node<T, A>(src), mark(0) {
+        tbb::internal::fgt_node( tbb::internal::FLOW_PRIORITY_QUEUE_NODE, &(this->my_graph), 
+                                 static_cast<receiver<input_type> *>(this),
+                                 static_cast<sender<output_type> *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 
 protected:
 
@@ -1776,8 +1975,9 @@ public:
 
 private:
     size_t my_threshold;
-    size_t my_count;
-    internal::predecessor_cache< T > my_predecessors;
+    size_t my_count; //number of successful puts 
+    size_t my_tries; //number of active put attempts
+    internal::reservable_predecessor_cache< T > my_predecessors;
     spin_mutex my_mutex;
     internal::broadcast_cache< T > my_successors;
     int init_decrement_predecessors;
@@ -1787,48 +1987,77 @@ private:
     // Let decrementer call decrement_counter()
     friend class internal::decrementer< limiter_node<T> >;
 
+    bool check_conditions() {    
+        return ( my_count + my_tries < my_threshold && !my_predecessors.empty() && !my_successors.empty() );
+    } 
+    
     // only returns a valid task pointer or NULL, never SUCCESSFULLY_ENQUEUED
-    task * decrement_counter() {
+    task *forward_task() {
         input_type v;
         task *rval = NULL;
-
-        // If we can't get / put an item immediately then drop the count
-        if ( my_predecessors.get_item( v ) == false
-             || (rval = my_successors.try_put_task(v)) == NULL ) {
-            spin_mutex::scoped_lock lock(my_mutex);
-            if(my_count) --my_count;
-            task* tp = this->my_graph.root_task();
-            if ( !my_predecessors.empty() && tp ) {
-                task *rtask = new ( task::allocate_additional_child_of( *tp ) )
-                    internal::forward_task_bypass< limiter_node<T> >( *this );
-                __TBB_ASSERT(!rval, "Have two tasks to handle");
-                return rtask;
+        bool reserved = false;
+            {
+                spin_mutex::scoped_lock lock(my_mutex);
+                if ( check_conditions() )
+                    ++my_tries;  
+                else  
+                    return NULL;
             }
+
+        //SUCCESS 
+        // if we can reserve and can put, we consume the reservation 
+        // we increment the count and decrement the tries
+        if ( (my_predecessors.try_reserve(v)) == true ){
+            reserved=true;
+            if ( (rval = my_successors.try_put_task(v)) != NULL ){
+                {
+                    spin_mutex::scoped_lock lock(my_mutex);
+                    ++my_count;
+                    --my_tries; 
+                    my_predecessors.try_consume();
+                    if ( check_conditions() ) { 
+                        task* tp = this->my_graph.root_task();
+                        if ( tp ) {
+                            task *rtask = new ( task::allocate_additional_child_of( *tp ) )
+                                internal::forward_task_bypass< limiter_node<T> >( *this );
+                            FLOW_SPAWN (*rtask);
+                        }
+                    }
+                }
+                return rval; 
+            } 
         }
-        return rval;
+        //FAILURE
+        //if we can't reserve, we decrement the tries 
+        //if we can reserve but can't put, we decrement the tries and release the reservation
+        { 
+            spin_mutex::scoped_lock lock(my_mutex);
+            --my_tries;
+            if (reserved) my_predecessors.try_release();
+            if ( check_conditions() ) { 
+                task* tp = this->my_graph.root_task();
+                if ( tp ) {
+                    task *rtask = new ( task::allocate_additional_child_of( *tp ) )
+                        internal::forward_task_bypass< limiter_node<T> >( *this );
+                    __TBB_ASSERT(!rval, "Have two tasks to handle");
+                    return rtask;
+                }
+            }
+            return rval;
+        }
     }
 
     void forward() {
-        {
-            spin_mutex::scoped_lock lock(my_mutex);
-            if ( my_count < my_threshold )
-                ++my_count;
-            else
-                return;
-        }
-        task * rtask = decrement_counter();
-        if(rtask) FLOW_SPAWN(*rtask);
+        __TBB_ASSERT(false, "Should never be called");
+        return;
     }
 
-    task *forward_task() {
-        {
+    task * decrement_counter() {
+        { 
             spin_mutex::scoped_lock lock(my_mutex);
-            if ( my_count >= my_threshold )
-                return NULL;
-            ++my_count;
+            if(my_count) --my_count;
         }
-        task * rtask = decrement_counter();
-        return rtask;
+        return forward_task();
     }
 
 public:
@@ -1837,30 +2066,52 @@ public:
 
     //! Constructor
     limiter_node(graph &g, size_t threshold, int num_decrement_predecessors=0) :
-        graph_node(g), my_threshold(threshold), my_count(0),
+        graph_node(g), my_threshold(threshold), my_count(0), my_tries(0),
         init_decrement_predecessors(num_decrement_predecessors),
         decrement(num_decrement_predecessors)
     {
         my_predecessors.set_owner(this);
         my_successors.set_owner(this);
         decrement.set_owner(this);
+        tbb::internal::fgt_node( tbb::internal::FLOW_LIMITER_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<receiver<continue_msg> *>(&decrement), 
+                                 static_cast<sender<output_type> *>(this) );
     }
 
     //! Copy constructor
     limiter_node( const limiter_node& src ) :
         graph_node(src.my_graph), receiver<T>(), sender<T>(),
-        my_threshold(src.my_threshold), my_count(0),
+        my_threshold(src.my_threshold), my_count(0), my_tries(0),
         init_decrement_predecessors(src.init_decrement_predecessors),
         decrement(src.init_decrement_predecessors)
     {
         my_predecessors.set_owner(this);
         my_successors.set_owner(this);
         decrement.set_owner(this);
+        tbb::internal::fgt_node( tbb::internal::FLOW_LIMITER_NODE, &this->my_graph, 
+                                 static_cast<receiver<input_type> *>(this), static_cast<receiver<continue_msg> *>(&decrement), 
+                                 static_cast<sender<output_type> *>(this) );
     }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
 
     //! Replace the current successor with this new successor
     /* override */ bool register_successor( receiver<output_type> &r ) {
+        spin_mutex::scoped_lock lock(my_mutex);
+        bool was_empty = my_successors.empty();
         my_successors.register_successor(r);
+        //spawn a forward task if this is the only successor
+        if ( was_empty && !my_predecessors.empty() && my_count + my_tries < my_threshold ) { 
+            task* tp = this->my_graph.root_task();
+            if ( tp ) {
+                FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *tp ) )
+                            internal::forward_task_bypass < limiter_node<T> >( *this ) ) );
+            } 
+        }
         return true;
     }
 
@@ -1872,15 +2123,15 @@ public:
         return true;
     }
 
-    //! Removes src from the list of cached predecessors.
+    //! Adds src to the list of cached predecessors.
     /* override */ bool register_predecessor( predecessor_type &src ) {
         spin_mutex::scoped_lock lock(my_mutex);
         my_predecessors.add( src );
         task* tp = this->my_graph.root_task();
-        if ( my_count < my_threshold && !my_successors.empty() && tp ) {
+        if ( my_count + my_tries < my_threshold && !my_successors.empty() && tp ) {
             FLOW_SPAWN( (* new ( task::allocate_additional_child_of( *tp ) )
                         internal::forward_task_bypass < limiter_node<T> >( *this ) ) );
-        }
+        }    
         return true;
     }
 
@@ -1899,23 +2150,28 @@ protected:
     /* override */ task *try_put_task( const T &t ) {
         {
             spin_mutex::scoped_lock lock(my_mutex);
-            if ( my_count >= my_threshold )
+            if ( my_count + my_tries >= my_threshold )
                 return NULL;
             else
-                ++my_count;
+                ++my_tries;
         }
 
         task * rtask = my_successors.try_put_task(t);
 
         if ( !rtask ) {  // try_put_task failed.
             spin_mutex::scoped_lock lock(my_mutex);
-            --my_count;
+            --my_tries;  
             task* tp = this->my_graph.root_task();
-            if ( !my_predecessors.empty() && tp ) {
+            if ( check_conditions() && tp ) {
                 rtask = new ( task::allocate_additional_child_of( *tp ) )
                     internal::forward_task_bypass< limiter_node<T> >( *this );
             }
         }
+        else {
+            spin_mutex::scoped_lock lock(my_mutex);
+            ++my_count;
+            --my_tries; 
+             }
         return rtask;
     }
 
@@ -1947,8 +2203,21 @@ private:
 public:
     typedef OutputTuple output_type;
     typedef typename unfolded_type::input_ports_type input_ports_type;
-    join_node(graph &g) : unfolded_type(g) { }
-    join_node(const join_node &other) : unfolded_type(other) {}
+    join_node(graph &g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_RESERVING, &this->my_graph,
+                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    join_node(const join_node &other) : unfolded_type(other) {
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_RESERVING, &this->my_graph,
+                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 };
 
 template<typename OutputTuple>
@@ -1959,8 +2228,21 @@ private:
 public:
     typedef OutputTuple output_type;
     typedef typename unfolded_type::input_ports_type input_ports_type;
-    join_node(graph &g) : unfolded_type(g) { }
-    join_node(const join_node &other) : unfolded_type(other) {}
+    join_node(graph &g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_QUEUEING, &this->my_graph,
+                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    join_node(const join_node &other) : unfolded_type(other) {
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_QUEUEING, &this->my_graph,
+                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 };
 
 // template for tag_matching join_node
@@ -1973,46 +2255,84 @@ private:
 public:
     typedef OutputTuple output_type;
     typedef typename unfolded_type::input_ports_type input_ports_type;
+    
     template<typename __TBB_B0, typename __TBB_B1>
-    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1) : unfolded_type(g, b0, b1) { }
+    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1) : unfolded_type(g, b0, b1) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2>
-    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2) : unfolded_type(g, b0, b1, b2) { }
+    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2) : unfolded_type(g, b0, b1, b2) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3>
-    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3) : unfolded_type(g, b0, b1, b2, b3) { }
+    join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3) : unfolded_type(g, b0, b1, b2, b3) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4) :
-            unfolded_type(g, b0, b1, b2, b3, b4) { }
+            unfolded_type(g, b0, b1, b2, b3, b4) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #if __TBB_VARIADIC_MAX >= 6
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4,
         typename __TBB_B5>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4, __TBB_B5 b5) :
-            unfolded_type(g, b0, b1, b2, b3, b4, b5) { }
+            unfolded_type(g, b0, b1, b2, b3, b4, b5) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #endif
 #if __TBB_VARIADIC_MAX >= 7
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4,
         typename __TBB_B5, typename __TBB_B6>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4, __TBB_B5 b5, __TBB_B6 b6) :
-            unfolded_type(g, b0, b1, b2, b3, b4, b5, b6) { }
+            unfolded_type(g, b0, b1, b2, b3, b4, b5, b6) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #endif
 #if __TBB_VARIADIC_MAX >= 8
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4,
         typename __TBB_B5, typename __TBB_B6, typename __TBB_B7>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4, __TBB_B5 b5, __TBB_B6 b6,
-            __TBB_B7 b7) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7) { }
+            __TBB_B7 b7) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #endif
 #if __TBB_VARIADIC_MAX >= 9
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4,
         typename __TBB_B5, typename __TBB_B6, typename __TBB_B7, typename __TBB_B8>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4, __TBB_B5 b5, __TBB_B6 b6,
-            __TBB_B7 b7, __TBB_B8 b8) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8) { }
+            __TBB_B7 b7, __TBB_B8 b8) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #endif
 #if __TBB_VARIADIC_MAX >= 10
     template<typename __TBB_B0, typename __TBB_B1, typename __TBB_B2, typename __TBB_B3, typename __TBB_B4,
         typename __TBB_B5, typename __TBB_B6, typename __TBB_B7, typename __TBB_B8, typename __TBB_B9>
     join_node(graph &g, __TBB_B0 b0, __TBB_B1 b1, __TBB_B2 b2, __TBB_B3 b3, __TBB_B4 b4, __TBB_B5 b5, __TBB_B6 b6,
-            __TBB_B7 b7, __TBB_B8 b8, __TBB_B9 b9) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9) { }
+            __TBB_B7 b7, __TBB_B8 b8, __TBB_B9 b9) : unfolded_type(g, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9) { 
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
 #endif
-    join_node(const join_node &other) : unfolded_type(other) {}
+    join_node(const join_node &other) : unfolded_type(other) {
+        tbb::internal::fgt_multiinput_node<OutputTuple,N>( tbb::internal::FLOW_JOIN_NODE_TAG_MATCHING, &this->my_graph, 
+                                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 };
 
 #if TBB_PREVIEW_GRAPH_NODES
@@ -2026,9 +2346,22 @@ private:
 public:
     typedef typename internal::or_output_type<InputTuple>::type output_type;
     typedef typename internal::unfolded_or_node<InputTuple> unfolded_type;
-    or_node(graph& g) : unfolded_type(g) { }
+    or_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_OR_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
     // Copy constructor
-    or_node( const or_node& other ) : unfolded_type(other) { }
+    or_node( const or_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_OR_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+
 };
 #endif  // TBB_PREVIEW_GRAPH_NODES
 
@@ -2036,12 +2369,14 @@ public:
 template< typename T >
 inline void make_edge( sender<T> &p, receiver<T> &s ) {
     p.register_successor( s );
+    tbb::internal::fgt_make_edge( &p, &s );
 }
 
 //! Makes an edge between a single predecessor and a single successor
 template< typename T >
 inline void remove_edge( sender<T> &p, receiver<T> &s ) {
     p.remove_successor( s );
+    tbb::internal::fgt_remove_edge( &p, &s );
 }
 
 //! Returns a copy of the body from a function or continue node

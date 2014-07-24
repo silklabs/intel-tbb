@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface7::source_node&lt; Output &gt; Class Template Reference</title>
+<title>tbb::simple_partitioner Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,118 +21,41 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00341.html">source_node</a></div>
-<h1>tbb::flow::interface7::source_node&lt; Output &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::source_node" --><!-- doxytag: inherits="tbb::flow::interface7::graph_node,tbb::flow::interface7::sender&lt; Output &gt;" -->An executable node that acts as a source, i.e. it has no predecessors.  
+<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00341.html">simple_partitioner</a></div>
+<h1>tbb::simple_partitioner Class Reference<br>
+<small>
+[<a class="el" href="a00442.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::simple_partitioner" -->A simple partitioner.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;flow_graph.h&gt;</code>
+<code>#include &lt;partitioner.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface7::source_node&lt; Output &gt;:
-<p><center><img src="a00341.png" usemap="#tbb::flow::interface7::source_node< Output >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface7::source_node< Output >_map">
-<area href="a00300.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,262,24">
-<area href="a00338.html" alt="tbb::flow::interface7::sender< Output >" shape="rect" coords="272,0,534,24">
-</map>
-<a href="a00063.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00103.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9cca345c48c9e7c5e285a607f4cc4dc3"></a><!-- doxytag: member="tbb::flow::interface7::source_node::output_type" ref="9cca345c48c9e7c5e285a607f4cc4dc3" args="" -->
-typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#9cca345c48c9e7c5e285a607f4cc4dc3">output_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type of the output message, which is complete. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7650f123d1c5d72ac51167b09814ceb2"></a><!-- doxytag: member="tbb::flow::interface7::source_node::successor_type" ref="7650f123d1c5d72ac51167b09814ceb2" args="" -->
-typedef <a class="el" href="a00332.html">receiver</a>&lt; Output &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#7650f123d1c5d72ac51167b09814ceb2">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The type of successors of this node. <br></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="a9157984303ac2696e9f58d2f43e52fb"></a><!-- doxytag: member="tbb::flow::interface7::source_node::source_node" ref="a9157984303ac2696e9f58d2f43e52fb" args="(graph &amp;g, Body body, bool is_active=true)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00341.html#a9157984303ac2696e9f58d2f43e52fb">source_node</a> (<a class="el" href="a00299.html">graph</a> &amp;g, Body body, bool is_active=true)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor for a node with a successor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5820230f68128091921713c3333b0f74"></a><!-- doxytag: member="tbb::flow::interface7::source_node::source_node" ref="5820230f68128091921713c3333b0f74" args="(const source_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#5820230f68128091921713c3333b0f74">source_node</a> (const <a class="el" href="a00341.html">source_node</a> &amp;src)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48ca0f71077d42e0d2bb856a6830a603"></a><!-- doxytag: member="tbb::flow::interface7::source_node::~source_node" ref="48ca0f71077d42e0d2bb856a6830a603" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#48ca0f71077d42e0d2bb856a6830a603">~source_node</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The destructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c3f64f4f3784f49dc27a85776241b14f"></a><!-- doxytag: member="tbb::flow::interface7::source_node::register_successor" ref="c3f64f4f3784f49dc27a85776241b14f" args="(receiver&lt; output_type &gt; &amp;r)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#c3f64f4f3784f49dc27a85776241b14f">register_successor</a> (<a class="el" href="a00332.html">receiver</a>&lt; <a class="el" href="a00341.html#9cca345c48c9e7c5e285a607f4cc4dc3">output_type</a> &gt; &amp;r)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a new successor to this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5efbad3d580d949221022d92b3c83831"></a><!-- doxytag: member="tbb::flow::interface7::source_node::remove_successor" ref="5efbad3d580d949221022d92b3c83831" args="(receiver&lt; output_type &gt; &amp;r)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#5efbad3d580d949221022d92b3c83831">remove_successor</a> (<a class="el" href="a00332.html">receiver</a>&lt; <a class="el" href="a00341.html#9cca345c48c9e7c5e285a607f4cc4dc3">output_type</a> &gt; &amp;r)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="32802c02ea228e18dcce51c6bffea687"></a><!-- doxytag: member="tbb::flow::interface7::source_node::try_get" ref="32802c02ea228e18dcce51c6bffea687" args="(output_type &amp;v)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#32802c02ea228e18dcce51c6bffea687">try_get</a> (<a class="el" href="a00341.html#9cca345c48c9e7c5e285a607f4cc4dc3">output_type</a> &amp;v)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Request an item from the node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a674ad2833664ca5eaf13dd3886f0e2c"></a><!-- doxytag: member="tbb::flow::interface7::source_node::try_reserve" ref="a674ad2833664ca5eaf13dd3886f0e2c" args="(output_type &amp;v)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#a674ad2833664ca5eaf13dd3886f0e2c">try_reserve</a> (<a class="el" href="a00341.html#9cca345c48c9e7c5e285a607f4cc4dc3">output_type</a> &amp;v)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reserves an item. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#843ed8620df084005f9a150f589ab186">try_release</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Release a reserved item.  <a href="#843ed8620df084005f9a150f589ab186"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="475572244ddbfa8d016d5a0966627dac"></a><!-- doxytag: member="tbb::flow::interface7::source_node::try_consume" ref="475572244ddbfa8d016d5a0966627dac" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#475572244ddbfa8d016d5a0966627dac">try_consume</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Consumes a reserved item. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8892ee250b48e5cfd78503bfd4a34f15"></a><!-- doxytag: member="tbb::flow::interface7::source_node::activate" ref="8892ee250b48e5cfd78503bfd4a34f15" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#8892ee250b48e5cfd78503bfd4a34f15">activate</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Activates a node that was created in the inactive state. <br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="df3326a8ac3e3b98e74bcf814112bf4d"></a><!-- doxytag: member="tbb::flow::interface7::source_node::copy_function_object" ref="df3326a8ac3e3b98e74bcf814112bf4d" args="()" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">Body&nbsp;</td><td class="memTemplItemRight" valign="bottom"><b>copy_function_object</b> ()</td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d59f86f8beec80099ab21031fae59400"></a><!-- doxytag: member="tbb::flow::interface7::source_node::reset" ref="d59f86f8beec80099ab21031fae59400" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00341.html#d59f86f8beec80099ab21031fae59400">reset</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">resets the node to its initial state <br></td></tr>
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bd00136edc600bf5b4efe816dd9412d4"></a><!-- doxytag: member="tbb::flow::interface7::source_node::internal::source_task_bypass&lt; source_node&lt; output_type &gt; &gt;" ref="bd00136edc600bf5b4efe816dd9412d4" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::source_task_bypass&lt; source_node&lt; output_type &gt; &gt;</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5f730f70d21df405adaebfc2018f59cd"></a><!-- doxytag: member="tbb::simple_partitioner::serial::interface6::start_for" ref="5f730f70d21df405adaebfc2018f59cd" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>serial::interface6::start_for</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a4cd0ffed4fad0d9af2c5efdaf586a8"></a><!-- doxytag: member="tbb::simple_partitioner::interface6::internal::start_for" ref="8a4cd0ffed4fad0d9af2c5efdaf586a8" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_for</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="86f0750233dd6c83b65fb684338fd09f"></a><!-- doxytag: member="tbb::simple_partitioner::interface6::internal::start_reduce" ref="86f0750233dd6c83b65fb684338fd09f" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_reduce</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="76d97ae6ad98db0acfc8ed8cb7c76705"></a><!-- doxytag: member="tbb::simple_partitioner::internal::start_scan" ref="76d97ae6ad98db0acfc8ed8cb7c76705" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::start_scan</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>partition_type</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Output&gt;<br>
- class tbb::flow::interface7::source_node&lt; Output &gt;</h3>
-
-An executable node that acts as a source, i.e. it has no predecessors. 
+A simple partitioner. 
 <p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="843ed8620df084005f9a150f589ab186"></a><!-- doxytag: member="tbb::flow::interface7::source_node::try_release" ref="843ed8620df084005f9a150f589ab186" args="()" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Output&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="a00341.html">tbb::flow::interface7::source_node</a>&lt; Output &gt;::try_release           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Divides the range until the range is not divisible. 
 <p>
-Release a reserved item. 
-<p>
-true = item has been released and so remains in sender, dest must request or reserve future items 
-<p>
-Reimplemented from <a class="el" href="a00338.html#9dcf950995f4b5796fb1012ec057006b">tbb::flow::interface7::sender&lt; Output &gt;</a>.
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
+<li>partitioner.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

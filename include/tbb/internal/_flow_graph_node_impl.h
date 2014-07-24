@@ -374,7 +374,16 @@ namespace internal {
         } 
 
         task * apply_body_impl_bypass( const input_type &i) {
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+            // There is an extra copied needed to capture the
+            // body execution without the try_put
+            tbb::internal::fgt_begin_body( my_body );
+            output_type v = (*my_body)(i);
+            tbb::internal::fgt_end_body( my_body );
+            task * new_task = successors().try_put_task( v );
+#else       
             task * new_task = successors().try_put_task( (*my_body)(i) );
+#endif
             return new_task;
         }
 
@@ -431,7 +440,9 @@ namespace internal {
         // for multifunction nodes we do not have a single successor as such.  So we just tell
         // the task we were successful.
         task * apply_body_impl_bypass( const input_type &i) {
+            tbb::internal::fgt_begin_body( my_body );
             (*my_body)(i, my_output_ports);
+            tbb::internal::fgt_end_body( my_body );
             task * new_task = SUCCESSFULLY_ENQUEUED;
             return new_task;
         }
@@ -518,7 +529,16 @@ namespace internal {
         
         //! Applies the body to the provided input
         /* override */ task *apply_body_bypass( input_type ) {
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+            // There is an extra copied needed to capture the
+            // body execution without the try_put
+            tbb::internal::fgt_begin_body( my_body );
+            output_type v = (*my_body)( continue_msg() );
+            tbb::internal::fgt_end_body( my_body );
+            return successors().try_put_task( v );
+#else   
             return successors().try_put_task( (*my_body)( continue_msg() ) );
+#endif
         }
         
         //! Spawns a task that applies the body

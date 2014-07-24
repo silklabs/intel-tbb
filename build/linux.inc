@@ -56,8 +56,8 @@ ifndef arch
         ifeq ($(uname_m),sparc64)
                 export arch:=sparc
         endif
-        ifeq ($(uname_m),armv71)
-                export arch :=armv7
+        ifeq ($(uname_m),armv7l)
+                export arch:=armv7
         endif
         ifndef arch
                 export arch:=$(uname_m)

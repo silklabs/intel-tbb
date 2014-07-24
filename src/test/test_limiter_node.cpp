@@ -291,6 +291,7 @@ test_multifunction_to_limiter(int _max, int _nparallel) {
     ASSERT(emit_sum == receive_sum, "sums do not match");
 }
 
+
 void
 test_continue_msg_reception() {
     tbb::flow::graph g;
@@ -304,6 +305,59 @@ test_continue_msg_reception() {
     ASSERT(qn.try_get(outint) && outint == 42, "initial put to decrement stops node");
 }
 
+
+//
+// This test ascertains that if a message is not successfully put
+// to a successor, the message is not dropped but released.
+//
+
+using namespace tbb::flow;
+void test_reserve_release_messages() {
+    graph g;
+
+    //making two queue_nodes: one broadcast_node and one limiter_node
+    queue_node<int> input_queue(g);
+    queue_node<int> output_queue(g);
+    broadcast_node<continue_msg> broad(g);
+    limiter_node<int> limit(g,2,1); //threshold of 2
+
+    //edges
+    make_edge(input_queue, limit);
+    make_edge(limit, output_queue);
+    make_edge(broad,limit.decrement); 
+
+    int list[4] = {19, 33, 72, 98}; //list to be put to the input queue
+
+    input_queue.try_put(list[0]); // succeeds
+    input_queue.try_put(list[1]); // succeeds
+    input_queue.try_put(list[2]); // fails, stored in upstream buffer
+    g.wait_for_all();
+
+    remove_edge(limit, output_queue); //remove successor
+
+    //sending continue messages to the decrement port of the limiter
+    broad.try_put(continue_msg());
+    broad.try_put(continue_msg()); //failed message retrieved.
+    g.wait_for_all();
+
+    make_edge(limit, output_queue); //putting the successor back
+
+    broad.try_put(continue_msg());
+    broad.try_put(continue_msg());  //drop the count
+
+    input_queue.try_put(list[3]);  //success
+    g.wait_for_all();
+
+    int var=0;
+
+    for (int i=0; i<4; i++){
+    output_queue.try_get(var);
+    ASSERT(var==list[i], "some data dropped, input does not match output");
+    g.wait_for_all();
+  }
+}
+
+
 int TestMain() { 
     for (int i = 1; i <= 8; ++i) {
         tbb::task_scheduler_init init(i);
@@ -314,5 +368,6 @@ int TestMain() {
     test_multifunction_to_limiter(30,3);
     test_multifunction_to_limiter(300,13);
     test_multifunction_to_limiter(3000,1);
+    test_reserve_release_messages();
    return Harness::Done;
 }

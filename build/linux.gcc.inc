@@ -61,6 +61,11 @@ ifneq (,$(shell gcc -dumpversion | egrep  "^4\.4"))
     WARNING_SUPPRESS += -Wno-strict-aliasing
 endif
 
+# gcc 4.8 and later support TSX intrinsics, but require command line switch to enable them
+ifneq (,$(shell gcc -dumpversion | egrep  "^4\.[8-9]"))
+    ENABLE_RTM += -mrtm
+endif
+
 ifeq ($(cfg), release)
         CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
 endif
@@ -82,13 +87,13 @@ endif
 
 ifeq (intel64,$(arch))
     ITT_NOTIFY = -DDO_ITT_NOTIFY
-    CPLUS_FLAGS += -m64
+    CPLUS_FLAGS += -m64 $(ENABLE_RTM)
     LIB_LINK_FLAGS += -m64
 endif
 
 ifeq (ia32,$(arch))
     ITT_NOTIFY = -DDO_ITT_NOTIFY
-    CPLUS_FLAGS += -m32 -march=pentium4
+    CPLUS_FLAGS += -m32 -march=pentium4 $(ENABLE_RTM)
     LIB_LINK_FLAGS += -m32
 endif
 

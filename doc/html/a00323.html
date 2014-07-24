@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface7::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</title>
+<title>tbb::pre_scan_tag Struct Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,113 +21,27 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00323.html">priority_queue_node</a></div>
-<h1>tbb::flow::interface7::priority_queue_node&lt; T, Compare, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::priority_queue_node" --><!-- doxytag: inherits="tbb::flow::interface7::buffer_node" -->Forwards messages in priority order.  
+<a class="el" href="a00428.html">tbb</a>::<a class="el" href="a00323.html">pre_scan_tag</a></div>
+<h1>tbb::pre_scan_tag Struct Reference<br>
+<small>
+[<a class="el" href="a00442.html">Algorithms</a>]</small>
+</h1><!-- doxytag: class="tbb::pre_scan_tag" -->Used to indicate that the initial scan is being performed.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;flow_graph.h&gt;</code>
+<code>#include &lt;parallel_scan.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface7::priority_queue_node&lt; T, Compare, A &gt;:
-<p><center><img src="a00323.png" usemap="#tbb::flow::interface7::priority_queue_node< T, Compare, A >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface7::priority_queue_node< T, Compare, A >_map">
-<area href="a00274.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
-<area href="a00300.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,352,24">
-<area href="a00332.html" alt="tbb::flow::interface7::receiver< T >" shape="rect" coords="362,0,714,24">
-<area href="a00338.html" alt="tbb::flow::interface7::sender< T >" shape="rect" coords="724,0,1076,24">
-</map>
-<a href="a00078.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00098.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d51550c386a9ec1abc16d874347d5731"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::input_type" ref="d51550c386a9ec1abc16d874347d5731" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#d51550c386a9ec1abc16d874347d5731">input_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a07aff6939d9a3b2001771efb9320868"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::output_type" ref="a07aff6939d9a3b2001771efb9320868" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#a07aff6939d9a3b2001771efb9320868">output_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dab69526ade9748556d1c772bd417686"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::base_type" ref="dab69526ade9748556d1c772bd417686" args="" -->
-typedef <a class="el" href="a00274.html">buffer_node</a>&lt; T, A &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>base_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="421303dff636e6b7929133aaa1daece5"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::predecessor_type" ref="421303dff636e6b7929133aaa1daece5" args="" -->
-typedef <a class="el" href="a00338.html">sender</a>&lt; <a class="el" href="a00323.html#d51550c386a9ec1abc16d874347d5731">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#421303dff636e6b7929133aaa1daece5">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="501a0d7f978fff373965ecf226b8732d"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::successor_type" ref="501a0d7f978fff373965ecf226b8732d" args="" -->
-typedef <a class="el" href="a00332.html">receiver</a>&lt; <a class="el" href="a00323.html#a07aff6939d9a3b2001771efb9320868">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#501a0d7f978fff373965ecf226b8732d">successor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="32d241410a03e1878892a47bf8d71dd7"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::priority_queue_node" ref="32d241410a03e1878892a47bf8d71dd7" args="(graph &amp;g)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#32d241410a03e1878892a47bf8d71dd7">priority_queue_node</a> (<a class="el" href="a00299.html">graph</a> &amp;g)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1ccbc628603946e8d66ffad5bdd5a1f1"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::priority_queue_node" ref="1ccbc628603946e8d66ffad5bdd5a1f1" args="(const priority_queue_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#1ccbc628603946e8d66ffad5bdd5a1f1">priority_queue_node</a> (const <a class="el" href="a00323.html">priority_queue_node</a> &amp;src)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d5c806c3f913b6463595b30b316ecc6"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::size_type" ref="3d5c806c3f913b6463595b30b316ecc6" args="" -->
-typedef <a class="el" href="a00274.html">buffer_node</a>&lt; T, A <br>
-&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="32b289f1a4953e16d98adb4f6c5860f3"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::item_type" ref="32b289f1a4953e16d98adb4f6c5860f3" args="" -->
-typedef <a class="el" href="a00274.html">buffer_node</a>&lt; T, A <br>
-&gt;::item_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>item_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fce3011339637d3afc08f969e7a03863"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::prio_operation" ref="fce3011339637d3afc08f969e7a03863" args="" -->
-typedef <a class="el" href="a00274.html">buffer_node</a>&lt; T, A <br>
-&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>prio_operation</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f657f587867141634a9e501cbf64525c3c75e43049d3e75e4eb7c728043245b8"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::WAIT" ref="f657f587867141634a9e501cbf64525c3c75e43049d3e75e4eb7c728043245b8" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f657f587867141634a9e501cbf64525c3929846419b525d6cb58003b27fd2c41"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::SUCCEEDED" ref="f657f587867141634a9e501cbf64525c3929846419b525d6cb58003b27fd2c41" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f657f587867141634a9e501cbf64525c945cf750366a2fbfdac3ed5ea77fa7d6"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::FAILED" ref="f657f587867141634a9e501cbf64525c945cf750366a2fbfdac3ed5ea77fa7d6" args="" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
-<b>SUCCEEDED</b>, 
-<b>FAILED</b>
- }</td></tr>
-
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="122ba3375c36b4822e0c325ee1e926d7"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::reset" ref="122ba3375c36b4822e0c325ee1e926d7" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ee962f9b321edfcfedb7b2e05895aa79"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::handle_operations" ref="ee962f9b321edfcfedb7b2e05895aa79" args="(prio_operation *op_list)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>handle_operations</b> (prio_operation *op_list)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b960cb98447b1faab2fdd1ac2d0dd616"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_forward_task" ref="b960cb98447b1faab2fdd1ac2d0dd616" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00323.html#b960cb98447b1faab2fdd1ac2d0dd616">internal_forward_task</a> (prio_operation *op)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d8cfb6bfbf21b960820efa9a09df1b98"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_push" ref="d8cfb6bfbf21b960820efa9a09df1b98" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_push</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4af42b93b2bd181844639092921f906b"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_pop" ref="4af42b93b2bd181844639092921f906b" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="583c439a129181ae8d7a18cab1454837"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_reserve" ref="583c439a129181ae8d7a18cab1454837" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="923ef6483b5fc665cc7a37750c4933af"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_consume" ref="923ef6483b5fc665cc7a37750c4933af" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (prio_operation *op)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4f196a165d61f12947d5d963eff5f17c"></a><!-- doxytag: member="tbb::flow::interface7::priority_queue_node::internal_release" ref="4f196a165d61f12947d5d963eff5f17c" args="(prio_operation *op)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_release</b> (prio_operation *op)</td></tr>
+<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d45d2cf548e51140ad6faafbea8ca6b5"></a><!-- doxytag: member="tbb::pre_scan_tag::is_final_scan" ref="d45d2cf548e51140ad6faafbea8ca6b5" args="()" -->
+static bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_final_scan</b> ()</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, typename Compare = std::less&lt;T&gt;, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
- class tbb::flow::interface7::priority_queue_node&lt; T, Compare, A &gt;</h3>
-
-Forwards messages in priority order. 
+Used to indicate that the initial scan is being performed. 
 <p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
+<hr>The documentation for this struct was generated from the following file:<ul>
+<li>parallel_scan.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

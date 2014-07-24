@@ -76,15 +76,14 @@ inline bool is_bit_set( uintptr_t val, int pos ) {
 }
 
 //! The container for "fairness-oriented" aka "enqueued" tasks.
-class task_stream : no_copy{
+class task_stream : no_copy {
     typedef queue_and_mutex <task*, spin_mutex> lane_t;
-    unsigned N;
     uintptr_t population;
-    FastRandom random;
     padded<lane_t>* lanes;
+    unsigned N;
 
 public:
-    task_stream() : N(), population(), random(&N), lanes()
+    task_stream() : population(), lanes()
     {
     }
 
@@ -105,11 +104,11 @@ public:
     ~task_stream() { if (lanes) delete[] lanes; }
 
     //! Push a task into a lane.
-    void push( task* source, unsigned& last_random ) {
+    void push( task* source, FastRandom& random ) {
         // Lane selection is random. Each thread should keep a separate seed value.
         unsigned idx;
         for( ; ; ) {
-            idx = random.get(last_random) & (N-1);
+            idx = random.get() & (N-1);
             spin_mutex::scoped_lock lock;
             if( lock.try_acquire(lanes[idx].my_mutex) ) {
                 lanes[idx].my_queue.push_back(source);
@@ -118,10 +117,10 @@ public:
             }
         }
     }
+
     //! Try finding and popping a task.
-    /** Does not change destination if unsuccessful. */
-    void pop( task*& dest, unsigned& last_used_lane ) {
-        if( !population ) return; // keeps the hot path shorter
+    task* pop( unsigned& last_used_lane ) {
+        task* result = NULL;
         // Lane selection is round-robin. Each thread should keep its last used lane.
         unsigned idx = (last_used_lane+1)&(N-1);
         for( ; population; idx=(idx+1)&(N-1) ) {
@@ -129,7 +128,7 @@ public:
                 lane_t& lane = lanes[idx];
                 spin_mutex::scoped_lock lock;
                 if( lock.try_acquire(lane.my_mutex) && !lane.my_queue.empty() ) {
-                    dest = lane.my_queue.front();
+                    result = lane.my_queue.front();
                     lane.my_queue.pop_front();
                     if( lane.my_queue.empty() )
                         clear_one_bit( population, idx );
@@ -138,12 +137,14 @@ public:
             }
         }
         last_used_lane = idx;
+        return result;
     }
 
     //! Checks existence of a task.
     bool empty() {
         return !population;
     }
+
     //! Destroys all remaining tasks in every lane. Returns the number of destroyed tasks.
     /** Tasks are not executed, because it would potentially create more tasks at a late stage.
         The scheduler is really expected to execute all tasks before task_stream destruction. */

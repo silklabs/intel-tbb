@@ -80,7 +80,6 @@ void arena::process( generic_scheduler& s ) {
 #endif /* __TBB_TASK_PRIORITY */
     s.attach_mailbox( affinity_id(index+1) );
 
-    s.hint_for_push = index ^ s.my_random.get(); // randomizer seed
     s.my_arena_slot->hint_for_pop  = index; // initial value for round-robin
 
     __TBB_set_cpu_ctl_env(&my_cpu_ctl_env);
@@ -491,7 +490,7 @@ intptr_t arena::workers_task_node_count() {
 }
 #endif /* __TBB_COUNT_TASK_NODES */
 
-void arena::enqueue_task( task& t, intptr_t prio, unsigned &hint_for_push )
+void arena::enqueue_task( task& t, intptr_t prio, FastRandom &random )
 {
 #if __TBB_RECYCLE_TO_ENQUEUE
     __TBB_ASSERT( t.state()==task::allocated || t.state()==task::to_enqueue, "attempt to enqueue task with inappropriate state" );
@@ -520,7 +519,7 @@ void arena::enqueue_task( task& t, intptr_t prio, unsigned &hint_for_push )
     task_stream &ts = my_task_stream;
 #endif /* !__TBB_TASK_PRIORITY */
     ITT_NOTIFY(sync_releasing, &ts);
-    ts.push( &t, hint_for_push );
+    ts.push( &t, random );
 #if __TBB_TASK_PRIORITY
     if ( p != my_top_priority )
         my_market->update_arena_priority( *this, p );
@@ -628,7 +627,7 @@ void task_arena_base::internal_enqueue( task& t, intptr_t prio ) const {
     __TBB_ASSERT(my_arena->my_default_ctx == t.prefix().context, NULL);
     ITT_STACK_CREATE(my_arena->my_default_ctx->itt_caller);
 #endif
-    my_arena->enqueue_task( t, prio, s->hint_for_push );
+    my_arena->enqueue_task( t, prio, s->my_random );
 }
 
 class delegated_task : public task {

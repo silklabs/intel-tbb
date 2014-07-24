@@ -41,4 +41,44 @@ __TBB_machine_unlock_elided:
         BYTE 0F3H
         mov  byte ptr [rcx], 0
         ret
+.code 
+	ALIGN 8
+	PUBLIC __TBB_machine_begin_transaction
+__TBB_machine_begin_transaction:
+        mov  eax, -1
+        BYTE 0C7H
+        BYTE 0F8H
+        BYTE 000H
+        BYTE 000H
+        BYTE 000H
+        BYTE 000H
+        ret
+.code 
+	ALIGN 8
+	PUBLIC __TBB_machine_end_transaction
+__TBB_machine_end_transaction:
+        BYTE 00FH
+        BYTE 001H
+        BYTE 0D5H
+        ret
+.code 
+	ALIGN 8
+	PUBLIC __TBB_machine_transaction_conflict_abort
+__TBB_machine_transaction_conflict_abort:
+        BYTE 0C6H
+        BYTE 0F8H
+        BYTE 0FFH  ; 12.4.5 Abort argument: lock not free when tested
+        ret
+.code 
+        ALIGN 8
+	PUBLIC __TBB_machine_is_in_transaction
+__TBB_machine_is_in_transaction:
+        xor eax, eax
+        BYTE 00FH  ; _xtest sets or clears ZF
+        BYTE 001H
+        BYTE 0D6H
+        jz   rset
+        mov  al,1
+rset:
+        ret
 end

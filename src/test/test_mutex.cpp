@@ -26,6 +26,10 @@
     the GNU General Public License.
 */
 
+#if __TBB_CPF_BUILD && !defined(TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX)
+    #define TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX 1
+#endif
+
 //------------------------------------------------------------------------
 // Test TBB mutexes when used with parallel_for.h
 //
@@ -208,6 +212,8 @@ struct Invariant {
             value[k] = 0;
         tbb::profiling::set_name(mutex, mutex_name_);
     }
+    ~Invariant() {
+    }
     void update() {
         for( size_t k=0; k<N; ++k )
             ++value[k];
@@ -321,13 +327,13 @@ void TestTryAcquireReader_OneThread( const char * mutex_name ) {
         else
             REPORT("ERROR for %s: try_acquire failed though it should not\n", mutex_name);
         {
-            typename M::scoped_lock lock2(tested_mutex, false);
-            if( lock1.try_acquire(tested_mutex) )
-                REPORT("ERROR for %s: try_acquire succeeded though it should not\n", mutex_name);
-            lock2.release();
-            lock2.acquire(tested_mutex, true);
-            if( lock1.try_acquire(tested_mutex, false) )
-                REPORT("ERROR for %s: try_acquire succeeded though it should not\n", mutex_name);
+            typename M::scoped_lock lock2(tested_mutex, false);   // read lock
+            if( lock1.try_acquire(tested_mutex) )                 // attempt to acquire read
+                REPORT("ERROR for %s: try_acquire succeeded though it should not (1)\n", mutex_name);
+            lock2.release();                                      // unlock
+            lock2.acquire(tested_mutex, true);                    // write lock
+            if( lock1.try_acquire(tested_mutex, false) )          // attempt to acquire read
+                REPORT("ERROR for %s: try_acquire succeeded though it should not (2)\n", mutex_name);
         }
         if( lock1.try_acquire(tested_mutex, false) )
             lock1.release();
@@ -356,7 +362,7 @@ void TestTryAcquire_OneThread( const char * mutex_name ) {
         } else {
             typename M::scoped_lock lock2(tested_mutex);
             if( lock1.try_acquire(tested_mutex) )
-                REPORT("ERROR for %s: try_acquire succeeded though it should not\n", mutex_name);
+                REPORT("ERROR for %s: try_acquire succeeded though it should not (3)\n", mutex_name);
         }
     }
     if( lock1.try_acquire(tested_mutex) )
@@ -551,7 +557,7 @@ void TestRecursiveMutexISO( const char * name ) {
 #include "harness_tsx.h"
 #include "tbb/task_scheduler_init.h"
 
-#if HAVE_TSX && __INTEL_COMPILER
+#if __TBB_TSX_AVAILABLE && (__INTEL_COMPILER || __GNUC__ || _MSC_VER)
 
 //! Function object for use with parallel_for.h to see if a transaction is actually attempted.
 tbb::atomic<size_t> n_transactions_attempted;
@@ -578,13 +584,20 @@ template<typename M>
 void TestTransaction( const char * name )
 {
     Counter<M> counter;
+#if TBB_TEST_LOW_WORKLOAD
     const int n = 100;
-    REMARK("TestTransaction with %s\n",name);
+#else
+    const int n = 1000;
+#endif
+    REMARK("TestTransaction with %s: ",name);
 
     n_transactions_attempted = 0;
+    tbb::tick_count start, stop;
     for( int i=0; i<5 && n_transactions_attempted==0; ++i ) {
         counter.value = 0;
+        start = tbb::tick_count::now();
         tbb::parallel_for(tbb::blocked_range<size_t>(0,n,2),AddOne_CheckTransaction<Counter<M> >(counter));
+        stop = tbb::tick_count::now();
         if( counter.value!=n ) {
             REPORT("ERROR for %s: counter.value=%ld\n",name,counter.value);
             break;
@@ -593,8 +606,10 @@ void TestTransaction( const char * name )
 
     if( n_transactions_attempted==0 )
         REPORT( "ERROR: HLE transactions are never attempted\n" );
+    else
+        REMARK("%d successful transactions in %6.6f seconds\n", (int)n_transactions_attempted, (stop - start).seconds());
 }
-#endif
+#endif  /* __TBB_TSX_AVAILABLE && (__INTEL_COMPILER || __GNUC__ || _MSC_VER) */
 
 int TestMain () {
     for( int p=MinThread; p<=MaxThread; ++p ) {
@@ -622,6 +637,9 @@ int TestMain () {
             Test<tbb::recursive_mutex>( "Recursive Mutex" );
             Test<tbb::queuing_rw_mutex>( "Queuing RW Mutex" );
             Test<tbb::spin_rw_mutex>( "Spin RW Mutex" );
+#if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+            Test<tbb::speculative_spin_rw_mutex>( "Spin RW Mutex speculative" );
+#endif
 
             TestTryAcquire_OneThread<tbb::spin_mutex>("Spin Mutex");
             TestTryAcquire_OneThread<tbb::speculative_spin_mutex>("Spin Mutex/speculative");
@@ -632,16 +650,25 @@ int TestMain () {
 #endif /* USE_PTHREAD */
             TestTryAcquire_OneThread<tbb::recursive_mutex>( "Recursive Mutex" );
             TestTryAcquire_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex"); // only tests try_acquire for writers
+#if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+            TestTryAcquire_OneThread<tbb::speculative_spin_rw_mutex>("Spin RW Mutex speculative"); // only tests try_acquire for writers
+#endif
             TestTryAcquire_OneThread<tbb::queuing_rw_mutex>("Queuing RW Mutex"); // only tests try_acquire for writers
             TestTryAcquireReader_OneThread<tbb::spin_rw_mutex>("Spin RW Mutex");
+#if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+            TestTryAcquireReader_OneThread<tbb::speculative_spin_rw_mutex>("Spin RW Mutex speculative");
+#endif
             TestTryAcquireReader_OneThread<tbb::queuing_rw_mutex>("Queuing RW Mutex");
 
             TestReaderWriterLock<tbb::queuing_rw_mutex>( "Queuing RW Mutex" );
             TestReaderWriterLock<tbb::spin_rw_mutex>( "Spin RW Mutex" );
+#if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+            TestReaderWriterLock<tbb::speculative_spin_rw_mutex>( "Spin RW Mutex speculative" );
+#endif
 
             TestRecursiveMutex<tbb::recursive_mutex>( "Recursive Mutex" );
 
-            // Test ISO C++0x interface
+            // Test ISO C++11 interface
             TestISO<tbb::spin_mutex>( "ISO Spin Mutex" );
             TestISO<tbb::mutex>( "ISO Mutex" );
             TestISO<tbb::spin_rw_mutex>( "ISO Spin RW Mutex" );
@@ -658,14 +685,19 @@ int TestMain () {
             TestReaderWriterLockISO<tbb::spin_rw_mutex>( "ISO Spin RW Mutex" );
             TestRecursiveMutexISO<tbb::recursive_mutex>( "ISO Recursive Mutex" );
         }
-        REMARK( "calling destructor for task_scheduler_init\n" );
     }
 
-#if HAVE_TSX && __INTEL_COMPILER
-    // additional test for speculative_spin_mutex to see if we actually attempt lock elisions
+#if __TBB_TSX_AVAILABLE && (__INTEL_COMPILER || __GNUC__ || _MSC_VER)
+    // additional test for speculative mutexes to see if we actually attempt lock elisions
     if( have_TSX() ) {
         tbb::task_scheduler_init init( MaxThread );
         TestTransaction<tbb::speculative_spin_mutex>( "Spin Mutex/speculative" );
+#if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+        TestTransaction<tbb::speculative_spin_rw_mutex>( "Spin RW Mutex/speculative" );
+#endif
+    }
+    else {
+        REMARK("Hardware transactions not supported\n");
     }
 #endif
     return Harness::Done;

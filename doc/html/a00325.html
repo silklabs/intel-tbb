@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::queuing_mutex Class Reference</title>
+<title>tbb::flow::interface7::queue_node&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,45 +21,98 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<a class="el" href="a00325.html">queuing_mutex</a></div>
-<h1>tbb::queuing_mutex Class Reference<br>
-<small>
-[<a class="el" href="a00444.html">Synchronization</a>]</small>
-</h1><!-- doxytag: class="tbb::queuing_mutex" -->Queuing mutex with local-only spinning.  
+<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00325.html">queue_node</a></div>
+<h1>tbb::flow::interface7::queue_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::queue_node" --><!-- doxytag: inherits="tbb::flow::interface7::buffer_node" -->Forwards messages in FIFO order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;queuing_mutex.h&gt;</code>
+<code>#include &lt;flow_graph.h&gt;</code>
 <p>
-<a href="a00112.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface7::queue_node&lt; T, A &gt;:
+<p><center><img src="a00325.png" usemap="#tbb::flow::interface7::queue_node< T, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface7::queue_node< T, A >_map">
+<area href="a00275.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="280,56,550,80">
+<area href="a00301.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,270,24">
+<area href="a00333.html" alt="tbb::flow::interface7::receiver< T >" shape="rect" coords="280,0,550,24">
+<area href="a00339.html" alt="tbb::flow::interface7::sender< T >" shape="rect" coords="560,0,830,24">
+<area href="a00340.html" alt="tbb::flow::interface7::sequencer_node< T, A >" shape="rect" coords="280,168,550,192">
+</map>
+<a href="a00076.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6b86acd14ea52151408fda4790b097ca"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::input_type" ref="6b86acd14ea52151408fda4790b097ca" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#6b86acd14ea52151408fda4790b097ca">input_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ece8d1292d2c63058d91aa2e5f8bae0a"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::output_type" ref="ece8d1292d2c63058d91aa2e5f8bae0a" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#ece8d1292d2c63058d91aa2e5f8bae0a">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="081abc26e1ea8e49c6f22b0bc720a543"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::predecessor_type" ref="081abc26e1ea8e49c6f22b0bc720a543" args="" -->
+typedef <a class="el" href="a00339.html">sender</a>&lt; <a class="el" href="a00325.html#6b86acd14ea52151408fda4790b097ca">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#081abc26e1ea8e49c6f22b0bc720a543">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e90c3eb0fc30adc8a51fa7da5d2ca844"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::successor_type" ref="e90c3eb0fc30adc8a51fa7da5d2ca844" args="" -->
+typedef <a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00325.html#ece8d1292d2c63058d91aa2e5f8bae0a">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#e90c3eb0fc30adc8a51fa7da5d2ca844">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b389ad9c4db7293e4bdb5b8cda69ec04"></a><!-- doxytag: member="tbb::queuing_mutex::queuing_mutex" ref="b389ad9c4db7293e4bdb5b8cda69ec04" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#b389ad9c4db7293e4bdb5b8cda69ec04">queuing_mutex</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="af020a4a23f6832849d5d4364da36e52"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::queue_node" ref="af020a4a23f6832849d5d4364da36e52" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#af020a4a23f6832849d5d4364da36e52">queue_node</a> (<a class="el" href="a00300.html">graph</a> &amp;g)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct unacquired mutex. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="96c1fe92760dcd1c5a7ed52c6599a72f"></a><!-- doxytag: member="tbb::queuing_mutex::internal_construct" ref="96c1fe92760dcd1c5a7ed52c6599a72f" args="()" -->
-void __TBB_EXPORTED_METHOD&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_construct</b> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="575cc9217da01f331a8056f12f3a6e99"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::queue_node" ref="575cc9217da01f331a8056f12f3a6e99" args="(const queue_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#575cc9217da01f331a8056f12f3a6e99">queue_node</a> (const <a class="el" href="a00325.html">queue_node</a> &amp;src)</td></tr>
 
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="420932f70ff3b85f7280ff11a133938d"></a><!-- doxytag: member="tbb::queuing_mutex::is_rw_mutex" ref="420932f70ff3b85f7280ff11a133938d" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d13436a9de327fa583b2505a72bfaa8b"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::set_name" ref="d13436a9de327fa583b2505a72bfaa8b" args="(const char *name)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_name</b> (const char *name)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dc0c749f3a4e6ea75418677cb8f9205f"></a><!-- doxytag: member="tbb::queuing_mutex::is_recursive_mutex" ref="dc0c749f3a4e6ea75418677cb8f9205f" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2d15fe9523acef0036b70e4e797e341a"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::size_type" ref="2d15fe9523acef0036b70e4e797e341a" args="" -->
+typedef <a class="el" href="a00275.html">buffer_node</a>&lt; T, A <br>
+&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="55d5339e4ca04b759f90c0c1ef966539"></a><!-- doxytag: member="tbb::queuing_mutex::is_fair_mutex" ref="55d5339e4ca04b759f90c0c1ef966539" args="" -->
-static const bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = true</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e51ec1149ffd039757e41d1181cd678b"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::queue_operation" ref="e51ec1149ffd039757e41d1181cd678b" args="" -->
+typedef <a class="el" href="a00275.html">buffer_node</a>&lt; T, A <br>
+&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>queue_operation</b></td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00326.html">scoped_lock</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2baf6055aab723cb13d8a18474bb3dfc15d6a6f79473f9b9a561f48472e48b1c"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::WAIT" ref="2baf6055aab723cb13d8a18474bb3dfc15d6a6f79473f9b9a561f48472e48b1c" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00326.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2baf6055aab723cb13d8a18474bb3dfcde29460500f0e287b21dcc1f95f4639c"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::SUCCEEDED" ref="2baf6055aab723cb13d8a18474bb3dfcde29460500f0e287b21dcc1f95f4639c" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2baf6055aab723cb13d8a18474bb3dfc47adcc2d54b5b84be5e483bd70e7846f"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::FAILED" ref="2baf6055aab723cb13d8a18474bb3dfc47adcc2d54b5b84be5e483bd70e7846f" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fc25431edae40ad890c2cac1c549d0b9"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::internal_forward_task" ref="fc25431edae40ad890c2cac1c549d0b9" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00325.html#fc25431edae40ad890c2cac1c549d0b9">internal_forward_task</a> (queue_operation *op)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Tries to forward valid items to successors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b08bd155daad920568d11ff3319820cd"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::internal_pop" ref="b08bd155daad920568d11ff3319820cd" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_pop</b> (queue_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4dd4e2886db3b25700aacd13b1490019"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::internal_reserve" ref="4dd4e2886db3b25700aacd13b1490019" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_reserve</b> (queue_operation *op)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="20f0a6348b69b52ef0d42704aac3db8b"></a><!-- doxytag: member="tbb::flow::interface7::queue_node::internal_consume" ref="20f0a6348b69b52ef0d42704aac3db8b" args="(queue_operation *op)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal_consume</b> (queue_operation *op)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Queuing mutex with local-only spinning. 
+<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface7::queue_node&lt; T, A &gt;</h3>
+
+Forwards messages in FIFO order. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>queuing_mutex.h</ul>
+<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::improper_lock Class Reference</title>
+<title>tbb::flow::interface7::graph_node Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,24 +21,61 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<a class="el" href="a00301.html">improper_lock</a></div>
-<h1>tbb::improper_lock Class Reference</h1><!-- doxytag: class="tbb::improper_lock" -->Exception for PPL locks.  
+<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00301.html">graph_node</a></div>
+<h1>tbb::flow::interface7::graph_node Class Reference</h1><!-- doxytag: class="tbb::flow::interface7::graph_node" -->The base of all graph nodes.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;tbb_exception.h&gt;</code>
+<code>#include &lt;flow_graph.h&gt;</code>
 <p>
-<a href="a00156.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface7::graph_node:
+<p><center><img src="a00301.png" usemap="#tbb::flow::interface7::graph_node_map" border="0" alt=""></center>
+<map name="tbb::flow::interface7::graph_node_map">
+<area href="a00274.html" alt="tbb::flow::interface7::broadcast_node< T >" shape="rect" coords="511,56,1012,80">
+<area href="a00275.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="511,112,1012,136">
+<area href="a00290.html" alt="tbb::flow::interface7::continue_node< Output >" shape="rect" coords="511,168,1012,192">
+<area href="a00298.html" alt="tbb::flow::interface7::function_node< Input, Output,, Allocator >" shape="rect" coords="511,224,1012,248">
+<area href="a00299.html" alt="tbb::flow::interface7::function_node< Input, Output, queueing, Allocator >" shape="rect" coords="511,280,1012,304">
+<area href="a00304.html" alt="tbb::flow::interface7::limiter_node< T >" shape="rect" coords="511,336,1012,360">
+<area href="a00312.html" alt="tbb::flow::interface7::multifunction_node< Input, Output,, Allocator >" shape="rect" coords="511,392,1012,416">
+<area href="a00312.html" alt="tbb::flow::interface7::multifunction_node< TupleType, TupleType, rejecting, Allocator >" shape="rect" coords="511,448,1012,472">
+<area href="a00342.html" alt="tbb::flow::interface7::source_node< Output >" shape="rect" coords="511,504,1012,528">
+</map>
+<a href="a00062.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="74213c2d20407e1fa16b70ca55ef27c6"></a><!-- doxytag: member="tbb::improper_lock::what" ref="74213c2d20407e1fa16b70ca55ef27c6" args="() const " -->
-const char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>what</b> () const   throw ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95c18dec6486e3b0100daa6e3d82505f"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::graph_node" ref="95c18dec6486e3b0100daa6e3d82505f" args="(graph &amp;g)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_node</b> (<a class="el" href="a00300.html">graph</a> &amp;g)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="503ae7247fffc1a6c34f1fec9887abac"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::set_name" ref="503ae7247fffc1a6c34f1fec9887abac" args="(const char *name)=0" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_name</b> (const char *name)=0</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45ee8223a0d62032118663fc3f42efb5"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::reset" ref="45ee8223a0d62032118663fc3f42efb5" args="()=0" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()=0</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95f814777f203fd750e36a96709955f7"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::my_graph" ref="95f814777f203fd750e36a96709955f7" args="" -->
+<a class="el" href="a00300.html">graph</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>my_graph</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dfdc5d2d0f679e023b5594ab3f8831b6"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::next" ref="dfdc5d2d0f679e023b5594ab3f8831b6" args="" -->
+<a class="el" href="a00301.html">graph_node</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>next</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95db1dc9eb080b63c00254d00d388540"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::prev" ref="95db1dc9eb080b63c00254d00d388540" args="" -->
+<a class="el" href="a00301.html">graph_node</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>prev</b></td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="137c56ab53c02049fca0b78c49294314"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::graph" ref="137c56ab53c02049fca0b78c49294314" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621c092f8466e55743ceef04b0bde9ce"></a><!-- doxytag: member="tbb::flow::interface7::graph_node::graph_iterator" ref="621c092f8466e55743ceef04b0bde9ce" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>graph_iterator</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Exception for PPL locks. 
+The base of all graph nodes. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>tbb_exception.h</ul>
+<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

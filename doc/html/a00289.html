@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface7::continue_node&lt; Output &gt; Class Template Reference</title>
+<title>tbb::flow::interface7::continue_msg Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,82 +21,20 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00289.html">continue_node</a></div>
-<h1>tbb::flow::interface7::continue_node&lt; Output &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::continue_node" --><!-- doxytag: inherits="tbb::flow::interface7::graph_node" -->Implements an executable node that supports <a class="el" href="a00288.html">continue_msg</a> -&gt; Output.  
+<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00289.html">continue_msg</a></div>
+<h1>tbb::flow::interface7::continue_msg Class Reference</h1><!-- doxytag: class="tbb::flow::interface7::continue_msg" -->An empty class used for messages that mean "I'm done".  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;flow_graph.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface7::continue_node&lt; Output &gt;:
-<p><center><img src="a00289.png" usemap="#tbb::flow::interface7::continue_node< Output >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface7::continue_node< Output >_map">
-<area href="a00300.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,271,24">
-</map>
-<a href="a00070.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c9393c0c7741906dcfa59673d991113f"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::input_type" ref="c9393c0c7741906dcfa59673d991113f" args="" -->
-typedef <a class="el" href="a00288.html">continue_msg</a>&nbsp;</td><td class="memItemRight" valign="bottom"><b>input_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ffcf7083e2aabfd54f9da29a6f45ab1"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::output_type" ref="0ffcf7083e2aabfd54f9da29a6f45ab1" args="" -->
-typedef Output&nbsp;</td><td class="memItemRight" valign="bottom"><b>output_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e961dfd96e728115a9afa763494f9c63"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::predecessor_type" ref="e961dfd96e728115a9afa763494f9c63" args="" -->
-typedef <a class="el" href="a00338.html">sender</a>&lt; <a class="el" href="a00288.html">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>predecessor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e9251f33e94e2180d22fac83d21a099"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::successor_type" ref="4e9251f33e94e2180d22fac83d21a099" args="" -->
-typedef <a class="el" href="a00332.html">receiver</a>&lt; output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successor_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="79f6251de29c83c12c11bfaa6c84f796"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::fInput_type" ref="79f6251de29c83c12c11bfaa6c84f796" args="" -->
-typedef internal::continue_input&lt;<br>
- Output &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fInput_type</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="600e0b710c541cb4a1502d0456a99128"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::fOutput_type" ref="600e0b710c541cb4a1502d0456a99128" args="" -->
-typedef internal::function_output&lt;<br>
- output_type &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>fOutput_type</b></td></tr>
-
-<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="923c5bfd25a4faeb0de1edb005d57e45"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::continue_node" ref="923c5bfd25a4faeb0de1edb005d57e45" args="(graph &amp;g, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00289.html#923c5bfd25a4faeb0de1edb005d57e45">continue_node</a> (<a class="el" href="a00299.html">graph</a> &amp;g, Body body)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor for executable node with <a class="el" href="a00288.html">continue_msg</a> -&gt; Output. <br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="c93239603d2226e0dc8eec0639a9a1bc"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::continue_node" ref="c93239603d2226e0dc8eec0639a9a1bc" args="(graph &amp;g, int number_of_predecessors, Body body)" -->
-template&lt;typename Body&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00289.html#c93239603d2226e0dc8eec0639a9a1bc">continue_node</a> (<a class="el" href="a00299.html">graph</a> &amp;g, int number_of_predecessors, Body body)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor for executable node with <a class="el" href="a00288.html">continue_msg</a> -&gt; Output. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5687a28e0ce50b58ea17bffe09585a07"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::continue_node" ref="5687a28e0ce50b58ea17bffe09585a07" args="(const continue_node &amp;src)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00289.html#5687a28e0ce50b58ea17bffe09585a07">continue_node</a> (const <a class="el" href="a00289.html">continue_node</a> &amp;src)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="10241ba8ac3bd363d173e037de3c3f42"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::reset" ref="10241ba8ac3bd363d173e037de3c3f42" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9fe4a69a635795a37d03604f4df149e2"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::successors" ref="9fe4a69a635795a37d03604f4df149e2" args="()" -->
-internal::broadcast_cache&lt;<br>
- output_type &gt; &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><b>successors</b> ()</td></tr>
-
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621bab40a858d214db69ef08d88b67c1"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::run_and_put_task" ref="621bab40a858d214db69ef08d88b67c1" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>run_and_put_task</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4fa30d87bc0bfa80942f97a8d58f1bd"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::internal::broadcast_cache" ref="e4fa30d87bc0bfa80942f97a8d58f1bd" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="31ba00ea3e3e5a421b38840bd0dc2589"></a><!-- doxytag: member="tbb::flow::interface7::continue_node::internal::round_robin_cache" ref="31ba00ea3e3e5a421b38840bd0dc2589" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
-
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename Output&gt;<br>
- class tbb::flow::interface7::continue_node&lt; Output &gt;</h3>
-
-Implements an executable node that supports <a class="el" href="a00288.html">continue_msg</a> -&gt; Output. 
+An empty class used for messages that mean "I'm done". 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
+<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

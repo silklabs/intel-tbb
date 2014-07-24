@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::internal::machine_load_store_relaxed&lt; T, S &gt; Struct Template Reference</title>
+<title>tbb::flow::interface7::limiter_node&lt; T &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,27 +21,137 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>internal</b>::<a class="el" href="a00304.html">machine_load_store_relaxed</a></div>
-<h1>tbb::internal::machine_load_store_relaxed&lt; T, S &gt; Struct Template Reference</h1><!-- doxytag: class="tbb::internal::machine_load_store_relaxed" --><code>#include &lt;tbb_machine.h&gt;</code>
+<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00304.html">limiter_node</a></div>
+<h1>tbb::flow::interface7::limiter_node&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::limiter_node" --><!-- doxytag: inherits="tbb::flow::interface7::graph_node,tbb::flow::interface7::receiver,tbb::flow::interface7::sender" -->Forwards messages only if the threshold has not been reached.  
+<a href="#_details">More...</a>
 <p>
-<a href="a00173.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<code>#include &lt;flow_graph.h&gt;</code>
+<p>
+<p>Inheritance diagram for tbb::flow::interface7::limiter_node&lt; T &gt;:
+<p><center><img src="a00304.png" usemap="#tbb::flow::interface7::limiter_node< T >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface7::limiter_node< T >_map">
+<area href="a00301.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,226,24">
+<area href="a00333.html" alt="tbb::flow::interface7::receiver< T >" shape="rect" coords="236,0,462,24">
+<area href="a00339.html" alt="tbb::flow::interface7::sender< T >" shape="rect" coords="472,0,698,24">
+</map>
+<a href="a00079.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="de10ed2fe8788773adb55f265db38587"></a><!-- doxytag: member="tbb::internal::machine_load_store_relaxed::load" ref="de10ed2fe8788773adb55f265db38587" args="(const volatile T &amp;location)" -->
-static T&nbsp;</td><td class="memItemRight" valign="bottom"><b>load</b> (const volatile T &amp;location)</td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9a28d7361d61e7417c6b493da134546a"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::input_type" ref="9a28d7361d61e7417c6b493da134546a" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#9a28d7361d61e7417c6b493da134546a">input_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1d72090653905a4c94aa6836bc190044"></a><!-- doxytag: member="tbb::internal::machine_load_store_relaxed::store" ref="1d72090653905a4c94aa6836bc190044" args="(volatile T &amp;location, T value)" -->
-static void&nbsp;</td><td class="memItemRight" valign="bottom"><b>store</b> (volatile T &amp;location, T value)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="64bd9f21ec477480cb7daa396b783b7f"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::output_type" ref="64bd9f21ec477480cb7daa396b783b7f" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#64bd9f21ec477480cb7daa396b783b7f">output_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="45486b9ed86d5ce9e2c8c675603b8eee"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::predecessor_type" ref="45486b9ed86d5ce9e2c8c675603b8eee" args="" -->
+typedef <a class="el" href="a00339.html">sender</a>&lt; <a class="el" href="a00304.html#9a28d7361d61e7417c6b493da134546a">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#45486b9ed86d5ce9e2c8c675603b8eee">predecessor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="83fdd9f5fe643637b4ed3a1a8ba0441b"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::successor_type" ref="83fdd9f5fe643637b4ed3a1a8ba0441b" args="" -->
+typedef <a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00304.html#64bd9f21ec477480cb7daa396b783b7f">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#83fdd9f5fe643637b4ed3a1a8ba0441b">successor_type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="baa37ba71ed1466dcba7a064f852feed"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::limiter_node" ref="baa37ba71ed1466dcba7a064f852feed" args="(graph &amp;g, size_t threshold, int num_decrement_predecessors=0)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#baa37ba71ed1466dcba7a064f852feed">limiter_node</a> (<a class="el" href="a00300.html">graph</a> &amp;g, size_t threshold, int num_decrement_predecessors=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="837f51a85f62deae331e158a522dd81e"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::limiter_node" ref="837f51a85f62deae331e158a522dd81e" args="(const limiter_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#837f51a85f62deae331e158a522dd81e">limiter_node</a> (const <a class="el" href="a00304.html">limiter_node</a> &amp;src)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ed4df2b70f1b46804f0ba26331d71dfa"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::set_name" ref="ed4df2b70f1b46804f0ba26331d71dfa" args="(const char *name)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_name</b> (const char *name)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="994ba98120e492284d093ba549f45929"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::register_successor" ref="994ba98120e492284d093ba549f45929" args="(receiver&lt; output_type &gt; &amp;r)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#994ba98120e492284d093ba549f45929">register_successor</a> (<a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00304.html#64bd9f21ec477480cb7daa396b783b7f">output_type</a> &gt; &amp;r)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Replace the current successor with this new successor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#234d3cf1684e0b0d6edf27f42c72d9f0">remove_successor</a> (<a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00304.html#64bd9f21ec477480cb7daa396b783b7f">output_type</a> &gt; &amp;r)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a successor from this node.  <a href="#234d3cf1684e0b0d6edf27f42c72d9f0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ce3646acfa9f1c4e38fef33ac1736e84"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::register_predecessor" ref="ce3646acfa9f1c4e38fef33ac1736e84" args="(predecessor_type &amp;src)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#ce3646acfa9f1c4e38fef33ac1736e84">register_predecessor</a> (<a class="el" href="a00339.html">predecessor_type</a> &amp;src)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds src to the list of cached predecessors. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c4429d84bf180d79785123aedc0ebd6f"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::remove_predecessor" ref="c4429d84bf180d79785123aedc0ebd6f" args="(predecessor_type &amp;src)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#c4429d84bf180d79785123aedc0ebd6f">remove_predecessor</a> (<a class="el" href="a00339.html">predecessor_type</a> &amp;src)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes src from the list of cached predecessors. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2cbf914b4372fb11e5b4d78310eb66bc"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::decrement" ref="2cbf914b4372fb11e5b4d78310eb66bc" args="" -->
+internal::decrementer&lt; <a class="el" href="a00304.html">limiter_node</a>&lt;<br>
+ T &gt; &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#2cbf914b4372fb11e5b4d78310eb66bc">decrement</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The internal receiver&lt; continue_msg &gt; that decrements the count. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b7fc93486a0c5ccdfc34daa4ed8917e1"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::try_put_task" ref="b7fc93486a0c5ccdfc34daa4ed8917e1" args="(const T &amp;t)" -->
+<a class="el" href="a00349.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#b7fc93486a0c5ccdfc34daa4ed8917e1">try_put_task</a> (const T &amp;t)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Puts an item to this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="542741aff4cd8874e7708b5abe055263"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::reset" ref="542741aff4cd8874e7708b5abe055263" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="68591a3690d26ade0610ddd6f3e076c5"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::reset_receiver" ref="68591a3690d26ade0610ddd6f3e076c5" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="74b341552e1314d2e318be9066a1d151"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::internal::forward_task_bypass&lt; limiter_node&lt; T &gt; &gt;" ref="74b341552e1314d2e318be9066a1d151" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::forward_task_bypass&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b43677b60c786d1071a7efd6f195c3be"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::internal::decrementer&lt; limiter_node&lt; T &gt; &gt;" ref="b43677b60c786d1071a7efd6f195c3be" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::decrementer&lt; limiter_node&lt; T &gt; &gt;</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621bab40a858d214db69ef08d88b67c1"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::run_and_put_task" ref="621bab40a858d214db69ef08d88b67c1" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00304.html#621bab40a858d214db69ef08d88b67c1">run_and_put_task</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put item to successor; return task to run the successor if possible. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4fa30d87bc0bfa80942f97a8d58f1bd"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::internal::broadcast_cache" ref="e4fa30d87bc0bfa80942f97a8d58f1bd" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="31ba00ea3e3e5a421b38840bd0dc2589"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::internal::round_robin_cache" ref="31ba00ea3e3e5a421b38840bd0dc2589" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T, size_t S&gt;<br>
- struct tbb::internal::machine_load_store_relaxed&lt; T, S &gt;</h3>
+<h3>template&lt;typename T&gt;<br>
+ class tbb::flow::interface7::limiter_node&lt; T &gt;</h3>
 
-Volatile should not incur any additional cost on IA32, Intel64, and Sparc TSO architectures. However on architectures with weak memory ordering compiler may generate code with acquire/release semantics for operations on volatile data. 
+Forwards messages only if the threshold has not been reached. 
 <p>
-<hr>The documentation for this struct was generated from the following file:<ul>
-<li>tbb_machine.h</ul>
+This node forwards items until its threshold is reached. It contains no buffering. If the downstream node rejects, the message is dropped. 
+<p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="234d3cf1684e0b0d6edf27f42c72d9f0"></a><!-- doxytag: member="tbb::flow::interface7::limiter_node::remove_successor" ref="234d3cf1684e0b0d6edf27f42c72d9f0" args="(receiver&lt; output_type &gt; &amp;r)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="a00304.html">tbb::flow::interface7::limiter_node</a>&lt; T &gt;::remove_successor           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00304.html#64bd9f21ec477480cb7daa396b783b7f">output_type</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>r</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes a successor from this node. 
+<p>
+r.remove_predecessor(*this) is also called. 
+<p>
+Implements <a class="el" href="a00339.html#1d4dbf1f3f96dbab6e2ce0e7e7198af8">tbb::flow::interface7::sender&lt; T &gt;</a>.
+</div>
+</div><p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

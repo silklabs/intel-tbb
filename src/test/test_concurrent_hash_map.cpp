@@ -932,6 +932,25 @@ void TestInitList(){
     TestInitListSupportWithoutAssign<ch_map_type>({});
 }
 #endif //if __TBB_INITIALIZER_LISTS_PRESENT
+
+#if __TBB_RANGE_BASED_FOR_PRESENT
+#include "test_range_based_for.h"
+
+void TestRangeBasedFor(){
+    using namespace range_based_for_support_tests;
+
+    REMARK("testing range based for loop compatibility \n");
+    typedef tbb::concurrent_hash_map<int,int> ch_map;
+    ch_map a_ch_map;
+
+    const int sequence_length = 100;
+    for (int i = 1; i <= sequence_length; ++i){
+        a_ch_map.insert(ch_map::value_type(i,i));
+    }
+
+    ASSERT( range_based_for_accumulate(a_ch_map, pair_second_summer(), 0) == gauss_summ_of_int_sequence(sequence_length), "incorrect accumulated value generated via range based for ?");
+}
+#endif //if __TBB_RANGE_BASED_FOR_PRESENT
 //------------------------------------------------------------------------
 // Test driver
 //------------------------------------------------------------------------
@@ -954,6 +973,10 @@ int TestMain () {
 #if __TBB_INITIALIZER_LISTS_PRESENT
     TestInitList();
 #endif //__TBB_INITIALIZER_LISTS_PRESENT
+
+#if __TBB_RANGE_BASED_FOR_PRESENT
+    TestRangeBasedFor();
+#endif //#if __TBB_RANGE_BASED_FOR_PRESENT
 
 #if TBB_USE_EXCEPTIONS
     TestExceptions();

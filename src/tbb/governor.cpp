@@ -84,6 +84,9 @@ void governor::acquire_resources () {
 #endif
     if( status )
         handle_perror(status, "TBB failed to initialize task scheduler TLS\n");
+#if __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+    is_speculation_enabled = cpu_has_speculation();
+#endif
 }
 
 void governor::release_resources () {

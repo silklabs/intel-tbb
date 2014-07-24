@@ -63,6 +63,7 @@ TBB_CPLUS.OBJ = concurrent_hash_map.$(OBJ) \
 		queuing_rw_mutex.$(OBJ) \
 		reader_writer_lock.$(OBJ) \
 		spin_rw_mutex.$(OBJ) \
+		x86_rtm_rw_mutex.$(OBJ) \
 		spin_mutex.$(OBJ) \
 		critical_section.$(OBJ) \
 		mutex.$(OBJ) \

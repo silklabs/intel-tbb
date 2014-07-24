@@ -226,6 +226,13 @@ namespace Harness {
     {
        return N;
     }
+
+    template<typename T, size_t N>
+    inline T* end( T(& array)[N])
+    {
+       return array+ array_length(array) ;
+    }
+
 } //namespace Harness
 
 #if TEST_USES_TBB

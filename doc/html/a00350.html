@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::interface5::internal::task_base Class Reference</title>
+<title>tbb::interface7::task_arena Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,22 +21,272 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>interface5</b>::<b>internal</b>::<a class="el" href="a00350.html">task_base</a></div>
-<h1>tbb::interface5::internal::task_base Class Reference</h1><!-- doxytag: class="tbb::interface5::internal::task_base" -->Base class for methods that became static in TBB 3.0.  
-<a href="#_details">More...</a>
+<a class="el" href="a00428.html">tbb</a>::<b>interface7</b>::<a class="el" href="a00350.html">task_arena</a></div>
+<h1>tbb::interface7::task_arena Class Reference</h1><!-- doxytag: class="tbb::interface7::task_arena" --><code>#include &lt;task_arena.h&gt;</code>
 <p>
-<code>#include &lt;task.h&gt;</code>
-<p>
-<a href="a00132.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00138.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#17dcd727a2072bae2207463a1e62643c">task_arena</a> (int max_concurrency=automatic, unsigned reserved_for_masters=1)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates <a class="el" href="a00350.html">task_arena</a> with certain concurrency limits.  <a href="#17dcd727a2072bae2207463a1e62643c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95c1453a420b538856f6eab765de8261"></a><!-- doxytag: member="tbb::interface7::task_arena::task_arena" ref="95c1453a420b538856f6eab765de8261" args="(const task_arena &amp;s)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#95c1453a420b538856f6eab765de8261">task_arena</a> (const <a class="el" href="a00350.html">task_arena</a> &amp;s)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copies settings from another <a class="el" href="a00350.html">task_arena</a>. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c8b903e5daca66c5744588b0c3976635"></a><!-- doxytag: member="tbb::interface7::task_arena::initialize" ref="c8b903e5daca66c5744588b0c3976635" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#c8b903e5daca66c5744588b0c3976635">initialize</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Forces allocation of the resources for the <a class="el" href="a00350.html">task_arena</a> as specified in constructor arguments. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ee3aacc1f41d5cbe0abcd46d1545efa9"></a><!-- doxytag: member="tbb::interface7::task_arena::initialize" ref="ee3aacc1f41d5cbe0abcd46d1545efa9" args="(int max_concurrency, unsigned reserved_for_masters=1)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#ee3aacc1f41d5cbe0abcd46d1545efa9">initialize</a> (int max_concurrency, unsigned reserved_for_masters=1)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Overrides concurrency level and forces initialization of internal representation. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#1ffd655b8c6a3332c643492f7e2ca2b3">terminate</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#ea978e9aa5aef2020a07eaab2db96943">~task_arena</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#3e03db972382b95a00e4e407fb0b4490">is_active</a> () const </td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00350.html#c2c7227f336f33716b1cbc2158d8591c">enqueue</a> (const F &amp;f)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00350.html#dc825e5106a634d49fd8aac167a933d8">enqueue</a> (const F &amp;f, priority_t p)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00350.html#3e89b67f59a80673a1fafd1f0ea6005e">execute</a> (F &amp;f)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;typename F&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00350.html#9b8225dbd1621870ff7b9cd1787c9251">execute</a> (const F &amp;f)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#e5227be56124483d36f79ff82e7abf84">debug_wait_until_empty</a> ()</td></tr>
+
+<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="aed127db29e46fe5ffcea3d8edebacf0"></a><!-- doxytag: member="tbb::interface7::task_arena::current_slot" ref="aed127db29e46fe5ffcea3d8edebacf0" args="()" -->
+static int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00350.html#aed127db29e46fe5ffcea3d8edebacf0">current_slot</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the index, aka slot number, of the calling thread in its current arena. <br></td></tr>
+<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="727385730510905129ecbb067b126bb0"></a><!-- doxytag: member="tbb::interface7::task_arena::tbb::internal::task_scheduler_observer_v3" ref="727385730510905129ecbb067b126bb0" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>tbb::internal::task_scheduler_observer_v3</b></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Base class for methods that became static in TBB 3.0. 
+1-to-1 proxy representation class of scheduler's arena Constructors set up settings only, real construction is deferred till the first method invocation Destructor only removes one of the references to the inner arena representation. Final destruction happens when all the references (and the work) are gone. 
 <p>
-TBB's evolution caused the "this" argument for several methods to become obsolete. However, for backwards binary compatibility, the new methods need distinct names, otherwise the One Definition Rule would be broken. Hence the new methods are defined in this private base class, and then exposed in class task via using declarations. 
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="17dcd727a2072bae2207463a1e62643c"></a><!-- doxytag: member="tbb::interface7::task_arena::task_arena" ref="17dcd727a2072bae2207463a1e62643c" args="(int max_concurrency=automatic, unsigned reserved_for_masters=1)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">tbb::interface7::task_arena::task_arena           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>max_concurrency</em> = <code>automatic</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned&nbsp;</td>
+          <td class="paramname"> <em>reserved_for_masters</em> = <code>1</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
 <p>
+Creates <a class="el" href="a00350.html">task_arena</a> with certain concurrency limits. 
+<p>
+Sets up settings only, real construction is deferred till the first method invocation <ul>
+<li>max_concurrency specifies total number of slots in arena where threads work </li>
+<li>reserved_for_masters specifies number of slots to be used by master threads only. Value of 1 is default and reflects behavior of implicit arenas. </li>
+</ul>
+
+</div>
+</div><p>
+<a class="anchor" name="ea978e9aa5aef2020a07eaab2db96943"></a><!-- doxytag: member="tbb::interface7::task_arena::~task_arena" ref="ea978e9aa5aef2020a07eaab2db96943" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">tbb::interface7::task_arena::~task_arena           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes the reference to the internal arena representation, and destroys the external object. Not thread safe wrt concurrent invocations of other methods. 
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="e5227be56124483d36f79ff82e7abf84"></a><!-- doxytag: member="tbb::interface7::task_arena::debug_wait_until_empty" ref="e5227be56124483d36f79ff82e7abf84" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::debug_wait_until_empty           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Wait for all work in the arena to be completed Even submitted by other application threads Joins arena if/when possible (in the same way as <a class="el" href="a00350.html#3e89b67f59a80673a1fafd1f0ea6005e">execute()</a>) 
+</div>
+</div><p>
+<a class="anchor" name="dc825e5106a634d49fd8aac167a933d8"></a><!-- doxytag: member="tbb::interface7::task_arena::enqueue" ref="dc825e5106a634d49fd8aac167a933d8" args="(const F &amp;f, priority_t p)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::enqueue           </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">priority_t&nbsp;</td>
+          <td class="paramname"> <em>p</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Enqueues a task with priority p into the arena to process a functor f, and immediately returns. Does not require the calling thread to join the arena 
+</div>
+</div><p>
+<a class="anchor" name="c2c7227f336f33716b1cbc2158d8591c"></a><!-- doxytag: member="tbb::interface7::task_arena::enqueue" ref="c2c7227f336f33716b1cbc2158d8591c" args="(const F &amp;f)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::enqueue           </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Enqueues a task into the arena to process a functor, and immediately returns. Does not require the calling thread to join the arena 
+</div>
+</div><p>
+<a class="anchor" name="9b8225dbd1621870ff7b9cd1787c9251"></a><!-- doxytag: member="tbb::interface7::task_arena::execute" ref="9b8225dbd1621870ff7b9cd1787c9251" args="(const F &amp;f)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::execute           </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread 
+</div>
+</div><p>
+<a class="anchor" name="3e89b67f59a80673a1fafd1f0ea6005e"></a><!-- doxytag: member="tbb::interface7::task_arena::execute" ref="3e89b67f59a80673a1fafd1f0ea6005e" args="(F &amp;f)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::execute           </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread 
+</div>
+</div><p>
+<a class="anchor" name="3e03db972382b95a00e4e407fb0b4490"></a><!-- doxytag: member="tbb::interface7::task_arena::is_active" ref="3e03db972382b95a00e4e407fb0b4490" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::interface7::task_arena::is_active           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns true if the arena is active (initialized); false otherwise. The name was chosen to match a <a class="el" href="a00355.html">task_scheduler_init</a> method with the same semantics. 
+</div>
+</div><p>
+<a class="anchor" name="1ffd655b8c6a3332c643492f7e2ca2b3"></a><!-- doxytag: member="tbb::interface7::task_arena::terminate" ref="1ffd655b8c6a3332c643492f7e2ca2b3" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::terminate           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes the reference to the internal arena representation. Not thread safe wrt concurrent invocations of other methods. 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>task.h</ul>
+<li>task_arena.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

@@ -74,6 +74,16 @@
   #define __TBB_LAMBDAS_PRESENT ( _MSC_VER >= 1600 )
 #endif
 
+#if __INTEL_COMPILER
+  #define __TBB_RANGE_BASED_FOR_PRESENT ( _TBB_CPP0X && __INTEL_COMPILER >= 1300 )
+#elif __clang__
+  #define __TBB_RANGE_BASED_FOR_PRESENT ( __has_feature(__cxx_range_for))
+#elif __GNUC__
+  #define __TBB_RANGE_BASED_FOR_PRESENT ( _TBB_CPP0X && __TBB_GCC_VERSION >= 40500 )
+#elif _MSC_VER
+  #define __TBB_RANGE_BASED_FOR_PRESENT ( _MSC_VER >= 1700 )
+#endif
+
 #if __GNUC__ && __ANDROID__
   /** Android GCC does not support _thread keyword **/
   #define __TBB_THREAD_LOCAL_VARIABLES_PRESENT 0
@@ -91,6 +101,8 @@
   #define __TBB_PVALLOC_PRESENT 1
 #endif
 
+//MSVC 2013 is unable to properly resolve call to overloaded operator= with std::initilizer_list argument for std::pair list elements
+#define __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN     _MSC_FULL_VER <= 180020827 && _MSC_VER && !__INTEL_COMPILER
 //Implementation of C++11 std::placeholders in libstdc++ coming with gcc prior to 4.5 reveals bug in Intel Compiler 13 causing "multiple definition" link errors.
 #define __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN ((__INTEL_COMPILER == 1300 || __INTEL_COMPILER == 1310 )&& __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION < 40500)
 

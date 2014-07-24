@@ -74,6 +74,10 @@ class governor {
     static bool IsBlockingTermiantionInProgress;
 #endif
 
+#if __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+    static bool is_speculation_enabled;
+#endif
+
     //! Create key for thread-local storage and initialize RML.
     static void acquire_resources ();
 
@@ -142,6 +146,10 @@ public:
 #if __TBB_SURVIVE_THREAD_SWITCH
     static __cilk_tbb_retcode stack_op_handler( __cilk_tbb_stack_op op, void* );
 #endif /* __TBB_SURVIVE_THREAD_SWITCH */
+#if __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+    static bool speculation_enabled() { return is_speculation_enabled; }
+#endif
+
 }; // class governor
 
 } // namespace internal

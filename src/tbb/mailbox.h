@@ -111,8 +111,7 @@ protected:
 
 //! Class representing where mail is put.
 /** Padded to occupy a cache line. */
-class mail_outbox : unpadded_mail_outbox {
-    char pad[NFS_MaxLineSize-sizeof(unpadded_mail_outbox)];
+class mail_outbox : padded<unpadded_mail_outbox> {
 
     task_proxy* internal_pop() {
         task_proxy* const first = __TBB_load_relaxed(my_first);
@@ -152,6 +151,11 @@ public:
         // No release fence required for the next store, because there are no memory operations 
         // between the previous fully fenced atomic operation and the store.
         __TBB_store_relaxed(*link, &t);
+    }
+
+    //! Return true if mailbox is empty
+    bool empty() {
+        return __TBB_load_relaxed(my_first) == NULL;
     }
 
     //! Construct *this as a mailbox from zeroed memory.
@@ -205,6 +209,10 @@ public:
     //! Get next piece of mail, or NULL if mailbox is empty.
     task_proxy* pop() {
         return my_putter->internal_pop();
+    }
+    //! Return true if mailbox is empty
+    bool empty() {
+        return my_putter->empty();
     }
     //! Indicate whether thread that reads this mailbox is idle.
     /** Raises assertion failure if mailbox is redundantly marked as not idle. */

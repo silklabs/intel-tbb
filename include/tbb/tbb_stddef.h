@@ -34,7 +34,7 @@
 #define TBB_VERSION_MINOR 2
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 7001
+#define TBB_INTERFACE_VERSION 7002
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported

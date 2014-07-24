@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::simple_partitioner Class Reference</title>
+<title>tbb::flow::interface7::sequencer_node&lt; T, A &gt; Class Template Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,41 +21,89 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<a class="el" href="a00340.html">simple_partitioner</a></div>
-<h1>tbb::simple_partitioner Class Reference<br>
-<small>
-[<a class="el" href="a00441.html">Algorithms</a>]</small>
-</h1><!-- doxytag: class="tbb::simple_partitioner" -->A simple partitioner.  
+<a class="el" href="a00428.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00340.html">sequencer_node</a></div>
+<h1>tbb::flow::interface7::sequencer_node&lt; T, A &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::sequencer_node" --><!-- doxytag: inherits="tbb::flow::interface7::queue_node" -->Forwards messages in sequence order.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;partitioner.h&gt;</code>
+<code>#include &lt;flow_graph.h&gt;</code>
 <p>
-<a href="a00103.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<p>Inheritance diagram for tbb::flow::interface7::sequencer_node&lt; T, A &gt;:
+<p><center><img src="a00340.png" usemap="#tbb::flow::interface7::sequencer_node< T, A >_map" border="0" alt=""></center>
+<map name="tbb::flow::interface7::sequencer_node< T, A >_map">
+<area href="a00325.html" alt="tbb::flow::interface7::queue_node< T, A >" shape="rect" coords="280,112,550,136">
+<area href="a00275.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="280,56,550,80">
+<area href="a00301.html" alt="tbb::flow::interface7::graph_node" shape="rect" coords="0,0,270,24">
+<area href="a00333.html" alt="tbb::flow::interface7::receiver< T >" shape="rect" coords="280,0,550,24">
+<area href="a00339.html" alt="tbb::flow::interface7::sender< T >" shape="rect" coords="560,0,830,24">
+</map>
+<a href="a00077.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5f730f70d21df405adaebfc2018f59cd"></a><!-- doxytag: member="tbb::simple_partitioner::serial::interface6::start_for" ref="5f730f70d21df405adaebfc2018f59cd" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>serial::interface6::start_for</b></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="afb4e5c33a982daab261805d8ae1a868"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::input_type" ref="afb4e5c33a982daab261805d8ae1a868" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#afb4e5c33a982daab261805d8ae1a868">input_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a4cd0ffed4fad0d9af2c5efdaf586a8"></a><!-- doxytag: member="tbb::simple_partitioner::interface6::internal::start_for" ref="8a4cd0ffed4fad0d9af2c5efdaf586a8" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_for</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5824939635bf08c3118c38dea1a8fa0d"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::output_type" ref="5824939635bf08c3118c38dea1a8fa0d" args="" -->
+typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#5824939635bf08c3118c38dea1a8fa0d">output_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="86f0750233dd6c83b65fb684338fd09f"></a><!-- doxytag: member="tbb::simple_partitioner::interface6::internal::start_reduce" ref="86f0750233dd6c83b65fb684338fd09f" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>interface6::internal::start_reduce</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The output type of this sender. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2213497e4c387c6cd5d204200cd4ada6"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::predecessor_type" ref="2213497e4c387c6cd5d204200cd4ada6" args="" -->
+typedef <a class="el" href="a00339.html">sender</a>&lt; <a class="el" href="a00340.html#afb4e5c33a982daab261805d8ae1a868">input_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#2213497e4c387c6cd5d204200cd4ada6">predecessor_type</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="76d97ae6ad98db0acfc8ed8cb7c76705"></a><!-- doxytag: member="tbb::simple_partitioner::internal::start_scan" ref="76d97ae6ad98db0acfc8ed8cb7c76705" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::start_scan</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="aac7cd5d3fcce743922132d383efaf83"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::successor_type" ref="aac7cd5d3fcce743922132d383efaf83" args="" -->
+typedef <a class="el" href="a00333.html">receiver</a>&lt; <a class="el" href="a00340.html#5824939635bf08c3118c38dea1a8fa0d">output_type</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#aac7cd5d3fcce743922132d383efaf83">successor_type</a></td></tr>
 
-<tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><b>partition_type</b></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The successor type for this node. <br></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2"><a class="anchor" name="0d11a6f4ad8f0c5e77464c9927fd579b"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::sequencer_node" ref="0d11a6f4ad8f0c5e77464c9927fd579b" args="(graph &amp;g, const Sequencer &amp;s)" -->
+template&lt;typename Sequencer&gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00340.html#0d11a6f4ad8f0c5e77464c9927fd579b">sequencer_node</a> (<a class="el" href="a00300.html">graph</a> &amp;g, const Sequencer &amp;s)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="35e9cd1a0048b944fb07c39d527270ad"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::sequencer_node" ref="35e9cd1a0048b944fb07c39d527270ad" args="(const sequencer_node &amp;src)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#35e9cd1a0048b944fb07c39d527270ad">sequencer_node</a> (const <a class="el" href="a00340.html">sequencer_node</a> &amp;src)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Copy constructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="62436f331413c2cbc3d926776916b71b"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::~sequencer_node" ref="62436f331413c2cbc3d926776916b71b" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00340.html#62436f331413c2cbc3d926776916b71b">~sequencer_node</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a9bd11c554c242c2b7eaa1dfd9b0e0cc"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::set_name" ref="a9bd11c554c242c2b7eaa1dfd9b0e0cc" args="(const char *name)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>set_name</b> (const char *name)</td></tr>
+
+<tr><td colspan="2"><br><h2>Protected Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="82ef261ca8bf9d9c5745f6cbab4d317c"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::size_type" ref="82ef261ca8bf9d9c5745f6cbab4d317c" args="" -->
+typedef <a class="el" href="a00275.html">buffer_node</a>&lt; T, A <br>
+&gt;::size_type&nbsp;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0fccbff118c23be47203b1e3cc75d56"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::sequencer_operation" ref="f0fccbff118c23be47203b1e3cc75d56" args="" -->
+typedef <a class="el" href="a00275.html">buffer_node</a>&lt; T, A <br>
+&gt;::buffer_operation&nbsp;</td><td class="memItemRight" valign="bottom"><b>sequencer_operation</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ae4e96b081f307b139c6fc59c2ee7af9c137aa0b1e2dad2fcd03d7eade96968a"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::WAIT" ref="ae4e96b081f307b139c6fc59c2ee7af9c137aa0b1e2dad2fcd03d7eade96968a" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>WAIT</b> = 0</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ae4e96b081f307b139c6fc59c2ee7af98d1f2651f44d765b11c7b26590178eff"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::SUCCEEDED" ref="ae4e96b081f307b139c6fc59c2ee7af98d1f2651f44d765b11c7b26590178eff" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>SUCCEEDED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ae4e96b081f307b139c6fc59c2ee7af9892f0868b5dfae4336553bf3f113c7d8"></a><!-- doxytag: member="tbb::flow::interface7::sequencer_node::FAILED" ref="ae4e96b081f307b139c6fc59c2ee7af9892f0868b5dfae4336553bf3f113c7d8" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>FAILED</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><b>op_stat</b> { <b>WAIT</b> = 0, 
+<b>SUCCEEDED</b>, 
+<b>FAILED</b>
+ }</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-A simple partitioner. 
-<p>
-Divides the range until the range is not divisible. 
+<h3>template&lt;typename T, typename A = cache_aligned_allocator&lt;T&gt;&gt;<br>
+ class tbb::flow::interface7::sequencer_node&lt; T, A &gt;</h3>
+
+Forwards messages in sequence order. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>partitioner.h</ul>
+<li><a class="el" href="a00385.html">flow_graph.h</a></ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

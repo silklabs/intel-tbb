@@ -116,6 +116,27 @@ void ParallelTest() {
     }
 }
 
+#if __TBB_RANGE_BASED_FOR_PRESENT
+#include "test_range_based_for.h"
+#include <functional>
+void TestRangeBasedFor(){
+    using namespace range_based_for_support_tests;
+    REMARK("testing range based for loop compatibility \n");
+
+    int int_array[100] = {0};
+    const int sequence_length = Harness::array_length(int_array);
+
+    for (int i =0; i< sequence_length; ++i){
+        int_array[i]=i + 1;
+    }
+
+    const tbb::blocked_range<int*> r(int_array, Harness::end(int_array), 1);
+
+    ASSERT(range_based_for_accumulate<int>(r, std::plus<int>(), 0) == gauss_summ_of_int_sequence(sequence_length), "incorrect accumulated value generated via range based for ?");
+}
+#endif //if __TBB_RANGE_BASED_FOR_PRESENT
+//------------------------------------------------------------------------
+// Test driver
 #include "tbb/task_scheduler_init.h"
 
 int TestMain () {
@@ -124,5 +145,10 @@ int TestMain () {
         tbb::task_scheduler_init init(p);
         ParallelTest();
     }
+
+    #if __TBB_RANGE_BASED_FOR_PRESENT
+        TestRangeBasedFor();
+    #endif //if __TBB_RANGE_BASED_FOR_PRESENT
+
     return Harness::Done;
 }

@@ -3,10 +3,35 @@ The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
 
+Intel TBB 4.2 Update 2
+TBB_INTERFACE_VERSION == 7002
+
+Changes (w.r.t. Intel TBB 4.2 Update 1):
+
+- Enable C++11 features available in Microsoft* Visual Studio* 2013 Preview.
+- Added test for compatibility of TBB containers with C++11 range-based for loop.
+
+Changes affecting backward compatibility:
+
+- Internal layout changed for class limiter_node.
+
+Bugs fixed:
+
+- When building for Intel(R) Xeon Phi(tm) coprocessor, TBB programs
+    no longer require explicit linking with librt and libpthread.
+
+Open-source contributions integrated:
+
+- Fixes for ARM* processors by Steve Capper, Leif Lindholm
+    and Steven Noonan.
+- Support for Clang on Linux by Raf Schietekat.
+- Typo correction in scheduler.cpp by Julien Schueller.
+
+------------------------------------------------------------------------
 Intel TBB 4.2 Update 1
 TBB_INTERFACE_VERSION == 7001
 
-Changes (w.r.t. TBB 4.2):
+Changes (w.r.t. Intel TBB 4.2):
 
 - Added project files for Microsoft* Visual Studio* 2010.
 - Initial support of Microsoft* Visual Studio* 2013 Preview.

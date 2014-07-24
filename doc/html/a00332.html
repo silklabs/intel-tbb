@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
-<title>tbb::flow::interface7::receiver&lt; T &gt; Class Template Reference</title>
+<title>tbb::interface5::reader_writer_lock::scoped_lock_read Class Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -21,88 +21,39 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
 <div class="nav">
-<a class="el" href="a00427.html">tbb</a>::<b>flow</b>::<b>interface7</b>::<a class="el" href="a00332.html">receiver</a></div>
-<h1>tbb::flow::interface7::receiver&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="tbb::flow::interface7::receiver" -->Pure virtual template class that defines a receiver of messages of type T.  
+<a class="el" href="a00428.html">tbb</a>::<b>interface5</b>::<a class="el" href="a00330.html">reader_writer_lock</a>::<a class="el" href="a00332.html">scoped_lock_read</a></div>
+<h1>tbb::interface5::reader_writer_lock::scoped_lock_read Class Reference</h1><!-- doxytag: class="tbb::interface5::reader_writer_lock::scoped_lock_read" -->The scoped lock pattern for read locks.  
 <a href="#_details">More...</a>
 <p>
-<code>#include &lt;flow_graph.h&gt;</code>
+<code>#include &lt;reader_writer_lock.h&gt;</code>
 <p>
-<p>Inheritance diagram for tbb::flow::interface7::receiver&lt; T &gt;:
-<p><center><img src="a00332.png" usemap="#tbb::flow::interface7::receiver< T >_map" border="0" alt=""></center>
-<map name="tbb::flow::interface7::receiver< T >_map">
-<area href="a00273.html" alt="tbb::flow::interface7::broadcast_node< T >" shape="rect" coords="0,56,352,80">
-<area href="a00274.html" alt="tbb::flow::interface7::buffer_node< T, A >" shape="rect" coords="362,56,714,80">
-<area href="a00290.html" alt="tbb::flow::interface7::continue_receiver" shape="rect" coords="724,56,1076,80">
-<area href="a00303.html" alt="tbb::flow::interface7::limiter_node< T >" shape="rect" coords="1086,56,1438,80">
-<area href="a00323.html" alt="tbb::flow::interface7::priority_queue_node< T, Compare, A >" shape="rect" coords="181,112,533,136">
-<area href="a00324.html" alt="tbb::flow::interface7::queue_node< T, A >" shape="rect" coords="543,112,895,136">
-<area href="a00339.html" alt="tbb::flow::interface7::sequencer_node< T, A >" shape="rect" coords="543,168,895,192">
-</map>
-<a href="a00056.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<a href="a00118.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
-<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9b15498dad14085589a50d139369ad90"></a><!-- doxytag: member="tbb::flow::interface7::receiver::input_type" ref="9b15498dad14085589a50d139369ad90" args="" -->
-typedef T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#9b15498dad14085589a50d139369ad90">input_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The input type of this receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="502f8656f4819275190e36a913b41e52"></a><!-- doxytag: member="tbb::flow::interface7::receiver::predecessor_type" ref="502f8656f4819275190e36a913b41e52" args="" -->
-typedef <a class="el" href="a00338.html">sender</a>&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#502f8656f4819275190e36a913b41e52">predecessor_type</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The predecessor type for this node. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4f2c6601e2f774b1fc4b48cd46bd464"></a><!-- doxytag: member="tbb::flow::interface7::receiver::~receiver" ref="e4f2c6601e2f774b1fc4b48cd46bd464" args="()" -->
-virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#e4f2c6601e2f774b1fc4b48cd46bd464">~receiver</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="87ab0dc8f7216e6ba0f7acd6aec33064"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read::scoped_lock_read" ref="87ab0dc8f7216e6ba0f7acd6aec33064" args="(reader_writer_lock &amp;lock)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#87ab0dc8f7216e6ba0f7acd6aec33064">scoped_lock_read</a> (<a class="el" href="a00330.html">reader_writer_lock</a> &amp;lock)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="153e4eb01c9fbab55c5c348db597fc08"></a><!-- doxytag: member="tbb::flow::interface7::receiver::try_put" ref="153e4eb01c9fbab55c5c348db597fc08" args="(const T &amp;t)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#153e4eb01c9fbab55c5c348db597fc08">try_put</a> (const T &amp;t)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Construct with blocking attempt to acquire read lock on the passed-in lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bd21c5f3d555d64d1de8658e15bf4966"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read::~scoped_lock_read" ref="bd21c5f3d555d64d1de8658e15bf4966" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#bd21c5f3d555d64d1de8658e15bf4966">~scoped_lock_read</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Put an item to the receiver. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="40f37d37e9909550348df449fa881d7e"></a><!-- doxytag: member="tbb::flow::interface7::receiver::register_predecessor" ref="40f37d37e9909550348df449fa881d7e" args="(predecessor_type &amp;)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#40f37d37e9909550348df449fa881d7e">register_predecessor</a> (<a class="el" href="a00338.html">predecessor_type</a> &amp;)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor, releases the read lock. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f09e1817dddf97cc2182a573945eef91"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read::operator new" ref="f09e1817dddf97cc2182a573945eef91" args="(size_t s)" -->
+void *&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator new</b> (size_t s)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a predecessor to the node. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9276216344f107d3bb4cb3c23b654abb"></a><!-- doxytag: member="tbb::flow::interface7::receiver::remove_predecessor" ref="9276216344f107d3bb4cb3c23b654abb" args="(predecessor_type &amp;)" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#9276216344f107d3bb4cb3c23b654abb">remove_predecessor</a> (<a class="el" href="a00338.html">predecessor_type</a> &amp;)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a predecessor from the node. <br></td></tr>
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="eee93ae1718bbb916218c77b93459379"></a><!-- doxytag: member="tbb::flow::interface7::receiver::try_put_task" ref="eee93ae1718bbb916218c77b93459379" args="(const T &amp;t)=0" -->
-virtual <a class="el" href="a00348.html">task</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>try_put_task</b> (const T &amp;t)=0</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3cbe1d85d9ea0506925cbc1297596d20"></a><!-- doxytag: member="tbb::flow::interface7::receiver::reset_receiver" ref="3cbe1d85d9ea0506925cbc1297596d20" args="()=0" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><b>reset_receiver</b> ()=0</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a9d21f7e4330aa6057814ff6bed03e6f"></a><!-- doxytag: member="tbb::flow::interface7::receiver::is_continue_receiver" ref="a9d21f7e4330aa6057814ff6bed03e6f" args="()" -->
-virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>is_continue_receiver</b> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4f9e148ec33895c0d2669ff6820cf164"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read::operator delete" ref="4f9e148ec33895c0d2669ff6820cf164" args="(void *p)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><b>operator delete</b> (void *p)</td></tr>
 
 <tr><td colspan="2"><br><h2>Friends</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621bab40a858d214db69ef08d88b67c1"></a><!-- doxytag: member="tbb::flow::interface7::receiver::run_and_put_task" ref="621bab40a858d214db69ef08d88b67c1" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#621bab40a858d214db69ef08d88b67c1">run_and_put_task</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put item to successor; return task to run the successor if possible. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e4fa30d87bc0bfa80942f97a8d58f1bd"></a><!-- doxytag: member="tbb::flow::interface7::receiver::internal::broadcast_cache" ref="e4fa30d87bc0bfa80942f97a8d58f1bd" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::broadcast_cache</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="31ba00ea3e3e5a421b38840bd0dc2589"></a><!-- doxytag: member="tbb::flow::interface7::receiver::internal::round_robin_cache" ref="31ba00ea3e3e5a421b38840bd0dc2589" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::round_robin_cache</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3b6d13039c2a8c1e369e5790895b0088"></a><!-- doxytag: member="tbb::flow::interface7::receiver::limiter_node" ref="3b6d13039c2a8c1e369e5790895b0088" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00332.html#3b6d13039c2a8c1e369e5790895b0088">limiter_node</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">put receiver back in initial state <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7e5acd3345f7903a0265a1ef9f3b66bc"></a><!-- doxytag: member="tbb::flow::interface7::receiver::internal::successor_cache" ref="7e5acd3345f7903a0265a1ef9f3b66bc" args="" -->
-class&nbsp;</td><td class="memItemRight" valign="bottom"><b>internal::successor_cache</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38eb53abbe72543f5967c63aa95b403e"></a><!-- doxytag: member="tbb::interface5::reader_writer_lock::scoped_lock_read::reader_writer_lock" ref="38eb53abbe72543f5967c63aa95b403e" args="" -->
+class&nbsp;</td><td class="memItemRight" valign="bottom"><b>reader_writer_lock</b></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-<h3>template&lt;typename T&gt;<br>
- class tbb::flow::interface7::receiver&lt; T &gt;</h3>
-
-Pure virtual template class that defines a receiver of messages of type T. 
+The scoped lock pattern for read locks. 
 <p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="a00384.html">flow_graph.h</a></ul>
+<li>reader_writer_lock.h</ul>
 <hr>
 <p></p>
 Copyright &copy; 2005-2013 Intel Corporation.  All Rights Reserved.

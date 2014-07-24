@@ -578,31 +578,21 @@ FreeBlock *Backend::splitAlignedBlock(FreeBlock *fBlock, int num, size_t size,
     return fBlock;
 }
 
-void Backend::correctMaxRequestSize(size_t requestSize)
-{
-    // Find maximal requested size limited by getMaxBinnedSize()
-    if (requestSize < getMaxBinnedSize()) {
-        for (size_t oldMaxReq = maxRequestedSize;
-             requestSize > oldMaxReq && requestSize < getMaxBinnedSize(); ) {
-            size_t val = AtomicCompareExchange((intptr_t&)maxRequestedSize,
-                                               requestSize, oldMaxReq);
-            if (val == oldMaxReq)
-                break;
-            oldMaxReq = val;
-        }
-    }
-}
-
-inline size_t Backend::getMaxBinnedSize()
+inline size_t Backend::getMaxBinnedSize() const
 {
     return hugePages.wasObserved && !inUserPool()?
         maxBinned_HugePage : maxBinned_SmallPage;
 }
 
+inline bool Backend::MaxRequestComparator::operator()(size_t oldMaxReq,
+                                                      size_t requestSize) const
+{
+    return requestSize > oldMaxReq && requestSize < backend->getMaxBinnedSize();
+}
+
 FreeBlock *Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
                                  int *lockedBinsThreshold, int numOfLockedBins)
 {
-    size_t maxBinSize = 0;
     FreeBlock *block = (FreeBlock*)VALID_BLOCK_IN_BIN;
 
     // Another thread is modifying backend while we can't get the block.
@@ -628,7 +618,7 @@ FreeBlock *Backend::askMemFromOS(size_t blockSize, intptr_t startModifiedCnt,
         blockSize : alignUp(4*maxRequestedSize, 1024*1024);
     if (blockSize == slabSize || blockSize == numOfSlabAllocOnMiss*slabSize
         || regSz_sizeBased < maxBinned) {
-        // For this size of blocks, add NUM_OF_REG regions in bin,
+        // For this size of blocks, add NUM_OF_REG "advance" regions in bin,
         // and return one as a result.
         // TODO: add to bin first, because other threads can use them right away.
         // This must be done carefully, because blocks in bins can be released
@@ -717,7 +707,8 @@ FreeBlock *Backend::genericGetBlock(int num, size_t size, bool needAlignedBlock)
     // for more memory, if block is quite large.
     int lockedBinsThreshold = extMemPool->fixedPool || size>=maxBinned_SmallPage? 0 : 2;
 
-    correctMaxRequestSize(totalReqSize);
+    // Find maximal requested size limited by getMaxBinnedSize()
+    AtomicUpdate(maxRequestedSize, totalReqSize, MaxRequestComparator(this));
     scanCoalescQ(/*forceCoalescQDrop=*/false);
 
     for (;;) {
@@ -1096,6 +1087,8 @@ void Backend::startUseBlock(MemRegion *region, FreeBlock *fBlock, bool addToBin)
 
     if (addToBin) {
         unsigned targetBin = sizeToBin(blockSz);
+        // during adding advance regions, register bin for a largest block in region
+        advRegBins.registerBin(targetBin);
         if (!region->exact && toAlignedBin(fBlock, blockSz)) {
             freeAlignedBins.addBlock(targetBin, fBlock, blockSz, /*addToTail=*/false);
         } else {
@@ -1148,12 +1141,15 @@ FreeBlock *Backend::addNewRegion(size_t size, bool exact, bool addToBin)
         if (regionList->next)
             regionList->next->prev = regionList;
     }
-    // copy it here, as just after starting to use region it might be released
-    size_t blockSz = region->blockSz;
-
     startUseBlock(region, fBlock, addToBin);
     bkndSync.binsModified();
     return addToBin? (FreeBlock*)VALID_BLOCK_IN_BIN : fBlock;
+}
+
+bool Backend::bootstrap(ExtMemoryPool *extMemoryPool)
+{
+    extMemPool = extMemoryPool;
+    return addNewRegion(2*1024*1024, /*exact=*/false, /*addToBin=*/true);
 }
 
 void Backend::reset()
@@ -1166,6 +1162,7 @@ void Backend::reset()
 
     freeLargeBins.reset();
     freeAlignedBins.reset();
+    advRegBins.reset();
 
     for (curr = regionList; curr; curr = curr->next) {
         FreeBlock *fBlock = findBlockInRegion(curr, curr->blockSz);
@@ -1178,6 +1175,10 @@ bool Backend::destroy()
 {
     // no active threads are allowed in backend while destroy() called
     verify();
+
+    freeLargeBins.reset();
+    freeAlignedBins.reset();
+
     while (regionList) {
         MemRegion *helper = regionList->next;
         if (inUserPool())
@@ -1197,12 +1198,12 @@ bool Backend::clean()
     // We can have several blocks, occupaing whole region,
     // because such regions are added in advance (see askMemFromOS() and reset()),
     // and never used. Release them all.
-    for ( int i=freeAlignedBins.getMinNonemptyBin(0);
-          i<freeBinsNum; i=freeAlignedBins.getMinNonemptyBin(i+1) )
-        res |= freeAlignedBins.tryReleaseRegions(i, this);
-    for ( int i=freeLargeBins.getMinNonemptyBin(0);
-          i<freeBinsNum; i=freeLargeBins.getMinNonemptyBin(i+1) )
-        res |= freeLargeBins.tryReleaseRegions(i, this);
+    for (int i = advRegBins.getMinUsedBin(0); i != -1; i = advRegBins.getMinUsedBin(i+1)) {
+        if (i == freeAlignedBins.getMinNonemptyBin(i))
+            res |= freeAlignedBins.tryReleaseRegions(i, this);
+        if (i == freeLargeBins.getMinNonemptyBin(i))
+            res |= freeLargeBins.tryReleaseRegions(i, this);
+    }
     return res;
 }
 

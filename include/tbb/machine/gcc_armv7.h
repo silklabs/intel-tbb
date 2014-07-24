@@ -88,6 +88,7 @@ static inline int32_t __TBB_machine_cmpswp4(volatile void *ptr, int32_t value, i
         "ldrex      %1, [%3]\n"
         "mov        %0, #0\n"
         "cmp        %1, %4\n"
+        "it         eq\n"
         "strexeq    %0, %5, [%3]\n"
         : "=&r" (res), "=&r" (oldval), "+Qo" (*(volatile int32_t*)ptr)
         : "r" ((int32_t *)ptr), "Ir" (comparand), "r" (value)
@@ -118,7 +119,9 @@ static inline int64_t __TBB_machine_cmpswp8(volatile void *ptr, int64_t value, i
             "mov        %0, #0\n"
             "ldrexd     %1, %H1, [%3]\n"
             "cmp        %1, %4\n"
+            "it         eq\n"
             "cmpeq      %H1, %H4\n"
+            "it         eq\n"
             "strexdeq   %0, %5, %H5, [%3]"
         : "=&r" (res), "=&r" (oldval), "+Qo" (*(volatile int64_t*)ptr)
         : "r" ((int64_t *)ptr), "r" (comparand), "r" (value)

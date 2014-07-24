@@ -518,7 +518,7 @@ int TestMain () {
     REPORT("Known issue: exception handling tests are skipped.\n");
 #endif
 #if (HAVE_m128 || HAVE_m256) && __TBB_SSE_STACK_ALIGNMENT_BROKEN
-    REPORT("Known issue: stack alignment for SSE/AVX not tested.\n");
+    REPORT("Known issue: stack alignment for SIMD instructions not tested.\n");
 #endif
     return Harness::Done;
 }

@@ -194,6 +194,47 @@ void PrintRMLVersionInfo( void* arg, const char* server_info ) {
     PrintExtraVersionInfo( server_info, (const char *)arg );
 }
 
+#if __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
+    //! check for transaction support.
+#if _MSC_VER
+#include <intrin.h> // for __cpuid
+#endif
+bool cpu_has_speculation() {
+#if __TBB_TSX_AVAILABLE
+#if (__INTEL_COMPILER || __GNUC__ || _MSC_VER)
+    bool result = false;
+    const int hle_ebx_mask = 1<<4;
+#if _MSC_VER
+    int info[4] = {0,0,0,0};
+    const int EBX = 1;
+    __cpuidex(info, 7, 0);
+    result = (info[EBX] & hle_ebx_mask)!=0;
+#elif __GNUC__
+    int EBX = 0;
+    int32_t reg_eax = 7;
+    int32_t reg_ecx = 0;
+    __asm__ __volatile__ ( "movl %%ebx, %%esi\n"
+                           "cpuid\n"
+                           "movl %%ebx, %0\n"
+                           "movl %%esi, %%ebx\n"
+                           : "=a"(EBX) : "0" (reg_eax), "c" (reg_ecx) : "esi", 
+#if __TBB_x86_64
+                           "ebx",
+#endif
+                           "edx"
+                           );
+    result = (EBX & hle_ebx_mask)!=0 ;
+#endif
+    return result;
+#else
+    #error Speculation detection not enabled for compiler
+#endif /* __INTEL_COMPILER || __GNUC__ || _MSC_VER */
+#else  /* __TBB_TSX_AVAILABLE */
+    return false;
+#endif /* __TBB_TSX_AVAILABLE */
+}
+#endif  /* __TBB_CPF_BUILD || TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX */
+
 } // namespace internal
 
 extern "C" int TBB_runtime_interface_version() {
