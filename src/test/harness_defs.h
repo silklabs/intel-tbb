@@ -58,7 +58,7 @@
 //ICC has a bug in assumptions of the modifications made via atomic pointer
 #define __TBB_ICC_BUILTIN_ATOMICS_POINTER_ALIASING_BROKEN (TBB_USE_ICC_BUILTINS &&  __INTEL_COMPILER < 1400 && __INTEL_COMPILER > 1200)
 
-#if (_WIN32 && !__TBB_WIN8UI_SUPPORT) || (__linux__ && !__ANDROID__) || __FreeBSD_version >= 701000
+#if (_WIN32 && !__TBB_WIN8UI_SUPPORT) || (__linux__ && !__ANDROID__ && !__bg__) || __FreeBSD_version >= 701000
 #define __TBB_TEST_SKIP_AFFINITY 0
 #else
 #define __TBB_TEST_SKIP_AFFINITY 1

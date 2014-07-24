@@ -54,8 +54,7 @@ using std::memcmp;
     #pragma warning( disable: 4127 4310 )
 #endif
 
-#if __TBB_GCC_STRICT_ALIASING_BROKEN && __TBB_GCC_WARNING_SUPPRESSION_PRESENT
-    // Suppress crazy warnings about strict aliasing
+#if __TBB_GCC_STRICT_ALIASING_BROKEN
     #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 

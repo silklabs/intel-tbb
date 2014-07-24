@@ -56,9 +56,7 @@
 */
 
 /*
- *  imageio.c - This file deals with reading/writing image files
- *
- *  $Id: imageio.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ *  imageio.cpp - This file deals with reading/writing image files
  */ 
 
 /* For our puposes, we're interested only in the 3 byte per pixel 24 bit
@@ -95,7 +93,7 @@ int fakeimage(char * name, int * xres, int * yres, unsigned char ** imgdata) {
 int readimage(rawimage * img) {
   int rc;
   int xres, yres;
-  unsigned char * imgdata;
+  unsigned char * imgdata = NULL;
   char * name = img->name;
 
   if (strstr(name, ".ppm")) { 

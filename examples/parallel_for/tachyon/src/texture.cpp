@@ -56,9 +56,7 @@
 */
 
 /* 
- * texture.c - This file contains functions for implementing textures.
- * 
- *  $Id: texture.cpp,v 1.2 2007-02-22 17:54:16 Exp $ 
+ * texture.cpp - This file contains functions for implementing textures.
  */
 
 #include "machine.h"

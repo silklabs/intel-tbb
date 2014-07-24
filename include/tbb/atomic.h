@@ -541,6 +541,12 @@ atomic<T> make_atomic(T t) {
 using interface6::make_atomic;
 
 namespace internal {
+template<memory_semantics M, typename T >
+void swap(atomic<T> & lhs, atomic<T> & rhs){
+    T tmp = load<M>(lhs);
+    store<M>(lhs,load<M>(rhs));
+    store<M>(rhs,tmp);
+}
 
 // only to aid in the gradual conversion of ordinary variables to proper atomics
 template<typename T>

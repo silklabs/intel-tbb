@@ -56,7 +56,6 @@
 #include "../atomic.h"
 #include "../tbb_exception.h"
 #include "../tbb_allocator.h"
-#include "tbb/atomic.h"
 
 #if __TBB_INITIALIZER_LISTS_PRESENT
     #include <initializer_list>

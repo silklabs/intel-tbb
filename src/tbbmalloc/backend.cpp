@@ -100,31 +100,40 @@ void HugePagesStatus::doPrintStatus(bool state, const char *stateName)
             state? "" : "not ", stateName);
 }
 
-void *Backend::getRawMem(size_t &size) const
+void *Backend::allocRawMem(size_t &size) const
 {
+    void *res = NULL;
+    size_t allocSize;
+
     if (extMemPool->userPool()) {
-        size = alignUpGeneric(size, extMemPool->granularity);
-        return (*extMemPool->rawAlloc)(extMemPool->poolId, size);
-    }
-    // try to get them at 1st allocation and still use, if successful
-    // if 1st try is unsuccessful, no more trying
-    if (FencedLoad(hugePages.enabled)) {
-        size_t hugeSize = alignUpGeneric(size, hugePages.getSize());
-        void *res = getRawMemory(hugeSize, /*hugePages=*/true);
-        hugePages.registerAllocation(res);
-        if (res) {
-            size = hugeSize;
-            AtomicAdd((intptr_t&)totalMemSize, size);
-            return res;
+        // memory from fixed pool is asked once and only once
+        if (!extMemPool->fixedPool || !rawMemReceived) {
+            allocSize = alignUpGeneric(size, extMemPool->granularity);
+            res = (*extMemPool->rawAlloc)(extMemPool->poolId, allocSize);
+            if (extMemPool->fixedPool)
+                const_cast<bool&>(rawMemReceived) = true;
+        }
+    } else {
+        // try to get them at 1st allocation and still use, if successful
+        // if 1st try is unsuccessful, no more trying
+        if (FencedLoad(hugePages.enabled)) {
+            allocSize = alignUpGeneric(size, hugePages.getSize());
+            res = getRawMemory(allocSize, /*hugePages=*/true);
+            hugePages.registerAllocation(res);
+        }
+
+        if ( !res ) {
+            allocSize = alignUpGeneric(size, extMemPool->granularity);
+            res = getRawMemory(allocSize, /*hugePages=*/false);
         }
     }
-    size_t granSize = alignUpGeneric(size, extMemPool->granularity);
-    if (void *res = getRawMemory(granSize, /*hugePages=*/false)) {
-        size = granSize;
+
+    if ( res ) {
+        size = allocSize;
         AtomicAdd((intptr_t&)totalMemSize, size);
-        return res;
     }
-    return NULL;
+
+    return res;
 }
 
 void Backend::freeRawMem(void *object, size_t size) const
@@ -1111,13 +1120,17 @@ FreeBlock *Backend::addNewRegion(size_t size, bool exact, bool addToBin)
     // "exact" means that not less than rawSize for block inside the region.
     // Reserve space for region header, worst case alignment
     // and last block mark.
-    size_t rawSize = exact?
+    const size_t requestSize = exact?
         size + sizeof(MemRegion) + largeObjectAlignment
              +  FreeBlock::minBlockSize + sizeof(LastFreeBlock)
         : size;
 
-    MemRegion *region = (MemRegion*)getRawMem(rawSize);
-    if (!region) return 0;
+    size_t rawSize = requestSize;
+    MemRegion *region = (MemRegion*)allocRawMem(rawSize);
+    if (!region) {
+        MALLOC_ASSERT(rawSize==requestSize, "getRawMem has not allocated memory but changed the allocated size.");
+        return 0;
+    }
     if (rawSize < sizeof(MemRegion)) {
         if (!extMemPool->fixedPool)
             freeRawMem(region, rawSize);

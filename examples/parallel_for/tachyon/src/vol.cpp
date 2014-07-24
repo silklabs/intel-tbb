@@ -56,13 +56,10 @@
 */
 
 /*
- * vol.c - Volume rendering helper routines etc.
- *
- *
- *  $Id: vol.cpp,v 1.3 2007-02-22 18:17:51 amalakho Exp $
+ * vol.cpp - Volume rendering helper routines etc.
  */
 
-#include<stdio.h>
+#include <stdio.h>
 #include "machine.h"
 #include "types.h"
 #include "macros.h"
@@ -290,7 +287,7 @@ color scalar_volume_texture(vector * hit, texture * tex, ray * ry) {
 
 void LoadVol(scalarvol * vol) { 
   FILE * dfile;
-  int status;
+  size_t status;
   char msgtxt[2048];
  
   dfile=fopen(vol->name, "r");

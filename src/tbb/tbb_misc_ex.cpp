@@ -62,7 +62,7 @@
 namespace tbb {
 namespace internal {
 
-#if __TBB_OS_AFFINITY_SYSCALL_PRESENT
+#if __TBB_USE_OS_AFFINITY_SYSCALL
 
 static void set_affinity_mask( size_t maskSize, const basic_mask_t* threadMask ) {
 #if __linux__

@@ -56,9 +56,7 @@
 */
 
 /*
- * extvol.c - Volume rendering helper routines etc.
- *
- *  $Id: extvol.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * extvol.cpp - Volume rendering helper routines etc.
  */
 
 #include<stdio.h>

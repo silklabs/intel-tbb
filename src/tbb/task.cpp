@@ -86,6 +86,12 @@ task& allocate_root_with_context_proxy::allocate( size_t size ) const {
         else
             my_context.bind_to( s );
     }
+#if __TBB_FP_CONTEXT
+    if ( __TBB_load_relaxed(my_context.my_kind) == task_group_context::isolated &&
+            !(my_context.my_version_and_traits & task_group_context::fp_settings) )
+        // When inheriting FPU settings we just copy the FPU settings (do not create them). So we do not inherit fp_settings traits.
+        task_group_context_accessor(my_context).my_cpu_ctl_env = task_group_context_accessor(*s->my_arena->my_default_ctx).my_cpu_ctl_env;
+#endif
     ITT_STACK_CREATE(my_context.itt_caller);
     return t;
 }
@@ -256,8 +262,8 @@ void task::note_affinity( affinity_id ) {
 #if __TBB_TASK_GROUP_CONTEXT
 void task::change_group ( task_group_context& ctx ) {
     prefix().context = &ctx;
+    internal::generic_scheduler* s = governor::local_scheduler();
     if ( __TBB_load_relaxed(ctx.my_kind) == task_group_context::binding_required ) {
-        internal::generic_scheduler* s = governor::local_scheduler();
         // If we are in the outermost task dispatch loop of a master thread, then
         // there is nothing to bind this context to, and we skip the binding part
         // treating the context as isolated.
@@ -266,6 +272,12 @@ void task::change_group ( task_group_context& ctx ) {
         else
             ctx.bind_to( s );
     }
+#if __TBB_FP_CONTEXT
+    if ( __TBB_load_relaxed(ctx.my_kind) == task_group_context::isolated &&
+            !(ctx.my_version_and_traits & task_group_context::fp_settings) )
+        // When inheriting FPU settings we just copy the FPU settings (do not create them). So we do not inherit fp_settings traits.
+        task_group_context_accessor(ctx).my_cpu_ctl_env = task_group_context_accessor(*s->my_arena->my_default_ctx).my_cpu_ctl_env;
+#endif
     ITT_STACK_CREATE(ctx.itt_caller);
 }
 #endif /* __TBB_TASK_GROUP_CONTEXT */

@@ -33,7 +33,7 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00222.html">tbb</a></li><li class="navelem"><a class="el" href="a00046.html">concurrent_vector</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><a class="el" href="a00046.html">concurrent_vector</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -42,9 +42,9 @@
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="a00257.html">List of all members</a>  </div>
+<a href="a00268.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::concurrent_vector&lt; T, A &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00235.html">Containers</a></div></div>  </div>
+<div class="title">tbb::concurrent_vector&lt; T, A &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00246.html">Containers</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -181,11 +181,16 @@ template&lt;class M &gt; </td></tr>
 <tr class="separator:a9dae5d9368fd852426552b21d67beb86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa11fc991cda82cf93789fce31b37a16c"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00046.html#aa11fc991cda82cf93789fce31b37a16c">grow_by</a> (size_type delta, const_reference t)</td></tr>
 <tr class="separator:aa11fc991cda82cf93789fce31b37a16c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfd74483ff523213b78f44fb914c8eb4"><td class="memTemplParams" colspan="2">template&lt;typename I &gt; </td></tr>
+<tr class="memitem:acfd74483ff523213b78f44fb914c8eb4"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00046.html#acfd74483ff523213b78f44fb914c8eb4">grow_by</a> (I first, I last)</td></tr>
+<tr class="separator:acfd74483ff523213b78f44fb914c8eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af52b603dd76a99dffe5760f0db4747f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00046.html#af52b603dd76a99dffe5760f0db4747f1">grow_to_at_least</a> (size_type n)</td></tr>
 <tr class="memdesc:af52b603dd76a99dffe5760f0db4747f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append minimal sequence of elements such that <a class="el" href="a00046.html#a803268c16e3688ff4681251947d257c7" title="Return size of vector. It may include elements under construction. ">size()</a>&gt;=n.  <a href="#af52b603dd76a99dffe5760f0db4747f1">More...</a><br/></td></tr>
 <tr class="separator:af52b603dd76a99dffe5760f0db4747f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9ef9895e88f9bf036b379035c18f035"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00046.html#ae9ef9895e88f9bf036b379035c18f035">grow_to_at_least</a> (size_type n)</td></tr>
 <tr class="separator:ae9ef9895e88f9bf036b379035c18f035"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a422d9689ed72a5ef2b6b72f28e4143a2"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00046.html#a422d9689ed72a5ef2b6b72f28e4143a2">grow_to_at_least</a> (size_type n, const_reference t)</td></tr>
+<tr class="separator:a422d9689ed72a5ef2b6b72f28e4143a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a5c85a9e6ff82e15c18da47a95b518f"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00046.html#a4a5c85a9e6ff82e15c18da47a95b518f">push_back</a> (const_reference item) iterator push_back(const _reference item)</td></tr>
 <tr class="memdesc:a4a5c85a9e6ff82e15c18da47a95b518f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Push item.  <a href="#a4a5c85a9e6ff82e15c18da47a95b518f">More...</a><br/></td></tr>
 <tr class="separator:a4a5c85a9e6ff82e15c18da47a95b518f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -343,6 +348,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a000
 const <br class="typebreak"/>
 internal::concurrent_vector_base_v3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>internal_vector_base</b> () const </td></tr>
 <tr class="separator:a675f1b62a651d350eb0d778a271e31e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96e2626d160361d8c6f4193ca0c7a4dd"><td class="memTemplParams" colspan="2"><a class="anchor" id="a96e2626d160361d8c6f4193ca0c7a4dd"></a>
+template&lt;typename I &gt; </td></tr>
+<tr class="memitem:a96e2626d160361d8c6f4193ca0c7a4dd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copy_range</b> (void *dst, const void *p_type_erased_iterator, size_type n)</td></tr>
+<tr class="separator:a96e2626d160361d8c6f4193ca0c7a4dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -561,6 +570,45 @@ template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="acfd74483ff523213b78f44fb914c8eb4"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename I &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="a00046.html">tbb::concurrent_vector</a>&lt; T, A &gt;::grow_by </td>
+          <td>(</td>
+          <td class="paramtype">I&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">I&#160;</td>
+          <td class="paramname"><em>last</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns iterator pointing to the first new element. </p>
+
+</div>
+</div>
 <a class="anchor" id="af52b603dd76a99dffe5760f0db4747f1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -614,6 +662,43 @@ template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>The new elements are default constructed. Blocks until all elements in range [0..n) are allocated. May return while other elements are being constructed by other threads. Returns iterator that points to beginning of appended sequence. If no elements were appended, returns iterator pointing to nth element. </p>
+
+</div>
+</div>
+<a class="anchor" id="a422d9689ed72a5ef2b6b72f28e4143a2"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, class A = cache_aligned_allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="a00046.html">tbb::concurrent_vector</a>&lt; T, A &gt;::grow_to_at_least </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_reference&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Analogous to <a class="el" href="a00046.html#af52b603dd76a99dffe5760f0db4747f1" title="Append minimal sequence of elements such that size()&gt;=n. ">grow_to_at_least( size_type n )</a> with exception that the new elements are initialized by copying of t instead of default construction. </p>
 
 </div>
 </div>

@@ -27,16 +27,15 @@
 */
 
 
-#if (_WIN32 || _WIN64) && !(defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_APP)
+#if (_WIN32 || _WIN64)
 // As the test is intentionally build with /EHs-, suppress multiple VS2005's 
 // warnings like C4530: C++ exception handler used, but unwind semantics are not enabled
-// The test is skipped under Win8/UI, so do nothing.
 #if defined(_MSC_VER) && !__INTEL_COMPILER
 /* ICC 10.1 and 11.0 generates code that uses std::_Raise_handler,
    but it's only defined in libcpmt(d), which the test doesn't linked with.
  */
 #undef  _HAS_EXCEPTIONS
-#define _HAS_EXCEPTIONS 0
+#define _HAS_EXCEPTIONS _CPPUNWIND
 #endif
 // to use strdup and putenv w/o warnings
 #define _CRT_NONSTDC_NO_DEPRECATE 1
@@ -80,6 +79,10 @@ void __libc_free(void *ptr);
 void *__libc_memalign(size_t alignment, size_t size);
 void *__libc_pvalloc(size_t size);
 void *__libc_valloc(size_t size);
+#if __ANDROID__
+#define malloc_usable_size(p) dlmalloc_usable_size(p)
+size_t dlmalloc_usable_size(const void *ptr);
+#endif
 }
 
 #elif _WIN32
@@ -185,7 +188,9 @@ const uint32_t minLargeObjectSize = fittingSize5 + 1;
 static bool scalableMallocLargeBlock(void *object, size_t size)
 {
     ASSERT(size >= minLargeObjectSize, NULL);
-#if MALLOC_REPLACEMENT_AVAILABLE == 2
+#if MALLOC_REPLACEMENT_AVAILABLE == 1
+    ASSERT(malloc_usable_size(object) >= size, NULL);
+#elif MALLOC_REPLACEMENT_AVAILABLE == 2
     // Check that _msize works correctly
     ASSERT(_msize(object) >= size, NULL);
     ASSERT(_aligned_msize(object,16,0) >= size, NULL);

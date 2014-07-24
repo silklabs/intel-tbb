@@ -33,7 +33,7 @@
 #error Do not #include this internal file directly; use public TBB headers instead.
 #endif
 
-#include "tbb/internal/_flow_graph_types_impl.h"
+#include "_flow_graph_types_impl.h"
 
 namespace internal {
 

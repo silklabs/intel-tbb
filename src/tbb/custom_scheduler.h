@@ -146,7 +146,6 @@ public:
 //------------------------------------------------------------------------
 // custom_scheduler methods
 //------------------------------------------------------------------------
-
 template<typename SchedulerTraits>
 task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count,
                                                                 bool return_if_no_work ) {
@@ -400,6 +399,17 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
         }
 #endif /* __TBB_TASK_PRIORITY */
     }
+
+#if __TBB_FP_CONTEXT
+    cpu_ctl_env guard_cpu_ctl_env, curr_cpu_ctl_env;
+    guard_cpu_ctl_env.get_env();
+    curr_cpu_ctl_env = guard_cpu_ctl_env;
+    if ( t && task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env != curr_cpu_ctl_env ) {
+        curr_cpu_ctl_env = task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env;
+        curr_cpu_ctl_env.set_env();
+    }
+#endif
+
 #if __TBB_TASK_GROUP_CONTEXT && TBB_USE_EXCEPTIONS
     // Infinite safeguard EH loop
     for (;;) {
@@ -410,7 +420,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
     // All exit points from the dispatch loop are located in its immediate scope.
     for(;;) {
         // Middle loop retrieves tasks from the local task pool.
-        do {
+        for(;;) {
             // Inner loop evaluates tasks coming from nesting loops and those returned
             // by just executed tasks (bypassing spawn or enqueue calls).
             while(t) {
@@ -418,6 +428,7 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
                 __TBB_ASSERT(!is_proxy(*t),"unexpected proxy");
                 __TBB_ASSERT( t->prefix().owner, NULL );
                 assert_task_valid(*t);
+                assert_context_valid(t->prefix().context);
 #if __TBB_TASK_GROUP_CONTEXT && TBB_USE_ASSERT
                 if ( !t->prefix().context->my_cancellation_requested )
 #endif
@@ -548,7 +559,16 @@ void custom_scheduler<SchedulerTraits>::local_wait_for_all( task& parent, task* 
             }
             __TBB_ASSERT(!t || !is_proxy(*t),"unexpected proxy");
             assert_task_pool_valid();
-        } while( t ); // end of local task pool retrieval loop
+
+            if ( !t ) break;
+
+#if __TBB_FP_CONTEXT
+            if ( task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env != curr_cpu_ctl_env ) {
+                curr_cpu_ctl_env = task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env;
+                curr_cpu_ctl_env.set_env();
+            }
+#endif
+        }; // end of local task pool retrieval loop
 
 #if __TBB_TASK_PRIORITY
 stealing_ground:
@@ -562,6 +582,11 @@ stealing_ground:
 #endif
         if ( quit_point == all_local_work_done ) {
             __TBB_ASSERT( !in_arena() && is_quiescent_local_task_pool_reset(), NULL );
+            __TBB_ASSERT( !worker_outermost_level(), NULL );
+#if __TBB_FP_CONTEXT
+            if ( curr_cpu_ctl_env != guard_cpu_ctl_env )
+                guard_cpu_ctl_env.set_env();
+#endif
             my_innermost_running_task = my_dispatching_task;
             my_dispatching_task = old_dispatching_task;
 #if __TBB_TASK_PRIORITY
@@ -577,11 +602,23 @@ stealing_ground:
         // Dispatching task pointer is NULL *iff* this is a worker thread in its outermost
         // dispatch loop (i.e. its execution stack is empty). In this case it should exit it
         // either when there is no more work in the current arena, or when revoked by the market.
+        
         t = receive_or_steal_task( parent.prefix().ref_count, worker_outermost_level() );
         if ( !t )
             goto done;
         __TBB_ASSERT(!is_proxy(*t),"unexpected proxy");
-    } // end of infinite stealing loop
+
+        // The user can capture another the FPU settings to the context so the
+        // cached data in the helper can be out-of-date and we cannot do fast
+        // check.
+        assert_context_valid(t->prefix().context);
+#if __TBB_FP_CONTEXT
+        if ( task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env != curr_cpu_ctl_env ) {
+            curr_cpu_ctl_env = task_group_context_accessor(*t->prefix().context).my_cpu_ctl_env;
+            curr_cpu_ctl_env.set_env();
+        }
+#endif /* __TBB_TASK_GROUP_FP_SETTINGS */
+} // end of infinite stealing loop
 #if __TBB_TASK_GROUP_CONTEXT && TBB_USE_EXCEPTIONS
     __TBB_ASSERT( false, "Must never get here" );
     } // end of try-block
@@ -608,6 +645,11 @@ stealing_ground:
     __TBB_ASSERT( false, "Must never get here too" );
 #endif /* __TBB_TASK_GROUP_CONTEXT && TBB_USE_EXCEPTIONS */
 done:
+#if __TBB_FP_CONTEXT
+    // Restore FPU settings only for master and nested dispatch loops on workes.
+    if ( !worker_outermost_level() && curr_cpu_ctl_env != guard_cpu_ctl_env )
+        guard_cpu_ctl_env.set_env();
+#endif /* __TBB_TASK_GROUP_FP_SETTINGS */
     my_innermost_running_task = my_dispatching_task;
     my_dispatching_task = old_dispatching_task;
 #if __TBB_TASK_PRIORITY

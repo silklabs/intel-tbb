@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
             }
 
             { // test two-input and_gate: 00, 01, 10, 11
-                and_gate<two_input> a(g);
+                and_gate<2> a(g);
                 toggle input0(g);
                 toggle input1(g);
                 led output(g, "OUTPUT", false);
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
             }
 
             { // test three-input or_gate: 000, 001, 010, 100, 011, 101, 110, 111
-                or_gate<three_input> o(g);
+                or_gate<3> o(g);
                 toggle input0(g);
                 toggle input1(g);
                 toggle input2(g);
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
             }
 
             { // test two-input xor_gate: 00, 01, 10, 11
-                xor_gate<two_input> x(g);
+                xor_gate<2> x(g);
                 toggle input0(g);
                 toggle input1(g);
                 led output(g, "OUTPUT", false);
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
 
 
             { // test two-input nor_gate: 00, 01, 10, 11
-                nor_gate<two_input> n(g);
+                nor_gate<2> n(g);
                 toggle input0(g);
                 toggle input1(g);
                 led output(g, "OUTPUT", false);
@@ -243,10 +243,10 @@ int main(int argc, char *argv[]) {
             { // test steady_signal and digit
                 steady_signal input0(g, high);
                 steady_signal input1(g, low);
-                and_gate<two_input> a(g);
-                or_gate<two_input> o(g);
-                xor_gate<two_input> x(g);
-                nor_gate<two_input> n(g);
+                and_gate<2> a(g);
+                or_gate<2> o(g);
+                xor_gate<2> x(g);
+                nor_gate<2> n(g);
                 digit output(g, "OUTPUT", false);
                 
                 make_edge(input0.get_out(), a.get_in(0));

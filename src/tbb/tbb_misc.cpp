@@ -144,6 +144,7 @@ void throw_exception_v4 ( exception_id eid ) {
     case eid_reservation_length_error: DO_THROW( length_error, ("reservation size exceeds permitted max size") );
     case eid_invalid_key: DO_THROW( out_of_range, ("invalid key") );
     case eid_user_abort: DO_THROW( user_abort, () );
+    case eid_bad_tagged_msg_cast: DO_THROW( runtime_error, ("Illegal tagged_msg cast") );
 #if __TBB_SUPPORTS_WORKERS_WAITING_IN_TERMINATE
     case eid_blocking_sch_init: DO_THROW( runtime_error, ("Nesting of blocking termiantion is impossible") );
 #endif

@@ -35,11 +35,11 @@ class one_bit_adder {
     broadcast_node<signal_t> A_port;
     broadcast_node<signal_t> B_port;
     broadcast_node<signal_t> CI_port;
-    xor_gate<two_input> FirstXOR;
-    xor_gate<two_input> SecondXOR;
-    and_gate<two_input> FirstAND;
-    and_gate<two_input> SecondAND;
-    or_gate<two_input> FirstOR;
+    xor_gate<2> FirstXOR;
+    xor_gate<2> SecondXOR;
+    and_gate<2> FirstAND;
+    and_gate<2> SecondAND;
+    or_gate<2> FirstOR;
     graph& my_graph;
 public:
     one_bit_adder(graph& g) : my_graph(g), A_port(g), B_port(g), CI_port(g), FirstXOR(g), 

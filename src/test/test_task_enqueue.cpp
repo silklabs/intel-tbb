@@ -128,8 +128,9 @@ public:
             }
             else if ( overall_progress > 2 ) {
                 ++uneven_progress_count;
-                // The threshold of 16 is twice bigger than what was observed on a 8-core machine with oversubscription.
-                ASSERT(uneven_progress_count < 16, "some enqueued tasks seem stalling; no simultaneous progress, or the machine is oversubscribed?");
+                // The threshold of 32 is 4x bigger than what was observed on a 8-core machine with oversubscription.
+                ASSERT_WARNING(uneven_progress_count < 32,
+                    "some enqueued tasks seem stalling; no simultaneous progress, or the machine is oversubscribed? Investigate if repeated");
             }
         } while( !completed );
     }
@@ -217,6 +218,7 @@ public:
     void Execute() {
         while ( !CanStart )
             __TBB_Yield();
+        Harness::Sleep(10); // increases probability of the bug
         tbb::task::enqueue( *new( tbb::task::allocate_root() ) CarrierTask(m_taskToSpawn) );
     }
 };
@@ -254,10 +256,10 @@ void TestCascadedEnqueue () {
             }
             for ( j = 0; j < numThreads; ++j )
                 Finished[j] = false;
-            REMARK("%02d threads; Iteration %03d\r", numThreads, i);
+            REMARK("\r%02d threads; Iteration %03d", numThreads, i);
         }
     }
-    REMARK( "                                 \r" );
+    REMARK( "\r                                 \r" );
 }
 
 class DummyTask : public tbb::task {
@@ -325,6 +327,7 @@ void TestDequeueByMaster () {
 
 static const int NUM_TASKS    = 4;
 static const size_t NUM_REPEATS = TBB_USE_DEBUG ? 50000 : 100000;
+static tbb::task_group_context persistent_context(tbb::task_group_context::isolated);
 
 struct Functor : NoAssign
 {
@@ -333,7 +336,9 @@ struct Functor : NoAssign
     void operator()(const tbb::blocked_range<int>& r) const 
     {
         ASSERT(r.size() == 1, NULL);
-        tbb::task *t = new(tbb::task::allocate_root()) tbb::empty_task();
+        // allocate_root() uses current context of parallel_for which is destroyed when it finishes.
+        // But enqueued tasks can outlive parallel_for execution. Thus, use a persistent context.
+        tbb::task *t = new(tbb::task::allocate_root(persistent_context)) tbb::empty_task();
         tbb::task::enqueue(*t); // ensure no missing wake-ups
         my_barrier.timed_wait(10, "Attention: poorly reproducible event, if seen stress testing required" );
     }

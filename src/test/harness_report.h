@@ -175,4 +175,9 @@ namespace Harness {
 /** On heterogeneous platforms redirects its output to the host side. **/
 #define REPORT TRACENL
 
+//! printf style reporting macro
+/** Produces output only when invoked first time.
+    Only one instance of this macro is allowed per source code line. **/
+#define REPORT_ONCE (Harness::internal::not_the_first_call<__LINE__>()) ? (void)0 : TRACENL
+
 #endif /* tbb_tests_harness_report_H */

@@ -56,9 +56,7 @@
 */
 
 /*
- * camera.c - This file contains all of the functions for doing camera work.
- *
- *  $Id: camera.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * camera.cpp - This file contains all of the functions for doing camera work.
  */
 
 #include "machine.h"

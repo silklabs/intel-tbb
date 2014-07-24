@@ -56,10 +56,7 @@
 */
 
 /*
- * global.c - any/all global data items etc should be in this file
- *
- *  $Id: global.cpp,v 1.2 2007-02-22 17:54:15 Exp $
- *
+ * global.cpp - any/all global data items etc should be in this file
  */
 
 #include "types.h"

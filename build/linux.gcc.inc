@@ -56,11 +56,6 @@ ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[2-9]|[5-9])"))
     OPENMP_FLAG = -fopenmp
 endif
 
-# gcc 4.4 is particularly zealous about strict aliasing rules; suppress it for library builds
-ifneq (,$(shell gcc -dumpversion | egrep  "^4\.4"))
-    WARNING_SUPPRESS += -Wno-strict-aliasing
-endif
-
 # gcc 4.8 and later support TSX intrinsics, but require command line switch to enable them
 ifneq (,$(shell gcc -dumpversion | egrep  "^4\.[8-9]"))
     ENABLE_RTM += -mrtm

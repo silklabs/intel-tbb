@@ -56,9 +56,7 @@
 */
 
 /*
- * imap.c - This file contains code for doing image map type things.  
- *
- *  $Id: imap.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * imap.cpp - This file contains code for doing image map type things.  
  */
 
 #include "machine.h"
@@ -139,7 +137,8 @@ color ImageMap(rawimage * image, flt u, flt v) {
 
 rawimage * AllocateImage(char * filename) { 
   rawimage * newimage = NULL;
-  int i, len, intable;
+  int i, intable;
+  size_t len;
 
   intable=0;
   if (numimages!=0) {

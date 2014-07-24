@@ -65,7 +65,17 @@
 
 #if defined( _WIN32 )
   #include <windows.h>
-  typedef DWORD timer;
+  #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+    #define WIN8UI_EXAMPLE 1
+    #include <thread>
+    typedef ULONGLONG timer;
+    #ifdef GetTickCount
+      #undef GetTickCount 
+    #endif
+    #define GetTickCount GetTickCount64
+  #else
+    typedef DWORD timer;
+  #endif
 #else
   #include <sys/time.h>
   #include <unistd.h>

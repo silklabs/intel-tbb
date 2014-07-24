@@ -56,9 +56,7 @@
 */
 
 /* 
- * parse.c - an UltraLame (tm) parser for simple data files...
- *
- *  $Id: parse.cpp,v 1.3 2007-02-22 17:54:15 Exp $
+ * parse.cpp - an UltraLame (tm) parser for simple data files...
  */
 
 // Try preventing lots of GCC warnings about ignored results of fscanf etc.
@@ -95,7 +93,7 @@ static int numobjectsparsed;    /* total number of objects parsed so far   */
 static color scenebackcol;   /* scene background color                  */
 
 static int stringcmp(const char * a, const char * b) {
-  int i, s, l;
+  size_t i, s, l;
 
   s=strlen(a);
   l=strlen(b);

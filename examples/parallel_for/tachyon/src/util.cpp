@@ -56,9 +56,7 @@
 */
 
 /*
- * util.c - Contains all of the timing functions for various platforms.
- *
- *  $Id: util.cpp,v 1.6 2007-02-22 18:17:51 amalakho Exp $ 
+ * util.cpp - Contains all of the timing functions for various platforms.
  */
 
 #include "machine.h"
@@ -84,10 +82,13 @@ void rt_sleep(int msec) {
 #undef OLDUNIXTIME
 #undef STDTIME
 
-#include <windows.h>
-
 void rt_sleep(int msec) {
+#if !WIN8UI_EXAMPLE
     Sleep(msec);
+#else
+    std::chrono::milliseconds sleep_time( msec );
+    std::this_thread::sleep_for( sleep_time );
+#endif
 }
 
 timer gettimer(void) {

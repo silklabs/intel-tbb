@@ -56,9 +56,7 @@
 */
 
 /* 
- * shade.c - This file contains the functions that perform surface shading.
- *
- *  $Id: shade.cpp,v 1.3 2007-02-22 17:54:16 Exp $
+ * shade.cpp - This file contains the functions that perform surface shading.
  */
 
 #include "machine.h"

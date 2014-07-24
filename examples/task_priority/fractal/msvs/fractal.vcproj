@@ -742,7 +742,7 @@
 			Name="Video Layer"
 			>
 			<File
-				RelativePath="..\..\..\common\gui\ddvideo.cpp"
+				RelativePath="..\..\..\common\gui\d2dvideo.cpp"
 				>
 				<FileConfiguration
 					Name="GDIDebug|Win32"

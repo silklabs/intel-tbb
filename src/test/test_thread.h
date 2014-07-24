@@ -26,7 +26,6 @@
     the GNU General Public License.
 */
 
-#include "tbb/tbb_thread.h"
 #include "tbb/atomic.h"
 
 #define HARNESS_NO_PARSE_COMMAND_LINE 1

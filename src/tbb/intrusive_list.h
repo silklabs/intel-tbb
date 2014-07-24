@@ -79,7 +79,15 @@ class intrusive_list_base {
 
     public:
         iterator_impl () :  my_pos(NULL) {}
-        
+
+        Iterator& operator = ( const Iterator& it ) {
+            return my_pos = it.my_pos;
+        }
+
+        Iterator& operator = ( const T& val ) {
+            return my_pos = &node(val);
+        }
+
         bool operator == ( const Iterator& it ) const {
             return my_pos == it.my_pos;
         }
@@ -125,13 +133,12 @@ class intrusive_list_base {
 public:
     class iterator : public iterator_impl<iterator> {
         template <class U, class V> friend class intrusive_list_base;
-
+    public:
         iterator (intrusive_list_node* pos )
             : iterator_impl<iterator>(pos )
         {}
-    public:
         iterator () {}
-        
+
         T* operator-> () const { return &this->item(); }
 
         T& operator* () const { return this->item(); }
@@ -139,13 +146,12 @@ public:
 
     class const_iterator : public iterator_impl<const_iterator> {
         template <class U, class V> friend class intrusive_list_base;
-
+    public:
         const_iterator (const intrusive_list_node* pos )
             : iterator_impl<const_iterator>(const_cast<intrusive_list_node*>(pos) )
         {}
-    public:
         const_iterator () {}
-        
+
         const T* operator-> () const { return &this->item(); }
 
         const T& operator* () const { return this->item(); }

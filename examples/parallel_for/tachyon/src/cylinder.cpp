@@ -56,9 +56,7 @@
 */
 
 /* 
- * cylinder.c - This file contains the functions for dealing with cylinders.
- *
- *  $Id: cylinder.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * cylinder.cpp - This file contains the functions for dealing with cylinders.
  */
  
 #include "machine.h"

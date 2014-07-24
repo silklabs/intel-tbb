@@ -35,10 +35,10 @@ class D_latch {
     broadcast_node<signal_t> D_port;
     broadcast_node<signal_t> E_port;
     not_gate a_not;
-    and_gate<two_input> first_and;
-    and_gate<two_input> second_and;
-    nor_gate<two_input> first_nor;
-    nor_gate<two_input> second_nor;
+    and_gate<2> first_and;
+    and_gate<2> second_and;
+    nor_gate<2> first_nor;
+    nor_gate<2> second_nor;
     graph& my_graph;
  public:
     D_latch(graph& g) : my_graph(g), D_port(g), E_port(g), a_not(g), first_and(g), second_and(g), 

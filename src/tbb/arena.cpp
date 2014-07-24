@@ -32,11 +32,6 @@
 #include "itt_notify.h"
 #include "semaphore.h"
 
-#if !__TBB_CPU_CTL_ENV_PRESENT
-inline void __TBB_get_cpu_ctl_env ( __TBB_cpu_ctl_env_t* ctl ) { fegetenv(ctl); }
-inline void __TBB_set_cpu_ctl_env ( const __TBB_cpu_ctl_env_t* ctl ) { fesetenv(ctl); }
-#endif /* !__TBB_CPU_CTL_ENV_PRESENT */
-
 #include <functional>
 
 #if __TBB_STATISTICS_STDOUT
@@ -82,7 +77,9 @@ void arena::process( generic_scheduler& s ) {
 
     s.my_arena_slot->hint_for_pop  = index; // initial value for round-robin
 
-    __TBB_set_cpu_ctl_env(&my_cpu_ctl_env);
+#if !__TBB_FP_CONTEXT
+    my_cpu_ctl_env.set_env();
+#endif
 
 #if __TBB_SCHEDULER_OBSERVER
     __TBB_ASSERT( !s.my_last_local_observer, "There cannot be notified local observers when entering arena" );
@@ -109,14 +106,8 @@ void arena::process( generic_scheduler& s ) {
         __TBB_ASSERT( s.my_arena_slot->task_pool == EmptyTaskPool, "Empty task pool is not marked appropriately" );
         // This check prevents relinquishing more than necessary workers because
         // of the non-atomicity of the decision making procedure
-        unsigned allotted = my_num_workers_allotted;
-        if (((num_workers_active() > allotted)
-#if __TBB_SCHEDULER_OBSERVER && __TBB_CPF_BUILD
-                && allotted > 0) || (allotted == 0 && my_observers.ask_permission_to_leave()
-                // TODO: my_num_workers_allotted > 0 makes bug 1967 even worse, rework with accounting of demand by other arenas
-                // TODO: add monitoring of my_pool_state when not allowed to leave
-#endif /* __TBB_SCHEDULER_OBSERVER && __TBB_TASK_ARENA */
-                )) break;
+        if (num_workers_active() > my_num_workers_allotted)
+            break;
     }
 #if __TBB_SCHEDULER_OBSERVER
     my_observers.notify_exit_observers( s.my_last_local_observer, /*worker=*/true );
@@ -172,7 +163,6 @@ arena::arena ( market& m, unsigned max_num_workers ) {
     my_num_slots = num_slots_to_reserve(max_num_workers);
     my_max_num_workers = max_num_workers;
     my_references = 1; // accounts for the master
-    __TBB_get_cpu_ctl_env(&my_cpu_ctl_env);
 #if __TBB_TASK_PRIORITY
     my_bottom_priority = my_top_priority = normalized_normal_priority;
 #endif /* __TBB_TASK_PRIORITY */
@@ -206,9 +196,15 @@ arena::arena ( market& m, unsigned max_num_workers ) {
     my_mandatory_concurrency = false;
 #if __TBB_TASK_GROUP_CONTEXT
     // Context to be used by root tasks by default (if the user has not specified one).
+    // The arena's context should not capture fp settings for the sake of backward compatibility.
     my_default_ctx =
-            new ( NFS_Allocate(1, sizeof(task_group_context), NULL) ) task_group_context(task_group_context::isolated);
+            new ( NFS_Allocate(1, sizeof(task_group_context), NULL) ) task_group_context(task_group_context::isolated, task_group_context::default_traits);
 #endif /* __TBB_TASK_GROUP_CONTEXT */
+#if __TBB_FP_CONTEXT
+    my_default_ctx->capture_fp_settings();
+#else
+    my_cpu_ctl_env.get_env();
+#endif
 }
 
 arena& arena::allocate_arena( market& m, unsigned max_num_workers ) {
@@ -308,14 +304,9 @@ void arena::dump_arena_statistics () {
 
 #if __TBB_TASK_PRIORITY
 // TODO: This function seems deserving refactoring, e.g. get rid of 's'
-inline bool arena::may_have_tasks ( generic_scheduler* s, arena_slot& slot, bool& tasks_present, bool& dequeuing_possible ) {
-    suppress_unused_warning(slot);
-    if ( !s ) {
-        // This slot is vacant
-        __TBB_ASSERT( slot.task_pool == EmptyTaskPool, NULL );
-        __TBB_ASSERT( slot.tail == slot.head, "Someone is tinkering with a vacant arena slot" );
+inline bool arena::may_have_tasks ( generic_scheduler* s, bool& tasks_present, bool& dequeuing_possible ) {
+    if ( !s )
         return false;
-    }
     dequeuing_possible |= s->worker_outermost_level();
     if ( s->my_pool_reshuffling_pending ) {
         // This primary task pool is nonempty and may contain tasks at the current
@@ -367,6 +358,8 @@ bool arena::is_out_of_work() {
                             // k-th primary task pool is nonempty and does contain tasks.
                             break;
                         }
+                        if( my_pool_state!=busy )
+                            return false; // the work was published
                     }
                     __TBB_ASSERT( k <= n, NULL );
                     bool work_absent = k == n;
@@ -389,7 +382,7 @@ bool arena::is_out_of_work() {
                         generic_scheduler *s = my_slots[0].my_scheduler;
                         if ( s && as_atomic(my_slots[0].my_scheduler).compare_and_swap(LockedMaster, s) == s ) { //TODO: remove need to lock
                             __TBB_ASSERT( my_slots[0].my_scheduler == LockedMaster && s != LockedMaster, NULL );
-                            work_absent = !may_have_tasks( s, my_slots[0], tasks_present, dequeuing_possible );
+                            work_absent = !may_have_tasks( s, tasks_present, dequeuing_possible );
                             __TBB_store_with_release( my_slots[0].my_scheduler, s );
                         }
                         my_market->my_arenas_list_mutex.unlock();
@@ -405,8 +398,11 @@ bool arena::is_out_of_work() {
                         // flow does not seem to make sense because it both is unlikely to
                         // ever have any observable performance effect, and will require
                         // additional synchronization code on the hotter paths.
-                        for( k = 1; work_absent && k < n; ++k )
-                            work_absent = !may_have_tasks( my_slots[k].my_scheduler, my_slots[k], tasks_present, dequeuing_possible );
+                        for( k = 1; work_absent && k < n; ++k ) {
+                            if( my_pool_state!=busy )
+                                return false; // the work was published
+                            work_absent = !may_have_tasks( my_slots[k].my_scheduler, tasks_present, dequeuing_possible );
+                        }
                         // Preclude premature switching arena off because of a race in the previous loop.
                         work_absent = work_absent
                                       && !__TBB_load_with_acquire(my_orphaned_tasks)
@@ -534,6 +530,7 @@ void arena::enqueue_task( task& t, intptr_t prio, FastRandom &random )
 #if __TBB_TASK_ARENA
 template<typename Body>
 void generic_scheduler::nested_arena_execute(arena* arena, task* t, bool needs_adjusting, Body &b) {
+    // TODO: add FPU control settings support to local arenas
     // TODO: is it safe to assign slot to a scheduler which is not yet switched
     // save current arena settings
     scheduler_state state = *this;

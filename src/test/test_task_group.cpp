@@ -849,16 +849,7 @@ int TestMain () {
         TestEh2();
         TestStructuredWait();
         TestStructuredCancellation2<true>();
-        //TODO: recheck the condition with newer versions of clang/libc++
-#if (__clang__ && (__cplusplus >= 201103L || _LIBCPP_VERSION ))
-        //TODO:it seems that clang in C++11 mode does not expect exception
-        //coming from destructor in the following test as it does not generate correct code for stack unwinding.
-        //TODO:it seems that libc++ implementation of std::uncaught_exception return incorrect value clang and
-        //icc14 in the following test
-        REPORT("Known issue: TestStructuredCancellation2<false> test is skipped.\n");
-#else
         TestStructuredCancellation2<false>();
-#endif
 #endif /* TBB_USE_EXCEPTIONS && !__TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN */
 #if !TBBTEST_USE_TBB
         s->Release();

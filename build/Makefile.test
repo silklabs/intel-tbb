@@ -190,7 +190,7 @@ TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
 	test_source_node.$(TEST_EXT)                 \
 	test_overwrite_node.$(TEST_EXT)              \
 	test_write_once_node.$(TEST_EXT)             \
-	test_or_node.$(TEST_EXT)                     \
+	test_indexer_node.$(TEST_EXT)                \
 	test_multifunction_node.$(TEST_EXT)          \
 	test_split_node.$(TEST_EXT)                  \
 	test_static_assert.$(TEST_EXT)               \
@@ -199,6 +199,8 @@ TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
 	test_examples_common_utility.$(TEST_EXT)     \
 	test_dynamic_link.$(TEST_EXT)                \
 	test_parallel_for_vectorization.$(TEST_EXT)  \
+	test_tagged_msg.$(TEST_EXT)                  \
+	test_partitioner_whitebox.$(TEST_EXT)        \
 	test_tbb_version.$(TEST_EXT)                 # insert new files right above
 
 TEST_TBB_PLAIN.EXE += $(TEST_TBB_CPP11)
@@ -259,6 +261,7 @@ test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_P
 	$(run_cmd) ./test_blocked_range2d.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_blocked_range3d.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_parallel_for.$(TEST_EXT) $(args) 1:4
+	$(run_cmd) ./test_partitioner_whitebox.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_parallel_for_vectorization.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_parallel_sort.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_aligned_space.$(TEST_EXT) $(args)
@@ -320,7 +323,7 @@ test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_P
 	$(run_cmd) ./test_source_node.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_overwrite_node.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_write_once_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_or_node.$(TEST_EXT) $(args) 1:4
+	$(run_cmd) ./test_indexer_node.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_multifunction_node.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_split_node.$(TEST_EXT) $(args) 1:4
 	$(run_cmd) ./test_examples_common_utility.$(TEST_EXT) $(args)
@@ -329,6 +332,7 @@ test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_P
 	$(run_cmd) ./test_static_assert.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_aggregator.$(TEST_EXT) $(args)
 	$(run_cmd) ./test_concurrent_lru_cache.$(TEST_EXT) $(args)
+	$(run_cmd) ./test_tagged_msg.$(TEST_EXT) $(args)
 
 # For deprecated files, we don't mind warnings etc., thus compilation rules are most relaxed
 CPLUS_FLAGS_DEPRECATED = $(DEFINE_KEY)TBB_DEPRECATED=1 $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(WARNING_SUPPRESS) $(INCLUDE_KEY)$(tbb_root)/src/test

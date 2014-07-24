@@ -134,12 +134,27 @@ void * pvalloc(size_t size) __THROW
     return scalable_aligned_malloc(size, memoryPageSize);
 }
 
+// match prototype from system headers
+#if __ANDROID__
+size_t malloc_usable_size(const void *ptr) __THROW
+#else
+size_t malloc_usable_size(void *ptr) __THROW
+#endif
+{
+    return __TBB_internal_msize(const_cast<void*>(ptr));
+}
+
 int mallopt(int /*param*/, int /*value*/) __THROW
 {
     return 1;
 }
 
-#if !__ANDROID__
+#if __ANDROID__
+// Android doesn't have malloc_usable_size, provide it to be compatible
+// with Linux, in addition overload dlmalloc_usable_size() that presented
+// under Android.
+size_t dlmalloc_usable_size(const void *ptr) __attribute__ ((alias ("malloc_usable_size")));
+#else
 // Those non-standart functions are exported by GLIBC, and might be used
 // in conjunction with standart malloc/free, so we must ovberload them.
 // Bionic doesn't have them. Not removing from the linker scripts,
@@ -217,6 +232,7 @@ void operator delete[](void* ptr, const std::nothrow_t&) throw() {
 
 #include <stdio.h>
 #include "tbb_function_replacement.h"
+#include "shared_utils.h"
 
 void safer_scalable_free2( void *ptr)
 {
@@ -466,8 +482,6 @@ void ReplaceFunctionWithStore( const wchar_t *dllName, const char *funcName, FUN
 
 void doMallocReplacement()
 {
-    int i,j;
-
     // Replace functions and keep backup of original code (separate for each runtime)
     __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr70)
     __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr71)
@@ -478,10 +492,8 @@ void doMallocReplacement()
     __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL(msvcr120)
 
     // Replace functions without storing original code
-    int modules_to_replace_count = sizeof(modules_to_replace) / sizeof(modules_to_replace[0]);
-    int routines_to_replace_count = sizeof(routines_to_replace) / sizeof(routines_to_replace[0]);
-    for ( j=0; j<modules_to_replace_count; j++ )
-        for (i = 0; i < routines_to_replace_count; i++)
+    for ( size_t j=0; j < arrayLength(modules_to_replace); j++ )
+        for (size_t i = 0; i < arrayLength(routines_to_replace); i++)
         {
 #if !_WIN64
             // in Microsoft* Visual Studio* 2012 and 2013 32-bit operator delete consists of 2 bytes only: short jump to free(ptr);

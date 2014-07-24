@@ -2742,6 +2742,7 @@ extern "C" void __TBB_mallocProcessShutdownNotification()
     for( int i=1; i<=nThreads && i<MAX_THREADS; ++i )
         STAT_print(i);
 #endif
+    MALLOC_ITT_FINI_ITTLIB();
 }
 
 extern "C" void * scalable_malloc(size_t size)
@@ -3001,8 +3002,10 @@ extern "C" size_t safer_scalable_msize (void *object, size_t (*original_msize)(v
         else if (original_msize)
             return original_msize(object);
     }
-    // object is NULL or unknown
-    errno = EINVAL;
+    // object is NULL or unknown, or foreign and no original_msize
+#if USE_WINTHREAD
+    errno = EINVAL; // errno expected to be set only on this platform
+#endif
     return 0;
 }
 

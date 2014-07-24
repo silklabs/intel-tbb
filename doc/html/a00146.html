@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.4"/>
-<title>tbb::tbb_exception Class Reference</title>
+<title>tbb::interface7::task_arena Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -33,63 +33,85 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00222.html">tbb</a></li><li class="navelem"><a class="el" href="a00146.html">tbb_exception</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><b>interface7</b></li><li class="navelem"><a class="el" href="a00146.html">task_arena</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="a00302.html">List of all members</a>  </div>
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
+<a href="a00390.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::tbb_exception Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">tbb::interface7::task_arena Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Interface to be implemented by all exceptions TBB recognizes and propagates across the threads.  
- <a href="a00146.html#details">More...</a></p>
-
-<p><code>#include &lt;tbb_exception.h&gt;</code></p>
+<p><code>#include &lt;task_arena.h&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for tbb::tbb_exception:</div>
+Inheritance diagram for tbb::interface7::task_arena:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="a00146.png" usemap="#tbb::tbb_exception_map" alt=""/>
-  <map id="tbb::tbb_exception_map" name="tbb::tbb_exception_map">
-<area href="a00031.html" title="This class is used by TBB to propagate information about unhandled exceptions into the root thread..." alt="tbb::captured_exception" shape="rect" coords="0,112,248,136"/>
-<area href="a00078.html" title="Template that can be used to implement exception that transfers arbitrary ExceptionData to the root t..." alt="tbb::movable_exception&lt; ExceptionData &gt;" shape="rect" coords="258,112,506,136"/>
+  <img src="a00146.png" usemap="#tbb::interface7::task_arena_map" alt=""/>
+  <map id="tbb::interface7::task_arena_map" name="tbb::interface7::task_arena_map">
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4bd4ba0d501021013d1473d21b020b69"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="a00146.html">tbb_exception</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a4bd4ba0d501021013d1473d21b020b69">move</a> ()=0  throw ()</td></tr>
-<tr class="memdesc:a4bd4ba0d501021013d1473d21b020b69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates and returns pointer to the deep copy of this exception object.  <a href="#a4bd4ba0d501021013d1473d21b020b69">More...</a><br/></td></tr>
-<tr class="separator:a4bd4ba0d501021013d1473d21b020b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3bc09bf78c33f19a0bcdf882fdf9d41"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#ad3bc09bf78c33f19a0bcdf882fdf9d41">destroy</a> ()=0  throw ()</td></tr>
-<tr class="memdesc:ad3bc09bf78c33f19a0bcdf882fdf9d41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys objects created by the <a class="el" href="a00146.html#a4bd4ba0d501021013d1473d21b020b69" title="Creates and returns pointer to the deep copy of this exception object. ">move()</a> method.  <a href="#ad3bc09bf78c33f19a0bcdf882fdf9d41">More...</a><br/></td></tr>
-<tr class="separator:ad3bc09bf78c33f19a0bcdf882fdf9d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae45c08d36c7ec7ae91785da3515a8828"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#ae45c08d36c7ec7ae91785da3515a8828">throw_self</a> ()=0</td></tr>
-<tr class="memdesc:ae45c08d36c7ec7ae91785da3515a8828"><td class="mdescLeft">&#160;</td><td class="mdescRight">Throws this exception object.  <a href="#ae45c08d36c7ec7ae91785da3515a8828">More...</a><br/></td></tr>
-<tr class="separator:ae45c08d36c7ec7ae91785da3515a8828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a282bb7dce5f157d044d14d50cd6ff35c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a282bb7dce5f157d044d14d50cd6ff35c"></a>
-virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a282bb7dce5f157d044d14d50cd6ff35c">name</a> () const =0  throw ()</td></tr>
-<tr class="memdesc:a282bb7dce5f157d044d14d50cd6ff35c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns RTTI name of the originally intercepted exception. <br/></td></tr>
-<tr class="separator:a282bb7dce5f157d044d14d50cd6ff35c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0ad81121d4b722ecc466b5d3cc4e919"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0ad81121d4b722ecc466b5d3cc4e919"></a>
-virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#ae0ad81121d4b722ecc466b5d3cc4e919">what</a> () const =0  throw ()</td></tr>
-<tr class="memdesc:ae0ad81121d4b722ecc466b5d3cc4e919"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the result of originally intercepted exception's <a class="el" href="a00146.html#ae0ad81121d4b722ecc466b5d3cc4e919" title="Returns the result of originally intercepted exception&#39;s what() method. ">what()</a> method. <br/></td></tr>
-<tr class="separator:ae0ad81121d4b722ecc466b5d3cc4e919"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a973c37078afedf7d457ff4704bf8cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a6a973c37078afedf7d457ff4704bf8cd">operator delete</a> (void *p)</td></tr>
-<tr class="separator:a6a973c37078afedf7d457ff4704bf8cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6035737ce1a8db376d06880dae9d0c40"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a6035737ce1a8db376d06880dae9d0c40">task_arena</a> (int max_concurrency=automatic, unsigned reserved_for_masters=1)</td></tr>
+<tr class="memdesc:a6035737ce1a8db376d06880dae9d0c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates <a class="el" href="a00146.html">task_arena</a> with certain concurrency limits.  <a href="#a6035737ce1a8db376d06880dae9d0c40">More...</a><br/></td></tr>
+<tr class="separator:a6035737ce1a8db376d06880dae9d0c40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70d122b3e6e4760c6053c5c230c715ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a70d122b3e6e4760c6053c5c230c715ef"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a70d122b3e6e4760c6053c5c230c715ef">task_arena</a> (const <a class="el" href="a00146.html">task_arena</a> &amp;s)</td></tr>
+<tr class="memdesc:a70d122b3e6e4760c6053c5c230c715ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies settings from another <a class="el" href="a00146.html">task_arena</a>. <br/></td></tr>
+<tr class="separator:a70d122b3e6e4760c6053c5c230c715ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a955131a79f8dc5a0a5c9ffa66a7e7140"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a955131a79f8dc5a0a5c9ffa66a7e7140"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a955131a79f8dc5a0a5c9ffa66a7e7140">initialize</a> ()</td></tr>
+<tr class="memdesc:a955131a79f8dc5a0a5c9ffa66a7e7140"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forces allocation of the resources for the <a class="el" href="a00146.html">task_arena</a> as specified in constructor arguments. <br/></td></tr>
+<tr class="separator:a955131a79f8dc5a0a5c9ffa66a7e7140"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a754d60ba6981461eb7c86afd14d3da2a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a754d60ba6981461eb7c86afd14d3da2a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a754d60ba6981461eb7c86afd14d3da2a">initialize</a> (int max_concurrency, unsigned reserved_for_masters=1)</td></tr>
+<tr class="memdesc:a754d60ba6981461eb7c86afd14d3da2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overrides concurrency level and forces initialization of internal representation. <br/></td></tr>
+<tr class="separator:a754d60ba6981461eb7c86afd14d3da2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecb3eedeacfe8469a91c17525dae7fc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#aecb3eedeacfe8469a91c17525dae7fc9">terminate</a> ()</td></tr>
+<tr class="separator:aecb3eedeacfe8469a91c17525dae7fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff5a35a219953a4f3d99b833fa5f683"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a9ff5a35a219953a4f3d99b833fa5f683">~task_arena</a> ()</td></tr>
+<tr class="separator:a9ff5a35a219953a4f3d99b833fa5f683"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad85856cefa30d42155a2b122b03efd8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#ad85856cefa30d42155a2b122b03efd8c">is_active</a> () const </td></tr>
+<tr class="separator:ad85856cefa30d42155a2b122b03efd8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8034275ed2fffa68f70484043b90d406"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:a8034275ed2fffa68f70484043b90d406"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00146.html#a8034275ed2fffa68f70484043b90d406">enqueue</a> (const F &amp;f)</td></tr>
+<tr class="separator:a8034275ed2fffa68f70484043b90d406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a04ab4afb2d74b0317618f59ab49be7"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:a9a04ab4afb2d74b0317618f59ab49be7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00146.html#a9a04ab4afb2d74b0317618f59ab49be7">enqueue</a> (const F &amp;f, priority_t p)</td></tr>
+<tr class="separator:a9a04ab4afb2d74b0317618f59ab49be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0c96f325b59d567b4c720f2830adde8"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:af0c96f325b59d567b4c720f2830adde8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00146.html#af0c96f325b59d567b4c720f2830adde8">execute</a> (F &amp;f)</td></tr>
+<tr class="separator:af0c96f325b59d567b4c720f2830adde8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8442c8e9e3e678349409e08cabc7ae2"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:ab8442c8e9e3e678349409e08cabc7ae2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="a00146.html#ab8442c8e9e3e678349409e08cabc7ae2">execute</a> (const F &amp;f)</td></tr>
+<tr class="separator:ab8442c8e9e3e678349409e08cabc7ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07d87dff8c6116ee349684e10f754aeb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a07d87dff8c6116ee349684e10f754aeb">debug_wait_until_empty</a> ()</td></tr>
+<tr class="separator:a07d87dff8c6116ee349684e10f754aeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a4c107b6a4cc79183923fe2433d25644f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c107b6a4cc79183923fe2433d25644f"></a>
+static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00146.html#a4c107b6a4cc79183923fe2433d25644f">current_slot</a> ()</td></tr>
+<tr class="memdesc:a4c107b6a4cc79183923fe2433d25644f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the index, aka slot number, of the calling thread in its current arena. <br/></td></tr>
+<tr class="separator:a4c107b6a4cc79183923fe2433d25644f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a6887d06dd0f104ab6c06fdddca4d2471"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6887d06dd0f104ab6c06fdddca4d2471"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>tbb::internal::task_scheduler_observer_v3</b></td></tr>
+<tr class="separator:a6887d06dd0f104ab6c06fdddca4d2471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface to be implemented by all exceptions TBB recognizes and propagates across the threads. </p>
-<p>If an unhandled exception of the type derived from <a class="el" href="a00146.html" title="Interface to be implemented by all exceptions TBB recognizes and propagates across the threads...">tbb::tbb_exception</a> is intercepted by the TBB scheduler in one of the worker threads, it is delivered to and re-thrown in the root thread. The root thread is the thread that has started the outermost algorithm or root task sharing the same <a class="el" href="a00138.html">task_group_context</a> with the guilty algorithm/task (the one that threw the exception first).</p>
-<p>Note: when documentation mentions workers with respect to exception handling, masters are implied as well, because they are completely equivalent in this context. Consequently a root thread can be master or worker thread.</p>
-<p>NOTE: In case of nested algorithms or complex task hierarchies when the nested levels share (explicitly or by means of implicit inheritance) the task group context of the outermost level, the exception may be (re-)thrown multiple times (ultimately - in each worker on each nesting level) before reaching the root thread at the outermost level. IMPORTANT: if you intercept an exception derived from this class on a nested level, you must re-throw it in the catch block by means of the "throw;" operator.</p>
-<p>TBB provides two implementations of this interface: <a class="el" href="a00031.html" title="This class is used by TBB to propagate information about unhandled exceptions into the root thread...">tbb::captured_exception</a> and template class <a class="el" href="a00078.html" title="Template that can be used to implement exception that transfers arbitrary ExceptionData to the root t...">tbb::movable_exception</a>. See their declarations for more info. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ad3bc09bf78c33f19a0bcdf882fdf9d41"></a>
+<div class="textblock"><p>1-to-1 proxy representation class of scheduler's arena Constructors set up settings only, real construction is deferred till the first method invocation Destructor only removes one of the references to the inner arena representation. Final destruction happens when all the references (and the work) are gone. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a6035737ce1a8db376d06880dae9d0c40"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -97,33 +119,40 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tbb::tbb_exception::destroy </td>
+          <td class="memname">tbb::interface7::task_arena::task_arena </td>
           <td>(</td>
-          <td class="paramname">)</td><td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max_concurrency</em> = <code>automatic</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>reserved_for_masters</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
-          <td align="right">throw </td><td>(</td><td colspan="2"></td>
-        </tr>
-        <tr>
-          <td align="right"></td><td>)</td><td></td><td></td>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destroys objects created by the <a class="el" href="a00146.html#a4bd4ba0d501021013d1473d21b020b69" title="Creates and returns pointer to the deep copy of this exception object. ">move()</a> method. </p>
-<p>Frees memory and calls destructor for this exception object. Can and must be used only on objects created by the move method. </p>
-
-<p>Implemented in <a class="el" href="a00078.html#a02f0401b465690de797face2432d9421">tbb::movable_exception&lt; ExceptionData &gt;</a>, and <a class="el" href="a00031.html#a3006b6825dda6c746d28fb748f5675de">tbb::captured_exception</a>.</p>
+<p>Creates <a class="el" href="a00146.html">task_arena</a> with certain concurrency limits. </p>
+<p>Sets up settings only, real construction is deferred till the first method invocation </p>
+<ul>
+<li>max_concurrency specifies total number of slots in arena where threads work </li>
+<li>reserved_for_masters specifies number of slots to be used by master threads only. Value of 1 is default and reflects behavior of implicit arenas. </li>
+</ul>
 
 </div>
 </div>
-<a class="anchor" id="a4bd4ba0d501021013d1473d21b020b69"></a>
+<a class="anchor" id="a9ff5a35a219953a4f3d99b833fa5f683"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -131,44 +160,9 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="a00146.html">tbb_exception</a>* tbb::tbb_exception::move </td>
+          <td class="memname">tbb::interface7::task_arena::~task_arena </td>
           <td>(</td>
           <td class="paramname">)</td><td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td align="right">throw </td><td>(</td><td colspan="2"></td>
-        </tr>
-        <tr>
-          <td align="right"></td><td>)</td><td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Creates and returns pointer to the deep copy of this exception object. </p>
-<p>Move semantics is allowed. </p>
-
-<p>Implemented in <a class="el" href="a00078.html#aeb47d3ac90a1f01fe642b572f6ac519d">tbb::movable_exception&lt; ExceptionData &gt;</a>, and <a class="el" href="a00031.html#abb221485cd260349efdef681f633a6a4">tbb::captured_exception</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a6a973c37078afedf7d457ff4704bf8cd"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tbb::tbb_exception::operator delete </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>p</em>)</td><td></td>
           <td></td>
         </tr>
       </table>
@@ -178,12 +172,12 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Operator delete is provided only to allow using existing smart pointers with TBB exception objects obtained as the result of applying <a class="el" href="a00146.html#a4bd4ba0d501021013d1473d21b020b69" title="Creates and returns pointer to the deep copy of this exception object. ">move()</a> operation on an exception thrown out of TBB scheduler.</p>
-<p>When overriding method <a class="el" href="a00146.html#a4bd4ba0d501021013d1473d21b020b69" title="Creates and returns pointer to the deep copy of this exception object. ">move()</a> make sure to override operator delete as well if memory is allocated not by TBB's scalable allocator. </p>
+<p>Removes the reference to the internal arena representation, and destroys the external object. Not thread safe wrt concurrent invocations of other methods. </p>
 
 </div>
 </div>
-<a class="anchor" id="ae45c08d36c7ec7ae91785da3515a8828"></a>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a07d87dff8c6116ee349684e10f754aeb"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -191,7 +185,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tbb::tbb_exception::throw_self </td>
+          <td class="memname">void tbb::interface7::task_arena::debug_wait_until_empty </td>
           <td>(</td>
           <td class="paramname">)</td><td></td>
           <td></td>
@@ -199,20 +193,182 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Wait for all work in the arena to be completed Even submitted by other application threads Joins arena if/when possible (in the same way as <a class="el" href="a00146.html#af0c96f325b59d567b4c720f2830adde8">execute()</a>) </p>
 
-<p>Throws this exception object. </p>
-<p>Make sure that if you have several levels of derivation from this interface you implement or override this method on the most derived level. The implementation is as simple as "throw *this;". Failure to do this will result in exception of a base class type being thrown. </p>
+</div>
+</div>
+<a class="anchor" id="a8034275ed2fffa68f70484043b90d406"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::enqueue </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&#160;</td>
+          <td class="paramname"><em>f</em>)</td><td></td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Enqueues a task into the arena to process a functor, and immediately returns. Does not require the calling thread to join the arena </p>
 
-<p>Implemented in <a class="el" href="a00078.html#a3d1570b53220fbcb45eb81552b57827a">tbb::movable_exception&lt; ExceptionData &gt;</a>, and <a class="el" href="a00031.html#ac9ae925678fcc0cc02a74df7d06b8d63">tbb::captured_exception</a>.</p>
+</div>
+</div>
+<a class="anchor" id="a9a04ab4afb2d74b0317618f59ab49be7"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::enqueue </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">priority_t&#160;</td>
+          <td class="paramname"><em>p</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Enqueues a task with priority p into the arena to process a functor f, and immediately returns. Does not require the calling thread to join the arena </p>
+
+</div>
+</div>
+<a class="anchor" id="af0c96f325b59d567b4c720f2830adde8"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::execute </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&#160;</td>
+          <td class="paramname"><em>f</em>)</td><td></td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread </p>
+
+</div>
+</div>
+<a class="anchor" id="ab8442c8e9e3e678349409e08cabc7ae2"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::execute </td>
+          <td>(</td>
+          <td class="paramtype">const F &amp;&#160;</td>
+          <td class="paramname"><em>f</em>)</td><td></td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Joins the arena and executes a functor, then returns If not possible to join, wraps the functor into a task, enqueues it and waits for task completion Can decrement the arena demand for workers, causing a worker to leave and free a slot to the calling thread </p>
+
+</div>
+</div>
+<a class="anchor" id="ad85856cefa30d42155a2b122b03efd8c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tbb::interface7::task_arena::is_active </td>
+          <td>(</td>
+          <td class="paramname">)</td><td></td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns true if the arena is active (initialized); false otherwise. The name was chosen to match a <a class="el" href="a00152.html" title="Class delimiting the scope of task scheduler activity. ">task_scheduler_init</a> method with the same semantics. </p>
+
+</div>
+</div>
+<a class="anchor" id="aecb3eedeacfe8469a91c17525dae7fc9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tbb::interface7::task_arena::terminate </td>
+          <td>(</td>
+          <td class="paramname">)</td><td></td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Removes the reference to the internal arena representation. Not thread safe wrt concurrent invocations of other methods. </p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>tbb_exception.h</li>
+<li>task_arena.h</li>
 </ul>
 </div><!-- contents -->
 <hr>

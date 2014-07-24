@@ -29,10 +29,19 @@ export compiler?=gcc
 export arch?=ia32
 export target?=android
 
+ifeq (ia32,$(arch))
+    APP_ABI:=x86
+else 
+ifeq (intel64,$(arch))
+    APP_ABI:=x86_64
+else 
 ifeq (arm,$(arch))
     APP_ABI:=armeabi-v7a
-else
-    APP_ABI:=x86
+else 
+    APP_ABI:=$(arch)
 endif
+endif
+endif
+
 APP_PLATFORM:=android-9
-NDK_TOOLCHAIN_VERSION:=4.6
+NDK_TOOLCHAIN_VERSION:=4.8

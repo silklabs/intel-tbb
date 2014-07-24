@@ -56,9 +56,7 @@
 */
 
 /*
- *  ppm.c - This file deals with PPM format image files (reading/writing)
- *
- *  $Id: ppm.cpp,v 1.2 2007-02-22 17:54:16 Exp $
+ *  ppm.cpp - This file deals with PPM format image files (reading/writing)
  */ 
 
 /* For our puposes, we're interested only in the 3 byte per pixel 24 bit
@@ -105,7 +103,8 @@ static int getint(FILE * dfile) {
 int readppm(char * name, int * xres, int * yres, unsigned char **imgdata) {
   char data[200];  
   FILE * ifp;
-  int i, bytesread;
+  int i;
+  size_t bytesread;
   int datasize;
  
   ifp=fopen(name, "r");  

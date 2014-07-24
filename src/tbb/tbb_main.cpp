@@ -134,18 +134,12 @@ void __TBB_InitOnce::add_ref() {
         governor::acquire_resources();
 }
 
-#if __TBB_ITT_STRUCTURE_API
-static inline void ITT_fini() { }
-#endif
-
 void __TBB_InitOnce::remove_ref() {
     int k = --count;
     __TBB_ASSERT(k>=0,"removed __TBB_InitOnce ref that was not added?"); 
     if( k==0 ) {
         governor::release_resources();
-#if __TBB_ITT_STRUCTURE_API
-        ITT_fini();
-#endif
+        ITT_FINI_ITTLIB();
     }
 }
 
@@ -403,6 +397,7 @@ void itt_task_end_v7( itt_domain_enum domain ) { }
 #endif // __TBB_ITT_STRUCTURE_API
 
 void* itt_load_pointer_v3( const void* src ) {
+    //TODO: replace this with __TBB_load_relaxed
     void* result = *static_cast<void*const*>(src);
     return result;
 }

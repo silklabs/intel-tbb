@@ -268,6 +268,42 @@ public:
 
 #include "tbb/task_scheduler_init.h"
 #include "harness_cpu.h"
+#include "test_partitioner.h"
+
+namespace interaction_with_range_and_partitioner {
+
+// Test checks compatibility of parallel_reduce algorithm with various range implementations
+
+void test() {
+    using namespace test_partitioner_utils::interaction_with_range_and_partitioner;
+
+    test_partitioner_utils::SimpleReduceBody body;
+    tbb::affinity_partitioner ap;
+
+    parallel_reduce(Range1(true, false), body, ap);
+    parallel_reduce(Range2(true, false), body, ap);
+    parallel_reduce(Range3(true, false), body, ap);
+    parallel_reduce(Range4(false, true), body, ap);
+    parallel_reduce(Range5(false, true), body, ap);
+    parallel_reduce(Range6(false, true), body, ap);
+
+    parallel_reduce(Range1(false, true), body, tbb::simple_partitioner());
+    parallel_reduce(Range2(false, true), body, tbb::simple_partitioner());
+    parallel_reduce(Range3(false, true), body, tbb::simple_partitioner());
+    parallel_reduce(Range4(false, true), body, tbb::simple_partitioner());
+    parallel_reduce(Range5(false, true), body, tbb::simple_partitioner());
+    parallel_reduce(Range6(false, true), body, tbb::simple_partitioner());
+
+    parallel_reduce(Range1(false, true), body, tbb::auto_partitioner());
+    parallel_reduce(Range2(false, true), body, tbb::auto_partitioner());
+    parallel_reduce(Range3(false, true), body, tbb::auto_partitioner());
+    parallel_reduce(Range4(false, true), body, tbb::auto_partitioner());
+    parallel_reduce(Range5(false, true), body, tbb::auto_partitioner());
+    parallel_reduce(Range6(false, true), body, tbb::auto_partitioner());
+}
+
+} // interaction_with_range_and_partitioner
+
 
 int TestMain () {
     if( MinThread<0 ) {
@@ -283,5 +319,7 @@ int TestMain () {
         // Test that all workers sleep when no work
         TestCPUUserTime(p);
     }
+
+    interaction_with_range_and_partitioner::test();
     return Harness::Done;
 }

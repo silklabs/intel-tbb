@@ -171,7 +171,12 @@ inline color_t video::get_color(colorcomp_t red, colorcomp_t green, colorcomp_t 
     if(red_shift == 16) // only for depth == 24 && red_shift > blue_shift
         return (red<<16) | (green<<8) | blue;
     else if(depth >= 24)
-        return (red<<red_shift) | (green<<green_shift) | (blue<<blue_shift);
+        return
+#if __ANDROID__
+                // Setting Alpha to 0xFF
+                0xFF000000 |
+#endif
+                (red<<red_shift) | (green<<green_shift) | (blue<<blue_shift);
     else if(depth > 0) {
         register depth_t bs = blue_shift, rs = red_shift;
         if(blue_shift < 0) blue >>= -bs, bs = 0;

@@ -56,9 +56,7 @@
 */
 
 /* 
- * ring.c - This file contains the functions for dealing with rings.
- *
- *  $Id: ring.cpp,v 1.2 2007-02-22 17:54:16 Exp $
+ * ring.cpp - This file contains the functions for dealing with rings.
  */
  
 #include "machine.h"

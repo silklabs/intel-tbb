@@ -60,6 +60,7 @@ extern "C" {
     void   __TBB_internal_free(void *ptr);
     void * __TBB_internal_realloc(void* ptr, size_t sz);
     int    __TBB_internal_posix_memalign(void **memptr, size_t alignment, size_t size);
+    size_t __TBB_internal_msize(void *ptr);
     
     bool   __TBB_internal_find_original_malloc(int num, const char *names[], void *table[]);
 } // extern "C"

@@ -251,7 +251,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_intel_tbb_example_tachyon_tachyonView
         LOG_INFO("fn=%s",fn);
         //Starting example_main and returning back to GUI
         pthread_create(&handle, NULL, &example_main, (void*) fn);
-        LOG_INFO("Thread handle is %x", handle);
+        LOG_INFO("Thread handle is %ld", handle);
     }
 }
 

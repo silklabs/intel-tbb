@@ -33,16 +33,17 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00222.html">tbb</a></li><li class="navelem"><a class="el" href="a00022.html">blocked_range2d</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><a class="el" href="a00022.html">blocked_range2d</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="a00248.html">List of all members</a>  </div>
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="a00259.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::blocked_range2d&lt; RowValue, ColValue &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00234.html">Algorithms</a></div></div>  </div>
+<div class="title">tbb::blocked_range2d&lt; RowValue, ColValue &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00245.html">Algorithms</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -78,8 +79,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a000
 <tr class="memdesc:ac84c6cc2ff8b0974ffa719fed804f586"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if range is divisible into two pieces. <br/></td></tr>
 <tr class="separator:ac84c6cc2ff8b0974ffa719fed804f586"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0e752d01b661b01c9a473473bea43fc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0e752d01b661b01c9a473473bea43fc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>blocked_range2d</b> (<a class="el" href="a00022.html">blocked_range2d</a> &amp;r, <a class="el" href="a00129.html">split</a>)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>blocked_range2d</b> (<a class="el" href="a00022.html">blocked_range2d</a> &amp;r, <a class="el" href="a00140.html">split</a>)</td></tr>
 <tr class="separator:af0e752d01b661b01c9a473473bea43fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ebbf0fa580c0553ec2e3c5997b9799c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ebbf0fa580c0553ec2e3c5997b9799c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>blocked_range2d</b> (<a class="el" href="a00022.html">blocked_range2d</a> &amp;r, <a class="el" href="a00102.html">proportional_split</a> &amp;proportion)</td></tr>
+<tr class="separator:a9ebbf0fa580c0553ec2e3c5997b9799c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06ae436bae2c8be5a95212ea410791db"><td class="memTemplParams" colspan="2"><a class="anchor" id="a06ae436bae2c8be5a95212ea410791db"></a>
+template&lt;typename Split &gt; </td></tr>
+<tr class="memitem:a06ae436bae2c8be5a95212ea410791db"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>do_split</b> (<a class="el" href="a00022.html">blocked_range2d</a> &amp;r, Split &amp;split_obj)</td></tr>
+<tr class="separator:a06ae436bae2c8be5a95212ea410791db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f7299e74c40df57dee2433c07ce65ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f7299e74c40df57dee2433c07ce65ae"></a>
 const <a class="el" href="a00022.html#ada609b296a9af0591cc34761b8538100">row_range_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00022.html#a4f7299e74c40df57dee2433c07ce65ae">rows</a> () const </td></tr>
 <tr class="memdesc:a4f7299e74c40df57dee2433c07ce65ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rows of the iteration space. <br/></td></tr>
@@ -88,6 +96,13 @@ const <a class="el" href="a00022.html#ada609b296a9af0591cc34761b8538100">row_ran
 const <a class="el" href="a00021.html">col_range_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00022.html#af3bccfaf90126b285491096f78ca9473">cols</a> () const </td></tr>
 <tr class="memdesc:af3bccfaf90126b285491096f78ca9473"><td class="mdescLeft">&#160;</td><td class="mdescRight">The columns of the iteration space. <br/></td></tr>
 <tr class="separator:af3bccfaf90126b285491096f78ca9473"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ad974836f40727a1b80f404c484ee426a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad974836f40727a1b80f404c484ee426a"></a>
+static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00022.html#ad974836f40727a1b80f404c484ee426a">is_divisible_in_proportion</a> = true</td></tr>
+<tr class="memdesc:ad974836f40727a1b80f404c484ee426a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static field to support proportional split. <br/></td></tr>
+<tr class="separator:ad974836f40727a1b80f404c484ee426a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename RowValue, typename ColValue = RowValue&gt;<br/>

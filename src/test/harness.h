@@ -38,7 +38,6 @@
 
 #include "tbb/tbb_config.h"
 #include "harness_defs.h"
-#include <exception> //for set_terminate
 
 namespace Harness {
     enum TestResult {
@@ -91,7 +90,7 @@ int TestMain ();
 
 #if _WIN32||_WIN64
     #include "tbb/machine/windows_api.h"
-    #if _WIN32_WINNT > 0x0501 && _MSC_VER
+    #if _WIN32_WINNT > 0x0501 && _MSC_VER && !_M_ARM
         #include <dbghelp.h>
         #pragma comment (lib, "dbghelp.lib")
     #endif
@@ -159,6 +158,7 @@ void print_call_stack() {
 }
 
 #if !HARNESS_NO_ASSERT
+    #include <exception> //for set_terminate
     #include "harness_assert.h"
     #if TEST_USES_TBB
         #include <tbb/tbb_stddef.h> /*set_assertion_handler*/

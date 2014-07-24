@@ -237,10 +237,12 @@ public:
 
 void * thread_trace(thr_parms * parms)
 {
+#if !WIN8UI_EXAMPLE
     int n, nthreads = tbb::task_scheduler_init::automatic;
     char *nthreads_str = getenv ("TBB_NUM_THREADS");
     if (nthreads_str && (sscanf (nthreads_str, "%d", &n) > 0) && (n > 0)) nthreads = n;
     tbb::task_scheduler_init init (nthreads);
+#endif
 
     // shared but read-only so could be private too
     all_parms = parms;
@@ -255,7 +257,10 @@ void * thread_trace(thr_parms * parms)
     thread_ids.clear();
 #endif
 
-    int g, grain_size = 8;
+    int grain_size = 8;
+//WIN8UI does not support getenv() function so using auto_partitioner unconditionally
+#if !WIN8UI_EXAMPLE
+    int g;
     char *grain_str = getenv ("TBB_GRAINSIZE");
     if (grain_str && (sscanf (grain_str, "%d", &g) > 0) && (g > 0)) grain_size = g;
     char *sched_str = getenv ("TBB_PARTITIONER");
@@ -265,6 +270,7 @@ void * thread_trace(thr_parms * parms)
     else if ( sched_str && !strncmp(sched_str, "simp", 4) )
         tbb::parallel_for (tbb::blocked_range2d<int> (starty, stopy, grain_size, startx, stopx, grain_size), parallel_task (), tbb::simple_partitioner());
     else
+#endif
         tbb::parallel_for (tbb::blocked_range2d<int> (starty, stopy, grain_size, startx, stopx, grain_size), parallel_task (), tbb::auto_partitioner());
 
     return(NULL);  

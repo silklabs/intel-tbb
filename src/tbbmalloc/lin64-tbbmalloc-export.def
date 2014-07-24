@@ -42,6 +42,7 @@ __TBB_internal_free;
 __TBB_internal_malloc;
 __TBB_internal_realloc;
 __TBB_internal_posix_memalign;
+__TBB_internal_msize;
 scalable_msize;
 scalable_allocation_mode;
 scalable_allocation_command;

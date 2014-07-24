@@ -38,9 +38,6 @@
 namespace tbb {
 namespace internal {
 
-class generic_scheduler;
-class mail_outbox;
-
 struct task_proxy : public task {
     static const intptr_t      pool_bit = 1<<0;
     static const intptr_t   mailbox_bit = 1<<1;

@@ -33,11 +33,6 @@
 #define TBB_PREVIEW_MEMORY_POOL 1
 
 #include "harness_assert.h"
-#if !__TBB_SOURCE_DIRECTLY_INCLUDED
-// Currently pools high-level interface has dependency to TBB library
-// to get atomics. For sake of testing add rudementary implementation of them.
-#include "harness_tbb_independence.h"
-#endif
 #include "tbb/memory_pool.h"
 #include "tbb/scalable_allocator.h"
 

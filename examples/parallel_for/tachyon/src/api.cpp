@@ -56,10 +56,8 @@
 */
 
 /*
- * api.c - This file contains all of the API calls that are defined for
+ * api.cpp - This file contains all of the API calls that are defined for
  *         external driver code to use.  
- * 
- *  $Id: api.cpp,v 1.5 2007-02-22 17:54:14 Exp $
  */
 
 #include "machine.h"

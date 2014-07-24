@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.4"/>
-<title>tbb::queuing_mutex Class Reference</title>
+<title>tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -33,57 +33,50 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00222.html">tbb</a></li><li class="navelem"><a class="el" href="a00093.html">queuing_mutex</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00035.html">concurrent_hash_map</a></li><li class="navelem"><a class="el" href="a00093.html">node</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="a00271.html">List of all members</a>  </div>
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="a00359.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::queuing_mutex Class Reference<div class="ingroups"><a class="el" href="a00237.html">Synchronization</a></div></div>  </div>
+<div class="title">tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>Queuing mutex with local-only spinning.  
- <a href="a00093.html#details">More...</a></p>
-
-<p><code>#include &lt;queuing_mutex.h&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="a00093.png" usemap="#tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node_map" alt=""/>
+  <map id="tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node_map" name="tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt;::node_map">
+</map>
+ </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00121.html">scoped_lock</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scoped locking pattern.  <a href="a00121.html#details">More...</a><br/></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0e58fce2062ae349a30b320b7fdc9155"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e58fce2062ae349a30b320b7fdc9155"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00093.html#a0e58fce2062ae349a30b320b7fdc9155">queuing_mutex</a> ()</td></tr>
-<tr class="memdesc:a0e58fce2062ae349a30b320b7fdc9155"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct unacquired mutex. <br/></td></tr>
-<tr class="separator:a0e58fce2062ae349a30b320b7fdc9155"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae475e98e804c75239748b293e7e0feff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae475e98e804c75239748b293e7e0feff"></a>
-void __TBB_EXPORTED_METHOD&#160;</td><td class="memItemRight" valign="bottom"><b>internal_construct</b> ()</td></tr>
-<tr class="separator:ae475e98e804c75239748b293e7e0feff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace61f7bd9d097375f6e33fea4758fbf9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace61f7bd9d097375f6e33fea4758fbf9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>node</b> (const Key &amp;key)</td></tr>
+<tr class="separator:ace61f7bd9d097375f6e33fea4758fbf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6755d387982f27a06d859811699e40b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6755d387982f27a06d859811699e40b7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>node</b> (const Key &amp;key, const T &amp;t)</td></tr>
+<tr class="separator:a6755d387982f27a06d859811699e40b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15b3c8955eb1b104db439e9caf3737c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15b3c8955eb1b104db439e9caf3737c3"></a>
+void *&#160;</td><td class="memItemRight" valign="bottom"><b>operator new</b> (size_t, node_allocator_type &amp;a)</td></tr>
+<tr class="separator:a15b3c8955eb1b104db439e9caf3737c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3115742612b79db574914741f2fff45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3115742612b79db574914741f2fff45"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>operator delete</b> (void *ptr, node_allocator_type &amp;a)</td></tr>
+<tr class="separator:aa3115742612b79db574914741f2fff45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a504f3af8a939468f1514604c0941bc62"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a504f3af8a939468f1514604c0941bc62"></a>
-static const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_rw_mutex</b> = false</td></tr>
-<tr class="separator:a504f3af8a939468f1514604c0941bc62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47ad4cdac79581c01a66241e2e5c2c07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47ad4cdac79581c01a66241e2e5c2c07"></a>
-static const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_recursive_mutex</b> = false</td></tr>
-<tr class="separator:a47ad4cdac79581c01a66241e2e5c2c07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b4833b97208bd699cba061dfc3057cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b4833b97208bd699cba061dfc3057cc"></a>
-static const bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_fair_mutex</b> = true</td></tr>
-<tr class="separator:a5b4833b97208bd699cba061dfc3057cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a6977520eaa2f1dee220f726c8a884b46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6977520eaa2f1dee220f726c8a884b46"></a>
+value_type&#160;</td><td class="memItemRight" valign="bottom"><b>item</b></td></tr>
+<tr class="separator:a6977520eaa2f1dee220f726c8a884b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Queuing mutex with local-only spinning. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>queuing_mutex.h</li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>concurrent_hash_map.h</li>
 </ul>
 </div><!-- contents -->
 <hr>

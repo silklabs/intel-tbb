@@ -24,6 +24,8 @@
 # invalidate any other reasons why the executable file might be covered by
 # the GNU General Public License.
 
+export tbb_root?=$(NDK_PROJECT_PATH)
+
 ifeq (armeabi-v7a,$(APP_ABI))
 	export SYSROOT:=$(NDK_ROOT)/platforms/$(APP_PLATFORM)/arch-arm
 else

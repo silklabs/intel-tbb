@@ -38,6 +38,7 @@ valloc;
 pvalloc;
 mallinfo;
 mallopt;
+malloc_usable_size;
 __libc_malloc;
 __libc_realloc;
 __libc_calloc;

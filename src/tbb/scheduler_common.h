@@ -29,7 +29,7 @@
 #ifndef _TBB_scheduler_common_H
 #define _TBB_scheduler_common_H
 
-#include "tbb/tbb_stddef.h"
+#include "tbb/tbb_machine.h"
 #include "tbb/cache_aligned_allocator.h"
 
 #include <string.h>  // for memset, memcpy, memmove
@@ -79,6 +79,10 @@
 #define TBB_TRACE(x) ((void)(0))
 #endif /* DO_TBB_TRACE */
 
+#if !__TBB_CPU_CTL_ENV_PRESENT
+#include <fenv.h>
+#endif
+
 #if _MSC_VER && !defined(__INTEL_COMPILER)
     // Workaround for overzealous compiler warnings
     // These particular warnings are so ubiquitous that no attempt is made to narrow
@@ -97,7 +101,14 @@ struct wait_body;
 namespace internal {
 using namespace interface7::internal;
 
+class arena;
+template<typename SchedulerTraits> class custom_scheduler;
 class generic_scheduler;
+class governor;
+class mail_outbox;
+class market;
+class observer_proxy;
+class task_scheduler_observer_v3;
 
 #if __TBB_TASK_PRIORITY
 static const intptr_t num_priority_levels = 3;
@@ -341,6 +352,53 @@ struct arena_slot : padded<arena_slot_line1>, padded<arena_slot_line2> {
         }
     }
 };
+
+#if !__TBB_CPU_CTL_ENV_PRESENT
+class cpu_ctl_env {
+    fenv_t *my_fenv_ptr;
+public:
+    cpu_ctl_env() : my_fenv_ptr(NULL) {}
+    ~cpu_ctl_env() {
+        if ( my_fenv_ptr )
+            tbb::internal::NFS_Free( (void*)my_fenv_ptr );
+    }
+    // It is possible not to copy memory but just to copy pointers but the following issues should be addressed:
+    //   1. The arena lifetime and the context lifetime are independent;
+    //   2. The user is allowed to recapture different FPU settings to context so 'current FPU settings' inside
+    //   dispatch loop may become invalid.
+    // But do we really want to improve the fenv implementation? It seems to be better to replace the fenv implementation
+    // with a platform specifc implementation.
+    void operator=( const cpu_ctl_env &src ) {
+        __TBB_ASSERT( src.my_fenv_ptr, NULL );
+        if ( !my_fenv_ptr )
+            my_fenv_ptr = (fenv_t*)tbb::internal::NFS_Allocate(1, sizeof(fenv_t), NULL);
+        *my_fenv_ptr = *src.my_fenv_ptr;
+    }
+    bool operator!=( const cpu_ctl_env &ctl ) const {
+        __TBB_ASSERT( my_fenv_ptr, "cpu_ctl_env is not initialized." );
+        __TBB_ASSERT( ctl.my_fenv_ptr, "cpu_ctl_env is not initialized." );
+        return memcmp( (void*)my_fenv_ptr, (void*)ctl.my_fenv_ptr, sizeof(fenv_t) );
+    }
+    void get_env () {
+        if ( !my_fenv_ptr )
+            my_fenv_ptr = (fenv_t*)tbb::internal::NFS_Allocate(1, sizeof(fenv_t), NULL);
+        fegetenv( my_fenv_ptr );
+    }
+    const cpu_ctl_env& set_env () const {
+        __TBB_ASSERT( my_fenv_ptr, "cpu_ctl_env is not initialized." );
+        fesetenv( my_fenv_ptr );
+        return *this;
+    }
+};
+#endif /* !__TBB_CPU_CTL_ENV_PRESENT */
+
+#if __TBB_FP_CONTEXT
+struct task_group_context_accessor : tbb::internal::no_copy {
+    cpu_ctl_env &my_cpu_ctl_env;
+    task_group_context_accessor( tbb::task_group_context &ctx ) :
+        my_cpu_ctl_env( *punned_cast<cpu_ctl_env*>(&ctx.my_cpu_ctl_env) ) {}
+};
+#endif
 
 } // namespace internal
 } // namespace tbb

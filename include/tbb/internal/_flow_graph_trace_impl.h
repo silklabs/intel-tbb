@@ -29,7 +29,7 @@
 #ifndef _FGT_GRAPH_TRACE_IMPL_H
 #define _FGT_GRAPH_TRACE_IMPL_H
 
-#include "tbb/tbb_profiling.h"
+#include "../tbb_profiling.h"
 
 namespace tbb {
     namespace internal {

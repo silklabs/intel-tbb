@@ -56,9 +56,7 @@
 */
 
 /*
- * light.c - This file contains declarations and defines for light sources.
- *
- *  $Id: light.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * light.cpp - This file contains declarations and defines for light sources.
  */
 
 #include "machine.h"

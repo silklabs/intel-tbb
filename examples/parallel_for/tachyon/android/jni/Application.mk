@@ -24,7 +24,7 @@
 # invalidate any other reasons why the executable file might be covered by
 # the GNU General Public License.
 
-APP_ABI:=x86
+APP_ABI:= all
 APP_STL:=gnustl_shared
 APP_GNUSTL_FORCE_CPP_FEATURES := exceptions rtti
 APP_PLATFORM:=android-15

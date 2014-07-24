@@ -26,6 +26,7 @@
     the GNU General Public License.
 */
 
+#include "tbb/tbb_thread.h"
 #define THREAD tbb::tbb_thread
 #define THIS_THREAD tbb::this_tbb_thread
 #define THIS_THREAD_SLEEP THIS_THREAD::sleep

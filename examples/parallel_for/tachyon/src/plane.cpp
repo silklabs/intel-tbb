@@ -56,9 +56,7 @@
 */
 
 /* 
- * plane.c - This file contains the functions for dealing with planes.
- *
- *  $Id: plane.cpp,v 1.2 2007-02-22 17:54:16 Exp $
+ * plane.cpp - This file contains the functions for dealing with planes.
  */
  
 #include "machine.h"

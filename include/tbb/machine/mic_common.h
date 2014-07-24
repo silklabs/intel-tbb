@@ -53,8 +53,9 @@
 #include <sched.h>
 #define __TBB_Yield() sched_yield()
 
-/** FPU control setting **/
-#define __TBB_CPU_CTL_ENV_PRESENT 0
+// low-level timing intrinsic and its type
+#define __TBB_machine_time_stamp() _rdtsc()
+typedef uint64_t machine_tsc_t;
 
 /** Specifics **/
 #define __TBB_STEALING_ABORT_ON_CONTENTION 1

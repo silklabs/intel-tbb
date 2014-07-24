@@ -227,6 +227,7 @@ inline thread_monitor::handle_type thread_monitor::launch( void* (*thread_routin
         check(pthread_attr_setstacksize( &s, stack_size ), "pthread_attr_setstack_size" );
     pthread_t handle;
     check( pthread_create( &handle, &s, thread_routine, arg ), "pthread_create" );
+    check( pthread_attr_destroy( &s ), "pthread_attr_destroy" );
     return handle;
 }
 

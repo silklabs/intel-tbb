@@ -56,9 +56,7 @@
 */
 
 /*
- * coordsys.c -  Routines to translate from one coordinate system to another.
- *
- *  $Id: coordsys.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ * coordsys.cpp -  Routines to translate from one coordinate system to another.
  */
 
 #include "machine.h"

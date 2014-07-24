@@ -56,9 +56,7 @@
 */
 
 /*
- *  jpeg.c - This file deals with JPEG format image files (reading/writing)
- *
- *  $Id: jpeg.cpp,v 1.2 2007-02-22 17:54:15 Exp $
+ *  jpeg.cpp - This file deals with JPEG format image files (reading/writing)
  */ 
 
 /*

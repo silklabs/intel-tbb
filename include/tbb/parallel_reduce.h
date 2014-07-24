@@ -37,7 +37,7 @@
 
 namespace tbb {
 
-namespace interface6 {
+namespace interface7 {
 //! @cond INTERNAL
 namespace internal {
 
@@ -116,10 +116,10 @@ public:
         }
         //! Splitting constructor used to generate children.
         /** parent_ becomes left child.  Newly constructed object is right child. */
-        start_reduce( start_reduce& parent_, split ) :
+        start_reduce( start_reduce& parent_, typename Partitioner::split_type& split_obj ) :
             my_body(parent_.my_body),
-            my_range(parent_.my_range, split()),
-            my_partition(parent_.my_partition, split()),
+            my_range(parent_.my_range, split_obj),
+            my_partition(parent_.my_partition, split_obj),
             my_context(right_child)
         {
             my_partition.set_affinity(*this);
@@ -160,11 +160,11 @@ public:
 
         //! spawn right task, serves as callback for partitioner
         // TODO: remove code duplication from 'offer_work' methods
-        void offer_work(split) {
+        void offer_work(typename Partitioner::split_type& split_obj) {
             task *tasks[2];
             allocate_sibling(static_cast<task*>(this), tasks, sizeof(start_reduce), sizeof(finish_type));
             new((void*)tasks[0]) finish_type(my_context);
-            new((void*)tasks[1]) start_reduce(*this, split());
+            new((void*)tasks[1]) start_reduce(*this, split_obj);
             spawn(*tasks[1]);
         }
         //! spawn right task, serves as callback for partitioner
@@ -289,8 +289,8 @@ public:
 
 //! @cond INTERNAL
 namespace internal {
-    using interface6::internal::start_reduce;
-    using interface6::internal::start_deterministic_reduce;
+    using interface7::internal::start_reduce;
+    using interface7::internal::start_deterministic_reduce;
     //! Auxiliary class for parallel_reduce; for internal use only.
     /** The adaptor class that implements \ref parallel_reduce_body_req "parallel_reduce Body"
         using given \ref parallel_reduce_lambda_req "anonymous function objects".

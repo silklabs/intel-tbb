@@ -56,9 +56,7 @@
 */
 
 /*
- * ui.c - Contains functions for dealing with user interfaces
- *
- *  $Id: ui.cpp,v 1.2 2007-02-22 17:54:16 Exp $
+ * ui.cpp - Contains functions for dealing with user interfaces
  */
 
 #include "machine.h"

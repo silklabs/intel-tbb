@@ -38,6 +38,7 @@ static int g_fps = 0;
 #if _WIN32 || _WIN64
 
 static DWORD g_msec = 0;
+
 #ifdef _WINDOWS
 HINSTANCE video::win_hInstance = 0;
 int video::win_iCmdShow = 0;
@@ -46,12 +47,12 @@ void video::win_load_accelerators(int idc)  { }
 #endif //_WINDOWS
 
 #else
-
 #include <sched.h>
 #include <sys/time.h>
 struct timeval g_time;
-
 #endif //_WIN32||_WIN64
+
+#define CALC_FPS_ENABLED ((WINAPI_FAMILY != WINAPI_FAMILY_APP) && (!__ANDROID__))
 
 video::video()
     // OpenGL* RGBA byte order for little-endian CPU
@@ -78,6 +79,7 @@ bool video::init_console()
 
 void video::terminate()
 {
+#if CALC_FPS_ENABLED
     if(calc_fps) {
         double fps = g_fps;
 #if _WIN32 || _WIN64
@@ -87,7 +89,8 @@ void video::terminate()
         fps /= (end_time.tv_sec+1.0*end_time.tv_usec/1000000.0) - (g_time.tv_sec+1.0*g_time.tv_usec/1000000.0);
 #endif
         printf("%s: %.1f fps\n", title, fps);
-  	}
+    }
+#endif
     g_video = 0; running = false;
     if(g_pImg) { delete[] g_pImg; g_pImg = 0; }
 }
@@ -100,16 +103,18 @@ video::~video()
 //! Count and display FPS count in titlebar
 bool video::next_frame()
 {
+#if CALC_FPS_ENABLED
     if(calc_fps){
-	    if(!g_fps) {
+        if(!g_fps) {
 #if _WIN32 || _WIN64
             g_msec = GetTickCount();
 #else
             struct timezone tz; gettimeofday(&g_time, &tz);
 #endif
-	    }
+        }
         g_fps++;
     }
+#endif
     return running;
 }
 

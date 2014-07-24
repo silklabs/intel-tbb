@@ -56,10 +56,8 @@
 */
 
 /* 
- * trace.c - This file contains the functions for firing primary rays
+ * trace.cpp - This file contains the functions for firing primary rays
  *           and handling subsequent calculations
- *
- *   $Id: trace_rest.cpp,v 1.4 2007-02-22 17:54:16 Exp $
  */
 
 #include "machine.h"

@@ -50,7 +50,7 @@ const size_t shared_size = SHARED_TEXT_REGION_SIZE+SHARED_DATA_REGION_SIZE;
 const size_t shared_size = 0;
 #endif
 
-#elif _WIN32 && !_XBOX
+#elif _WIN32 && !_XBOX && !__TBB_WIN8UI_SUPPORT
 #include <windows.h>
 #include <psapi.h>
 #if _MSC_VER

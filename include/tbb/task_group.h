@@ -116,7 +116,7 @@ public:
         my_root->set_ref_count(1);
     }
 
-    ~task_group_base() {
+    ~task_group_base() __TBB_NOEXCEPT(false) {
         if( my_root->ref_count() > 1 ) {
             bool stack_unwinding_in_progress = std::uncaught_exception();
             // Always attempt to do proper cleanup to avoid inevitable memory corruption 

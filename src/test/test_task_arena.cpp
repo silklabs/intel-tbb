@@ -140,7 +140,6 @@ public:
 
 class ArenaObserver : public tbb::task_scheduler_observer {
     int myId;
-    tbb::atomic<int> myTrappedSlot;
     /*override*/
     void on_scheduler_entry( bool is_worker ) {
         REMARK("a %s #%p is entering arena %d from %d\n", is_worker?"worker":"master", &local_id.local(), myId, local_id.local());
@@ -161,16 +160,10 @@ class ArenaObserver : public tbb::task_scheduler_observer {
         local_id.local() = old_id.local();
         old_id.local() = 0;
     }
-    /*override*/
-    bool on_scheduler_leaving() {
-        ASSERT(slot_id.local() == tbb::task_arena::current_slot(), NULL);
-        return tbb::task_arena::current_slot() >= myTrappedSlot;
-    }
 public:
-    ArenaObserver(tbb::task_arena &a, int id, int trap = 0) : tbb::task_scheduler_observer(a) {
+    ArenaObserver(tbb::task_arena &a, int id) : tbb::task_scheduler_observer(a) {
         ASSERT(id, NULL);
         myId = id;
-        myTrappedSlot = trap;
         observe(true);
     }
     ~ArenaObserver () {

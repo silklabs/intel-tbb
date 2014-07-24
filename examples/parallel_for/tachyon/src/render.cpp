@@ -56,9 +56,7 @@
 */
 
 /* 
- * render.c - This file contains the main program and driver for the raytracer.
- *
- *  $Id: render.cpp,v 1.5 2007-02-22 18:17:51 amalakho Exp $
+ * render.cpp - This file contains the main program and driver for the raytracer.
  */
 
 #include "machine.h"

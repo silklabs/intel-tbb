@@ -65,12 +65,12 @@ build_gdi_debug: $(SOURCE) $(UISRC) msvs/$(RCNAME).res compiler_check
 	$(CXX) $(CXXFLAGS_DEBUG) /D _WINDOWS $(MYCXXFLAGS) $(SOURCE) $(UISRC) $(MYLFLAGS) msvs/$(RCNAME).res /debug /subsystem:windows /machine:$(XARCH) /OUT:$(EXE)
 	@cmd.exe /C del *.obj
 
-build_dd: $(SOURCE) $(UISRC) msvs/$(RCNAME).res compiler_check
+build_d2d: $(SOURCE) $(UISRC) msvs/$(RCNAME).res compiler_check
 	-@echo Using DirectX SDK from "$(DDLIB_DIR)"
 	$(CXX) $(CXXFLAGS_NDEBUG) /D _WINDOWS $(MYCXXFLAGS) /I "$(DXSDK_DIR)\include" $(SOURCE) $(UISRC) $(MYLFLAGS) /LIBPATH:"$(DDLIB_DIR)" msvs/$(RCNAME).res /subsystem:windows /machine:$(XARCH) /OUT:$(EXE)
 	@cmd.exe /C del *.obj
 
-build_dd_debug: $(SOURCE) $(UISRC) msvs/$(RCNAME).res compiler_check
+build_d2d_debug: $(SOURCE) $(UISRC) msvs/$(RCNAME).res compiler_check
 	-@echo Using DirectX SDK from "$(DDLIB_DIR)"
 	$(CXX) $(CXXFLAGS_DEBUG) /D _WINDOWS $(MYCXXFLAGS) /I "$(DXSDK_DIR)\include" $(SOURCE) $(UISRC) $(MYLFLAGS) /LIBPATH:"$(DDLIB_DIR)" msvs/$(RCNAME).res /debug /subsystem:windows /machine:$(XARCH) /OUT:$(EXE)
 	@cmd.exe /C del *.obj

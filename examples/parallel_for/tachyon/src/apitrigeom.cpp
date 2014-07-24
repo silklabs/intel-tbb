@@ -56,10 +56,8 @@
 */
 
 /*
- * apitrigeom.c - This file contains code for generating triangle tesselated
+ * apitrigeom.cpp - This file contains code for generating triangle tesselated
  *                geometry, for use with OpenGL, XGL, etc.
- * 
- *  $Id: apitrigeom.cpp,v 1.2 2007-02-22 17:54:15 Exp $
  */
 
 #include "machine.h"

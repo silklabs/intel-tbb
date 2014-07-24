@@ -914,7 +914,7 @@ protected:
     /* override */ internal::broadcast_cache<output_type> &successors () { return fOutput_type::my_successors; }
 };
 
-#include "tbb/internal/_flow_graph_types_impl.h"
+#include "internal/_flow_graph_types_impl.h"
 
 //! implements a function node that supports Input -> (set of outputs)
 // Output is a tuple of output types.
@@ -1141,7 +1141,6 @@ public:
             if ( s.try_put( my_buffer ) || !s.register_predecessor( *this  ) ) {
                 // We add the successor: it accepted our put or it rejected it but won't let us become a predecessor
                 my_successors.register_successor( s );
-                return true;
             } else {
                 // We don't add the successor: it rejected our put and we became its predecessor instead
                 return false;
@@ -1149,8 +1148,8 @@ public:
         } else {
             // No valid value yet, just add as successor
             my_successors.register_successor( s );
-            return true;
         }
+        return true;
     }
 
     /* override */ bool remove_successor( successor_type &s ) {
@@ -1164,9 +1163,8 @@ public:
         if ( my_buffer_is_valid ) {
             v = my_buffer;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     bool is_valid() {
@@ -2342,23 +2340,106 @@ public:
 };
 
 #if TBB_PREVIEW_GRAPH_NODES
-// or node
-#include "internal/_flow_graph_or_impl.h"
+// indexer node
+#include "internal/_flow_graph_indexer_impl.h"
 
-template<typename InputTuple>
-class or_node : public internal::unfolded_or_node<InputTuple> {
+struct indexer_null_type {};
+
+template<typename T0, typename T1=indexer_null_type, typename T2=indexer_null_type, typename T3=indexer_null_type, 
+                      typename T4=indexer_null_type, typename T5=indexer_null_type, typename T6=indexer_null_type, 
+                      typename T7=indexer_null_type, typename T8=indexer_null_type, typename T9=indexer_null_type> class indexer_node;
+
+//indexer node specializations
+template<typename T0>
+class indexer_node<T0> : public internal::unfolded_indexer_node<tuple<T0> > {
 private:
-    static const int N = tbb::flow::tuple_size<InputTuple>::value;
+    static const int N = 1;
 public:
-    typedef typename internal::or_output_type<InputTuple>::type output_type;
-    typedef typename internal::unfolded_or_node<InputTuple> unfolded_type;
-    or_node(graph& g) : unfolded_type(g) { 
-        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_OR_NODE, &this->my_graph,
+    typedef tuple<T0> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
     }
     // Copy constructor
-    or_node( const or_node& other ) : unfolded_type(other) { 
-        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_OR_NODE, &this->my_graph,
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+     void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+
+template<typename T0, typename T1>
+class indexer_node<T0, T1> : public internal::unfolded_indexer_node<tuple<T0, T1> > {
+private:
+    static const int N = 2;
+public:
+    typedef tuple<T0, T1> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+     void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+
+template<typename T0, typename T1, typename T2>
+class indexer_node<T0, T1, T2> : public internal::unfolded_indexer_node<tuple<T0, T1, T2> > {
+private:
+    static const int N = 3;
+public:
+    typedef tuple<T0, T1, T2> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+        void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+
+template<typename T0, typename T1, typename T2, typename T3>
+class indexer_node<T0, T1, T2, T3> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3> > {
+private:
+    static const int N = 4;
+public:
+    typedef tuple<T0, T1, T2, T3> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
                                            this->input_ports(), static_cast< sender< output_type > *>(this) );
     }
 
@@ -2367,8 +2448,172 @@ public:
         tbb::internal::fgt_node_desc( this, name );
     }
 #endif
-
 };
+
+template<typename T0, typename T1, typename T2, typename T3, typename T4>
+class indexer_node<T0, T1, T2, T3, T4> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4> > {
+private:
+    static const int N = 5;
+public:
+    typedef tuple<T0, T1, T2, T3, T4> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+
+#if __TBB_VARIADIC_MAX >= 6
+template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
+class indexer_node<T0, T1, T2, T3, T4, T5> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4, T5> > {
+private:
+    static const int N = 6; 
+public:
+    typedef tuple<T0, T1, T2, T3, T4, T5> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4, T5> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+#endif //variadic max 6
+
+#if __TBB_VARIADIC_MAX >= 7
+template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, 
+         typename T6>
+class indexer_node<T0, T1, T2, T3, T4, T5, T6> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4, T5, T6> > {
+private:
+    static const int N = 7;
+public:
+    typedef tuple<T0, T1, T2, T3, T4, T5, T6> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4, T5, T6> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+#endif //variadic max 7
+
+#if __TBB_VARIADIC_MAX >= 8
+template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, 
+         typename T6, typename T7>
+class indexer_node<T0, T1, T2, T3, T4, T5, T6, T7> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4, T5, T6, T7> > {
+private:
+    static const int N = 8; 
+public:
+    typedef tuple<T0, T1, T2, T3, T4, T5, T6, T7> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4, T5, T6, T7> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+#endif //variadic max 8
+
+#if __TBB_VARIADIC_MAX >= 9
+template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, 
+         typename T6, typename T7, typename T8>
+class indexer_node<T0, T1, T2, T3, T4, T5, T6, T7, T8> : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8> > {
+private:
+    static const int N = 9;
+public:
+    typedef tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4, T5, T6, T7, T8> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+#endif //variadic max 9
+
+#if __TBB_VARIADIC_MAX >= 10
+template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, 
+         typename T6, typename T7, typename T8, typename T9>
+class indexer_node/*default*/ : public internal::unfolded_indexer_node<tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> > {
+private:
+    static const int N = 10;
+public:
+    typedef tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> InputTuple;
+    typedef typename internal::tagged_msg<size_t, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> output_type;
+    typedef typename internal::unfolded_indexer_node<InputTuple> unfolded_type;
+    indexer_node(graph& g) : unfolded_type(g) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+    // Copy constructor
+    indexer_node( const indexer_node& other ) : unfolded_type(other) { 
+        tbb::internal::fgt_multiinput_node<InputTuple,N>( tbb::internal::FLOW_INDEXER_NODE, &this->my_graph,
+                                           this->input_ports(), static_cast< sender< output_type > *>(this) );
+    }
+
+#if TBB_PREVIEW_FLOW_GRAPH_TRACE
+    /* override */ void set_name( const char *name ) {
+        tbb::internal::fgt_node_desc( this, name );
+    }
+#endif
+};
+#endif //variadic max 10
+
 #endif  // TBB_PREVIEW_GRAPH_NODES
 
 //! Makes an edge between a single predecessor and a single successor
@@ -2406,7 +2651,10 @@ Body copy_body( Node &n ) {
     using interface7::split_node;
     using interface7::internal::output_port;
 #if TBB_PREVIEW_GRAPH_NODES
-    using interface7::or_node;
+    using interface7::indexer_node;
+    using interface7::internal::tagged_msg;
+    using interface7::internal::cast_to;
+    using interface7::internal::is_a;
 #endif
     using interface7::continue_node;
     using interface7::overwrite_node;

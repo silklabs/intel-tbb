@@ -68,6 +68,14 @@
 #include "tachyon_video.h"
 #include "../../../common/utility/utility.h"
 
+#if WIN8UI_EXAMPLE
+#include "tbb/tbb.h"
+volatile long global_startTime = 0;
+volatile long global_elapsedTime = 0;
+volatile bool global_isCancelled = false;
+volatile int global_number_of_threads;
+#endif
+
 SceneHandle global_scene;
 int global_xsize;     /*  size of graphic image rendered in window (from hres, vres)  */
 int global_ysize;
@@ -94,6 +102,86 @@ typedef struct {
   char camfilename[1024]; /* camera filename */
 } argoptions;
 
+void initoptions(argoptions * opt) {
+    memset(opt, 0, sizeof(argoptions));
+    opt->foundfilename = -1;
+    opt->useoutfilename = -1;
+    opt->verbosemode = -1;
+    opt->antialiasing = -1;
+    opt->displaymode = -1;
+    opt->boundmode = -1; 
+    opt->boundthresh = -1; 
+    opt->usecamfile = -1;
+}
+
+#if WIN8UI_EXAMPLE
+int CreateScene() {
+
+   char* filename = "Assets/balls.dat";
+
+    global_scene = rt_newscene();
+    rt_initialize();
+
+    if ( readmodel(filename, global_scene) != 0 ) {
+        rt_finalize();
+        return -1;
+    }
+
+    // need these early for create_graphics_window() so grab these here...
+    scenedef *scene = (scenedef *) global_scene;
+
+    // scene->hres and scene->vres should be equal to screen resolution
+    scene->hres = global_xwinsize = global_xsize;
+    scene->vres = global_ywinsize = global_ysize;  
+
+    return 0;
+}
+
+unsigned int __stdcall example_main(void *)
+{
+    try {
+
+        if ( CreateScene() != 0 )
+            exit(-1);
+
+        tachyon_video tachyon;
+        tachyon.threaded = true;
+        tachyon.init_console();
+
+        // always using window even if(!global_usegraphics)
+        global_usegraphics = 
+            tachyon.init_window(global_xwinsize, global_ywinsize);
+        if(!tachyon.running)
+            exit(-1);
+
+        video = &tachyon;
+
+        for(;;) {
+            global_elapsedTime = 0;
+            global_startTime=(long) time(NULL);
+            global_isCancelled=false;
+            if (video)video->running = true;
+            tbb::task_scheduler_init init (global_number_of_threads);
+            memset(g_pImg, 0, sizeof(unsigned int) * global_xsize * global_ysize);
+            tachyon.main_loop();
+            global_elapsedTime = (long)(time(NULL)-global_startTime);
+            video->running=false;
+            //The timer to restart drawing then it is complete.
+            int timer=50;
+            while( (  !global_isCancelled && (timer--)>0 ) ){
+                rt_sleep( 100 );
+            }
+        }
+        return NULL;
+
+    } catch ( std::exception& e ) {
+        std::cerr<<"error occurred. error text is :\"" <<e.what()<<"\"\n";
+        return 1;
+    }
+}
+
+#else
+
 static char *window_title_string (int argc, const char **argv)
 {
     int i;
@@ -115,18 +203,6 @@ static char *window_title_string (int argc, const char **argv)
     strcat (name, " (DEBUG BUILD)");
 #endif
     return name;
-}
-
-void initoptions(argoptions * opt) {
-    memset(opt, 0, sizeof(argoptions));
-    opt->foundfilename = -1;
-    opt->useoutfilename = -1;
-    opt->verbosemode = -1;
-    opt->antialiasing = -1;
-    opt->displaymode = -1;
-    opt->boundmode = -1; 
-    opt->boundthresh = -1; 
-    opt->usecamfile = -1;
 }
 
 int useoptions(argoptions * opt, SceneHandle scene) {
@@ -255,3 +331,5 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 }
+#endif
+

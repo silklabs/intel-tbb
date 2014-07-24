@@ -37,7 +37,7 @@
 
 namespace tbb {
 
-namespace interface6 {
+namespace interface7 {
 //! @cond INTERNAL
 namespace internal {
 
@@ -68,10 +68,10 @@ namespace internal {
         }
         //! Splitting constructor used to generate children.
         /** parent_ becomes left child.  Newly constructed object is right child. */
-        start_for( start_for& parent_, split ) :
-            my_range(parent_.my_range, split()),
+        start_for( start_for& parent_, typename Partitioner::split_type& split_obj) :
+            my_range(parent_.my_range, split_obj),
             my_body(parent_.my_body),
-            my_partition(parent_.my_partition, split())
+            my_partition(parent_.my_partition, split_obj)
         {
             my_partition.set_affinity(*this);
         }
@@ -80,7 +80,7 @@ namespace internal {
         start_for( start_for& parent_, const Range& r, depth_t d ) :
             my_range(r),
             my_body(parent_.my_body),
-            my_partition(parent_.my_partition,split())
+            my_partition(parent_.my_partition, split())
         {
             my_partition.set_affinity(*this);
             my_partition.align_depth( d );
@@ -110,8 +110,8 @@ namespace internal {
         void run_body( Range &r ) { my_body( r ); }
 
         //! spawn right task, serves as callback for partitioner
-        void offer_work(split) {
-            spawn( *new( allocate_sibling(static_cast<task*>(this), sizeof(start_for)) ) start_for(*this, split()) );
+        void offer_work(typename Partitioner::split_type& split_obj) {
+            spawn( *new( allocate_sibling(static_cast<task*>(this), sizeof(start_for)) ) start_for(*this, split_obj) );
         }
         //! spawn right task, serves as callback for partitioner
         void offer_work(const Range& r, depth_t d = 0) {
@@ -141,7 +141,7 @@ namespace internal {
 
 //! @cond INTERNAL
 namespace internal {
-    using interface6::internal::start_for;
+    using interface7::internal::start_for;
 
     //! Calls the function with values from range [begin, end) with a step provided
     template<typename Function, typename Index>

@@ -61,15 +61,6 @@ struct scheduler_list_node_t {
 
 #define LockedMaster ((generic_scheduler*)~(intptr_t)0)
 
-class governor;
-class market;
-class arena;
-
-#if __TBB_SCHEDULER_OBSERVER
-class task_scheduler_observer_v3;
-class observer_proxy;
-#endif /* __TBB_SCHEDULER_OBSERVER */
-
 struct scheduler_state {
     //! Index of the arena slot the scheduler occupies now, or occupied last time.
     size_t my_arena_index;
@@ -114,25 +105,8 @@ struct scheduler_state {
     Class generic_scheduler is an abstract base class that contains most of the scheduler,
     except for tweaks specific to processors and tools (e.g. VTune).
     The derived template class custom_scheduler<SchedulerTraits> fills in the tweaks. */
-class generic_scheduler: public scheduler, public ::rml::job, private scheduler_state {
-    friend class tbb::task;
-    friend class market;
-    friend class arena;
-    friend class interface7::internal::task_arena_base;
-    friend class interface7::internal::delegated_task;
-    friend class interface7::internal::wait_task;
-    friend struct interface7::internal::wait_body;
-    friend class allocate_root_proxy;
-    friend class governor;
-#if __TBB_TASK_GROUP_CONTEXT
-    friend class allocate_root_with_context_proxy;
-    friend class tbb::task_group_context;
-#endif /* __TBB_TASK_GROUP_CONTEXT */
-#if __TBB_SCHEDULER_OBSERVER
-    friend class task_scheduler_observer_v3;
-#endif /* __TBB_SCHEDULER_OBSERVER */
-    friend class scheduler;
-    template<typename SchedulerTraits> friend class custom_scheduler;
+class generic_scheduler: public scheduler, public ::rml::job, public scheduler_state {
+public: // almost every class in TBB uses generic_scheduler
 
     //! If sizeof(task) is <=quick_task_size, it is handled on a free list instead of malloc'd.
     static const size_t quick_task_size = 256-task_prefix_reservation_size;
@@ -296,8 +270,10 @@ class generic_scheduler: public scheduler, public ::rml::job, private scheduler_
     static void cleanup_worker( void* arg, bool worker );
 
 protected:
+    template<typename SchedulerTraits> friend class custom_scheduler;
     generic_scheduler( arena*, size_t index );
 
+public:
 #if TBB_USE_ASSERT > 1
     //! Check that internal data structures are in consistent state.
     /** Raises __TBB_ASSERT failure if inconsistency is found. */
@@ -306,7 +282,6 @@ protected:
     void assert_task_pool_valid() const {}
 #endif /* TBB_USE_ASSERT <= 1 */
 
-public:
 #if __TBB_TASK_ARENA
     template<typename Body>
     void nested_arena_execute(arena*, task*, bool, Body&);
@@ -460,12 +435,40 @@ public:
     //! and propagates the new state to them.
     template <typename T>
     void propagate_task_group_state ( T task_group_context::*mptr_state, task_group_context& src, T new_state );
+
+    // check consistency
+    void assert_context_valid(task_group_context *tgc) {
+        suppress_unused_warning(tgc);
+#if TBB_USE_ASSERT
+        uintptr_t ctx = tgc->my_version_and_traits;
+        __TBB_ASSERT(is_alive(ctx), "referenced task_group_context was destroyed");
+        static const char *msg = "task_group_context is invalid";
+        __TBB_ASSERT(!(ctx&~(3|(7<<task_group_context::traits_offset))), msg); // the value fits known values of versions and traits
+        __TBB_ASSERT(tgc->my_kind < task_group_context::dying, msg);
+        __TBB_ASSERT(tgc->my_cancellation_requested == 0 || tgc->my_cancellation_requested == 1, msg);
+        __TBB_ASSERT(tgc->my_state <= 1, msg);
+        if(tgc->my_kind != task_group_context::isolated) {
+            __TBB_ASSERT(tgc->my_owner, msg);
+            __TBB_ASSERT(tgc->my_node.my_next && tgc->my_node.my_prev, msg);
+        }
+#if __TBB_TASK_PRIORITY
+        assert_priority_valid(tgc->my_priority);
+#endif
+        if(tgc->my_parent)
+#if TBB_USE_ASSERT > 1
+            assert_context_valid(tgc->my_parent);
+#else
+            __TBB_ASSERT(is_alive(tgc->my_parent->my_version_and_traits), msg);
+#endif
+#endif
+    }
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
 #if _WIN32||_WIN64
 private:
     //! Handle returned by RML when registering a master with RML
     ::rml::server::execution_resource_t master_exec_resource;
+public:
 #endif /* _WIN32||_WIN64 */
 
 #if __TBB_TASK_GROUP_CONTEXT

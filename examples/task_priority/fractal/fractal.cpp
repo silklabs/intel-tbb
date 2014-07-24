@@ -28,11 +28,15 @@
 
 #include "fractal.h"
 
-#include "tbb/compat/thread"
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range2d.h"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/tick_count.h"
+#if TBB_IMPLEMENT_CPP0X
+#include "tbb/compat/thread"
+#else
+#include <thread>
+#endif
 
 #include <math.h>
 #include <stdio.h>

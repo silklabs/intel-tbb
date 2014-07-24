@@ -33,7 +33,7 @@
     #error Set TBB_PREVIEW_RUNTIME_LOADER to include runtime_loader.h
 #endif
 
-#include "tbb/tbb_stddef.h"
+#include "tbb_stddef.h"
 #include <climits>
 
 #if _MSC_VER
