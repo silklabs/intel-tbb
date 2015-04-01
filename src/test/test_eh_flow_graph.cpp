@@ -282,6 +282,7 @@ public:
 template<class BufferItemType>
 struct sequencer_body {
     size_t operator()(const BufferItemType &s) {
+        ASSERT(s, "sequencer item out of range (== 0)");
         return size_t(s) - 1;
     }
 };
@@ -1107,7 +1108,7 @@ void run_one_sequencer_node_test(bool throwException,bool flog) {
         if(iter == 0) {
             remove_edge(node_to_test, sink);
             node_to_test.try_put(BufferItemType(g_NumItems + 1));
-            node_to_test.try_put(BufferItemType());
+            node_to_test.try_put(BufferItemType(1));
             g.wait_for_all();
             g.reset();
             source_count = sink_count = 0;

@@ -104,11 +104,18 @@
 #endif
 
 //MSVC 2013 is unable to properly resolve call to overloaded operator= with std::initializer_list argument for std::pair list elements
-#define __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN (_MSC_FULL_VER <= 180030501 && _MSC_VER && !__INTEL_COMPILER)
+#define __TBB_CPP11_INIT_LIST_ASSIGN_OP_RESOLUTION_BROKEN (_MSC_FULL_VER <= 180030723 && _MSC_VER && !__INTEL_COMPILER)
 //MSVC 2013 is unable to manage lifetime of temporary objects passed to a std::initializer_list constructor properly
 #define __TBB_CPP11_INIT_LIST_TEMP_OBJS_LIFETIME_BROKEN (_MSC_FULL_VER < 180030501 && _MSC_VER && !__INTEL_COMPILER)
 //Implementation of C++11 std::placeholders in libstdc++ coming with gcc prior to 4.5 reveals bug in Intel Compiler 13 causing "multiple definition" link errors.
 #define __TBB_CPP11_STD_PLACEHOLDERS_LINKAGE_BROKEN ((__INTEL_COMPILER == 1300 || __INTEL_COMPILER == 1310 )&& __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION < 40500)
+
+//some compilers do not generate implicitly move constructor and assignment operator, as this feature (r-value reference 3.0) was added later
+#if __clang__ &&  !__INTEL_COMPILER
+  #define __TBB_CPP11_IMPLICIT_MOVE_MEMBERS_GENERATION_BROKEN !__has_feature(cxx_implicit_moves)
+#else
+  #define __TBB_CPP11_IMPLICIT_MOVE_MEMBERS_GENERATION_BROKEN  (__TBB_CPP11_RVALUE_REF_PRESENT && ( !__INTEL_COMPILER && _MSC_VER && _MSC_VER <=1800 || __INTEL_COMPILER && __INTEL_COMPILER < 1400))
+#endif
 
 #if __GNUC__ && __ANDROID__
   #define __TBB_EXCEPTION_TYPE_INFO_BROKEN ( __TBB_GCC_VERSION < 40600 )

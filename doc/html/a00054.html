@@ -33,7 +33,7 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00231.html">tbb</a></li><li class="navelem"><b>interface6</b></li><li class="navelem"><a class="el" href="a00054.html">enumerable_thread_specific</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><b>interface6</b></li><li class="navelem"><a class="el" href="a00054.html">enumerable_thread_specific</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -42,9 +42,9 @@
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="a00375.html">List of all members</a>  </div>
+<a href="a00380.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::interface6::enumerable_thread_specific&lt; T, Allocator, ETS_key_type &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00245.html">Containers</a></div></div>  </div>
+<div class="title">tbb::interface6::enumerable_thread_specific&lt; T, Allocator, ETS_key_type &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00248.html">Containers</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -124,7 +124,7 @@ template&lt;typename Finit &gt; </td></tr>
 <tr class="separator:a6c4bec58ae7f0f2b6c77f0baf79623ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f0249ee95fa56665da4b6984f3a685a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f0249ee95fa56665da4b6984f3a685a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00054.html#a6f0249ee95fa56665da4b6984f3a685a">enumerable_thread_specific</a> (const T &amp;exemplar)</td></tr>
-<tr class="memdesc:a6f0249ee95fa56665da4b6984f3a685a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with exemplar. Each local instance of T is copied-constructed from the exemplar. <br/></td></tr>
+<tr class="memdesc:a6f0249ee95fa56665da4b6984f3a685a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with exemplar. Each local instance of T is copy-constructed from the exemplar. <br/></td></tr>
 <tr class="separator:a6f0249ee95fa56665da4b6984f3a685a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ea8d717f770acb63efc406df52d4585"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ea8d717f770acb63efc406df52d4585"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00054.html#a6ea8d717f770acb63efc406df52d4585">~enumerable_thread_specific</a> ()</td></tr>
@@ -174,20 +174,20 @@ const_range_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00054.html#a85a0d8f088ef1ee07aeb2c0e944a4a5e">clear</a> ()</td></tr>
 <tr class="memdesc:a85a0d8f088ef1ee07aeb2c0e944a4a5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys local copies. <br/></td></tr>
 <tr class="separator:a85a0d8f088ef1ee07aeb2c0e944a4a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c2e2949e1b12c91c700b6394a637ac2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4c2e2949e1b12c91c700b6394a637ac2"></a>
-template&lt;typename U , typename Alloc , ets_key_usage_type Cachetype&gt; </td></tr>
-<tr class="memitem:a4c2e2949e1b12c91c700b6394a637ac2"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>enumerable_thread_specific</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a>&lt; U, Alloc, Cachetype &gt; &amp;other)</td></tr>
-<tr class="separator:a4c2e2949e1b12c91c700b6394a637ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15960d5f730ea183a581730e912700c8"><td class="memTemplParams" colspan="2"><a class="anchor" id="a15960d5f730ea183a581730e912700c8"></a>
+template&lt;typename Alloc , ets_key_usage_type Cachetype&gt; </td></tr>
+<tr class="memitem:a15960d5f730ea183a581730e912700c8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>enumerable_thread_specific</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a>&lt; T, Alloc, Cachetype &gt; &amp;other)</td></tr>
+<tr class="separator:a15960d5f730ea183a581730e912700c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b614f913497b8dc168a8e6ea03eac48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b614f913497b8dc168a8e6ea03eac48"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>enumerable_thread_specific</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a> &amp;other)</td></tr>
 <tr class="separator:a6b614f913497b8dc168a8e6ea03eac48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7af8784cd0d0f04b3f9f50988b8f0885"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7af8784cd0d0f04b3f9f50988b8f0885"></a>
 <a class="el" href="a00054.html">enumerable_thread_specific</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a> &amp;other)</td></tr>
 <tr class="separator:a7af8784cd0d0f04b3f9f50988b8f0885"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f5a6b7f44d0d367c7ede8dc52a0aec4"><td class="memTemplParams" colspan="2"><a class="anchor" id="a8f5a6b7f44d0d367c7ede8dc52a0aec4"></a>
-template&lt;typename U , typename Alloc , ets_key_usage_type Cachetype&gt; </td></tr>
-<tr class="memitem:a8f5a6b7f44d0d367c7ede8dc52a0aec4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="a00054.html">enumerable_thread_specific</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a>&lt; U, Alloc, Cachetype &gt; &amp;other)</td></tr>
-<tr class="separator:a8f5a6b7f44d0d367c7ede8dc52a0aec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e2cfddffa47dd0eb042cf6cbcea815f"><td class="memTemplParams" colspan="2"><a class="anchor" id="a5e2cfddffa47dd0eb042cf6cbcea815f"></a>
+template&lt;typename Alloc , ets_key_usage_type Cachetype&gt; </td></tr>
+<tr class="memitem:a5e2cfddffa47dd0eb042cf6cbcea815f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="a00054.html">enumerable_thread_specific</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00054.html">enumerable_thread_specific</a>&lt; T, Alloc, Cachetype &gt; &amp;other)</td></tr>
+<tr class="separator:a5e2cfddffa47dd0eb042cf6cbcea815f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ab62b7fd2aeeb12e1a3b93c9ce99f27"><td class="memTemplParams" colspan="2"><a class="anchor" id="a7ab62b7fd2aeeb12e1a3b93c9ce99f27"></a>
 template&lt;typename combine_func_t &gt; </td></tr>
 <tr class="memitem:a7ab62b7fd2aeeb12e1a3b93c9ce99f27"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>combine</b> (combine_func_t f_combine)</td></tr>

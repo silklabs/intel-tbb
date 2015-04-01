@@ -42,8 +42,6 @@
 #include "tbb/spin_rw_mutex.h"
 #include "tbb/task.h"
 
-#define WAIT_MAX 1000000
-
 #define private public
 #define protected public
 #include "tbb/flow_graph.h"

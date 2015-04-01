@@ -32,6 +32,7 @@
 #include <iterator>
 #include <utility>      // Need std::pair
 #include <cstring>      // Need std::memset
+#include <algorithm>    // Need std::swap
 
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
     #pragma warning (pop)

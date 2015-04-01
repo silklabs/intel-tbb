@@ -126,10 +126,11 @@
         #define __TBB_EXCEPTION_PTR_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1200)
     #elif __TBB_GCC_VERSION >= 40600
         #define __TBB_EXCEPTION_PTR_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __INTEL_COMPILER >= 1300)
+    #elif _LIBCPP_VERSION
+        #define __TBB_EXCEPTION_PTR_PRESENT           __GXX_EXPERIMENTAL_CXX0X__
     #else
         #define __TBB_EXCEPTION_PTR_PRESENT           0
     #endif
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (_MSC_VER >= 1700 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600))
     #define __TBB_STATIC_ASSERT_PRESENT               (__INTEL_CXX11_MODE__ || _MSC_VER >= 1600)
     #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300))
     /**Intel C++ compiler 14.0 crashes on using __has_include. When it fixed, condition will need to be updated. **/
@@ -157,7 +158,6 @@
     #define __TBB_CPP11_RVALUE_REF_PRESENT             (__has_feature(__cxx_rvalue_references__) && (__TBB_GCC_VERSION >= 40300 || _LIBCPP_VERSION))
 /** TODO: extend exception_ptr related conditions to cover libstdc++ **/
     #define __TBB_EXCEPTION_PTR_PRESENT               (__cplusplus >= 201103L && _LIBCPP_VERSION)
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__cplusplus >= 201103L && _LIBCPP_VERSION)
     #define __TBB_STATIC_ASSERT_PRESENT               __has_feature(__cxx_static_assert__)
     /**Clang (preprocessor) has problems with dealing with expression having __has_include in #ifs
      * used inside C++ code. (At least version that comes with OS X 10.8 : Apple LLVM version 4.2 (clang-425.0.28) (based on LLVM 3.2svn)) **/
@@ -181,7 +181,6 @@
         for exception_ptr but cannot be used in this file because it is defined in a header, not by the compiler. 
         If the compiler has no atomic intrinsics, the C++ library should not expect those as well. **/
     #define __TBB_EXCEPTION_PTR_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40404 && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40600)
     #define __TBB_STATIC_ASSERT_PRESENT               (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300)
     #define __TBB_CPP11_TUPLE_PRESENT                 (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300)
     #define __TBB_INITIALIZER_LISTS_PRESENT           (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40400)
@@ -197,7 +196,6 @@
     #define __TBB_CPP11_RVALUE_REF_PRESENT            (_MSC_VER >= 1600)
     #define __TBB_EXCEPTION_PTR_PRESENT               (_MSC_VER >= 1600)
     #define __TBB_STATIC_ASSERT_PRESENT               (_MSC_VER >= 1600)
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          (_MSC_VER >= 1700)
     #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600)
     #define __TBB_INITIALIZER_LISTS_PRESENT           (_MSC_VER >= 1800)
     #define __TBB_CONSTEXPR_PRESENT                   0
@@ -211,7 +209,6 @@
     #define __TBB_CPP11_RVALUE_REF_PRESENT            0
     #define __TBB_EXCEPTION_PTR_PRESENT               0
     #define __TBB_STATIC_ASSERT_PRESENT               0
-    #define __TBB_MAKE_EXCEPTION_PTR_PRESENT          0
     #define __TBB_CPP11_TUPLE_PRESENT                 0
     #define __TBB_INITIALIZER_LISTS_PRESENT           0
     #define __TBB_CONSTEXPR_PRESENT                   0
@@ -224,12 +221,18 @@
 
 // C++11 standard library features
 
-#define __TBB_CPP11_TYPE_PROPERTIES_PRESENT      (_LIBCPP_VERSION || _MSC_VER >= 1700)
-#define __TBB_TR1_TYPE_PROPERTIES_IN_STD_PRESENT (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300 || _MSC_VER >= 1600)
+#define __TBB_CPP11_TYPE_PROPERTIES_PRESENT         (_LIBCPP_VERSION || _MSC_VER >= 1700)
+#define __TBB_TR1_TYPE_PROPERTIES_IN_STD_PRESENT    (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300 || _MSC_VER >= 1600)
+// GCC has a partial support of type properties
+#define __TBB_CPP11_IS_COPY_CONSTRUCTIBLE_PRESENT   (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40700 || __TBB_CPP11_TYPE_PROPERTIES_PRESENT)
+
+// In GCC and MSVC, implementation of std::move_if_noexcept is not aligned with noexcept
+#define __TBB_MOVE_IF_NOEXCEPT_PRESENT          (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40700 || _MSC_VER >= 1800 || __clang__ && _LIBCPP_VERSION && __TBB_NOEXCEPT_PRESENT)
 //TODO: Probably more accurate way is to analyze version of stdlibc++ via__GLIBCXX__ instead of __TBB_GCC_VERSION
-#define __TBB_ALLOCATOR_TRAITS_PRESENT           (__cplusplus >= 201103L && _LIBCPP_VERSION  || _MSC_VER >= 1700 ||                                             \
-                                                  __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40700 && !(__TBB_GCC_VERSION == 40700 && __TBB_DEFINE_MIC) \
-                                                 )
+#define __TBB_ALLOCATOR_TRAITS_PRESENT              (__cplusplus >= 201103L && _LIBCPP_VERSION  || _MSC_VER >= 1700 ||                                             \
+                                                     __GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40700 && !(__TBB_GCC_VERSION == 40700 && __TBB_DEFINE_MIC) \
+                                                    )
+#define __TBB_MAKE_EXCEPTION_PTR_PRESENT         (__TBB_EXCEPTION_PTR_PRESENT && (_MSC_VER >= 1700 || __TBB_GCC_VERSION >= 40600 || _LIBCPP_VERSION))
 
 //TODO: not clear how exactly this macro affects exception_ptr - investigate
 // On linux ICC fails to find existing std::exception_ptr in libstdc++ without this define

@@ -1072,9 +1072,15 @@ private:
     //! Copy-construct n instances of T by copying single element pointed to by src, starting at "dst".
     static void __TBB_EXPORTED_FUNC copy_array( void* dst, const void* src, size_type n );
 
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+    //! Either opy or move-construct n instances of T, starting at "dst" by copying according element of src array.
+    static void __TBB_EXPORTED_FUNC move_array_if_noexcept( void* dst, const void* src, size_type n );
+#endif //__TBB_MOVE_IF_NO_EXCEPT_PRESENT
+
 #if __TBB_CPP11_RVALUE_REF_PRESENT
     //! Move-construct n instances of T, starting at "dst" by copying according element of src array.
     static void __TBB_EXPORTED_FUNC move_array( void* dst, const void* src, size_type n );
+
     //! Move-assign (using operator=) n instances of T, starting at "dst" by assigning according element of src array.
     static void __TBB_EXPORTED_FUNC move_assign_array( void* dst, const void* src, size_type n );
 #endif
@@ -1108,6 +1114,10 @@ private:
         void move_assign(const void *src)       { for(; i < n; ++i) array[i]         =  std::move(as_pointer(src)[i]);   }
         void move_construct(const void *src)    { for(; i < n; ++i) new( &array[i] ) T( std::move(as_pointer(src)[i]) ); }
 #endif
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+        void move_construct_if_noexcept(const void *src)    { for(; i < n; ++i) new( &array[i] ) T( std::move_if_noexcept(as_pointer(src)[i]) ); }
+#endif //__TBB_MOVE_IF_NOEXCEPT_PRESENT
+
         //TODO: rename to construct_range
         template<class I> void iterate(I &src) { for(; i < n; ++i, ++src) new( &array[i] ) T( *src ); }
         ~internal_loop_guide() {
@@ -1155,7 +1165,14 @@ template<typename T, class A>
 void concurrent_vector<T, A>::shrink_to_fit() {
     internal_segments_table old;
     __TBB_TRY {
-        if( internal_compact( sizeof(T), &old, &destroy_array, &copy_array ) )
+        internal_array_op2 copy_or_move_array =
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+                &move_array_if_noexcept
+#else
+                &copy_array
+#endif
+        ;
+        if( internal_compact( sizeof(T), &old, &destroy_array, copy_or_move_array ) )
             internal_free_segments( old.table, pointers_per_long_table, old.first_block ); // free joined and unnecessary segments
     } __TBB_CATCH(...) {
         if( old.first_block ) // free segment allocated for compacting. Only for support of exceptions in ctor of user T[ype]
@@ -1262,12 +1279,18 @@ template<typename T, class A>
 void concurrent_vector<T, A>::move_array( void* dst, const void* src, size_type n ) {
     internal_loop_guide loop(n, dst); loop.move_construct(src);
 }
-
 template<typename T, class A>
 void concurrent_vector<T, A>::move_assign_array( void* dst, const void* src, size_type n ) {
     internal_loop_guide loop(n, dst); loop.move_assign(src);
 }
 #endif
+
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+template<typename T, class A>
+void concurrent_vector<T, A>::move_array_if_noexcept( void* dst, const void* src, size_type n ) {
+    internal_loop_guide loop(n, dst); loop.move_construct_if_noexcept(src);
+}
+#endif //__TBB_MOVE_IF_NOEXCEPT_PRESENT
 
 template<typename T, class A>
 template<typename I>

@@ -129,6 +129,13 @@ Library Issues
         version 4.0 U5 or higher under Intel(R) Graphics Performance
         Analyzers is not supported.
 
+    - If an application that uses dynamic memory allocator replacement via
+        LD_PRELOAD is analyzed with Intel(R) VTune(TM) Amplifier XE for Linux,
+        the analysis may fail to start. For a workaround, either specify
+        the full path to both libtbbmalloc_proxy.so.2 and libtbbmalloc.so.2
+        in LD_PRELOAD, or set up a Intel(R) VTune(TM) Amplifier XE project
+        to use a shell script that sets LD_PRELOAD and starts the application.
+
 ------------------------------------------------------------------------
 Copyright (C) 2005-2014 Intel Corporation.  All Rights Reserved.
 

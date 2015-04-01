@@ -36,7 +36,6 @@
     #define __TBB_FUNCTION_BY_CONSTREF_IN_TEMPLATE_BROKEN 1
 #endif
 
-static const size_t MAX_NUMBER_OF_PINVOKE_ARGS = 10;
 tbb::atomic<size_t> function_counter;
 
 // Some macros to make the test easier to read

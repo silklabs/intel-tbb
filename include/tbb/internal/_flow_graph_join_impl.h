@@ -1417,11 +1417,11 @@ namespace internal {
         typedef typename internal::function_body<T1, tag_value> *f1_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p > func_initializer_type;
     public:
-        template<typename B0, typename B1>
-        unfolded_join_node(graph &g, B0 b0, B1 b1) : base_type(g,
+        template<typename Body0, typename Body1>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1) : base_type(g,
                 func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1)
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1442,12 +1442,12 @@ namespace internal {
         typedef typename internal::function_body<T2, tag_value> *f2_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2) : base_type(g,
+        template<typename Body0, typename Body1, typename Body2>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2) : base_type(g,
                 func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2)
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1470,13 +1470,13 @@ namespace internal {
         typedef typename internal::function_body<T3, tag_value> *f3_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3) : base_type(g,
+        template<typename Body0, typename Body1, typename Body2, typename Body3>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3) : base_type(g,
                 func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3)
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1501,14 +1501,14 @@ namespace internal {
         typedef typename internal::function_body<T4, tag_value> *f4_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4) : base_type(g,
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4) : base_type(g,
                 func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4)
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1536,15 +1536,15 @@ namespace internal {
         typedef typename internal::function_body<T5, tag_value> *f5_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p, f5_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5) : base_type(g,
-                func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4),
-                    new internal::function_body_leaf<T5, tag_value, B5>(b5)
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4, typename Body5>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4, Body5 body5)
+                : base_type(g, func_initializer_type(
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4),
+                    new internal::function_body_leaf<T5, tag_value, Body5>(body5)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1575,16 +1575,17 @@ namespace internal {
         typedef typename internal::function_body<T6, tag_value> *f6_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p, f5_p, f6_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6) : base_type(g,
-                func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4),
-                    new internal::function_body_leaf<T5, tag_value, B5>(b5),
-                    new internal::function_body_leaf<T6, tag_value, B6>(b6)
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4,
+                 typename Body5, typename Body6>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4,
+                Body5 body5, Body6 body6) : base_type(g, func_initializer_type(
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4),
+                    new internal::function_body_leaf<T5, tag_value, Body5>(body5),
+                    new internal::function_body_leaf<T6, tag_value, Body6>(body6)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1617,17 +1618,18 @@ namespace internal {
         typedef typename internal::function_body<T7, tag_value> *f7_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p, f5_p, f6_p, f7_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7) : base_type(g,
-                func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4),
-                    new internal::function_body_leaf<T5, tag_value, B5>(b5),
-                    new internal::function_body_leaf<T6, tag_value, B6>(b6),
-                    new internal::function_body_leaf<T7, tag_value, B7>(b7)
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4,
+                 typename Body5, typename Body6, typename Body7>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4,
+                Body5 body5, Body6 body6, Body7 body7) : base_type(g, func_initializer_type(
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4),
+                    new internal::function_body_leaf<T5, tag_value, Body5>(body5),
+                    new internal::function_body_leaf<T6, tag_value, Body6>(body6),
+                    new internal::function_body_leaf<T7, tag_value, Body7>(body7)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1662,18 +1664,19 @@ namespace internal {
         typedef typename internal::function_body<T8, tag_value> *f8_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p, f5_p, f6_p, f7_p, f8_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7, typename B8>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7, B8 b8) : base_type(g,
-                func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4),
-                    new internal::function_body_leaf<T5, tag_value, B5>(b5),
-                    new internal::function_body_leaf<T6, tag_value, B6>(b6),
-                    new internal::function_body_leaf<T7, tag_value, B7>(b7),
-                    new internal::function_body_leaf<T8, tag_value, B8>(b8)
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4,
+                 typename Body5, typename Body6, typename Body7, typename Body8>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4,
+                Body5 body5, Body6 body6, Body7 body7, Body8 body8) : base_type(g, func_initializer_type(
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4),
+                    new internal::function_body_leaf<T5, tag_value, Body5>(body5),
+                    new internal::function_body_leaf<T6, tag_value, Body6>(body6),
+                    new internal::function_body_leaf<T7, tag_value, Body7>(body7),
+                    new internal::function_body_leaf<T8, tag_value, Body8>(body8)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };
@@ -1710,19 +1713,20 @@ namespace internal {
         typedef typename internal::function_body<T9, tag_value> *f9_p;
         typedef typename tbb::flow::tuple< f0_p, f1_p, f2_p, f3_p, f4_p, f5_p, f6_p, f7_p, f8_p, f9_p > func_initializer_type;
     public:
-        template<typename B0, typename B1, typename B2, typename B3, typename B4, typename B5, typename B6, typename B7, typename B8, typename B9>
-        unfolded_join_node(graph &g, B0 b0, B1 b1, B2 b2, B3 b3, B4 b4, B5 b5, B6 b6, B7 b7, B8 b8, B9 b9) : base_type(g,
-                func_initializer_type(
-                    new internal::function_body_leaf<T0, tag_value, B0>(b0),
-                    new internal::function_body_leaf<T1, tag_value, B1>(b1),
-                    new internal::function_body_leaf<T2, tag_value, B2>(b2),
-                    new internal::function_body_leaf<T3, tag_value, B3>(b3),
-                    new internal::function_body_leaf<T4, tag_value, B4>(b4),
-                    new internal::function_body_leaf<T5, tag_value, B5>(b5),
-                    new internal::function_body_leaf<T6, tag_value, B6>(b6),
-                    new internal::function_body_leaf<T7, tag_value, B7>(b7),
-                    new internal::function_body_leaf<T8, tag_value, B8>(b8),
-                    new internal::function_body_leaf<T9, tag_value, B9>(b9)
+        template<typename Body0, typename Body1, typename Body2, typename Body3, typename Body4,
+            typename Body5, typename Body6, typename Body7, typename Body8, typename Body9>
+        unfolded_join_node(graph &g, Body0 body0, Body1 body1, Body2 body2, Body3 body3, Body4 body4,
+                Body5 body5, Body6 body6, Body7 body7, Body8 body8, Body9 body9) : base_type(g, func_initializer_type(
+                    new internal::function_body_leaf<T0, tag_value, Body0>(body0),
+                    new internal::function_body_leaf<T1, tag_value, Body1>(body1),
+                    new internal::function_body_leaf<T2, tag_value, Body2>(body2),
+                    new internal::function_body_leaf<T3, tag_value, Body3>(body3),
+                    new internal::function_body_leaf<T4, tag_value, Body4>(body4),
+                    new internal::function_body_leaf<T5, tag_value, Body5>(body5),
+                    new internal::function_body_leaf<T6, tag_value, Body6>(body6),
+                    new internal::function_body_leaf<T7, tag_value, Body7>(body7),
+                    new internal::function_body_leaf<T8, tag_value, Body8>(body8),
+                    new internal::function_body_leaf<T9, tag_value, Body9>(body9)
                     ) ) {}
         unfolded_join_node(const unfolded_join_node &other) : base_type(other) {}
     };

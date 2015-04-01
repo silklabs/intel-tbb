@@ -632,8 +632,7 @@ namespace interface6 {
             typedef typename tbb::tbb_allocator<callback_leaf> my_allocator_type;
 
             /*override*/ callback_base<T>* clone() {
-                void* where = my_allocator_type().allocate(1);
-                return new(where) callback_leaf(*this);
+                return make(*this);
             }
 
             /*override*/ void destroy() {
@@ -767,20 +766,20 @@ namespace interface6 {
         typedef generic_range_type< const_iterator > const_range_type;
 
         //! Default constructor.  Each local instance of T is default constructed.
-        enumerable_thread_specific() :
-            my_construct_callback( internal::callback_leaf<T,internal::construct_by_default<T> >::make(/*dummy argument*/0) )
-        {}
+        enumerable_thread_specific() : my_construct_callback(
+            internal::callback_leaf<T,internal::construct_by_default<T> >::make(/*dummy argument*/0)
+        ){}
 
         //! Constructor with initializer functor.  Each local instance of T is constructed by T(finit()).
         template <typename Finit>
-        enumerable_thread_specific( Finit finit ) :
-            my_construct_callback( internal::callback_leaf<T,internal::construct_by_finit<T,Finit> >::make( finit ) )
-        {}
+        enumerable_thread_specific( Finit finit ) : my_construct_callback(
+            internal::callback_leaf<T,internal::construct_by_finit<T,Finit> >::make( finit )
+        ){}
 
-        //! Constructor with exemplar.  Each local instance of T is copied-constructed from the exemplar.
-        enumerable_thread_specific(const T& exemplar) :
-            my_construct_callback( internal::callback_leaf<T,internal::construct_by_exemplar<T> >::make( exemplar ) )
-        {}
+        //! Constructor with exemplar. Each local instance of T is copy-constructed from the exemplar.
+        enumerable_thread_specific( const T& exemplar ) : my_construct_callback(
+            internal::callback_leaf<T,internal::construct_by_exemplar<T> >::make( exemplar )
+        ){}
 
         //! Destructor
         ~enumerable_thread_specific() {
@@ -835,13 +834,13 @@ namespace interface6 {
 
     private:
 
-        template<typename U, typename A2, ets_key_usage_type C2>
-        void internal_copy( const enumerable_thread_specific<U, A2, C2>& other);
+        template<typename A2, ets_key_usage_type C2>
+        void internal_copy( const enumerable_thread_specific<T, A2, C2>& other);
 
     public:
 
-        template<typename U, typename Alloc, ets_key_usage_type Cachetype>
-        enumerable_thread_specific( const enumerable_thread_specific<U, Alloc, Cachetype>& other ) : internal::ets_base<ETS_key_type> ()
+        template<typename Alloc, ets_key_usage_type Cachetype>
+        enumerable_thread_specific( const enumerable_thread_specific<T, Alloc, Cachetype>& other ) : internal::ets_base<ETS_key_type> ()
         {
             internal_copy(other);
         }
@@ -853,9 +852,9 @@ namespace interface6 {
 
     private:
 
-        template<typename U, typename A2, ets_key_usage_type C2>
+        template<typename A2, ets_key_usage_type C2>
         enumerable_thread_specific &
-        internal_assign(const enumerable_thread_specific<U, A2, C2>& other) {
+        internal_assign(const enumerable_thread_specific<T, A2, C2>& other) {
             if(static_cast<void *>( this ) != static_cast<const void *>( &other )) {
                 this->clear();
                 my_construct_callback->destroy();
@@ -872,8 +871,8 @@ namespace interface6 {
             return internal_assign(other);
         }
 
-        template<typename U, typename Alloc, ets_key_usage_type Cachetype>
-        enumerable_thread_specific& operator=(const enumerable_thread_specific<U, Alloc, Cachetype>& other)
+        template<typename Alloc, ets_key_usage_type Cachetype>
+        enumerable_thread_specific& operator=(const enumerable_thread_specific<T, Alloc, Cachetype>& other)
         {
             return internal_assign(other);
         }
@@ -904,8 +903,8 @@ namespace interface6 {
     }; // enumerable_thread_specific
 
     template <typename T, typename Allocator, ets_key_usage_type ETS_key_type>
-    template<typename U, typename A2, ets_key_usage_type C2>
-    void enumerable_thread_specific<T,Allocator,ETS_key_type>::internal_copy( const enumerable_thread_specific<U, A2, C2>& other) {
+    template<typename A2, ets_key_usage_type C2>
+    void enumerable_thread_specific<T,Allocator,ETS_key_type>::internal_copy( const enumerable_thread_specific<T, A2, C2>& other) {
         // Initialize my_construct_callback first, so that it is valid even if rest of this routine throws an exception.
         my_construct_callback = other.my_construct_callback->clone();
 
@@ -919,7 +918,7 @@ namespace interface6 {
                     base::slot& s2 = this->table_find(s1.key);
                     if( s2.empty() ) {
                         void* lref = &*my_locals.grow_by(1);
-                        s2.ptr = new(lref) T(*(U*)s1.ptr);
+                        s2.ptr = new(lref) T(*(T*)s1.ptr);
                         s2.key = s1.key;
                     } else {
                         // Skip the duplicate

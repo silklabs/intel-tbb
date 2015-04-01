@@ -141,7 +141,7 @@ extern "C" void threadDtor(void*) {
 
 inline bool intersectingObjects(const void *p1, const void *p2, size_t n)
 {
-    return (size_t)labs((uintptr_t)p1 - (uintptr_t)p2) < n;
+    return p1>p2 ? ((uintptr_t)p1-(uintptr_t)p2)<n : ((uintptr_t)p2-(uintptr_t)p1)<n;
 }
 
 struct TestThread: NoAssign {

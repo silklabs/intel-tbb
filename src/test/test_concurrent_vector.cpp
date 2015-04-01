@@ -411,8 +411,6 @@ void TestSequentialFor() {
 #endif
 }
 
-static const size_t Modulus = 7;
-
 namespace test_grow_to_at_least_helpers {
     template<typename MyVector >
     class GrowToAtLeast: NoAssign {
@@ -748,9 +746,9 @@ void test_grow_by_empty_range( Vector &v, typename Vector::value_type* range_beg
     ASSERT( v == v_copy, "grow_by(empty_range) has changed the vector." );
 }
 
-void TestSerialGrowByRange( bool segmented_vector ) {
+void TestSerialGrowByRange( bool fragmented_vector ) {
     tbb::concurrent_vector<int> v;
-    if ( segmented_vector ) {
+    if ( fragmented_vector ) {
         v.reserve( 1 );
     }
     int init_range[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -917,6 +915,47 @@ void TestSerialGrowByWithMoveIterators(){
 
     fixture.verify_content_deep_moved(dst);
 }
+
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+namespace test_move_in_shrink_to_fit_helpers {
+    struct dummy : Harness::StateTrackable<>{
+        int i;
+        dummy(int an_i) __TBB_NOTHROW : Harness::StateTrackable<>(0), i(an_i)  {};
+#if __TBB_CPP11_IMPLICIT_MOVE_MEMBERS_GENERATION_BROKEN
+        dummy(dummy &&src) __TBB_NOTHROW : Harness::StateTrackable<>(std::move(src)), i(src.i)  {};
+    //somehow magically this declaration make std::is_nothrow_move_constructible<pod>::value to works correctly on icc14+msvc2013
+        ~dummy() __TBB_NOTHROW {};
+#endif //__TBB_CPP11_IMPLICIT_MOVE_MEMBERS_GENERATION_BROKEN
+        friend bool operator== ( const dummy & lhs, const dummy & rhs){ return lhs.i == rhs.i; }
+    };
+}
+void TestSerialMoveInShrinkToFit(){
+    const char* test_name = "TestSerialMoveInShrinkToFit";
+    REMARK("running %s \n", test_name);
+    using test_move_in_shrink_to_fit_helpers::dummy;
+
+    __TBB_STATIC_ASSERT(std::is_nothrow_move_constructible<dummy>::value,"incorrect test setup or broken configuration?");
+    {
+        dummy src(0);
+        ASSERT_IN_TEST(is_state<Harness::StateTrackableBase::MoveInitialized>(dummy(std::move_if_noexcept(src))),"broken configuration ?", test_name);
+    }
+    static const size_t sequence_size = 15;
+    typedef  tbb::concurrent_vector<dummy> c_vector_t;
+    std::vector<dummy> source(sequence_size, 0);
+    std::generate_n(source.begin(), source.size(), std::rand);
+
+    c_vector_t c_vector;
+    c_vector.reserve(1); //make it fragmented
+
+    c_vector.assign(source.begin(), source.end());
+    memory_locations c_vector_before_shrink(c_vector);
+    c_vector.shrink_to_fit();
+
+    ASSERT_IN_TEST(c_vector_before_shrink.content_location_changed(c_vector), "incorrect test setup? shrink_to_fit should cause moving elements to other memory locations while it is not", test_name);
+    ASSERT_IN_TEST(all_of(c_vector, is_state_f<Harness::StateTrackableBase::MoveInitialized>()), "container did not move construct some elements?", test_name);
+    ASSERT_IN_TEST(c_vector == c_vector_t(source.begin(),source.end()),"",test_name);
+}
+#endif //__TBB_MOVE_IF_NOEXCEPT_PRESENT
 #endif //__TBB_CPP11_RVALUE_REF_PRESENT
 // Test the comparison operators
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
@@ -1086,7 +1125,7 @@ void verify_vector_partially_copied(
         ASSERT_IN_TEST( victim == vector_t(src.begin(), src.begin() + victim.size(), src.get_allocator()), "failed to properly copy of source ?", test_name );
     }else{
         ASSERT_IN_TEST( std::equal(victim.begin(), victim.begin() + planned_victim_size, src.begin()), "failed to properly copy items before the exception?", test_name );
-        ASSERT_IN_TEST( ::all_of( victim.begin() + planned_victim_size, victim.end(), &is_state<Foo::ZeroInitialized> ), "failed to zero-initialize items left not constructed after the exception?", test_name );
+        ASSERT_IN_TEST( ::all_of( victim.begin() + planned_victim_size, victim.end(), is_state_f<Foo::ZeroInitialized>() ), "failed to zero-initialize items left not constructed after the exception?", test_name );
     }
 }
 
@@ -1682,6 +1721,9 @@ int TestMain () {
     TestConstructorWithMoveIterators<c_vector_type>();
     TestAssignWithMoveIterators<c_vector_type>();
     TestSerialGrowByWithMoveIterators();
+#if __TBB_MOVE_IF_NOEXCEPT_PRESENT
+    TestSerialMoveInShrinkToFit();
+#endif // __TBB_MOVE_IF_NOEXCEPT_PRESENT
 #else
     REPORT("Known issue: tests for vector move constructor/assignment operator are skipped.\n");
 #endif

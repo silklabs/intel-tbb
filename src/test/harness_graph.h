@@ -31,6 +31,31 @@
 #include "tbb/atomic.h"
 #include "tbb/concurrent_unordered_map.h"
 #include "tbb/task.h"
+#include "tbb/task_scheduler_init.h"
+
+#define WAIT_MAX 100000
+#define BACKOFF_WAIT(ex,msg) \
+{ \
+    int wait_cnt = 0; \
+    tbb::internal::atomic_backoff backoff; \
+    do { \
+        backoff.pause(); \
+        ++wait_cnt; \
+    } \
+    while( (ex) && (wait_cnt < WAIT_MAX)); \
+    ASSERT(wait_cnt < WAIT_MAX, msg); \
+}
+#define BACKOFF_WAIT_NOASSERT(ex,msg) \
+{ \
+    int wait_cnt = 0; \
+    tbb::internal::atomic_backoff backoff; \
+    do { \
+        backoff.pause(); \
+        ++wait_cnt; \
+    } \
+    while( (ex) && (wait_cnt < WAIT_MAX)); \
+    if(wait_cnt >= WAIT_MAX) REMARK("%s\n",msg); \
+}
 
 // Needed conversion to and from continue_msg, but didn't want to add
 // conversion operators to the class, since we don't want it in general,
@@ -502,6 +527,7 @@ found_it:
 template<typename T, typename BufferType>
 void test_resets() {
     const int NN = 3;
+    tbb::task_scheduler_init init(4);
     tbb::task_group_context   tgc;
     tbb::flow::graph          g(tgc);
     BufferType                b0(g);
@@ -551,24 +577,20 @@ void test_resets() {
     // b0 ------> sfn ------> outq
 
     for(int icnt = 0; icnt < 2; ++icnt) {
+        g.wait_for_all();
         serial_fn_state0 = 0;
         b0.try_put((T)0);  // will start sfn
         // wait until function_node starts
-        tbb::internal::atomic_backoff backoff;
-        do {
-            backoff.pause();
-        } while(serial_fn_state0 == 0);
+        BACKOFF_WAIT(serial_fn_state0 == 0,"Timed out waiting for function_node to start");
         // now the function_node is executing.
         // this will start a task to forward the second item
+        // to the serial function node
         b0.try_put((T)1);  // first item will be consumed by task completing the execution
-        // of the serial function node
+        BACKOFF_WAIT_NOASSERT(g.root_task()->ref_count() >= 3,"Timed out waiting try_put task to wind down");
         b0.try_put((T)2);  // second item will remain after cancellation
         // now wait for the task that attempts to forward the buffer item to
         // complete.
-        tbb::internal::atomic_backoff backoff2;
-        do {
-            backoff.pause();
-        } while(g.root_task()->ref_count() >= 3);
+        BACKOFF_WAIT_NOASSERT(g.root_task()->ref_count() >= 3,"Timed out waiting for tasks to wind down");
         // now cancel the graph.
         ASSERT(tgc.cancel_group_execution(), "task group already cancelled");
         serial_fn_state0 = 0;  // release the function_node.
@@ -600,10 +622,7 @@ void test_resets() {
             serial_fn_state0 = 0;
             b0.try_put((T)0);  // starts up the function node
             b0.try_put((T)1);  // shoyuld reverse the edge
-            tbb::internal::atomic_backoff backoff;
-            do {
-                backoff.pause();
-            } while(serial_fn_state0 == 0);
+            BACKOFF_WAIT(serial_fn_state0 == 0,"Timed out waiting for edge reversal");
             ASSERT(tgc.cancel_group_execution(), "task group already cancelled");
             serial_fn_state0 = 0;  // release the function_node.
             g.wait_for_all();  // wait for all the tasks to complete.

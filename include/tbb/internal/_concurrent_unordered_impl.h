@@ -40,6 +40,7 @@
 #include <functional>   // Need std::equal_to (in ../concurrent_unordered_*.h)
 #include <string>       // For tbb_hasher
 #include <cstring>      // Need std::memset
+#include <algorithm>    // Need std::swap
 
 #if !TBB_USE_EXCEPTIONS && _MSC_VER
     #pragma warning (pop)
@@ -496,7 +497,7 @@ public:
         if (inserted_node == pnode)
         {
             // If the insert succeeded, check that the order is correct and increment the element count
-            check_range();
+            check_range(it, next);
             *new_count = __TBB_FetchAndAddW((uintptr_t*)&my_element_count, uintptr_t(1));
             return std::pair<iterator, bool>(iterator(pnode, this), true);
         }
@@ -537,7 +538,7 @@ public:
                 if (inserted_node == dummy_node)
                 {
                     // Insertion succeeded, check the list for order violations
-                    check_range();
+                    check_range(it, where);
                     return raw_iterator(dummy_node);
                 }
                 else
@@ -620,16 +621,24 @@ private:
     friend class concurrent_unordered_base;
 
     // Check the list for order violations
+    void check_range( raw_iterator first, raw_iterator last )
+    {
+#if TBB_USE_ASSERT
+        for (raw_iterator it = first; it != last; ++it)
+        {
+            raw_iterator next = it;
+            ++next;
+
+            __TBB_ASSERT(next == raw_end() || get_order_key(next) >= get_order_key(it), "!!! List order inconsistency !!!");
+        }
+#else
+        tbb::internal::suppress_unused_warning(first, last);
+#endif
+    }
     void check_range()
     {
 #if TBB_USE_ASSERT
-        for (raw_iterator it = raw_begin(); it != raw_end(); ++it)
-        {
-            raw_iterator next_iterator = it;
-            ++next_iterator;
-
-            __TBB_ASSERT(next_iterator == end() || next_iterator.get_node_ptr()->get_order_key() >= it.get_node_ptr()->get_order_key(), "!!! List order inconsistency !!!");
-        }
+        check_range( raw_begin(), raw_end() );
 #endif
     }
 

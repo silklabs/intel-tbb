@@ -997,9 +997,9 @@ public:
     typedef receiver< output_type > successor_type;
     typedef internal::function_input<input_type,output_type,Allocator> fInput_type;
     typedef internal::function_output<output_type> fOutput_type;
-#if TBB_PREVIEW_FLOW_GRAPH_FEAURES
-    typedef std::vector<predecessor_type *> predecessor_vector_type;
-    typedef std::vector<successor_type *> successor_vector_type;
+#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+    using typename internal::function_input<Input,Output,Allocator>::predecessor_vector_type;
+    using typename internal::function_output<Output>::successor_vector_type;
 #endif
 
     //! Constructor
@@ -1057,8 +1057,8 @@ public:
     typedef internal::function_input_queue<input_type, Allocator> queue_type;
     typedef internal::function_output<output_type> fOutput_type;
 #if TBB_PREVIEW_FLOW_GRAPH_FEATURES
-    typedef std::vector<predecessor_type *> predecessor_vector_type;
-    typedef std::vector<successor_type *> successor_vector_type;
+    using typename internal::function_input<Input,Output,Allocator>::predecessor_vector_type;
+    using typename internal::function_output<Output>::successor_vector_type;
 #endif
 
     //! Constructor
@@ -2285,8 +2285,11 @@ protected:
             }
         }
         // process pops!  for now, no special pop processing
+        // concurrent_priority_queue handles pushes first, then pops.
+        // that is the genesis of this comment
         if (mark<this->my_tail) heapify();
-        if (try_forwarding && !this->forwarder_busy) {
+        __TBB_ASSERT(mark == this->my_tail, "mark unequal after heapify");
+        if (try_forwarding && !this->forwarder_busy) {  // could we also test for this->my_tail (queue non-empty)?
             task* tp = this->my_graph.root_task();
             if(tp) {
                 this->forwarder_busy = true;
@@ -2314,17 +2317,11 @@ protected:
         }
         // Keep trying to send while there exists an accepting successor
         while (counter>0 && this->my_tail > 0) {
-            i_copy = this->get_my_item(0);
+            prio_copy(i_copy);
             task * new_task = this->my_successors.try_put_task(i_copy);
             if ( new_task ) {
                 last_task = combine_tasks(last_task, new_task);
-                this->destroy_item(0);  // we've forwarded this item
-                if (mark == this->my_tail) --mark;
-                if(--(this->my_tail)) { // didn't consume last item on heap
-                    this->move_item(0,this->my_tail);
-                }
-                if (this->my_tail > 1) // don't reheap for heap of size 1
-                    reheap();
+                prio_pop();
             }
             --counter;
         }
@@ -2338,10 +2335,7 @@ protected:
     }
 
     /* override */ void internal_push(prio_operation *op) {
-        if ( this->my_tail >= this->my_array_size )
-            this->grow_my_array( this->my_tail + 1 );
-        (void) this->place_item(this->my_tail, *(op->elem));
-        ++(this->my_tail);
+        prio_push(*(op->elem));
         __TBB_store_with_release(op->status, SUCCEEDED);
     }
 
@@ -2351,67 +2345,99 @@ protected:
             __TBB_store_with_release(op->status, FAILED);
             return;
         }
-        if (mark<this->my_tail &&  // item pushed, no re-heap
-            compare(this->get_my_item(0),
-                    this->get_my_item(this->my_tail-1))) {
-            // there are newly pushed elems; last one higher than top
-            // copy the data
-            this->fetch_item(this->my_tail-1, *(op->elem));
-            __TBB_store_with_release(op->status, SUCCEEDED);
-            --(this->my_tail);
-            return;
-        }
-        // extract and push the last element down heap
-        *(op->elem) = this->get_my_item(0); // copy the data, item 0 still valid
+
+        prio_copy(*(op->elem));
         __TBB_store_with_release(op->status, SUCCEEDED);
-        if (mark == this->my_tail) --mark;
-        __TBB_ASSERT(this->my_item_valid(this->my_tail - 1), NULL);
-        if(--(this->my_tail)) {
-            // there were two or more items in heap.  Move the
-            // last item to the top of the heap
-            this->set_my_item(0,this->get_my_item(this->my_tail));
-        }
-        this->destroy_item(this->my_tail);
-        if (this->my_tail > 1) // don't reheap for heap of size 1
-            reheap();
+        prio_pop();
+
     }
 
+    // pops the highest-priority item, saves copy
     /* override */ void internal_reserve(prio_operation *op) {
         if (this->my_reserved == true || this->my_tail == 0) {
             __TBB_store_with_release(op->status, FAILED);
             return;
         }
         this->my_reserved = true;
-        *(op->elem) = reserved_item = this->get_my_item(0);
-        if (mark == this->my_tail) --mark;
-        --(this->my_tail);
+        prio_copy(*(op->elem));
+        reserved_item = *(op->elem);
         __TBB_store_with_release(op->status, SUCCEEDED);
-        this->set_my_item(0, this->get_my_item(this->my_tail));
-        this->destroy_item(this->my_tail);
-        if (this->my_tail > 1)
-            reheap();
+        prio_pop();
     }
 
     /* override */ void internal_consume(prio_operation *op) {
-        this->my_reserved = false;
         __TBB_store_with_release(op->status, SUCCEEDED);
+        this->my_reserved = false;
+        reserved_item = input_type();
     }
+
     /* override */ void internal_release(prio_operation *op) {
-        if (this->my_tail >= this->my_array_size)
-            this->grow_my_array( this->my_tail + 1 );
-        this->set_my_item(this->my_tail, reserved_item);
-        ++(this->my_tail);
-        this->my_reserved = false;
         __TBB_store_with_release(op->status, SUCCEEDED);
-        heapify();
+        prio_push(reserved_item);
+        this->my_reserved = false;
+        reserved_item = input_type();
     }
 private:
     Compare compare;
     size_type mark;
+
     input_type reserved_item;
+
+    // in case a reheap has not been done after a push, check if the mark item is higher than the 0'th item
+    bool prio_use_tail() {
+        __TBB_ASSERT(mark <= this->my_tail, "mark outside bounds before test");
+        return mark < this->my_tail && compare(this->get_my_item(0), this->get_my_item(this->my_tail - 1));
+    }
+
+    // prio_push: checks that the item will fit, expand array if necessary, put at end
+    void prio_push(const T &src) {
+        if ( this->my_tail >= this->my_array_size )
+            this->grow_my_array( this->my_tail + 1 );
+        (void) this->place_item(this->my_tail, src);
+        ++(this->my_tail);
+        __TBB_ASSERT(mark < this->my_tail, "mark outside bounds after push");
+    }
+
+    // prio_pop: deletes highest priority item from the array, and if it is item
+    // 0, move last item to 0 and reheap.  If end of array, just destroy and decrement tail
+    // and mark.  Assumes the array has already been tested for emptiness; no failure.
+    void prio_pop()  {
+        if (prio_use_tail()) {
+            // there are newly pushed elems; last one higher than top
+            // copy the data
+            this->destroy_item(this->my_tail-1);
+            --(this->my_tail);
+            __TBB_ASSERT(mark <= this->my_tail, "mark outside bounds after pop");
+            return;
+        }
+        this->destroy_item(0);
+        if(this->my_tail > 1) {
+            // push the last element down heap
+            __TBB_ASSERT(this->my_item_valid(this->my_tail - 1), NULL);
+            this->move_item(0,this->my_tail - 1);
+        }
+        --(this->my_tail);
+        if(mark > this->my_tail) --mark;
+        if (this->my_tail > 1) // don't reheap for heap of size 1
+            reheap();
+        __TBB_ASSERT(mark <= this->my_tail, "mark outside bounds after pop");
+    }
+
+    void prio_copy(T &res) {
+        if (prio_use_tail()) {
+            res = this->get_my_item(this->my_tail - 1);
+        }
+        else {
+            res = this->get_my_item(0);
+        }
+    }
 
     // turn array into heap
     void heapify() {
+        if(this->my_tail == 0) {
+            mark = 0;
+            return;
+        }
         if (!mark) mark = 1;
         for (; mark<this->my_tail; ++mark) { // for each unheaped element
             size_type cur_pos = mark;

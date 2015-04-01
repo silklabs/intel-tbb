@@ -2,6 +2,31 @@
 The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
+Intel TBB 4.3 Update 2
+TBB_INTERFACE_VERSION == 8002
+
+Changes (w.r.t. Intel TBB 4.3 Update 1):
+
+- Binary files for 64-bit Android* applications were added as part of the
+    Linux* OS package.
+- Exact exception propagation is enabled for Intel C++ Compiler on OS X*.
+- concurrent_vector::shrink_to_fit was optimized for types that support
+    C++11 move semantics.
+
+Bugs fixed:
+
+- Fixed concurrent unordered containers to insert elements much faster
+    in debug mode.
+- Fixed concurrent priority queue to support types that do not have
+    copy constructors.
+- Fixed enumerable_thread_specific to forbid copying from an instance
+    with a different value type.
+
+Open-source contributions integrated:
+
+- Support for PathScale* EKOPath* Compiler by Erik Lindahl.
+
+------------------------------------------------------------------------
 Intel TBB 4.3 Update 1
 TBB_INTERFACE_VERSION == 8001
 

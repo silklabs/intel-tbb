@@ -28,8 +28,8 @@
 template <typename T>
 static inline intptr_t __TBB_machine_lg( T x ) {
     __TBB_ASSERT(x>0, "The logarithm of a non-positive value is undefined.");
-    uintptr_t j;
-    __asm__("bsr %1,%0" : "=r"(j) : "r"((uintptr_t)x));
+    uintptr_t j, i = x;
+    __asm__("bsr %1,%0" : "=r"(j) : "r"(i));
     return j;
 }
 #define __TBB_Log2(V)  __TBB_machine_lg(V)

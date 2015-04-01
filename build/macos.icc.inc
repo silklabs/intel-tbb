@@ -62,12 +62,9 @@ ifneq (00,$(lambdas)$(cpp0x))
 	CXX_ONLY_FLAGS += $(CPP11_FLAGS)
 endif
 
-# ICC 14.0 and higher support clang environment
+# ICC 14.0 and higher support usage of libc++, clang standard library
 ifneq (,$(shell icc -dumpversion | egrep  "^1[4-9]\."))
     LIBCPP_KEY = -stdlib=libc++
-    ifneq (,$(shell icc -dumpversion | egrep  "^14\."))
-        LIBCPP_KEY += -use-clang-env
-    endif    
 endif
 
 ifeq (libc++,$(stdlib))

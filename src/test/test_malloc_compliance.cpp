@@ -85,9 +85,15 @@ void limitMem( size_t limit )
 void limitMem( size_t limit )
 {
     rlimit rlim;
-    rlim.rlim_cur = limit? limit*MByte : (rlim_t)RLIM_INFINITY;
-    rlim.rlim_max = (rlim_t)RLIM_INFINITY;
-    int ret = setrlimit(RLIMIT_AS,&rlim);
+    int ret = getrlimit(RLIMIT_AS,&rlim);
+    if (0 != ret) {
+        REPORT("getrlimit() returned an error: errno %d\n", errno);
+        exit(1);
+    }
+    if (rlim.rlim_max==(rlim_t)RLIM_INFINITY)
+        rlim.rlim_cur = (limit > 0) ? limit*MByte : rlim.rlim_max;
+    else rlim.rlim_cur = (limit > 0 && limit<rlim.rlim_max) ? limit*MByte : rlim.rlim_max;
+    ret = setrlimit(RLIMIT_AS,&rlim);
     if (0 != ret) {
         REPORT("Can't set limits: errno %d\n", errno);
         exit(1);
@@ -134,8 +140,6 @@ extern "C" void *__cdecl _aligned_malloc(size_t,size_t);
     #pragma warning (pop)
 #endif
 
-const size_t COUNT_ELEM_CALLOC = 2;
-const int COUNT_TESTS = 1000;
 const int COUNT_ELEM = 25000;
 const size_t MAX_SIZE = 1000;
 const int COUNTEXPERIMENT = 10000;
@@ -176,8 +180,10 @@ TestAlignedRealloc* Raligned_realloc;
 bool error_occurred = false;
 
 #if __APPLE__
-// Tests that use the variable are skipped on OS X*
+// Tests that use the variables are skipped on OS X*
 #else
+const size_t COUNT_ELEM_CALLOC = 2;
+const int COUNT_TESTS = 1000;
 static bool perProcessLimits = true;
 #endif
 
