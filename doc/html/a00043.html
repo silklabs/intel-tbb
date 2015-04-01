@@ -33,14 +33,14 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00233.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00043.html">concurrent_unordered_multiset</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00232.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00043.html">concurrent_unordered_multiset</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="a00367.html">List of all members</a>  </div>
+<a href="a00368.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">tbb::interface5::concurrent_unordered_multiset&lt; Key, Hasher, Key_equality, Allocator &gt; Class Template Reference</div>  </div>
 </div><!--header-->
@@ -56,21 +56,6 @@ Inheritance diagram for tbb::interface5::concurrent_unordered_multiset&lt; Key, 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ab1c670cc0b75a7f6c13432b264669ac0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1c670cc0b75a7f6c13432b264669ac0"></a>
-typedef internal::hash_compare<br class="typebreak"/>
-&lt; Key, Hasher, Key_equality &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>hash_compare</b></td></tr>
-<tr class="separator:ab1c670cc0b75a7f6c13432b264669ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd3897cd2679d5e6804cd8f6ff6eb071"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd3897cd2679d5e6804cd8f6ff6eb071"></a>
-typedef <br class="typebreak"/>
-<a class="el" href="a00045.html">concurrent_unordered_set_traits</a><br class="typebreak"/>
-&lt; Key, hash_compare, Allocator, <br class="typebreak"/>
-true &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>traits_type</b></td></tr>
-<tr class="separator:abd3897cd2679d5e6804cd8f6ff6eb071"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16714895a578ae9e77b4a862811f3d0d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a16714895a578ae9e77b4a862811f3d0d"></a>
-typedef <br class="typebreak"/>
-internal::concurrent_unordered_base<br class="typebreak"/>
-&lt; <a class="el" href="a00045.html">traits_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>base_type</b></td></tr>
-<tr class="separator:a16714895a578ae9e77b4a862811f3d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1eb846a05a4e2d30a3ff7f66acad7c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1eb846a05a4e2d30a3ff7f66acad7c7"></a>
 typedef Key&#160;</td><td class="memItemRight" valign="bottom"><b>key_type</b></td></tr>
 <tr class="separator:af1eb846a05a4e2d30a3ff7f66acad7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,61 +110,38 @@ typedef base_type::const_iterator&#160;</td><td class="memItemRight" valign="bot
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a10adc362c74af28dd7dd16ca335ce1c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10adc362c74af28dd7dd16ca335ce1c9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (size_type n_of_buckets=8, const hasher &amp;_Hasher=hasher(), const key_equal &amp;_Key_equality=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
-<tr class="separator:a10adc362c74af28dd7dd16ca335ce1c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa7c1f095ac1f56c7811811aabe6b77c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa7c1f095ac1f56c7811811aabe6b77c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (size_type n_of_buckets=base_type::initial_bucket_number, const hasher &amp;_Hasher=hasher(), const key_equal &amp;_Key_equality=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
+<tr class="separator:afa7c1f095ac1f56c7811811aabe6b77c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf8c095a7be6913dd96e22a6ce9af187"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf8c095a7be6913dd96e22a6ce9af187"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (const Allocator &amp;a)</td></tr>
 <tr class="separator:adf8c095a7be6913dd96e22a6ce9af187"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a830962289c517e0466704e1b9b70fe71"><td class="memTemplParams" colspan="2"><a class="anchor" id="a830962289c517e0466704e1b9b70fe71"></a>
+<tr class="memitem:a2eede1ccad9975aac7acbffbd991e26c"><td class="memTemplParams" colspan="2"><a class="anchor" id="a2eede1ccad9975aac7acbffbd991e26c"></a>
 template&lt;typename Iterator &gt; </td></tr>
-<tr class="memitem:a830962289c517e0466704e1b9b70fe71"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (Iterator first, Iterator last, size_type n_of_buckets=8, const hasher &amp;_Hasher=hasher(), const key_equal &amp;_Key_equality=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
-<tr class="separator:a830962289c517e0466704e1b9b70fe71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2fa28924f52578bb59200b9ffa976c8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2fa28924f52578bb59200b9ffa976c8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00043.html#ab2fa28924f52578bb59200b9ffa976c8">concurrent_unordered_multiset</a> (std::initializer_list&lt; value_type &gt; const &amp;il, size_type n_of_buckets=8, const hasher &amp;a_hasher=hasher(), const key_equal &amp;a_keyeq=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
-<tr class="memdesc:ab2fa28924f52578bb59200b9ffa976c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor from initializer_list. <br/></td></tr>
-<tr class="separator:ab2fa28924f52578bb59200b9ffa976c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2eede1ccad9975aac7acbffbd991e26c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (Iterator first, Iterator last, size_type n_of_buckets=base_type::initial_bucket_number, const hasher &amp;_Hasher=hasher(), const key_equal &amp;_Key_equality=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
+<tr class="separator:a2eede1ccad9975aac7acbffbd991e26c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15631f048043195863c66bad6533bccb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15631f048043195863c66bad6533bccb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00043.html#a15631f048043195863c66bad6533bccb">concurrent_unordered_multiset</a> (std::initializer_list&lt; value_type &gt; il, size_type n_of_buckets=base_type::initial_bucket_number, const hasher &amp;a_hasher=hasher(), const key_equal &amp;a_keyeq=key_equal(), const allocator_type &amp;a=allocator_type())</td></tr>
+<tr class="memdesc:a15631f048043195863c66bad6533bccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor from initializer_list. <br/></td></tr>
+<tr class="separator:a15631f048043195863c66bad6533bccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3110fb1a6f8e2a3071d2acbe4b7b154b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3110fb1a6f8e2a3071d2acbe4b7b154b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (const <a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;table)</td></tr>
 <tr class="separator:a3110fb1a6f8e2a3071d2acbe4b7b154b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a229089da66522fd4f3d77e9f57e19fbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a229089da66522fd4f3d77e9f57e19fbb"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (const <a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;table, const Allocator &amp;a)</td></tr>
-<tr class="separator:a229089da66522fd4f3d77e9f57e19fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1fb116ee3fdf6c6c810fe21eb01e209"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1fb116ee3fdf6c6c810fe21eb01e209"></a>
 <a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;table)</td></tr>
 <tr class="separator:ac1fb116ee3fdf6c6c810fe21eb01e209"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01e685fab9a39cbd69c53bb3b8befce6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01e685fab9a39cbd69c53bb3b8befce6"></a>
-<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00043.html#a01e685fab9a39cbd69c53bb3b8befce6">operator=</a> (std::initializer_list&lt; value_type &gt; const &amp;il)</td></tr>
-<tr class="memdesc:a01e685fab9a39cbd69c53bb3b8befce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignment operator from initializer_list <br/></td></tr>
-<tr class="separator:a01e685fab9a39cbd69c53bb3b8befce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38147175641e9ae03c3136de9efad03b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38147175641e9ae03c3136de9efad03b"></a>
-std::pair&lt; iterator, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>insert</b> (const value_type &amp;value)</td></tr>
-<tr class="separator:a38147175641e9ae03c3136de9efad03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b4845a6d788668ea54ba5aa6d8a1a65"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b4845a6d788668ea54ba5aa6d8a1a65"></a>
-iterator&#160;</td><td class="memItemRight" valign="bottom"><b>insert</b> (const_iterator where, const value_type &amp;value)</td></tr>
-<tr class="separator:a8b4845a6d788668ea54ba5aa6d8a1a65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a962a3b35f481723e91a48fdd179b4803"><td class="memTemplParams" colspan="2"><a class="anchor" id="a962a3b35f481723e91a48fdd179b4803"></a>
-template&lt;class Iterator &gt; </td></tr>
-<tr class="memitem:a962a3b35f481723e91a48fdd179b4803"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>insert</b> (Iterator first, Iterator last)</td></tr>
-<tr class="separator:a962a3b35f481723e91a48fdd179b4803"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1278d73388093ea34292c81159952c94"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1278d73388093ea34292c81159952c94"></a>
-iterator&#160;</td><td class="memItemRight" valign="bottom"><b>unsafe_erase</b> (const_iterator where)</td></tr>
-<tr class="separator:a1278d73388093ea34292c81159952c94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1cd1fefe17cda678734882018bb75ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1cd1fefe17cda678734882018bb75ad"></a>
-size_type&#160;</td><td class="memItemRight" valign="bottom"><b>unsafe_erase</b> (const key_type &amp;key)</td></tr>
-<tr class="separator:aa1cd1fefe17cda678734882018bb75ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a598e558219dd96f1946146312a441e5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a598e558219dd96f1946146312a441e5c"></a>
-iterator&#160;</td><td class="memItemRight" valign="bottom"><b>unsafe_erase</b> (const_iterator first, const_iterator last)</td></tr>
-<tr class="separator:a598e558219dd96f1946146312a441e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a868f5d5658afe698d23231ce70de3d2d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a868f5d5658afe698d23231ce70de3d2d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>swap</b> (<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;table)</td></tr>
-<tr class="separator:a868f5d5658afe698d23231ce70de3d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c9826f91c36d15b5a370d8c813f0b84"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c9826f91c36d15b5a370d8c813f0b84"></a>
-hasher&#160;</td><td class="memItemRight" valign="bottom"><b>hash_function</b> () const </td></tr>
-<tr class="separator:a8c9826f91c36d15b5a370d8c813f0b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1e4c658fb25acae25a335004d5023a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1e4c658fb25acae25a335004d5023a8"></a>
-key_equal&#160;</td><td class="memItemRight" valign="bottom"><b>key_eq</b> () const </td></tr>
-<tr class="separator:ac1e4c658fb25acae25a335004d5023a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb435d8d31e95357c2f59656ec96dbbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb435d8d31e95357c2f59656ec96dbbb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&amp;table)</td></tr>
+<tr class="separator:aeb435d8d31e95357c2f59656ec96dbbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6c980c4bf29824a52610d94e6597b28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6c980c4bf29824a52610d94e6597b28"></a>
+<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&amp;table)</td></tr>
+<tr class="separator:ab6c980c4bf29824a52610d94e6597b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a229089da66522fd4f3d77e9f57e19fbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a229089da66522fd4f3d77e9f57e19fbb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (const <a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;table, const Allocator &amp;a)</td></tr>
+<tr class="separator:a229089da66522fd4f3d77e9f57e19fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa0a295004627bb5473b4371c6e20c80"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa0a295004627bb5473b4371c6e20c80"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>concurrent_unordered_multiset</b> (<a class="el" href="a00043.html">concurrent_unordered_multiset</a> &amp;&amp;table, const Allocator &amp;a)</td></tr>
+<tr class="separator:aaa0a295004627bb5473b4371c6e20c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>concurrent_unordered_set.h</li>

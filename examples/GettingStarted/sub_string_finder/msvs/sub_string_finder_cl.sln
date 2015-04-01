@@ -1,15 +1,11 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder", "sub_string_finder.vcproj", "{3AA40693-F93D-4D4B-B32E-068F511A2525}"
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder", "sub_string_finder_cl.vcxproj", "{3AA40693-F93D-4D4B-B32E-068F511A2525}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder_extended", "sub_string_finder_extended.vcproj", "{3AA40693-F93D-4D4B-B32E-068F511A2526}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder_extended", "sub_string_finder_extended_cl.vcxproj", "{3AA40693-F93D-4D4B-B32E-068F511A2526}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder_pretty", "sub_string_finder_pretty.vcproj", "{3AA40693-F93D-4D4B-B32E-068F511A2524}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A26B588D-97F7-4466-9672-8A7E3173FBA1}"
-	ProjectSection(SolutionItems) = preProject
-		..\index.html = ..\index.html
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sub_string_finder_pretty", "sub_string_finder_pretty_cl.vcxproj", "{3AA40693-F93D-4D4B-B32E-068F511A2524}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
