@@ -904,11 +904,13 @@ ITT_EXTERN_C void _N_(fini_ittlib)(void)
             if (current_thread == 0)
             {
                 current_thread = __itt_thread_id();
-                __itt_api_fini_ptr = (__itt_api_fini_t*)(size_t)__itt_get_proc(_N_(_ittapi_global).lib, "__itt_api_fini");
-                if (__itt_api_fini_ptr)
-                    __itt_api_fini_ptr(&_N_(_ittapi_global));
+                if (_N_(_ittapi_global).lib) {
+                    __itt_api_fini_ptr = (__itt_api_fini_t*)(size_t)__itt_get_proc(_N_(_ittapi_global).lib, "__itt_api_fini");
+                    if (__itt_api_fini_ptr)
+                        __itt_api_fini_ptr(&_N_(_ittapi_global));
 
-                __itt_nullify_all_pointers();
+                    __itt_nullify_all_pointers();
+                }
 
  /* TODO: !!! not safe !!! don't support unload so far.
   *             if (_N_(_ittapi_global).lib != NULL)

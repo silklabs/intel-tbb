@@ -83,7 +83,7 @@ public:
 
 #if __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES
     //! Static field to support proportional split
-    static const bool is_divisible_in_proportion = true;
+    static const bool is_splittable_in_proportion = true;
 
     blocked_range3d( blocked_range3d& r, proportional_split& proportion ) :
         my_pages(r.my_pages),

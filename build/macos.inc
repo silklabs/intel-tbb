@@ -61,7 +61,7 @@ ifeq (ios,$(target))
 endif
 
 ifndef runtime
- gcc_version = $(shell gcc -dumpversion)
+ gcc_version:=$(shell gcc -dumpversion)
  os_version:=$(shell /usr/bin/sw_vers -productVersion)
  export runtime:=cc$(gcc_version)_os$(os_version)
 endif

@@ -18,6 +18,9 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
+#define HARNESS_DEFAULT_MIN_THREADS 0
+#define HARNESS_DEFAULT_MAX_THREADS 4
+
 #define __TBB_EXTRA_DEBUG 1 // for concurrent_hash_map
 #include "tbb/combinable.h"
 #include "tbb/task_scheduler_init.h"

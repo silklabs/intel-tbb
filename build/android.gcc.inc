@@ -91,10 +91,11 @@ ifeq (ia32,$(arch))
     LIB_LINK_FLAGS += -m32
 endif
 
-# Currently, no intel64 support for Android, but if added later, these flags may suffice
 ifeq (intel64,$(arch))
     CPLUS_FLAGS += -m64
     LIB_LINK_FLAGS += -m64
+    # pie is necessary for test executables to work and might be removed if newer NDK will add it implicitly
+    LINK_FLAGS += -pie
 endif
 
 ifeq (arm,$(findstring arm,$(arch)))

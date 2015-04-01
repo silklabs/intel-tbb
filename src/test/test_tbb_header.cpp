@@ -28,6 +28,7 @@
 // Add testing of preview features
 #define TBB_PREVIEW_AGGREGATOR 1
 #define TBB_PREVIEW_CONCURRENT_LRU_CACHE 1
+#define TBB_PREVIEW_VARIADIC_PARALLEL_INVOKE 1
 #endif
 
 #include "harness_defs.h"

@@ -400,16 +400,36 @@ public:
     const BackRefIdx *getBackRefIdx() const { return &backRefIdx; }
     inline TLSData *ownBlock() const;
     bool isStartupAllocObject() const { return objectSize == startupAllocObjSizeMark; }
-    inline FreeObject *findObjectToFree(void *object) const;
-    bool checkFreePrecond(void *object) const {
-        if (allocatedCount>0) {
-            if (startupAllocObjSizeMark == objectSize) // startup block
-                return object<=bumpPtr;
-            else
-                return allocatedCount <= (slabSize-sizeof(Block))/objectSize
-                       && (!bumpPtr || object>bumpPtr);
+    inline FreeObject *findObjectToFree(const void *object) const;
+    void checkFreePrecond(const void *object) const {
+#if MALLOC_DEBUG
+        const char *msg = "Possible double free or heap corruption.";
+        // small objects are always at least sizeof(size_t) Byte aligned,
+        // try to check this before this dereference as for invalid objects
+        // this may be unreadable
+        MALLOC_ASSERT(isAligned(object, sizeof(size_t)), "Try to free invalid small object");
+        // releasing to free slab
+        MALLOC_ASSERT(allocatedCount>0, msg);
+        // must not point to slab's header
+        MALLOC_ASSERT((uintptr_t)object - (uintptr_t)this >= sizeof(Block), msg);
+        if (startupAllocObjSizeMark == objectSize) // startup block
+            MALLOC_ASSERT(object<=bumpPtr, msg);
+        else {
+            // non-startup objects are 8 Byte aligned
+            MALLOC_ASSERT(isAligned(object, 8), "Try to free invalid small object");
+            MALLOC_ASSERT(allocatedCount <= (slabSize-sizeof(Block))/objectSize
+                          && (!bumpPtr || object>bumpPtr), msg);
+            FreeObject *toFree = findObjectToFree(object);
+            // check against head of freeList, as this is mostly
+            // expected after double free
+            MALLOC_ASSERT(findObjectToFree(object) != freeList, msg);
+            // check against head of publicFreeList, to detect double free
+            // involiving foreign thread
+            MALLOC_ASSERT(findObjectToFree(object) != publicFreeList, msg);
         }
-        return false;
+#else
+        suppress_unused_warning(object);
+#endif
     }
     const BackRefIdx *getBackRef() const { return &backRefIdx; }
     void initEmptyBlock(TLSData *tls, size_t size);
@@ -716,6 +736,15 @@ bool        RecursiveMallocCallProtector::canUsePthread;
 
 /*********** End code to provide thread ID and a TLS pointer **********/
 
+// Parameter for isLargeObject, keeps our expectations on memory origin.
+// In assertions it must be used
+// unknownMem to reliably check them for invalid objects.
+enum MemoryOrigin {
+    ourMem,    // allocated by TBB allocator
+    unknownMem // can be allocated by system allocator or TBB allocator
+};
+
+template<MemoryOrigin> bool isLargeObject(void *object);
 static void *internalMalloc(size_t size);
 static void internalFree(void *object);
 static void *internalPoolMalloc(MemoryPool* mPool, size_t size);
@@ -1388,8 +1417,8 @@ void Block::privatizePublicFreeList()
         while( isSolidPtr(temp->next) ){ // the list will end with either NULL or UNUSABLE
             temp = temp->next;
             allocatedCount--;
+            MALLOC_ASSERT( allocatedCount < (slabSize-sizeof(Block))/objectSize, ASSERT_TEXT );
         }
-        MALLOC_ASSERT( allocatedCount < (slabSize-sizeof(Block))/objectSize, ASSERT_TEXT );
         /* merge with local freeList */
         temp->next = freeList;
         freeList = localPublicFreeList;
@@ -1625,7 +1654,7 @@ inline TLSData *Block::ownBlock() const {
     return tlsPtr;
 }
 
-FreeObject *Block::findObjectToFree(void *object) const
+FreeObject *Block::findObjectToFree(const void *object) const
 {
     FreeObject *objectToFree;
     // Due to aligned allocations, a pointer passed to scalable_free
@@ -2224,7 +2253,7 @@ void *MemoryPool::getFromLLOCache(TLSData* tls, size_t size, size_t alignment)
 
         lmb->objectSize = size;
 
-        MALLOC_ASSERT( isLargeObject(alignedArea), ASSERT_TEXT );
+        MALLOC_ASSERT( isLargeObject<unknownMem>(alignedArea), ASSERT_TEXT );
         MALLOC_ASSERT( isAligned(alignedArea, alignment), ASSERT_TEXT );
 
         return alignedArea;
@@ -2294,7 +2323,7 @@ static void *reallocAligned(MemoryPool *memPool, void *ptr,
     void *result;
     size_t copySize;
 
-    if (isLargeObject(ptr)) {
+    if (isLargeObject<ourMem>(ptr)) {
         LargeMemoryBlock* lmb = ((LargeObjectHdr *)ptr - 1)->memoryBlock;
         copySize = lmb->unalignedSize-((uintptr_t)ptr-(uintptr_t)lmb);
         if (size <= copySize && (0==alignment || isAligned(ptr, alignment))) {
@@ -2360,14 +2389,20 @@ static inline BackRefIdx safer_dereference (const BackRefIdx *ptr)
     return id;
 }
 
+template<MemoryOrigin memOrigin>
 bool isLargeObject(void *object)
 {
     if (!isAligned(object, largeObjectAlignment))
         return false;
     LargeObjectHdr *header = (LargeObjectHdr*)object - 1;
-    BackRefIdx idx = safer_dereference(&header->backRefIdx);
+    // TODO: drop safer_dereference() when we know for sure that we allocated
+    // the object, i.e. on scalable_free() callpath
+    BackRefIdx idx = memOrigin==unknownMem? safer_dereference(&header->backRefIdx) :
+        header->backRefIdx;
 
     return idx.isLargeObject()
+        // in valid LargeObjectHdr memoryBlock is not NULL
+        && header->memoryBlock
         // in valid LargeObjectHdr memoryBlock points somewhere before header
         // TODO: more strict check
         && (uintptr_t)header->memoryBlock < (uintptr_t)header
@@ -2376,24 +2411,26 @@ bool isLargeObject(void *object)
 
 static inline bool isSmallObject (void *ptr)
 {
-    void* expected = alignDown(ptr, slabSize);
-    const BackRefIdx* idx = ((Block*)expected)->getBackRef();
+    Block* expectedBlock = (Block*)alignDown(ptr, slabSize);
+    const BackRefIdx* idx = expectedBlock->getBackRef();
 
-    return expected == getBackRef(safer_dereference(idx));
+    bool isSmall = expectedBlock == getBackRef(safer_dereference(idx));
+    if (isSmall)
+        expectedBlock->checkFreePrecond(ptr);
+    return isSmall;
 }
 
 /**** Check if an object was allocated by scalable_malloc ****/
 static inline bool isRecognized (void* ptr)
 {
-    return isLargeObject(ptr) || isSmallObject(ptr);
+    return isLargeObject<unknownMem>(ptr) || isSmallObject(ptr);
 }
 
 static inline void freeSmallObject(MemoryPool *memPool, void *object)
 {
     /* mask low bits to get the block */
     Block *block = (Block *)alignDown(object, slabSize);
-    MALLOC_ASSERT( block->checkFreePrecond(object),
-                   "Possible double free or heap corruption." );
+    block->checkFreePrecond(object);
 
 #if MALLOC_CHECK_RECURSION
     if (block->isStartupAllocObject()) {
@@ -2489,6 +2526,9 @@ static void *internalPoolMalloc(MemoryPool* memPool, size_t size)
 }
 
 // When size==0 (i.e. unknown), detect here whether the object is large.
+// For size is known and < minLargeObjectSize, we still need to check
+// if the actual object is large, because large objects might be used
+// for aligned small allocations.
 static bool internalPoolFree(MemoryPool *memPool, void *object, size_t size)
 {
     if (!memPool || !object) return false;
@@ -2499,7 +2539,7 @@ static bool internalPoolFree(MemoryPool *memPool, void *object, size_t size)
     MALLOC_ASSERT(memPool->extMemPool.userPool() || isRecognized(object),
                   "Invalid pointer during object releasing is detected.");
 
-    if (size >= minLargeObjectSize || (!size && isLargeObject(object)))
+    if (size >= minLargeObjectSize || isLargeObject<ourMem>(object))
         memPool->putToLLOCache(memPool->getTLS(/*create=*/false), object);
     else
         freeSmallObject(memPool, object);
@@ -2532,7 +2572,7 @@ static size_t internalMsize(void* ptr)
 {
     if (ptr) {
         MALLOC_ASSERT(isRecognized(ptr), "Invalid pointer in scalable_msize detected.");
-        if (isLargeObject(ptr)) {
+        if (isLargeObject<ourMem>(ptr)) {
             LargeMemoryBlock* lmb = ((LargeObjectHdr*)ptr - 1)->memoryBlock;
             return lmb->objectSize;
         } else
@@ -2778,7 +2818,7 @@ extern "C" void __TBB_malloc_safer_free(void *object, void (*original_free)(void
 
     // must check 1st for large object, because small object check touches 4 pages on left,
     // and it can be inaccessible
-    if (isLargeObject(object)) {
+    if (isLargeObject<unknownMem>(object)) {
         TLSData *tls = defaultMemPool->getTLS(/*create=*/false);
 
         defaultMemPool->putToLLOCache(tls, object);

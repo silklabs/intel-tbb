@@ -98,9 +98,32 @@ public:
     AllocTask() {}
 };
 
+/* Regression test against data race between termination of workers
+   and setting blocking terination mode in main thread. */
+class RunWorkersBody : NoAssign {
+    bool wait_workers;
+public:
+    RunWorkersBody(bool waitWorkers) : wait_workers(waitWorkers) {}
+    void operator()(const int /*threadID*/) const {
+        tbb::task_scheduler_init sch(MaxThread, 0, wait_workers);
+            tbb::parallel_for(tbb::blocked_range<int>(0, 10000, 1), AllocTask(),
+                              tbb::simple_partitioner());
+    }
+};
+
+void TestBlockNonblock()
+{
+    for (int i=0; i<100; i++) {
+        NativeParallelFor(4, RunWorkersBody(/*wait_workers=*/false));
+        RunWorkersBody(/*wait_workers=*/true)(0);
+    }
+}
+
 int TestMain()
 {
     using namespace Harness;
+
+    TestBlockNonblock();
 
     bool child = false;
 #if _WIN32||_WIN64

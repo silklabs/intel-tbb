@@ -64,11 +64,17 @@ endif
 
 # ICC 14.0 and higher support clang environment
 ifneq (,$(shell icc -dumpversion | egrep  "^1[4-9]\."))
-    ifeq (libc++,$(stdlib))
-        CPLUS_FLAGS    += -use-clang-env -stdlib=libc++
-        LIB_LINK_FLAGS += -use-clang-env -stdlib=libc++
-    endif
+    LIBCPP_KEY = -stdlib=libc++
+    ifneq (,$(shell icc -dumpversion | egrep  "^14\."))
+        LIBCPP_KEY += -use-clang-env
+    endif    
 endif
+
+ifeq (libc++,$(stdlib))
+    CPLUS_FLAGS    += $(LIBCPP_KEY)
+    LIB_LINK_FLAGS += $(LIBCPP_KEY)
+endif
+
 #------------------------------------------------------------------------------
 # Setting assembler data.
 #------------------------------------------------------------------------------

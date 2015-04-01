@@ -246,6 +246,7 @@ public:
         : my_a(a), my_b(b) {}
     void operator()(int idx) const {
         tbb::empty_task* root_task = new(tbb::task::allocate_root()) tbb::empty_task;
+        my_b.timed_wait(10); // increases chances for task_arena initialization contention
         for( int i=0; i<100; ++i) {
             root_task->set_ref_count(2);
             my_a.enqueue(Runner(root_task));

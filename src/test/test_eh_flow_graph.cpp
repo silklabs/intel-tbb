@@ -20,6 +20,9 @@
 
 #include "harness_defs.h"
 
+#define HARNESS_DEFAULT_MIN_THREADS 2
+#define HARNESS_DEFAULT_MAX_THREADS 4
+
 #if _MSC_VER
     #pragma warning (disable: 4503) // Suppress "decorated name length exceeded, name was truncated" warning
     #if !TBB_USE_EXCEPTIONS

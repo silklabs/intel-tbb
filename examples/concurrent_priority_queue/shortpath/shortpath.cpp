@@ -18,10 +18,6 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
-// This header should come before any other one.
-// For details, see Known Issues in the Release Notes.
-#include "tbb/tbb_stddef.h"
-
 #include <cstdio>
 #include <vector>
 #include <math.h>

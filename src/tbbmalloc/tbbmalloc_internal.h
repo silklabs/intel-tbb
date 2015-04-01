@@ -1108,8 +1108,6 @@ public:
 
 bool isMallocInitializedExt();
 
-bool isLargeObject(void *object);
-
 unsigned int getThreadId();
 
 bool initBackRefMaster(Backend *backend);

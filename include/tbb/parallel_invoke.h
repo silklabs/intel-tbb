@@ -201,7 +201,7 @@ namespace internal {
     };
 
     // Select task_group_context parameter from the back of a pack
-    task_group_context& get_context( task_group_context& tgc ) { return tgc; }
+    inline task_group_context& get_context( task_group_context& tgc ) { return tgc; }
 
     template<typename T1, typename... T>
     task_group_context& get_context( T1&& /*ignored*/, T&&... t )

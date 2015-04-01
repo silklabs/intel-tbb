@@ -93,10 +93,10 @@
   #define __TBB_THREAD_LOCAL_VARIABLES_PRESENT 1
 #endif
 
-#if __ANDROID__
-  /** Android Bionic library does not support posix_memalign() **/
+#if _WIN32 || __ANDROID__
+  /** Windows and Android Bionic library do not support posix_memalign() **/
   #define __TBB_POSIX_MEMALIGN_PRESENT 0
-  /** Android Bionic library does not support pvalloc() **/
+  /** Windows and Android Bionic library do not support pvalloc() **/
   #define __TBB_PVALLOC_PRESENT 0
 #else
   #define __TBB_POSIX_MEMALIGN_PRESENT 1

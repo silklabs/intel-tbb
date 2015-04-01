@@ -417,7 +417,7 @@
 #endif
 
 #ifndef __TBB_TASK_PRIORITY
-    #define __TBB_TASK_PRIORITY (!(__TBB_CPF_BUILD||TBB_USE_PREVIEW_BINARY)&&__TBB_TASK_GROUP_CONTEXT) // TODO: it will be enabled for CPF in the next versions
+    #define __TBB_TASK_PRIORITY (__TBB_TASK_GROUP_CONTEXT)
 #endif /* __TBB_TASK_PRIORITY */
 
 #if __TBB_TASK_PRIORITY && !__TBB_TASK_GROUP_CONTEXT
@@ -445,6 +445,10 @@
 
 #ifndef __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES
 #define __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES 1
+#endif
+
+#ifndef __TBB_ENABLE_RANGE_FEEDBACK
+#define __TBB_ENABLE_RANGE_FEEDBACK 0
 #endif
 
 #ifdef _VARIADIC_MAX
@@ -494,8 +498,8 @@
     #define __TBB_DEFAULT_DTOR_THROW_SPEC_BROKEN 1
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1500 && !defined(__INTEL_COMPILER)
-    /** VS2005 and earlier do not allow declaring template class as a friend
+#if !__INTEL_COMPILER && (_MSC_VER && _MSC_VER < 1500 || __TBB_GCC_VERSION && __TBB_GCC_VERSION < 40102)
+    /** gcc 3.4.6 (and earlier) and VS2005 (and earlier) do not allow declaring template class as a friend
         of classes defined in other namespaces. **/
     #define __TBB_TEMPLATE_FRIENDS_BROKEN 1
 #endif

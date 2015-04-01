@@ -93,7 +93,13 @@ static void impl_zone_discharge(malloc_zone_t *, void *) {}
 static void impl_zone_destroy(struct _malloc_zone_t *) {}
 
 /* note: impl_malloc_usable_size() is called for each free() call, so it must be fast */
-static size_t impl_malloc_usable_size(struct _malloc_zone_t *, const void *ptr);
+static size_t impl_malloc_usable_size(struct _malloc_zone_t *, const void *ptr)
+{
+    // malloc_usable_size() is used by OS X to recognize which memory manager
+    // allocated the address, so our wrapper must not redirect to the original function.
+    return __TBB_malloc_safer_msize(const_cast<void*>(ptr), NULL);
+}
+
 static void *impl_malloc(struct _malloc_zone_t *, size_t size);
 static void *impl_calloc(struct _malloc_zone_t *, size_t num_items, size_t size);
 static void *impl_valloc(struct _malloc_zone_t *, size_t size);

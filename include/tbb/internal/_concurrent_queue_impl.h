@@ -434,6 +434,7 @@ struct concurrent_queue_rep : public concurrent_queue_rep_base {
  */
 template<typename T>
 class concurrent_queue_base_v3: public concurrent_queue_page_allocator {
+private:
     //! Internal representation
     concurrent_queue_rep<T>* my_rep;
 
@@ -760,7 +761,7 @@ class concurrent_queue_iterator: public concurrent_queue_iterator_base_v3<typena
     template<typename T, class A>
     friend class ::tbb::strict_ppl::concurrent_queue;
 #else
-public: // workaround for MSVC
+public:
 #endif
     //! Construct iterator pointing to head of queue.
     concurrent_queue_iterator( const concurrent_queue_base_v3<Value>& queue ) :
@@ -831,6 +832,7 @@ template<typename Container, typename Value> class concurrent_queue_iterator;
 /** Type-independent portion of concurrent_queue.
     @ingroup containers */
 class concurrent_queue_base_v3: no_copy {
+private:
     //! Internal representation
     concurrent_queue_rep* my_rep;
 

@@ -85,7 +85,7 @@ void arena::process( generic_scheduler& s ) {
         // Passing reference count is technically unnecessary in this context,
         // but omitting it here would add checks inside the function.
         __TBB_ASSERT( is_alive(my_guard), NULL );
-        task* t = s.receive_or_steal_task( s.my_dummy_task->prefix().ref_count, /*return_if_no_work=*/true );
+        task* t = s.receive_or_steal_task( s.my_dummy_task->prefix().ref_count );
         if (t) {
             // A side effect of receive_or_steal_task is that my_innermost_running_task can be set.
             // But for the outermost dispatch loop of a worker it has to be NULL.
@@ -164,15 +164,8 @@ arena::arena ( market& m, unsigned max_num_workers ) {
         my_slots[i].my_counters = new ( NFS_Allocate(1, sizeof(statistics_counters), NULL) ) statistics_counters;
 #endif /* __TBB_STATISTICS */
     }
-#if __TBB_TASK_PRIORITY
-    for ( intptr_t i = 0; i < num_priority_levels; ++i ) {
-        my_task_stream[i].initialize(my_num_slots);
-        ITT_SYNC_CREATE(my_task_stream + i, SyncType_Scheduler, SyncObj_TaskStream);
-    }
-#else /* !__TBB_TASK_PRIORITY */
     my_task_stream.initialize(my_num_slots);
     ITT_SYNC_CREATE(&my_task_stream, SyncType_Scheduler, SyncObj_TaskStream);
-#endif /* !__TBB_TASK_PRIORITY */
     my_mandatory_concurrency = false;
 #if __TBB_TASK_GROUP_CONTEXT
     // Context to be used by root tasks by default (if the user has not specified one).
@@ -222,12 +215,7 @@ void arena::free_arena () {
 #endif /* __TBB_STATISTICS */
         drained += mailbox(i+1).drain();
     }
-#if __TBB_TASK_PRIORITY && TBB_USE_ASSERT
-    for ( intptr_t i = 0; i < num_priority_levels; ++i )
-        __TBB_ASSERT(my_task_stream[i].empty() && my_task_stream[i].drain()==0, "Not all enqueued tasks were executed");
-#elif !__TBB_TASK_PRIORITY
-    __TBB_ASSERT(my_task_stream.empty() && my_task_stream.drain()==0, "Not all enqueued tasks were executed");
-#endif /* !__TBB_TASK_PRIORITY */
+    __TBB_ASSERT( my_task_stream.drain()==0, "Not all enqueued tasks were executed");
 #if __TBB_COUNT_TASK_NODES
     my_market->update_task_node_count( -drained );
 #endif /* __TBB_COUNT_TASK_NODES */
@@ -414,18 +402,18 @@ bool arena::is_out_of_work() {
                     // Test and test-and-set.
                     if( my_pool_state==busy ) {
 #if __TBB_TASK_PRIORITY
-                        bool no_fifo_tasks = my_task_stream[top_priority].empty();
+                        bool no_fifo_tasks = my_task_stream.empty(top_priority);
                         work_absent = work_absent && (!dequeuing_possible || no_fifo_tasks)
                                       && top_priority == my_top_priority && reload_epoch == my_reload_epoch;
 #else
-                        bool no_fifo_tasks = my_task_stream.empty();
+                        bool no_fifo_tasks = my_task_stream.empty(0);
                         work_absent = work_absent && no_fifo_tasks;
 #endif /* __TBB_TASK_PRIORITY */
                         if( work_absent ) {
 #if __TBB_TASK_PRIORITY
                             if ( top_priority > my_bottom_priority ) {
                                 if ( my_market->lower_arena_priority(*this, top_priority - 1, reload_epoch)
-                                     && !my_task_stream[top_priority].empty() )
+                                     && !my_task_stream.empty(top_priority) )
                                 {
                                     atomic_update( my_skipped_fifo_priority, top_priority, std::less<intptr_t>());
                                 }
@@ -447,7 +435,7 @@ bool arena::is_out_of_work() {
                                     // which is unacceptable.
                                     bool switch_back = false;
                                     for ( int p = 0; p < num_priority_levels; ++p ) {
-                                        if ( !my_task_stream[p].empty() ) {
+                                        if ( !my_task_stream.empty(p) ) {
                                             switch_back = true;
                                             if ( p < my_bottom_priority || p > my_top_priority )
                                                 my_market->update_arena_priority(*this, p);
@@ -508,20 +496,17 @@ void arena::enqueue_task( task& t, intptr_t prio, FastRandom &random )
     __TBB_ASSERT(t.prefix().affinity==affinity_id(0), "affinity is ignored for enqueued tasks");
 #endif /* TBB_USE_ASSERT */
 
+    ITT_NOTIFY(sync_releasing, &my_task_stream);
 #if __TBB_TASK_PRIORITY
     intptr_t p = prio ? normalize_priority(priority_t(prio)) : normalized_normal_priority;
     assert_priority_valid(p);
-    task_stream &ts = my_task_stream[p];
-#else /* !__TBB_TASK_PRIORITY */
-    __TBB_ASSERT_EX(prio == 0, "the library is not configured to respect the task priority");
-    task_stream &ts = my_task_stream;
-#endif /* !__TBB_TASK_PRIORITY */
-    ITT_NOTIFY(sync_releasing, &ts);
-    ts.push( &t, random );
-#if __TBB_TASK_PRIORITY
+    my_task_stream.push( &t, p, random );
     if ( p != my_top_priority )
         my_market->update_arena_priority( *this, p );
-#endif /* __TBB_TASK_PRIORITY */
+#else /* !__TBB_TASK_PRIORITY */
+    __TBB_ASSERT_EX(prio == 0, "the library is not configured to respect the task priority");
+    my_task_stream.push( &t, 0, random );
+#endif /* !__TBB_TASK_PRIORITY */
     advertise_new_work< /*Spawned=*/ false >();
 #if __TBB_TASK_PRIORITY
     if ( p != my_top_priority )
@@ -650,13 +635,13 @@ void task_arena_base::internal_initialize( ) {
     if(as_atomic(my_arena).compare_and_swap(new_arena, NULL) != NULL) { // there is a race possible on my_initialized
         __TBB_ASSERT(my_arena, NULL);                             // other thread was the first
         new_arena->on_thread_leaving</*is_master*/true>(); // deallocate new arena
-    }
 #if __TBB_TASK_GROUP_CONTEXT
-    else {
-        my_context = new_arena->my_default_ctx;
-        my_context->my_version_and_traits |= my_version_and_traits & exact_exception_flag;
-    }
+        spin_wait_while_eq(my_context, (task_group_context*)NULL);
+    } else {
+        new_arena->my_default_ctx->my_version_and_traits |= my_version_and_traits & exact_exception_flag;
+        as_atomic(my_context) = new_arena->my_default_ctx;
 #endif
+    }
 }
 
 void task_arena_base::internal_terminate( ) {
@@ -816,7 +801,7 @@ class wait_task : public task {
     /*override*/ task* execute() {
         generic_scheduler* s = governor::local_scheduler_if_initialized();
         __TBB_ASSERT( s, NULL );
-        if( s->my_arena_index && s->worker_outermost_level() ) {// on outermost level of workers only
+        if( s->my_arena_index && s->worker_outermost_level() ) {
             s->local_wait_for_all( *s->my_dummy_task, NULL ); // run remaining tasks
         } else s->my_arena->is_out_of_work(); // avoids starvation of internal_wait: issuing this task makes arena full
         my_signal.V();

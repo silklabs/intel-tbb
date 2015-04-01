@@ -21,6 +21,7 @@
 #ifndef __CONVEX_HULL_H__
 #define __CONVEX_HULL_H__
 
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
@@ -30,13 +31,11 @@
 #include <cstring>
 #include <algorithm>
 #include <functional>
-#include <cassert>
 #include <climits>
 #include "tbb/tick_count.h"
 #include "tbb/task_scheduler_init.h"
 #include "../../common/utility/utility.h"
 #include "../../common/utility/fast_random.h"
-#include "tbb/blocked_range.h"
 
 using namespace std;
 

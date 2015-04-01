@@ -18,6 +18,9 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
+#define HARNESS_DEFAULT_MIN_THREADS 2
+#define HARNESS_DEFAULT_MAX_THREADS 2
+
 #if !TBB_USE_THREADING_TOOLS
     #define TBB_USE_THREADING_TOOLS 1
 #endif

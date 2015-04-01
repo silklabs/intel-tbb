@@ -2,7 +2,37 @@
 The list of most significant changes made over time in
 Intel(R) Threading Building Blocks (Intel(R) TBB).
 ------------------------------------------------------------------------
+Intel TBB 4.3 Update 1
+TBB_INTERFACE_VERSION == 8001
 
+Changes (w.r.t. Intel TBB 4.3):
+
+- The ability to split blocked_ranges in a proportion, used by
+    affinity_partitioner since version 4.2 Update 4, became a formal
+    extension of the Range concept.
+- More checks for an incorrect address to release added to the debug
+    version of the memory allocator.
+- Different kind of solutions for each TBB example were merged.
+
+Preview Features:
+- Task priorities are re-enabled in preview binaries.
+
+Bugs fixed:
+
+- Fixed a duplicate symbol when TBB_PREVIEW_VARIADIC_PARALLEL_INVOKE is
+    used in multiple compilation units.
+- Fixed a crash in __itt_fini_ittlib seen on Ubuntu 14.04.
+- Fixed a crash in memory release after dynamic replacement of the
+    OS X* memory allocator.
+- Fixed incorrect indexing of arrays in seismic example.
+- Fixed a data race in lazy initialization of task_arena.
+
+Open-source contributions integrated:
+
+- Fix for dumping information about gcc and clang compiler versions
+    by Misty De Meo.
+
+------------------------------------------------------------------------
 Intel TBB 4.3
 TBB_INTERFACE_VERSION == 8000
 

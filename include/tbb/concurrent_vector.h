@@ -321,11 +321,11 @@ private:
         template<typename C, typename U>
         friend class internal::vector_iterator;
 
-#if !defined(_MSC_VER) || defined(__INTEL_COMPILER)
+#if !__TBB_TEMPLATE_FRIENDS_BROKEN
         template<typename T, class A>
         friend class tbb::concurrent_vector;
 #else
-public: // workaround for MSVC
+public:
 #endif
 
         vector_iterator( const Container& vector, size_t index, void *ptr = 0 ) :
@@ -835,12 +835,9 @@ public:
     /** Returns iterator pointing to the new element. */
     iterator push_back( const_reference item )
     {
-        size_type k;
-        T* ptr = static_cast<T*>(internal_push_back(sizeof(T),k));
-        element_construction_guard g(ptr);
-        new(ptr) T(item);
-        g.dismiss();
-        return iterator(*this, k, ptr);
+        push_back_helper prolog(*this);
+        new(prolog.internal_push_back_result()) T(item);
+        return prolog.return_iterator_and_dismiss();
     }
 
 #if    __TBB_CPP11_RVALUE_REF_PRESENT
@@ -848,25 +845,19 @@ public:
     /** Returns iterator pointing to the new element. */
     iterator push_back(  T&& item )
     {
-        size_type k;
-        T* ptr = static_cast<T*>(internal_push_back(sizeof(T),k));
-        element_construction_guard g(ptr);
-        new(ptr) T(std::move(item));
-        g.dismiss();
-        return iterator(*this, k, ptr);
+        push_back_helper prolog(*this);
+        new(prolog.internal_push_back_result()) T(std::move(item));
+        return prolog.return_iterator_and_dismiss();
     }
 #if __TBB_CPP11_VARIADIC_TEMPLATES_PRESENT
     //! Push item, create item "in place" with provided arguments
     /** Returns iterator pointing to the new element. */
     template<typename... Args>
-    iterator emplace_back(  Args&&... args)
+    iterator emplace_back(  Args&&... args )
     {
-        size_type k;
-        T* ptr = static_cast<T*>(internal_push_back(sizeof(T),k));
-        element_construction_guard g(ptr);
-        new(ptr) T( std::forward<Args>(args)...);
-        g.dismiss();
-        return iterator(*this, k, ptr);
+        push_back_helper prolog(*this);
+        new(prolog.internal_push_back_result()) T(std::forward<Args>(args)...);
+        return prolog.return_iterator_and_dismiss();
     }
 #endif //__TBB_CPP11_VARIADIC_TEMPLATES_PRESENT
 #endif //__TBB_CPP11_RVALUE_REF_PRESENT
@@ -1126,15 +1117,32 @@ private:
         }
     };
 
-    class element_construction_guard : internal::no_copy{
-        pointer element;
-    public:
-        element_construction_guard(pointer an_element) : element (an_element){}
-        void dismiss(){ element = NULL; }
-        ~element_construction_guard(){
-            if (element){
-                internal::handle_unconstructed_elements(element, 1);
+    struct push_back_helper : internal::no_copy{
+        struct element_construction_guard : internal::no_copy{
+            pointer element;
+
+            element_construction_guard(pointer an_element) : element (an_element){}
+            void dismiss(){ element = NULL; }
+            ~element_construction_guard(){
+                if (element){
+                    internal::handle_unconstructed_elements(element, 1);
+                }
             }
+        };
+
+        concurrent_vector & v;
+        size_type k;
+        element_construction_guard g;
+
+        push_back_helper(concurrent_vector & vector) :
+            v(vector),
+            g (static_cast<T*>(v.internal_push_back(sizeof(T),k)))
+        {}
+
+        pointer internal_push_back_result(){ return g.element;}
+        iterator return_iterator_and_dismiss(){
+            g.dismiss();
+            return iterator(v, k, g.element);
         }
     };
 };

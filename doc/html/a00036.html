@@ -33,7 +33,7 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00232.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00036.html">concurrent_hash_map</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00231.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00036.html">concurrent_hash_map</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -46,9 +46,9 @@
 <a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="a00355.html">List of all members</a>  </div>
+<a href="a00354.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00246.html">Containers</a></div></div>  </div>
+<div class="title">tbb::interface5::concurrent_hash_map&lt; Key, T, HashCompare, A &gt; Class Template Reference<div class="ingroups"><a class="el" href="a00245.html">Containers</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -78,7 +78,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00047.html">const_accessor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines data access, locking, and garbage collection.  <a href="a00047.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00094.html">node</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00095.html">node</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -287,7 +287,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a000
 Protected Types</h2></td></tr>
 <tr class="memitem:a81dddc5d509f7f074d84d9c38e83efb9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81dddc5d509f7f074d84d9c38e83efb9"></a>
 typedef Allocator::template <br class="typebreak"/>
-rebind&lt; <a class="el" href="a00094.html">node</a> &gt;::other&#160;</td><td class="memItemRight" valign="bottom"><b>node_allocator_type</b></td></tr>
+rebind&lt; <a class="el" href="a00095.html">node</a> &gt;::other&#160;</td><td class="memItemRight" valign="bottom"><b>node_allocator_type</b></td></tr>
 <tr class="separator:a81dddc5d509f7f074d84d9c38e83efb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -296,13 +296,13 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>delete_node</b> (node_base *n)</td></tr>
 <tr class="separator:aed0e0def29516d9ee7aab2192727b69b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae44a70417f9674a2169f9a1fd437a3bd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae44a70417f9674a2169f9a1fd437a3bd"></a>
-<a class="el" href="a00094.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>search_bucket</b> (const key_type &amp;key, bucket *b) const </td></tr>
+<a class="el" href="a00095.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>search_bucket</b> (const key_type &amp;key, bucket *b) const </td></tr>
 <tr class="separator:ae44a70417f9674a2169f9a1fd437a3bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b57e036f82bc2b1ef1ede41b02d46b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b57e036f82bc2b1ef1ede41b02d46b5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>rehash_bucket</b> (bucket *b_new, const hashcode_t h)</td></tr>
 <tr class="separator:a1b57e036f82bc2b1ef1ede41b02d46b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54c7e526a1dc75509a1f059195d4f24c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54c7e526a1dc75509a1f059195d4f24c"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00036.html#a54c7e526a1dc75509a1f059195d4f24c">lookup</a> (bool op_insert, const Key &amp;key, const T *t, <a class="el" href="a00047.html">const_accessor</a> *result, bool write, <a class="el" href="a00094.html">node</a> *(*allocate_node)(node_allocator_type &amp;, const Key &amp;, const T *))</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00036.html#a54c7e526a1dc75509a1f059195d4f24c">lookup</a> (bool op_insert, const Key &amp;key, const T *t, <a class="el" href="a00047.html">const_accessor</a> *result, bool write, <a class="el" href="a00095.html">node</a> *(*allocate_node)(node_allocator_type &amp;, const Key &amp;, const T *))</td></tr>
 <tr class="memdesc:a54c7e526a1dc75509a1f059195d4f24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert or find item and optionally acquire a lock on the item. <br/></td></tr>
 <tr class="separator:a54c7e526a1dc75509a1f059195d4f24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fec452b31b8f0e185dc2de64b7128b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6fec452b31b8f0e185dc2de64b7128b2"></a>
@@ -329,13 +329,13 @@ template&lt;typename I &gt; </td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa220373171ca2feccb74c23823c6329f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa220373171ca2feccb74c23823c6329f"></a>
-static <a class="el" href="a00094.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>allocate_node_copy_construct</b> (node_allocator_type &amp;allocator, const Key &amp;key, const T *t)</td></tr>
+static <a class="el" href="a00095.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>allocate_node_copy_construct</b> (node_allocator_type &amp;allocator, const Key &amp;key, const T *t)</td></tr>
 <tr class="separator:aa220373171ca2feccb74c23823c6329f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f92f68816357df14d30650b29ab94cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f92f68816357df14d30650b29ab94cb"></a>
-static <a class="el" href="a00094.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>allocate_node_default_construct</b> (node_allocator_type &amp;allocator, const Key &amp;key, const T *)</td></tr>
+static <a class="el" href="a00095.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>allocate_node_default_construct</b> (node_allocator_type &amp;allocator, const Key &amp;key, const T *)</td></tr>
 <tr class="separator:a1f92f68816357df14d30650b29ab94cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a684cc0d3eb4b6ba8b88a14189c40bb20"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a684cc0d3eb4b6ba8b88a14189c40bb20"></a>
-static <a class="el" href="a00094.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>do_not_allocate_node</b> (node_allocator_type &amp;, const Key &amp;, const T *)</td></tr>
+static <a class="el" href="a00095.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>do_not_allocate_node</b> (node_allocator_type &amp;, const Key &amp;, const T *)</td></tr>
 <tr class="separator:a684cc0d3eb4b6ba8b88a14189c40bb20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>

@@ -99,7 +99,7 @@ public:
 
 #if __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES
     //! Static field to support proportional split
-    static const bool is_divisible_in_proportion = true;
+    static const bool is_splittable_in_proportion = true;
 
     //! Split range.
     /** The new Range *this has the second part split according to specified proportion, the old range r has the first part.

@@ -85,6 +85,7 @@ private:
         of my_workers array. **/
     atomic<unsigned> my_num_workers;
 
+    bool join_workers;
 #if __TBB_TASK_PRIORITY
     //! Highest priority among active arenas in the market.
     /** Arena priority level is its tasks highest priority (specified by arena's
@@ -280,6 +281,8 @@ public:
 
     //! Wait workers termination
     void wait_workers ();
+
+    bool must_join_workers () const { return join_workers; }
 
     //! Returns the requested stack size of worker threads.
     size_t worker_stack_size () const { return my_stack_size; }

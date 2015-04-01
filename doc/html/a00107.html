@@ -33,7 +33,7 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="a00232.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00107.html">reader_writer_lock</a></li>  </ul>
+<li class="navelem"><a class="el" href="a00231.html">tbb</a></li><li class="navelem"><b>interface5</b></li><li class="navelem"><a class="el" href="a00107.html">reader_writer_lock</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -42,9 +42,9 @@
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="a00369.html">List of all members</a>  </div>
+<a href="a00368.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tbb::interface5::reader_writer_lock Class Reference<div class="ingroups"><a class="el" href="a00248.html">Synchronization</a></div></div>  </div>
+<div class="title">tbb::interface5::reader_writer_lock Class Reference<div class="ingroups"><a class="el" href="a00247.html">Synchronization</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -63,8 +63,8 @@ Inheritance diagram for tbb::interface5::reader_writer_lock:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00128.html">scoped_lock</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scoped lock pattern for write locks.  <a href="a00128.html#details">More...</a><br/></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00125.html">scoped_lock</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scoped lock pattern for write locks.  <a href="a00125.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00135.html">scoped_lock_read</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scoped lock pattern for read locks.  <a href="a00135.html#details">More...</a><br/></td></tr>
@@ -136,7 +136,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>scoped_lock_read</b>
 <p>active: the active state means that the lock instance holds the lock; it will transition to invalid state during node deletion</p>
 <p>invalid: the end state for all nodes; this is set in the destructor so if we encounter this state, we are looking at memory that has already been freed</p>
 <p>The state diagrams below describe the status transitions. Single arrows indicate that the thread that owns the node is responsible for the transition; double arrows indicate that any thread could make the transition.</p>
-<p>State diagram for <a class="el" href="a00128.html" title="The scoped lock pattern for write locks. ">scoped_lock</a> status:</p>
+<p>State diagram for <a class="el" href="a00125.html" title="The scoped lock pattern for write locks. ">scoped_lock</a> status:</p>
 <p>waiting -------&mdash;&gt; waiting_nonblocking | _____________/ | V V V active --------------&mdash;&gt; invalid</p>
 <p>State diagram for <a class="el" href="a00135.html" title="The scoped lock pattern for read locks. ">scoped_lock_read</a> status:</p>
 <p>waiting | V active --------------&mdash;&gt;invalid </p>
@@ -158,7 +158,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>scoped_lock_read</b>
 </div><div class="memdoc">
 
 <p>Acquires the <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> for write. </p>
-<p>If the lock is currently held in write mode by another context, the writer will block by spinning on a local variable. Exceptions thrown: <a class="el" href="a00066.html" title="Exception for PPL locks. ">improper_lock</a> The context tries to acquire a <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> that it already has write ownership of. </p>
+<p>If the lock is currently held in write mode by another context, the writer will block by spinning on a local variable. Exceptions thrown: <a class="el" href="a00067.html" title="Exception for PPL locks. ">improper_lock</a> The context tries to acquire a <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> that it already has write ownership of. </p>
 
 </div>
 </div>
@@ -176,7 +176,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>scoped_lock_read</b>
 </div><div class="memdoc">
 
 <p>Acquires the <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> for read. </p>
-<p>If the lock is currently held by a writer, this reader will block and wait until the writers are done. Exceptions thrown: <a class="el" href="a00066.html" title="Exception for PPL locks. ">improper_lock</a> The context tries to acquire a <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> that it already has write ownership of. </p>
+<p>If the lock is currently held by a writer, this reader will block and wait until the writers are done. Exceptions thrown: <a class="el" href="a00067.html" title="Exception for PPL locks. ">improper_lock</a> The context tries to acquire a <a class="el" href="a00107.html" title="Writer-preference reader-writer lock with local-only spinning on readers. ">reader_writer_lock</a> that it already has write ownership of. </p>
 
 </div>
 </div>

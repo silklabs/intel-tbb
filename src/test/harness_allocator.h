@@ -64,6 +64,8 @@ using std::printf;
     #pragma warning (disable: 4512)
 #endif
 
+#if TBB_INTERFACE_VERSION >= 7005
+// Allocator traits were introduced in 4.2 U5
 namespace Harness {
 #if __TBB_ALLOCATOR_TRAITS_PRESENT
     using std::true_type;
@@ -73,6 +75,7 @@ namespace Harness {
     using tbb::internal::false_type;
 #endif //__TBB_ALLOCATOR_TRAITS_PRESENT
 }
+#endif
 
 template<typename counter_type = size_t>
 struct arena_data  {
@@ -136,9 +139,7 @@ public:
         char* p = reinterpret_cast<char*>(p_arg);
         __TBB_ASSERT(p >=my_data->my_buffer && p <= my_data->my_buffer + my_data->my_size, "trying to deallocate pointer not from arena ?");
         __TBB_ASSERT(p + n*sizeof(T) <= my_data->my_buffer + my_data->my_size, "trying to deallocate incorrect number of items?");
-        tbb::internal::suppress_unused_warning(p_arg);
-        tbb::internal::suppress_unused_warning(p);
-        tbb::internal::suppress_unused_warning(n);
+        tbb::internal::suppress_unused_warning(p, n);
     }
 
     //! Largest value for which method allocate might succeed.

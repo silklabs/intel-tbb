@@ -66,6 +66,7 @@ void allocate_root_proxy::free( task& task ) {
 task& allocate_root_with_context_proxy::allocate( size_t size ) const {
     internal::generic_scheduler* s = governor::local_scheduler();
     __TBB_ASSERT( s, "Scheduler auto-initialization failed?" );
+    __TBB_ASSERT( &my_context, "allocate_root(context) argument is a dereferenced NULL pointer" );
     task& t = s->allocate_task( size, NULL, &my_context );
     // Supported usage model prohibits concurrent initial binding. Thus we do not
     // need interlocked operations or fences to manipulate with my_context.my_kind
@@ -73,7 +74,7 @@ task& allocate_root_with_context_proxy::allocate( size_t size ) const {
         // If we are in the outermost task dispatch loop of a master thread, then
         // there is nothing to bind this context to, and we skip the binding part
         // treating the context as isolated.
-        if ( s->my_innermost_running_task == s->my_dummy_task )
+        if ( s->master_outermost_level() )
             __TBB_store_relaxed(my_context.my_kind, task_group_context::isolated);
         else
             my_context.bind_to( s );
@@ -258,7 +259,7 @@ void task::change_group ( task_group_context& ctx ) {
         // If we are in the outermost task dispatch loop of a master thread, then
         // there is nothing to bind this context to, and we skip the binding part
         // treating the context as isolated.
-        if ( s->my_innermost_running_task == s->my_dummy_task )
+        if ( s->master_outermost_level() )
             __TBB_store_relaxed(ctx.my_kind, task_group_context::isolated);
         else
             ctx.bind_to( s );

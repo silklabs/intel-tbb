@@ -131,7 +131,7 @@ public:
 
     //! Try getting a task from the mailbox or stealing from another scheduler.
     /** Returns the stolen task or NULL if all attempts fail. */
-    /* override */ task* receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count, bool return_if_no_work );
+    /* override */ task* receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count );
 
 }; // class custom_scheduler<>
 
@@ -139,30 +139,28 @@ public:
 // custom_scheduler methods
 //------------------------------------------------------------------------
 template<typename SchedulerTraits>
-task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count,
-                                                                bool return_if_no_work ) {
+task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count ) {
     task* t = NULL;
-    bool outermost_dispatch_level = return_if_no_work || master_outermost_level();
+    bool outermost_worker_level = worker_outermost_level();
+    bool outermost_dispatch_level = outermost_worker_level || master_outermost_level();
     bool can_steal_here = can_steal();
     my_inbox.set_is_idle( true );
 #if __TBB_HOARD_NONLOCAL_TASKS
     __TBB_ASSERT(!my_nonlocal_free_list, NULL);
 #endif
 #if __TBB_TASK_PRIORITY
-    if ( return_if_no_work && my_arena->my_skipped_fifo_priority ) {
-        // This thread can dequeue FIFO tasks, and some priority levels of
-        // FIFO tasks have been bypassed (to prevent deadlock caused by
-        // dynamic priority changes in nested task group hierarchy).
-        intptr_t skipped_priority = my_arena->my_skipped_fifo_priority;
-        if ( my_arena->my_skipped_fifo_priority.compare_and_swap(0, skipped_priority) == skipped_priority &&
-             skipped_priority > my_arena->my_top_priority )
-        {
-            my_market->update_arena_priority( *my_arena, skipped_priority );
+    if ( outermost_dispatch_level ) {
+        if ( intptr_t skipped_priority = my_arena->my_skipped_fifo_priority ) {
+            // This thread can dequeue FIFO tasks, and some priority levels of
+            // FIFO tasks have been bypassed (to prevent deadlock caused by
+            // dynamic priority changes in nested task group hierarchy).
+            if ( my_arena->my_skipped_fifo_priority.compare_and_swap(0, skipped_priority) == skipped_priority
+                 && skipped_priority > my_arena->my_top_priority )
+            {
+                my_market->update_arena_priority( *my_arena, skipped_priority );
+            }
         }
     }
-    task_stream *ts;
-#else /* !__TBB_TASK_PRIORITY */
-    task_stream *ts = &my_arena->my_task_stream;
 #endif /* !__TBB_TASK_PRIORITY */
     // TODO: Try to find a place to reset my_limit (under market's lock)
     // The number of slots potentially used in the arena. Updated once in a while, as my_limit changes rarely.
@@ -187,7 +185,7 @@ task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic ref
             break; // exit stealing loop and return;
         }
         // Check if the resource manager requires our arena to relinquish some threads
-        if ( return_if_no_work && my_arena->my_num_workers_allotted < my_arena->num_workers_active() ) {
+        if ( outermost_worker_level && my_arena->my_num_workers_allotted < my_arena->num_workers_active() ) {
 #if !__TBB_TASK_ARENA
             __TBB_ASSERT( is_worker(), NULL );
 #endif
@@ -196,7 +194,9 @@ task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic ref
             return NULL;
         }
 #if __TBB_TASK_PRIORITY
-        ts = &my_arena->my_task_stream[my_arena->my_top_priority];
+        const int p = int(my_arena->my_top_priority);
+#else /* !__TBB_TASK_PRIORITY */
+        static const int p = 0;
 #endif
         // Check if there are tasks mailed to this thread via task-to-thread affinity mechanism.
         __TBB_ASSERT(my_affinity_id, NULL);
@@ -204,9 +204,10 @@ task* custom_scheduler<SchedulerTraits>::receive_or_steal_task( __TBB_atomic ref
             GATHER_STATISTIC( ++my_counters.mails_received );
         }
         // Check if there are tasks in starvation-resistant stream.
-        // Only allowed for workers with empty stack, which is identified by return_if_no_work.
-        else if ( outermost_dispatch_level && !ts->empty() && (t = ts->pop( my_arena_slot->hint_for_pop)) ) {
-            ITT_NOTIFY(sync_acquired, ts);
+        // Only allowed at the outermost dispatch level.
+        else if ( outermost_dispatch_level && !my_arena->my_task_stream.empty(p)
+                  && (t = my_arena->my_task_stream.pop( p, my_arena_slot->hint_for_pop)) ) {
+            ITT_NOTIFY(sync_acquired, &my_arena->my_task_stream);
             // just proceed with the obtained task
         }
 #if __TBB_TASK_PRIORITY
@@ -312,10 +313,10 @@ fail:
                 // When a worker thread has nothing to do, return it to RML.
                 // For purposes of affinity support, the thread is considered idle while in RML.
 #if __TBB_TASK_PRIORITY
-                if( return_if_no_work || my_arena->my_top_priority > my_arena->my_bottom_priority ) {
-                    if ( my_arena->is_out_of_work() && return_if_no_work ) {
+                if( outermost_worker_level || my_arena->my_top_priority > my_arena->my_bottom_priority ) {
+                    if ( my_arena->is_out_of_work() && outermost_worker_level ) {
 #else /* !__TBB_TASK_PRIORITY */
-                    if ( return_if_no_work && my_arena->is_out_of_work() ) {
+                    if ( outermost_worker_level && my_arena->is_out_of_work() ) {
 #endif /* !__TBB_TASK_PRIORITY */
                         if( SchedulerTraits::itt_possible )
                             ITT_NOTIFY(sync_cancel, this);
@@ -331,11 +332,10 @@ fail:
                     // stealing and offloading a lower priority task. Priority check
                     // at the stealing moment cannot completely preclude such cases
                     // because priorities can changes dynamically.
-                    if ( !return_if_no_work && *my_ref_top_priority > my_arena->my_top_priority ) {
+                    if ( !outermost_worker_level && *my_ref_top_priority > my_arena->my_top_priority ) {
                         GATHER_STATISTIC( ++my_counters.prio_ref_fixups );
                         my_ref_top_priority = &my_arena->my_top_priority;
                         // it's expected that only outermost workers can use global reload epoch
-                        __TBB_ASSERT(!worker_outermost_level(), NULL);
                         __TBB_ASSERT(my_ref_reload_epoch == &my_arena->my_reload_epoch, NULL);
                     }
                 }
@@ -589,7 +589,7 @@ stealing_ground:
         // dispatch loop (i.e. its execution stack is empty). In this case it should exit it
         // either when there is no more work in the current arena, or when revoked by the market.
         
-        t = receive_or_steal_task( parent.prefix().ref_count, worker_outermost_level() );
+        t = receive_or_steal_task( parent.prefix().ref_count );
         if ( !t )
             goto done;
         __TBB_ASSERT(!is_proxy(*t),"unexpected proxy");

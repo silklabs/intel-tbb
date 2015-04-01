@@ -18,6 +18,9 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
+#define HARNESS_DEFAULT_MIN_THREADS 1
+#define HARNESS_DEFAULT_MAX_THREADS 3
+
 //------------------------------------------------------------------------
 // Test TBB mutexes when used with parallel_for.h
 //

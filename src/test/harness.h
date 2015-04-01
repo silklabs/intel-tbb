@@ -331,6 +331,10 @@ static void ParseCommandLine( int argc, char* argv[] ) {
 #include "mpi.h"
 #endif
 
+#if __TBB_MIC_OFFLOAD && __MIC__
+extern "C" int COIProcessProxyFlush();
+#endif
+
 HARNESS_EXPORT
 #if HARNESS_NO_PARSE_COMMAND_LINE
 int main() {
@@ -383,7 +387,16 @@ int main(int argc, char* argv[]) {
     #pragma offload target(mic) out(res) mandatory
 #endif
 #endif
-    res = TestMain ();
+    {
+        res = TestMain();
+#if __TBB_MIC_OFFLOAD && __MIC__
+        // It is recommended not to use the __MIC__ macro directly in the offload block but it is Ok here
+        // since it is not lead to an unexpected difference between host and target compilation phases.
+        // We need to flush internals COI buffers to order output from the offload part before the host part.
+        // Also it is work-around for the issue with missed output.
+        COIProcessProxyFlush();
+#endif
+    }
 
     ASSERT( res==Harness::Done || res==Harness::Skipped, "Wrong return code by TestMain");
 #if __TBB_MPI_INTEROP
@@ -441,7 +454,11 @@ public:
         thread_handle = thread_tmp->native_handle();
         thread_id = 0;
 #else
-        thread_handle = (HANDLE)_beginthreadex( NULL, 0, thread_function, this, 0, &thread_id );
+        unsigned stack_size = 0;
+#if HARNESS_THREAD_STACK_SIZE
+        stack_size = HARNESS_THREAD_STACK_SIZE;
+#endif
+        thread_handle = (HANDLE)_beginthreadex( NULL, stack_size, thread_function, this, 0, &thread_id );
 #endif
         ASSERT( thread_handle!=0, "NativeParallelFor: _beginthreadex failed" );
 #else
@@ -455,6 +472,7 @@ public:
         // Therefore we set the stack size explicitly (as for TBB worker threads).
 // TODO: make a single definition of MByte used by all tests.
         const size_t MByte = 1024*1024;
+#if !defined(HARNESS_THREAD_STACK_SIZE)
 #if __i386__||__i386||__arm__
         const size_t stack_size = 1*MByte;
 #elif __x86_64__
@@ -462,6 +480,9 @@ public:
 #else
         const size_t stack_size = 4*MByte;
 #endif
+#else
+        const size_t stack_size = HARNESS_THREAD_STACK_SIZE;
+#endif /* HARNESS_THREAD_STACK_SIZE */
         pthread_attr_t attr_stack;
         int status = pthread_attr_init(&attr_stack);
         ASSERT(0==status, "NativeParallelFor: pthread_attr_init failed");
@@ -583,6 +604,11 @@ T1 max ( const T1& val1, const T2& val2 ) {
     return val1 < val2 ? val2 : val1;
 }
 #endif /* !max */
+
+template<typename T>
+static inline bool is_aligned(T arg, size_t alignment) {
+    return 0==((size_t)arg &  (alignment-1));
+}
 
 #if __linux__
 inline unsigned LinuxKernelVersion()

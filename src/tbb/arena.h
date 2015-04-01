@@ -60,6 +60,7 @@ struct arena_base : padded<intrusive_list_node> {
 #if __TBB_TASK_PRIORITY
     //! Highest priority of recently spawned or enqueued tasks.
     volatile intptr_t my_top_priority;  // heavy use in stealing loop
+#endif /* !__TBB_TASK_PRIORITY */
 
     //! Maximal currently busy slot.
     atomic<unsigned> my_limit;          // heavy use in stealing loop
@@ -69,38 +70,17 @@ struct arena_base : padded<intrusive_list_node> {
         - new tasks are constantly coming (by extracting scheduled tasks in
           relaxed FIFO order);
         - the enqueuing thread does not call any of wait_for_all methods. **/
-    task_stream my_task_stream[num_priority_levels]; // heavy use in stealing loop
+#if __TBB_TASK_PRIORITY
+    task_stream<num_priority_levels> my_task_stream; // heavy use in stealing loop
 #else /* !__TBB_TASK_PRIORITY */
-    //! Task pool for the tasks scheduled via task::enqueue() method
-    /** Such scheduling guarantees eventual execution even if
-        - new tasks are constantly coming (by extracting scheduled tasks in
-          relaxed FIFO order);
-        - the enqueuing thread does not call any of wait_for_all methods. **/
-    task_stream my_task_stream;         // heavy use in stealing loop
-
-    //! Maximal currently busy slot.
-    atomic<unsigned> my_limit;          // heavy use in stealing loop
+    task_stream<1>                   my_task_stream; // heavy use in stealing loop
 #endif /* !__TBB_TASK_PRIORITY */
 
     //! Number of workers that are currently requested from the resource manager
     int my_num_workers_requested;
 
-    //! Number of slots in the arena
-    unsigned my_num_slots;
-
     //! Number of workers requested by the master thread owning the arena
     unsigned my_max_num_workers;
-
-    //! Market owning this arena
-    market* my_market;
-
-    //! ABA prevention marker
-    uintptr_t my_aba_epoch;
-
-#if !__TBB_FP_CONTEXT
-    //! FPU control settings of arena's master thread captured at the moment of arena instantiation.
-    __TBB_cpu_ctl_env_t my_cpu_ctl_env;
-#endif
 
 #if __TBB_TRACK_PRIORITY_LEVEL_SATURATION
     int my_num_workers_present;
@@ -112,13 +92,6 @@ struct arena_base : padded<intrusive_list_node> {
         Note that the implementation of arena::is_busy_or_empty() requires 
         my_pool_state to be unsigned. */
     tbb::atomic<uintptr_t> my_pool_state;
-
-#if __TBB_TASK_GROUP_CONTEXT
-    //! Default task group context.
-    /** Used by root tasks allocated directly by the master thread (not from inside
-        a TBB task) without explicit context specification. **/
-    task_group_context* my_default_ctx;
-#endif /* __TBB_TASK_GROUP_CONTEXT */
 
 #if __TBB_SCHEDULER_OBSERVER
     //! List of local observers attached to this arena.
@@ -146,6 +119,29 @@ struct arena_base : padded<intrusive_list_node> {
         were unable to progress at then current priority level. **/
     tbb::atomic<intptr_t> my_skipped_fifo_priority;
 #endif /* !__TBB_TASK_PRIORITY */
+
+    // Below are rarely modified members
+
+    //! Market owning this arena
+    market* my_market;
+
+    //! ABA prevention marker
+    uintptr_t my_aba_epoch;
+
+#if !__TBB_FP_CONTEXT
+    //! FPU control settings of arena's master thread captured at the moment of arena instantiation.
+    cpu_ctl_env my_cpu_ctl_env;
+#endif
+
+#if __TBB_TASK_GROUP_CONTEXT
+    //! Default task group context.
+    /** Used by root tasks allocated directly by the master thread (not from inside
+        a TBB task) without explicit context specification. **/
+    task_group_context* my_default_ctx;
+#endif /* __TBB_TASK_GROUP_CONTEXT */
+
+    //! Number of slots in the arena
+    unsigned my_num_slots;
 
     //! Indicates if there is an oversubscribing worker created to service enqueued tasks.
     bool my_mandatory_concurrency;

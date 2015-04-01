@@ -180,14 +180,14 @@ struct UpdateVelocityBody {
     Universe & u_;
     UpdateVelocityBody(Universe & u):u_(u){}
     void operator()( const tbb::blocked_range<int>& y_range ) const {
-        u_.UpdateVelocity(Universe::Rectangle(0,y_range.begin(),u_.UniverseWidth-1,y_range.size()));
+        u_.UpdateVelocity(Universe::Rectangle(1,y_range.begin(),u_.UniverseWidth-1,y_range.size()));
     }
 };
 
 void Universe::ParallelUpdateVelocity(tbb::affinity_partitioner &affinity) {
-    tbb::parallel_for( tbb::blocked_range<int>( 0, UniverseHeight-1 ), // Index space for loop
-                       UpdateVelocityBody(*this),                           // Body of loop
-                       affinity );                                     // Affinity hint
+    tbb::parallel_for( tbb::blocked_range<int>( 1, UniverseHeight ), // Index space for loop
+                       UpdateVelocityBody(*this),                    // Body of loop
+                       affinity );                                   // Affinity hint
 }
 
 void Universe::SerialUpdateUniverse() {

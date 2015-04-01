@@ -18,6 +18,9 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
+#define HARNESS_DEFAULT_MIN_THREADS 6
+#define HARNESS_DEFAULT_MAX_THREADS 8
+
 #include "tbb/concurrent_monitor.h"
 #include "tbb/atomic.h"
 #include "tbb/task_scheduler_init.h"

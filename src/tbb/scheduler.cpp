@@ -1144,10 +1144,14 @@ void generic_scheduler::cleanup_master() {
 #if __TBB_STATISTICS_EARLY_DUMP
     GATHER_STATISTIC( a->dump_arena_statistics() );
 #endif
-    if (governor::needsWaitWorkers())
+    // TODO: read global settings for the parameter at that point
+    // if workers are not joining, market can be released from on_thread_leaving(),
+    // so keep copy the state on local stack
+    bool must_join = my_market->join_workers = governor::needsWaitWorkers();
+    if (must_join)
         my_market->prepare_wait_workers();
     a->on_thread_leaving</*is_master*/true>();
-    if (governor::needsWaitWorkers())
+    if (must_join)
         my_market->wait_workers();
 }
 

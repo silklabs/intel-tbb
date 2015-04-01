@@ -352,15 +352,14 @@ public:
     static task* plugged_return_list() {return (task*)(intptr_t)(-1);}
 
     //! Number of small tasks that have been allocated by this scheduler. 
-    intptr_t my_small_task_count;
+    __TBB_atomic intptr_t my_small_task_count;
 
     //! List of small tasks that have been returned to this scheduler by other schedulers.
     task* my_return_list;
 
     //! Try getting a task from other threads (via mailbox, stealing, FIFO queue, orphans adoption).
     /** Returns obtained task or NULL if all attempts fail. */
-    virtual task* receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count,
-                                         bool return_if_no_work ) = 0;
+    virtual task* receive_or_steal_task( __TBB_atomic reference_count& completion_ref_count ) = 0;
 
     //! Free a small task t that that was allocated by a different scheduler 
     void free_nonlocal_small_task( task& t ); 

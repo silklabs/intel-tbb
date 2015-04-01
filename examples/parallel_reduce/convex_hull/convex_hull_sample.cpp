@@ -26,8 +26,6 @@
     - INIT_ONCE defined to 0
     - only buffered version is used
 */
-#include <cassert>
-#include <algorithm>
 #include "convex_hull.h"
 
 #include "tbb/task_scheduler_init.h"

@@ -238,7 +238,7 @@ int main(int argc, char *argv[] ) {
 void initialize_strings_vector(std::vector <string_pair>* vector)
 {
     vector->push_back(string_pair("TBB: VERSION\t\t4.3", required));          // check TBB_VERSION
-    vector->push_back(string_pair("TBB: INTERFACE VERSION\t8000", required)); // check TBB_INTERFACE_VERSION
+    vector->push_back(string_pair("TBB: INTERFACE VERSION\t8001", required)); // check TBB_INTERFACE_VERSION
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));
@@ -249,7 +249,8 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: BUILD_COMPILER", required));
 #elif __APPLE__
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));
-    vector->push_back(string_pair("TBB: BUILD_GCC", required));
+    vector->push_back(string_pair("TBB: BUILD_CLANG", required));
+    vector->push_back(string_pair("TBB: BUILD_XCODE", optional));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", optional)); //if( getenv("COMPILER_VERSION") )
 #elif __sun
     vector->push_back(string_pair("TBB: BUILD_KERNEL", required));

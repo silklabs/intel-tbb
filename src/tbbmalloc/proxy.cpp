@@ -60,6 +60,8 @@ static inline void initPageSize()
 */
 extern "C" void *__TBB_malloc_proxy(size_t) __attribute__ ((alias ("malloc")));
 
+static void *orig_msize;
+
 #elif MALLOC_ZONE_OVERLOAD_ENABLED
 
 #include "proxy_overload_osx.h"
@@ -69,8 +71,7 @@ extern "C" void *__TBB_malloc_proxy(size_t) __attribute__ ((alias ("malloc")));
 // Original (i.e., replaced) functions,
 // they are never changed for MALLOC_ZONE_OVERLOAD_ENABLED.
 static void *orig_free,
-    *orig_realloc,
-    *orig_msize;
+    *orig_realloc;
 
 #if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 #define ZONE_ARG
@@ -146,9 +147,14 @@ void *PREFIX(valloc)(ZONE_ARG size_t size) __THROW
     return scalable_aligned_malloc(size, memoryPageSize);
 }
 
+#undef ZONE_ARG
+#undef PREFIX
+
+#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
+
 // match prototype from system headers
-#if __ANDROID__ || MALLOC_ZONE_OVERLOAD_ENABLED
-size_t PREFIX(malloc_usable_size)(ZONE_ARG const void *ptr) __THROW
+#if __ANDROID__
+size_t malloc_usable_size(const void *ptr) __THROW
 #else
 size_t malloc_usable_size(void *ptr) __THROW
 #endif
@@ -156,11 +162,6 @@ size_t malloc_usable_size(void *ptr) __THROW
     InitOrigPointers();
     return __TBB_malloc_safer_msize(const_cast<void*>(ptr), (size_t (*)(void*))orig_msize);
 }
-
-#undef ZONE_ARG
-#undef PREFIX
-
-#if MALLOC_UNIXLIKE_OVERLOAD_ENABLED
 
 int posix_memalign(void **memptr, size_t alignment, size_t size) __THROW
 {

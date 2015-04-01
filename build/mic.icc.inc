@@ -25,6 +25,11 @@ OUTPUTOBJ_KEY = -o #
 PIC_KEY = -fPIC
 WARNING_AS_ERROR_KEY = -Werror
 WARNING_KEY = -w1
+# Several options (e.g. -opt-streaming-stores) were deprecated in Intel(R) Compiler 15.0.
+# When Intel(R) Compiler 14.0 support is dropped consider enabling remark 10009 and replacing deprecated options with
+# new ones (e.g. -qopt-streaming-stores never).
+WARNING_SUPPRESS = -diag-disable 10009
+TEST_WARNING_KEY = -diag-disable 10009
 DYLIB_KEY = -shared -Wl,-soname=$@
 EXPORT_KEY = -Wl,--version-script,
 NOINTRINSIC_KEY = -fno-builtin

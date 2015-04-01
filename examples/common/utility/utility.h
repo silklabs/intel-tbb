@@ -21,6 +21,13 @@
 #ifndef UTILITY_H_
 #define UTILITY_H_
 
+#if __TBB_MIC_OFFLOAD
+#pragma offload_attribute (push,target(mic))
+#include <exception>
+#include <cstdio>
+#pragma offload_attribute (pop)
+#endif // __TBB_MIC_OFFLOAD
+
 #include <string>
 #include <cstring>
 #include <vector>

@@ -120,10 +120,6 @@ template<typename T>
 static inline T alignUp(T arg, uintptr_t alignment) {
     return T(((uintptr_t)arg+(alignment-1)) & ~(alignment-1));
 }
-template<typename T>
-static inline bool isAligned(T arg, uintptr_t alignment) {
-    return 0==((uintptr_t)arg &  (alignment-1));
-}
 
 /* start of code replicated from src/tbbmalloc */
 
@@ -231,12 +227,12 @@ void CheckUnixAlignFuncOverload(void *(*memalign_p)(size_t, size_t),
     if (memalign_p) {
         void *ptr = memalign_p(128, 4*minLargeObjectSize);
         scalableMallocCheckSize(ptr, 4*minLargeObjectSize);
-        ASSERT(isAligned(ptr, 128), NULL);
+        ASSERT(is_aligned(ptr, 128), NULL);
         free_p(ptr);
     }
     void *ptr = valloc_p(minLargeObjectSize);
     scalableMallocCheckSize(ptr, minLargeObjectSize);
-    ASSERT(isAligned(ptr, sysconf(_SC_PAGESIZE)), NULL);
+    ASSERT(is_aligned(ptr, sysconf(_SC_PAGESIZE)), NULL);
     free_p(ptr);
 }
 
@@ -250,7 +246,7 @@ void CheckPvalloc(void *(*pvalloc_p)(size_t), void (*free_p)(void*))
     for (size_t sz = 0; sz<=largeSz; sz+=largeSz) {
         void *ptr = pvalloc_p(sz);
         scalableMallocCheckSize(ptr, sz? alignUp(sz, memoryPageSize) : memoryPageSize);
-        ASSERT(isAligned(ptr, memoryPageSize), NULL);
+        ASSERT(is_aligned(ptr, memoryPageSize), NULL);
         free_p(ptr);
     }
 }
@@ -260,6 +256,25 @@ void CheckPvalloc(void *(*pvalloc_p)(size_t), void (*free_p)(void*))
 
 #endif // MALLOC_REPLACEMENT_AVAILABLE
 
+// regression test: on OS X scalable_free() treated small aligned object,
+// placed in large block, as small block
+void CheckFreeAligned() {
+    size_t sz[] = {8, 4*1024, 16*1024, 0};
+    size_t align[] = {8, 4*1024, 16*1024, 0};
+
+    for (int s=0; sz[s]; s++)
+        for (int a=0; align[a]; a++) {
+            void *ptr = NULL;
+#if __TBB_POSIX_MEMALIGN_PRESENT
+            posix_memalign(&ptr, align[a], sz[s]);
+#elif MALLOC_REPLACEMENT_AVAILABLE == 2
+            ptr = _aligned_malloc(sz[s], align[a]);
+#endif
+            ASSERT(is_aligned(ptr, align[a]), NULL);
+            free(ptr);
+        }
+}
+
 #if __ANDROID__
 // Workaround for an issue with strdup somehow bypassing our malloc replacement on Android.
 char *strdup(const char *str) {
@@ -268,6 +283,29 @@ char *strdup(const char *str) {
     void *new_str = malloc(len);
     return new_str ? reinterpret_cast<char *>(memcpy(new_str, str, len)) : 0;
 }
+#endif
+
+#if __APPLE__
+#include <mach/mach.h>
+
+// regression test: malloc_usable_size() that was passed to zone interface
+// called system malloc_usable_size(), so for object that was not allocated
+// by tbbmalloc non-zero was returned, so such objects were passed to
+// tbbmalloc's free(), that is incorrect
+void TestZoneOverload() {
+    vm_address_t *zones;
+    unsigned zones_num;
+
+    kern_return_t ret = malloc_get_all_zones(mach_task_self(), NULL, &zones, &zones_num);
+    ASSERT(!ret && zones_num>1, NULL);
+    malloc_zone_t *sys_zone = (malloc_zone_t*)zones[1];
+    ASSERT(strcmp("tbbmalloc", malloc_get_zone_name(sys_zone)),
+                  "zone 1 expected to be not tbbmalloc");
+    void *p = malloc_zone_malloc(sys_zone, 16);
+    free(p);
+}
+#else
+#define TestZoneOverload()
 #endif
 
 int TestMain() {
@@ -308,7 +346,7 @@ int TestMain() {
 #if __TBB_POSIX_MEMALIGN_PRESENT
     int ret = posix_memalign(&ptr, 1024, 3*minLargeObjectSize);
     scalableMallocCheckSize(ptr, 3*minLargeObjectSize);
-    ASSERT(0==ret && isAligned(ptr, 1024), NULL);
+    ASSERT(0==ret && is_aligned(ptr, 1024), NULL);
     free(ptr);
 #endif
 
@@ -338,20 +376,21 @@ int TestMain() {
 
     ptr = _aligned_malloc(minLargeObjectSize, 16);
     scalableMallocCheckSize(ptr, minLargeObjectSize);
-    ASSERT(isAligned(ptr, 16), NULL);
+    ASSERT(is_aligned(ptr, 16), NULL);
 
     // Testing of workaround for vs "is power of 2 pow N" bug that accepts zeros
     ptr1 = _aligned_malloc(minLargeObjectSize, 0);
     scalableMallocCheckSize(ptr, minLargeObjectSize);
-    ASSERT(isAligned(ptr, sizeof(void*)), NULL);
+    ASSERT(is_aligned(ptr, sizeof(void*)), NULL);
     _aligned_free(ptr1);
 
     ptr1 = _aligned_realloc(ptr, minLargeObjectSize*10, 16);
     scalableMallocCheckSize(ptr1, minLargeObjectSize*10);
-    ASSERT(isAligned(ptr, 16), NULL);
+    ASSERT(is_aligned(ptr, 16), NULL);
     _aligned_free(ptr1);
 
 #endif
+    CheckFreeAligned();
 
     BigStruct *f = new BigStruct;
     scalableMallocCheckSize(f, sizeof(BigStruct));
@@ -373,6 +412,7 @@ int TestMain() {
     std::string stdstring = "dependence on msvcpXX.dll";
     ASSERT(strcmp(stdstring.c_str(), "dependence on msvcpXX.dll") == 0, NULL);
 #endif
+    TestZoneOverload();
 
     return Harness::Done;
 }

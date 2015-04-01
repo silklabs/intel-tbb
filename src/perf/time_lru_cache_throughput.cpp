@@ -161,7 +161,7 @@ struct throughput {
                         (std::min)(p.time_check_granularity_ops, _this->per_thread_sample_size - part_of_the_sample_so_far);
 
                 for (access_sequence_type::iterator it = iteration_begin_it; it < iteration_end_it; ++it){
-                    typename cache_type::handle h = _this->m_cache(*it);
+                    typename cache_type::handle h = _this->m_cache[*it];
                     micro_benchmarking::utils::busy_wait(p.time_of_item_use_usec);
                     micro_benchmarking::utils::disable_elimination(h.value());
                 }

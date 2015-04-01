@@ -395,7 +395,7 @@ void* itt_load_pointer_v3( const void* src ) {
 
 void itt_set_sync_name_v3( void* obj, const tchar* name) {
     ITT_SYNC_RENAME(obj, name);
-    suppress_unused_warning(obj && name);
+    suppress_unused_warning(obj, name);
 }
 
 

@@ -143,12 +143,17 @@ void market::release () {
 
 void market::wait_workers () {
     // usable for this kind of scheduler only
-    __TBB_ASSERT(governor::needsWaitWorkers(), NULL);
+    __TBB_ASSERT(join_workers, NULL);
+    // to guarantee that request_close_connection() is called by master,
     // wait till terminating last worker decresed my_ref_count
     while (__TBB_load_with_acquire(my_ref_count) > 1)
         __TBB_Yield();
     __TBB_ASSERT(1 == my_ref_count, NULL);
     release();
+}
+
+bool governor::does_client_join_workers (const tbb::internal::rml::tbb_client &client) {
+    return ((const market&)client).must_join_workers();
 }
 
 arena& market::create_arena ( unsigned max_num_workers, size_t stack_size ) {
@@ -298,6 +303,7 @@ inline void market::reset_global_priority () {
 
 arena* market::arena_in_need ( arena* prev_arena )
 {
+    suppress_unused_warning(prev_arena);
     if( !has_any_demand() )
         return NULL;
     arenas_list_mutex_type::scoped_lock lock(my_arenas_list_mutex, /*is_writer=*/false);
@@ -314,8 +320,6 @@ arena* market::arena_in_need ( arena* prev_arena )
             lock.acquire();
         }
     }
-#else
-    suppress_unused_warning(prev_arena);
 #endif /* __TBB_TRACK_PRIORITY_LEVEL_SATURATION */
     int p = my_global_top_priority;
     arena *a = NULL;

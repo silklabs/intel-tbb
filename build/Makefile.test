@@ -54,7 +54,9 @@ include $(tbb_root)/build/common_rules.inc
 test_model_plugin.$(TEST_EXT): LINK_TBB.LIB =
 test_model_plugin.$(TEST_EXT): CPLUS_FLAGS := $(CPLUS_FLAGS:$(USE_PROXY_FLAG)=)
 test_model_plugin.$(TEST_EXT): LIBS += $(LIBDL)
+ifneq (,$(DYLIB_KEY))
 test_model_plugin.$(TEST_EXT): test_model_plugin_dll.$(DLL)
+endif
 
 # tbb_misc.$(OBJ) has to be specified here (instead of harness_inject_scheduler.h) because it carries dependency on version_string.ver
 SCHEDULER_DEPENDENCIES = $(TBB_ASM.OBJ) tbb_misc.$(OBJ)
@@ -62,7 +64,8 @@ SCHEDULER_DEPENDENCIES = $(TBB_ASM.OBJ) tbb_misc.$(OBJ)
 # These executables don't depend on the TBB library, but include core .cpp files directly
 SCHEDULER_DIRECTLY_INCLUDED = test_task_leaks.$(TEST_EXT) \
  test_task_assertions.$(TEST_EXT) \
- test_fast_random.$(TEST_EXT)
+ test_fast_random.$(TEST_EXT) \
+ test_concurrent_queue_whitebox.$(TEST_EXT)
 
 # Necessary to locate version_string.ver referenced from directly included tbb_misc.cpp
 INCLUDES += $(INCLUDE_KEY).
@@ -117,7 +120,6 @@ TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
 	test_blocked_range2d.$(TEST_EXT)             \
 	test_blocked_range3d.$(TEST_EXT)             \
 	test_concurrent_queue.$(TEST_EXT)            \
-	test_concurrent_queue_whitebox.$(TEST_EXT)   \
 	test_concurrent_vector.$(TEST_EXT)           \
 	test_concurrent_unordered_set.$(TEST_EXT)    \
 	test_concurrent_unordered_map.$(TEST_EXT)    \
@@ -200,6 +202,9 @@ TEST_TBB_PLAIN.EXE = test_assembly.$(TEST_EXT)   \
 
 TEST_TBB_PLAIN.EXE += $(TEST_TBB_CPP11)
 
+# skip mode_plugin for now
+skip_tests += test_model_plugin
+
 ifdef OPENMP_FLAG
 test_openmp.$(TEST_EXT): CPLUS_FLAGS += $(OPENMP_FLAG)
 
@@ -229,108 +234,22 @@ endif
 
 $(TEST_TBB_PLAIN.EXE): WARNING_KEY += $(TEST_WARNING_KEY)
 
-# Run tests that are in SCHEDULER_DIRECTLY_INCLUDED and TEST_TBB_PLAIN.EXE
+# Run tests that are in SCHEDULER_DIRECTLY_INCLUDED and TEST_TBB_PLAIN.EXE but not in skip_tests (which is specified by user)
+TESTS_TO_RUN := $(filter-out $(addsuffix .$(TEST_EXT),$(skip_tests)),$(TEST_TBB_PLAIN.EXE) $(SCHEDULER_DIRECTLY_INCLUDED))
+
+# This definition intentionally consists of two blank lines
+define eol
+
+
+endef
+
+# First build the targets, then run them
+# Form a list of commands separated with end of line
 # Note that usually run_cmd is empty, and tests run directly
-test_tbb_plain: $(TEST_PREREQUISITE) $(SCHEDULER_DIRECTLY_INCLUDED) $(TEST_TBB_PLAIN.EXE)
-	$(run_cmd) ./test_tbb_version.$(TEST_EXT) $(args)
-        # Checking TBB version first to make sure the following testing has anything in it
-	$(run_cmd) ./test_assembly.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_atomic.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_atomic_pic.$(TEST_EXT) $(args)
-        # Yes, 4:8 is intended on the next line.
-	$(run_cmd) ./test_yield.$(TEST_EXT) $(args) 4:8
-	$(run_cmd) ./test_handle_perror.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_dynamic_link.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_task_auto_init.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_task_arena.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_task_scheduler_init.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task_scheduler_observer.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task_assertions.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_task_leaks.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_fast_random.$(TEST_EXT) $(args) 1:16
-	$(run_cmd) ./test_eh_tasks.$(TEST_EXT) $(args) 2:4
-	$(run_cmd) ./test_cache_aligned_allocator.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_cache_aligned_allocator_STL.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_blocked_range.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_blocked_range2d.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_blocked_range3d.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_parallel_for.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_partitioner_whitebox.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_parallel_for_vectorization.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_parallel_sort.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_aligned_space.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_parallel_reduce.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_parallel_scan.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_parallel_while.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_parallel_do.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_inits_loop.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_lambda.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_mutex.$(TEST_EXT) $(args) 1:3
-	$(run_cmd) ./test_mutex_native_threads.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_rwm_upgrade_downgrade.$(TEST_EXT) $(args) 4
-        # Yes, 4:8 is intended on the next line.
-	$(run_cmd) ./test_halt.$(TEST_EXT) $(args) 4:8
-	$(run_cmd) ./test_pipeline.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_pipeline_with_tbf.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_parallel_pipeline.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_tick_count.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_concurrent_queue.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_concurrent_vector.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_concurrent_queue_whitebox.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_concurrent_unordered_set.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_concurrent_unordered_map.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_concurrent_hash_map.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_enumerable_thread_specific.$(TEST_EXT) $(args) 0:4
-	$(run_cmd) ./test_combinable.$(TEST_EXT) $(args) 0:4
-	$(run_cmd) ./test_model_plugin.$(TEST_EXT) $(args) 4
-	$(run_cmd) ./test_eh_algorithms.$(TEST_EXT) $(args) 2:4
-	$(run_cmd) ./test_eh_flow_graph.$(TEST_EXT) $(args) 2:4
-	$(run_cmd) ./test_tbb_thread.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_std_thread.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_parallel_invoke.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task_group.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_ittnotify.$(TEST_EXT) $(args) 2:2
-	$(run_cmd) ./test_parallel_for_each.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_tbb_header.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_concurrent_monitor.$(TEST_EXT) $(args) 6:8
-	$(run_cmd) ./test_critical_section.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_semaphore.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_reader_writer_lock.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_tbb_condition_variable.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_tbb_fork.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_intrusive_list.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_concurrent_priority_queue.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task_priority.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_task_enqueue.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_task_steal_limit.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_hw_concurrency.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_fp.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_tuple.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_flow_graph.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_broadcast_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_continue_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_function_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_limiter_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_join_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_buffer_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_queue_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_priority_queue_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_sequencer_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_source_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_overwrite_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_write_once_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_indexer_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_multifunction_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_split_node.$(TEST_EXT) $(args) 1:4
-	$(run_cmd) ./test_examples_common_utility.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_atomic_compiler_builtins.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_assembly_compiler_builtins.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_static_assert.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_aggregator.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_concurrent_lru_cache.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_tagged_msg.$(TEST_EXT) $(args)
-	$(run_cmd) ./test_flow_graph_whitebox.$(TEST_EXT) $(args)
+
+test_tbb_plain: $(TEST_PREREQUISITE) $(TESTS_TO_RUN)
+	$(foreach test, $(TESTS_TO_RUN), $(run_cmd) ./$(test) $(args) $(eol))
+
 
 # For deprecated files, we don't mind warnings etc., thus compilation rules are most relaxed
 CPLUS_FLAGS_DEPRECATED = $(DEFINE_KEY)TBB_DEPRECATED=1 $(subst $(WARNING_KEY),,$(CPLUS_FLAGS)) $(WARNING_SUPPRESS) $(INCLUDE_KEY)$(tbb_root)/src/test

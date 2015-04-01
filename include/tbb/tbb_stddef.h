@@ -26,7 +26,7 @@
 #define TBB_VERSION_MINOR 3
 
 // Engineering-focused interface version
-#define TBB_INTERFACE_VERSION 8000
+#define TBB_INTERFACE_VERSION 8001
 #define TBB_INTERFACE_VERSION_MAJOR TBB_INTERFACE_VERSION/1000
 
 // The oldest major interface version still supported
@@ -207,40 +207,6 @@ namespace tbb {
  */
 extern "C" int __TBB_EXPORTED_FUNC TBB_runtime_interface_version();
 
-//! Dummy type that distinguishes splitting constructor from copy constructor.
-/**
- * See description of parallel_for and parallel_reduce for example usages.
- * @ingroup algorithms
- */
-class split {
-};
-
-//! Type enables transmission of splitting proportion from partitioners to range objects
-/**
- * In order to make use of such facility Range objects must implement
- * splitting constructor with this type passed and initialize static
- * constant boolean field 'is_divisible_in_proportion' with the value
- * of 'true'
- */
-class proportional_split {
-public:
-    proportional_split(size_t _left = 1, size_t _right = 1) : my_left(_left), my_right(_right) { }
-    proportional_split(split) : my_left(1), my_right(1) { }
-
-    size_t left() const { return my_left; }
-    size_t right() const { return my_right; }
-
-    void set_proportion(size_t _left, size_t _right) {
-        my_left = _left;
-        my_right = _right;
-    }
-
-    // used when range does not support proportional split
-    operator split() const { return split(); }
-private:
-    size_t my_left, my_right;
-};
-
 /**
  * @cond INTERNAL
  * @brief Identifiers declared inside namespace internal should never be used directly by client code.
@@ -400,8 +366,9 @@ inline bool is_power_of_two_factor(argument_integer_type arg, divisor_integer_ty
 }
 
 //! Utility template function to prevent "unused" warnings by various compilers.
-template<typename T>
-void suppress_unused_warning( const T& ) {}
+template<typename T1> void suppress_unused_warning( const T1& ) {}
+template<typename T1, typename T2> void suppress_unused_warning( const T1&, const T2& ) {}
+template<typename T1, typename T2, typename T3> void suppress_unused_warning( const T1&, const T2&, const T3& ) {}
 
 // Struct to be used as a version tag for inline functions.
 /** Version tag can be necessary to prevent loader on Linux from using the wrong
@@ -411,6 +378,42 @@ struct version_tag_v3 {};
 typedef version_tag_v3 version_tag;
 
 } // internal
+
+//! Dummy type that distinguishes splitting constructor from copy constructor.
+/**
+ * See description of parallel_for and parallel_reduce for example usages.
+ * @ingroup algorithms
+ */
+class split {
+};
+
+//! Type enables transmission of splitting proportion from partitioners to range objects
+/**
+ * In order to make use of such facility Range objects must implement
+ * splitting constructor with this type passed and initialize static
+ * constant boolean field 'is_splittable_in_proportion' with the value
+ * of 'true'
+ */
+class proportional_split: internal::no_assign {
+public:
+    proportional_split(size_t _left = 1, size_t _right = 1) : my_left(_left), my_right(_right) { }
+
+    size_t left() const { return my_left; }
+    size_t right() const { return my_right; }
+
+    // used when range does not support proportional split
+    operator split() const { return split(); }
+
+#if __TBB_ENABLE_RANGE_FEEDBACK
+    void set_proportion(size_t _left, size_t _right) {
+        my_left = _left;
+        my_right = _right;
+    }
+#endif
+private:
+    size_t my_left, my_right;
+};
+
 } // tbb
 
 // Following is a set of classes and functions typically used in compile-time "metaprogramming".

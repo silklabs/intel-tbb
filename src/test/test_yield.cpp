@@ -21,6 +21,9 @@
 // Test that __TBB_Yield works.
 // On Red Hat EL4 U1, it does not work, because sched_yield is broken.
 
+#define HARNESS_DEFAULT_MIN_THREADS 4
+#define HARNESS_DEFAULT_MAX_THREADS 8
+
 #include "tbb/tbb_machine.h"
 #include "tbb/tick_count.h"
 #include "harness.h"

@@ -19,8 +19,7 @@
 */
 
 #include "tbb/tick_count.h"
-#include "harness.h"
-#include <cstdio>
+#include "harness_assert.h"
 
 //! Assert that two times in seconds are very close.
 void AssertNear( double x, double y ) {
@@ -62,6 +61,8 @@ static void WaitForDuration( double duration ) {
         continue;
 }
 
+#include "harness.h"
+
 //! Test that average timer overhead is within acceptable limit.
 /** The 'tolerance' value inside the test specifies the limit. */
 void TestSimpleDelay( int ntrial, double duration, double tolerance ) {
@@ -92,37 +93,70 @@ void TestSimpleDelay( int ntrial, double duration, double tolerance ) {
 //------------------------------------------------------------------------
 
 #include "tbb/atomic.h"
-static tbb::atomic<int> Counter;
-static volatile bool Flag;
+static tbb::atomic<int> Counter1, Counter2;
+static tbb::atomic<bool> Flag1, Flag2;
 static tbb::tick_count *tick_count_array;
+static double barrier_time;
 
 struct TickCountDifferenceBody {
+    TickCountDifferenceBody( int num_threads ) {
+        Counter1 = Counter2 = num_threads;
+        Flag1 = Flag2 = false;
+    }
     void operator()( int id ) const {
-        if( --Counter==0 ) Flag = true;
-        while( !Flag ) continue;
+        bool last = false;
+        // The first barrier.
+        if ( --Counter1 == 0 ) last = true;
+        while ( !last && !Flag1.load<tbb::acquire>() ) __TBB_Pause( 1 );
+        // Save a time stamp of the first barrier releasing.
         tick_count_array[id] = tbb::tick_count::now();
+
+        // The second barrier.
+        if ( --Counter2 == 0 ) Flag2.store<tbb::release>(true);
+        // The last thread should release threads from the first barrier after it reaches the second
+        // barrier to avoid a deadlock.
+        if ( last ) Flag1.store<tbb::release>(true);
+        // After the last thread releases threads from the first barrier it waits for a signal from
+        // the second barrier.
+        while ( !Flag2.load<tbb::acquire>() ) __TBB_Pause( 1 );
+
+        if ( last )
+            // We suppose that the barrier time is a time interval between the moment when the last
+            // thread reaches the first barrier and the moment when the same thread is released from
+            // the second barrier. This time is not accurate time of two barriers but it is
+            // guaranteed that it does not exceed it.
+            barrier_time = (tbb::tick_count::now() - tick_count_array[id]).seconds() / 2;
+    }
+    ~TickCountDifferenceBody() {
+        ASSERT( Counter1 == 0 && Counter2 == 0, NULL );
     }
 };
 
 //! Test that two tick_count values recorded on different threads can be meaningfully subtracted.
 void TestTickCountDifference( int n ) {
-    double tolerance = 3E-4;
+    const double tolerance = 3E-4;
     tick_count_array = new tbb::tick_count[n];
-    for( int trial=0; trial<10; ++trial ) {
-        Counter = n;
-        Flag = false;
-        NativeParallelFor( n, TickCountDifferenceBody() );
-        ASSERT( Counter==0, NULL );
-        for( int i=0; i<n; ++i )
-            for( int j=0; j<i; ++j ) {
-                double diff = (tick_count_array[i]-tick_count_array[j]).seconds();
-                if( diff<0 ) diff = -diff;
-                if( diff>tolerance ) {
-                    REPORT("%s: cross-thread tick_count difference = %g > %g = tolerance\n",
-                           diff>3*tolerance?"ERROR":"Warning",diff,tolerance);
-                }
+
+    int num_trials = 0;
+    tbb::tick_count start_time = tbb::tick_count::now();
+    do {
+        NativeParallelFor( n, TickCountDifferenceBody( n ) );
+        if ( barrier_time > tolerance )
+            // The machine seems to be oversubscibed so skip the test.
+            continue;
+        for ( int i = 0; i < n; ++i ) {
+            for ( int j = 0; j < i; ++j ) {
+                double diff = (tick_count_array[i] - tick_count_array[j]).seconds();
+                if ( diff < 0 ) diff = -diff;
+                if ( diff > tolerance )
+                    REPORT( "Warning: cross-thread tick_count difference = %g > %g = tolerance\n", diff, tolerance );
+                ASSERT( diff < 3 * tolerance, "Too big difference." );
             }
-    }
+        }
+        // During 5 seconds we are trying to get 10 successful trials.
+    } while ( ++num_trials < 10 && (tbb::tick_count::now() - start_time).seconds() < 5 );
+    REMARK( "Difference test time: %g sec\n", (tbb::tick_count::now() - start_time).seconds() );
+    ASSERT( num_trials == 10, "The machine seems to be heavily oversubscibed, difference test was skipped." );
     delete[] tick_count_array;
 }
 
@@ -152,7 +186,7 @@ int TestMain () {
     tbb::tick_count t0 = tbb::tick_count::now();
     TestSimpleDelay(/*ntrial=*/1000000,/*duration=*/0,    /*tolerance=*/2E-6);
     tbb::tick_count t1 = tbb::tick_count::now();
-    TestSimpleDelay(/*ntrial=*/10,     /*duration=*/0.125,/*tolerance=*/5E-6);
+    TestSimpleDelay(/*ntrial=*/1000,   /*duration=*/0.001,/*tolerance=*/5E-6);
     tbb::tick_count t2 = tbb::tick_count::now();
     TestArithmetic(t0,t1,t2);
 

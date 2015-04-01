@@ -18,6 +18,9 @@
     reasons why the executable file might be covered by the GNU General Public License.
 */
 
+#define HARNESS_DEFAULT_MIN_THREADS 4
+#define HARNESS_DEFAULT_MAX_THREADS 8
+
 #include "harness_defs.h"
 #include <cstdio>
 #include <cstdlib>

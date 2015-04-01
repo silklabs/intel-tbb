@@ -38,6 +38,10 @@ class market;
 class generic_scheduler;
 class __TBB_InitOnce;
 
+namespace rml {
+class tbb_client;
+}
+
 //------------------------------------------------------------------------
 // Class governor
 //------------------------------------------------------------------------
@@ -129,6 +133,8 @@ public:
     static void initialize_rml_factory ();
 
     static bool needsWaitWorkers () { return BlockingTSI!=NULL; }
+
+    static bool does_client_join_workers (const tbb::internal::rml::tbb_client &client);
 
     //! Must be called before init_scheduler
     static void setBlockingTerminate(const task_scheduler_init *tsi);

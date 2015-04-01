@@ -89,7 +89,7 @@ class private_worker: no_copy {
 
     static __RML_DECL_THREAD_ROUTINE thread_routine( void* arg );
 
-    static void release_handle(thread_handle my_handle);
+    static void release_handle(thread_handle my_handle, bool join);
 
 protected:
     private_worker( private_server& server, tbb_client& client, const size_t i ) : 
@@ -230,8 +230,8 @@ __RML_DECL_THREAD_ROUTINE private_worker::thread_routine( void* arg ) {
     #pragma warning(pop)
 #endif
 
-void private_worker::release_handle(thread_handle handle) {
-    if (governor::needsWaitWorkers())
+void private_worker::release_handle(thread_handle handle, bool join) {
+    if (join)
         thread_monitor::join(handle);
     else
         thread_monitor::detach_thread(handle);
@@ -253,7 +253,7 @@ void private_worker::start_shutdown() {
         // because in this case the thread wasn't started yet.
         // For st_starting release is done at launch site.
         if (s==st_normal)
-            release_handle(my_handle);
+            release_handle(my_handle, governor::does_client_join_workers(my_client));
     } else if( s==st_init ) {
         // Perform action that otherwise would be performed by associated thread when it quits.
         my_server.remove_server_ref();
@@ -310,7 +310,7 @@ inline void private_worker::wake_or_launch() {
             // by start_shutdown, because my_handle value might be not set yet
             // at time of transition from st_starting to st_quit.
             __TBB_ASSERT( s==st_quit, NULL );
-            release_handle(my_handle);
+            release_handle(my_handle, governor::does_client_join_workers(my_client));
         }
     }
     else

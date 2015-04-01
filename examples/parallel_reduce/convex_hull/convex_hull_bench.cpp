@@ -22,7 +22,6 @@
     This file contains a few implementations, so it may look overly complicated.
     The most efficient implementation is also separated into convex_hull_sample.cpp
 */
-#include <cassert>
 #include "convex_hull.h"
 
 typedef util::point<double> point_t;
